@@ -1,0 +1,2307 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Cisco ISE Deployment",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://example:443",
+      "description": "Inferred Url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "deployment-api-controller",
+      "description": "the deployment API"
+    },
+    {
+      "name": "node-api-controller",
+      "description": "the node API"
+    },
+    {
+      "name": "profile-api-controller",
+      "description": "the profile API"
+    }
+  ],
+  "paths": {
+    "/api/v1/deployment/node": {
+      "get": {
+        "tags": ["Node Deployment"],
+        "summary": "Retrieve the list of all the nodes that are deployed in the cluster.",
+        "description": "The API lists all the nodes that are deployed in the cluster.<br> Returns basic information about each of the deployed nodes in the cluster like hostname, status, roles, and services. <br> Supports filtering on FQDN, hostname, IP address, roles, services and node status. <br> Execute this API only on PPAN for accurate results. ",
+        "operationId": "getDeploymentNodes",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "<div> <style type=\"text/css\" scoped> .apiServiceTable td, .apiServiceTable th { padding: 5px 10px !important; text-align: left; } </style> <span> <b>Simple filtering</b> is available through the filter query string parameter. The structure of a filter is a triplet of field operator and value, separated by dots. More than one filter can be sent. The logical operator common to all filter criteria is AND by default, and can be changed by using the <i>\"filterType=or\"</i> query string parameter. Each resource Data model description should specify if an attribute is a filtered field. </span> <br /> <table class=\"apiServiceTable\"> <thead> <tr> <th>OPERATOR</th> <th>DESCRIPTION</th> </tr> </thead> <tbody> <tr> <td>EQ</td> <td>Equals</td> </tr> <tr> <td>NEQ</td> <td>Not Equals</td> </tr> <tr> <td>STARTSW</td> <td>Starts With</td> </tr> <tr> <td>NSTARTSW</td> <td>Not Starts With</td> </tr> <tr> <td>ENDSW</td> <td>Ends With</td> </tr> <tr> <td>NENDSW</td> <td>Not Ends With</td> </tr> <tr> <td>CONTAINS</td> <td>Contains</td> </tr> <tr> <td>NCONTAINS</td> <td>Not Contains</td> </tr> </tbody> </table> </div>",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filterType",
+            "in": "query",
+            "description": "The logical operator common to all filter criteria is AND by default, and can be changed by using this parameter.",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": ["AND", "OR"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeploymentNodesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid inputs have been supplied. ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["Node Deployment"],
+        "summary": "Register a standalone node to the cluster",
+        "description": "This API registers a Cisco ISE node to form a multi-node deployment. <br/> Approximate execution time - 300 seconds. ",
+        "operationId": "registerNode",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NodeRegistrationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Registration initiated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Invalid inputs are supplied. 1. Node being registered is not a standalone node. ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/deployment/node-group": {
+      "get": {
+        "tags": ["Node Group"],
+        "summary": "Retrieve the list of all the node groups.",
+        "description": "This API retrieves the details of all the node groups in the cluster.<br> Each node group retrieved consists of name, description and MAR cache details like query-attempts, query-timeout, replication-attempts, replication-timeout. </br>",
+        "operationId": "getNodeGroups",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeGroupsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Node groups not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["Node Group"],
+        "summary": "Create a node group.",
+        "description": "<div> <style type=\"text/css\" scoped> .nodeGroupTable td , .nodeGroupTable th { padding: 5px 10px !important; text-align: left;} </style> <span>This API creates a node group in the cluster.  A node group is a group of PSNs, where the PSNs maintain a heartbeat with each other. It is used primarily to terminate or transfer posture-pending sessions when a PSN in a local node group fails.  Node group members can communicate over TCP/7800.</span><br> </br><span>The following parameters are used in the request body of the API:</span></br> <table class=\"nodeGroupTable\"> <thead> <tr> <th>PARAMETER</th> <th>DESCRIPTION</th> <th>EXAMPLE</th> </tr> </thead> <tbody> <tr> <td>name<sup><font color=red>* required</font></sup></td> <td>Name of the node group(<b>valid-range:</b> 1-100 characters)</td> <td>{\"name\": \"site1\"}</td> </tr> <tr> <td>description</td> <td>Description of the node group (<b>valid-range:</b> 0-256 characters)</td> <td>{\"name\": \"site2\", \"description\": \"sample\"}</td> </tr> <tr> <td>query-attempts</td> <td>The number of times Cisco ISE attempts to perform the cache entry query. (<b>valid-range:</b> 0 - 5, <b>default-value:</b> 1)</td> <td>{\"name\": \"site3\",\"marCache\": {\"query-attempts\": 1}}</td> </tr> <tr> <td>query-timeout</td> <td>The time, in seconds, after which a cache entry query times out. (<b>valid-range:</b> 1 - 10, <b>default-value:</b> 2) second(s)</td> <td>{\"name\": \"site4\",\"marCache\": {\"query-timeout\": 2}}</td> </tr> <td>replication-attempts</td> <td>The number of times Cisco ISE attempts to perform MAR cache entry replication. (<b>valid-range:</b> 0 - 5, <b>default-value:</b> 2)</td> <td>{\"name\": \"site5\",\"marCache\": {\"replication-attempts\": 2}}</td> </tr> <tr> <td>replication-timeout</td> <td>The time, in seconds, after which the cache entry replication times out. (<b>valid-range:</b> 1 - 10, <b>default-value:</b> 5) second(s)</td> <td>{\"name\": \"site6\",\"marCache\": {\"replication-timeout\": 5}}</td> </tr> </tbody> </table></br> <span><b>NOTE 1: </b>: Node group name and description cannot contain any of the following characters: ! % ^ : ; , . ~ @ # & [ { ( | ) } ] ` > <  / \\ \" - + = ?</br> <b>NOTE 2: </b>: Parameter marCache stands for Machine Access Restriction (MAR) cache that provides an additional means of controlling authorization for Active Directory-authentication users. We can enable the marCache for a nodegroup by providing key \"marCache\" in json request. Additionally we may also provide any combination of parameters - query-attempts, query-timeout, replication-attempts, replication-timeout in marCache object. If no value is specified for a particular parameter its default value will be recorded.If no marCache object is given, marCache will be considered as disabled.  </br></span> <div>",
+        "operationId": "createNodeGroup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NodeGroupConfig"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "409": {
+            "description": "Conflict. Node group already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/deployment/node-group/{nodeGroupName}": {
+      "get": {
+        "tags": ["Node Group"],
+        "summary": "Retrieve the details of a node group",
+        "description": "This API retrieves the details of a node group in the cluster using a node group name.",
+        "operationId": "getNodeGroup",
+        "parameters": [
+          {
+            "name": "nodeGroupName",
+            "in": "path",
+            "description": "Name of the existing node group.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeGroupResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Node groups not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["Node Group"],
+        "summary": "Update an existing node group.",
+        "description": "<div> <style type=\"text/css\" scoped> .nodeGroupTable td , .nodeGroupTable th { padding: 5px 10px !important; text-align: left;} </style> <span>Purpose of this API is to update an existing node group. </span><br> </br><span>The following parameters are used in the request body of the API:</span></br> <table class=\"nodeGroupTable\"> <thead> <tr> <th>PARAMETER</th> <th>DESCRIPTION</th> <th>EXAMPLE</th> </tr> </thead> <tbody> <tr> <td>name<sup><font color=red>* required</font></sup></td> <td> Name of the node group existing in ISE(<b>valid-range:</b> 1-100 characters)<br/> <span><b>NOTE : </b>name of an existing node group cannot be modified. \"name\" parameter should be identical to the node group name(nodeGroupName) provided in the path</span> </td> <td>{\"name\": \"site1\"}</td> </tr> <tr> <td>description</td> <td> Description of the node group (<b>valid-range:</b> 0-256 characters)<br/> </td> <td>{\"name\": \"site2\", \"description\": \"sample\"}</td> </tr> <tr> <td>query-attempts</td> <td>The number of times Cisco ISE attempts to perform the cache entry query. (<b>valid-range:</b> 0 - 5, <b>default-value:</b> 1)</td> <td>{\"name\": \"site3\",\"marCache\": {\"query-attempts\": 1}}</td> </tr> <tr> <td>query-timeout</td> <td>The time, in seconds, after which a cache entry query times out. (<b>valid-range:</b> 1 - 10, <b>default-value:</b> 2) second(s)</td> <td>{\"name\": \"site4\",\"marCache\": {\"query-timeout\": 2}}</td> </tr> <tr> <td>replication-attempts</td> <td>The number of times Cisco ISE attempts to perform MAR cache entry replication. (<b>valid-range:</b> 0 - 5, <b>default-value:</b> 2)</td> <td>{\"name\": \"site5\",\"marCache\": {\"replication-attempts\": 2}}</td> </tr> <tr> <td>replication-timeout</td> <td>The time, in seconds, after which the cache entry replication times out. (<b>valid-range:</b> 1 - 10, <b>default-value:</b> 5) second(s)</td> <td>{\"name\": \"site6\",\"marCache\": {\"replication-timeout\": 5}}</td> </tr> </tbody> </table></br> <span><b>NOTE 1: </b> Node group name and description cannot contain any of the following characters: ! % ^ : ; , . ~ @ # & [ { ( | ) } ] ` > <  / \\ \" - + = ?</br> <b>NOTE 2: </b> Parameter marCache stands for Machine Access Restriction (MAR) cache that provides an additional means of controlling authorization for Active Directory-authentication users. We can enable the marCache for a nodegroup by providing key \"marCache\" in json request. Additionally we may also provide any combination of parameters - query-attempts, query-timeout, replication-attempts, replication-timeout in marCache object. If no value is specified for a particular parameter its default value will be recorded. If no marCache object is given, marCache will be disabled.  </br></span> <div>",
+        "operationId": "updateNodeGroup",
+        "parameters": [
+          {
+            "name": "nodeGroupName",
+            "in": "path",
+            "description": "Name of the existing node group.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NodeGroupConfig"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden [Updating a node group whose name does not match with the payload is forbidden].",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Node group does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["Node Group"],
+        "summary": "Delete a node group.",
+        "description": "Delete an existing node group in the cluster. Deleting the node group does not delete the nodes, but failover is no longer carried out among the nodes.",
+        "operationId": "deleteNodeGroup",
+        "parameters": [
+          {
+            "name": "nodeGroupName",
+            "in": "path",
+            "description": "Name of the existing node group.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "forceDelete",
+            "in": "query",
+            "description": "Force delete the group even if the node group contains one or more nodes.",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden [Node group contains one or more nodes.]",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Node group not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/deployment/node-group/{nodeGroupName}/add-node": {
+      "post": {
+        "tags": ["Node Group"],
+        "summary": "Add a node to a node group.",
+        "description": "<div> <style type=\"text/css\" scoped> .nodeGroupTable td , .nodeGroupTable th { padding: 5px 10px !important; text-align: left;} </style> <span>This API adds a node to the node group in the cluster. When a node that belongs to a node group fails, another node in the same node group issues a Change of Authorization (CoA) for all the URL-redirected sessions on the failed node.</span><br> </br><span>The following parameters are used in the request body of the API:</span></br> <table class=\"nodeGroupTable\"> <thead> <tr> <th>PARAMETER</th> <th>DESCRIPTION</th> <th>EXAMPLE</th> </tr> </thead> <tbody> <tr> <td>hostname<sup><font color=red>* required</font></sup></td> <td>Name of the host name </td> <td>{\"hostname\": \"isenode\"}</td> </tr> </tbody> </table></br> <div>",
+        "operationId": "addNode",
+        "parameters": [
+          {
+            "name": "nodeGroupName",
+            "in": "path",
+            "description": "Name of the existing node group.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hostname"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Node/Nodegroup not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict. The node is already part of a node group.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/deployment/node-group/{nodeGroupName}/node": {
+      "get": {
+        "tags": ["Node Group"],
+        "summary": "Retrieve the list of nodes in a given node group.",
+        "description": "This API retrieves the list of nodes associated with a node group in the cluster with a given node group name.",
+        "operationId": "getNodes",
+        "parameters": [
+          {
+            "name": "nodeGroupName",
+            "in": "path",
+            "description": "Name of the existing node group.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeGroupNodesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Node group not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/deployment/node-group/{nodeGroupName}/remove-node": {
+      "post": {
+        "tags": ["Node Group"],
+        "summary": "Remove a node from a node group.",
+        "description": "<div> <style type=\"text/css\" scoped> .nodeGroupTable td , .nodeGroupTable th { padding: 5px 10px !important; text-align: left;} </style> <span>Purpose of this API is to remove a node from a node group in the cluster. Removing node from the node group does not delete the node, but failover is no longer carried out if the node is not part any node group.</span><br> </br><span>The following parameters are used in the request body of the API:</span></br> <table class=\"nodeGroupTable\"> <thead> <tr> <th>PARAMETER</th> <th>DESCRIPTION</th> <th>EXAMPLE</th> </tr> </thead> <tbody> <tr> <td>hostname<sup><font color=red>* required</font></sup></td> <td>Name of the host name </td> <td>{\"hostname\": \"isenode\"}</td> </tr> </tbody> </table></br> <div>",
+        "operationId": "removeNode",
+        "parameters": [
+          {
+            "name": "nodeGroupName",
+            "in": "path",
+            "description": "Name of the existing node group.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hostname"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Node not found in the node group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/deployment/node/{hostname}": {
+      "get": {
+        "tags": ["Node Deployment"],
+        "summary": "Retrieve details of a deployed node.",
+        "description": "This API retrieves detailed information of the deployed node. ",
+        "operationId": "getNodeDetails",
+        "parameters": [
+          {
+            "name": "hostname",
+            "in": "path",
+            "description": "Hostname of the deployed node.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeploymentNodeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid inputs or parameters supplied.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "No deployment node found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["Node Deployment"],
+        "summary": "Replace the existing configuration of the Cisco ISE node with the configuration provided.",
+        "description": "This API updates the configuration of the Cisco ISE node with the configuration provided. <br/> Approximate execution time - 300 seconds. ",
+        "operationId": "updateDeploymentNode",
+        "parameters": [
+          {
+            "name": "hostname",
+            "in": "path",
+            "description": "Hostname of the deployed node.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NodeUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Configuration updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Invalid inputs supplied.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "No node is found in the deployment with the provided hostname.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["Node Deployment"],
+        "summary": "Remove a deployed node from a cluster.",
+        "description": "The deregistered node becomes a standalone Cisco ISE node.<br> It retains the last configuration that it received from the primary PAN and assumes the default roles and services of a standalone node. <br/> Approximate execution time - 300 seconds. ",
+        "operationId": "deleteDeploymentNode",
+        "parameters": [
+          {
+            "name": "hostname",
+            "in": "path",
+            "description": "The hostname of the node in the deployment to be deregistered.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Invalid inputs are supplied. 1. Node being deregistered is a standalone node. 2. Node being deregistered is a primary node. ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "No node is found in the deployment with the provided hostname.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected error occurred",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/deployment/pan-ha": {
+      "get": {
+        "tags": ["PAN HA"],
+        "summary": "Get the current configuration of the PAN HA.",
+        "description": "In a high availability configuration, the primary PAN is in active state. The secondary PAN (backup PAN) is in standby state, which means that it receives all the configuration updates from the primary PAN, but is not active in the Cisco ISE cluster. You can configure Cisco ISE to automatically promote the secondary PAN when the primary PAN becomes unavailable.",
+        "operationId": "getPANHaStatus",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PanHAResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["PAN HA"],
+        "summary": "Enable, update or disable PAN failover configuration.",
+        "description": "To deploy the auto-failover feature, you must have at least three nodes, where two of the nodes assume the Administration persona, and one node acts as the health check node. A health check node is a non-administration node and can be a Policy Service, Monitoring, or pxGrid node, or any combination of these. If the PANs are in different data centers, you must have a health check node for each PAN. <br> All the fields are mandatory to enable PanHA. <br> Values of failedAttempts, pollingInterval, primaryHealthCheckNode, and secondaryHealthCheckNode are not considered when the isEnable value is \"false\" in the request body.",
+        "operationId": "updatePanHA",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PanHA"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Node not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/deployment/primary": {
+      "post": {
+        "tags": ["Node Deployment"],
+        "summary": "Promote a standalone node to a primary PAN.",
+        "description": "This API promotes the standalone node on which the API is invoked to the primary Policy Administration node (PAN). ",
+        "operationId": "makePrimary",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Node is not standalone.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/deployment/promote": {
+      "post": {
+        "tags": ["Node Deployment"],
+        "summary": "Promote the secondary PAN in a multi-node cluster to the role of primary PAN.",
+        "description": "Execute this API in the secondary PAN in the cluster to promote the node to primary PAN.  Ensure that the API Gateway setting is enabled in the secondary PAN. <br/> Approximate execution time - 300 seconds. ",
+        "operationId": "promoteNode",
+        "responses": {
+          "200": {
+            "description": "Node promotion initiated from secondary PAN to primary PAN. ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Invalid inputs have been supplied.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/deployment/standalone": {
+      "post": {
+        "tags": ["Node Deployment"],
+        "summary": "Change a primary PAN to a standalone node.",
+        "description": "This API changes the primary PAN in a single node cluster on which the API is invoked, to a standalone node. ",
+        "operationId": "makeStandalone",
+        "responses": {
+          "200": {
+            "description": "The node changes from primary PAN to standalone. ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Node is not a primary node in the single node cluster.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/deployment/sync-node/{hostname}": {
+      "post": {
+        "tags": ["Node Deployment"],
+        "summary": "Trigger manual synchronization of the node.",
+        "description": "Performing a manual synchronization involves a reload of the target node, but not the primary PAN. <br/> Approximate execution time - 300 seconds.",
+        "operationId": "syncNode",
+        "parameters": [
+          {
+            "name": "hostname",
+            "in": "path",
+            "description": "Hostname of the node.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeploymentTaskResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "202": {
+            "description": "Manual synchronization task initiated. Use the Task Service Status API to retrieve the status of the task. ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeploymentTaskResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Manual synchronization cannot be initiated on a primary PAN or standalone node.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Node is not part of the cluster.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/node/{hostname}/interface": {
+      "get": {
+        "tags": ["Node Services"],
+        "summary": "Get the list of interfaces on a node in a cluster.",
+        "description": "This API retrieves the list of interfaces on a node in a cluster. ",
+        "operationId": "getInterfaces",
+        "parameters": [
+          {
+            "name": "hostname",
+            "in": "path",
+            "description": "Hostname of the node.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InterfacesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid inputs entered. Please check.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Node not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/node/{hostname}/sxp-interface": {
+      "get": {
+        "tags": ["Node Services"],
+        "summary": "Get the interface configured for SXP.",
+        "description": "This API retrieves the SXP interface. ",
+        "operationId": "getSxpInterface",
+        "parameters": [
+          {
+            "name": "hostname",
+            "in": "path",
+            "description": "Hostname of the node.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InterfaceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input [SXP service is not enabled on the node].",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Node not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["Node Services"],
+        "summary": "Configure the interface for use with SXP.",
+        "description": "This API configures the SXP interface. ",
+        "operationId": "setSxpInterface",
+        "parameters": [
+          {
+            "name": "hostname",
+            "in": "path",
+            "description": "Hostname of the node.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModelInterface"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad input [SXP service is not enabled on the node].",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Node not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/profile/{hostname}": {
+      "get": {
+        "tags": ["Node Services"],
+        "summary": "Retrieve the profiler probe configuration of a PSN.",
+        "description": "This API retrieves the profiler probe configuration of a PSN. ",
+        "operationId": "getProfilerProbeConfig",
+        "parameters": [
+          {
+            "name": "hostname",
+            "in": "path",
+            "description": "Hostname of the node.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfilingConfigurationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Profiler service not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Node not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error, the node is not a PSN.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["Node Services"],
+        "summary": "Update the profiler probe configuration of a PSN.",
+        "description": "This API updates the profiler probe configuration of a PSN. <br/>Set probe value as <b>null</b> to disable probe. <br/>Ex: Below payload will disable NMAP, PxGrid and SNMPTRAP probes <br/><font size=\"-1\">{ <br/>  \"activeDirectory\": { \"daysBeforeRescan\": 1 }, <br/>  \"dhcp\": { \"interfaces\": \"[{\"interface\":\"GigabitEthernet 0\"}]\", \"port\": 0 }, <br/>  \"dhcpSpan\": { \"interfaces\": \"[{\"interface\":\"GigabitEthernet 0\"}]\" }, <br/>  \"dns\": { \"timeout\": 2 }, <br/>  \"http\": { \"interfaces\": \"[{\"interface\":\"GigabitEthernet 0\"}]\" }, <br/>  \"netflow\": { \"interfaces\": \"[{\"interface\":\"GigabitEthernet 0\"}]\", \"port\": 0 }, <br/>  \"nmap\": <b>null</b>, <br/>  \"pxgrid\": <b>null</b>, <br/>  \"radius\": [], <br/>  \"snmpQuery\": { \"eventTimeout\": 30, \"retries\": 2, \"timeout\": 1000 }, <br/>  \"snmpTrap\": <b>null</b> <br/>}</font> ",
+        "operationId": "setProfilerProbeConfig",
+        "parameters": [
+          {
+            "name": "hostname",
+            "in": "path",
+            "description": "Hostname of the node.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfilingConfiguration"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "A node with the specified hostname could not be found in the cluster.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "description": "Basic authorization",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "ActiveDirectoryProbe": {
+        "title": "ActiveDirectoryProbe",
+        "type": "object",
+        "properties": {
+          "daysBeforeRescan": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          }
+        },
+        "description": "The Active Directory probe queries the Active Directory for Windows information."
+      },
+      "DeploymentNode": {
+        "title": "DeploymentNode",
+        "required": ["fqdn", "hostname", "ipAddress", "services"],
+        "type": "object",
+        "properties": {
+          "fqdn": {
+            "type": "string"
+          },
+          "hostname": {
+            "type": "string",
+            "example": "isenode"
+          },
+          "ipAddress": {
+            "type": "string"
+          },
+          "nodeStatus": {
+            "type": "string",
+            "enum": [
+              "Connected",
+              "Disconnected",
+              "InProgress",
+              "NotApplicable",
+              "NotInSync",
+              "NotUpgraded",
+              "RegistrationFailed",
+              "ReplicationStopped"
+            ]
+          },
+          "roles": {
+            "type": "array",
+            "description": "Roles can be empty or have many values for a node. ",
+            "items": {
+              "type": "string",
+              "enum": [
+                "PrimaryAdmin",
+                "PrimaryDedicatedMonitoring",
+                "PrimaryMonitoring",
+                "SecondaryAdmin",
+                "SecondaryDedicatedMonitoring",
+                "SecondaryMonitoring",
+                "Standalone"
+              ]
+            }
+          },
+          "services": {
+            "type": "array",
+            "description": "Services can be empty or have many values for a node. ",
+            "items": {
+              "type": "string",
+              "enum": [
+                "DeviceAdmin",
+                "PassiveIdentity",
+                "Profiler",
+                "SXP",
+                "Session",
+                "TC-NAC",
+                "pxGrid",
+                "pxGridCloud"
+              ]
+            }
+          }
+        }
+      },
+      "DeploymentNodeResponse": {
+        "title": "DeploymentNodeResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/DeploymentNode"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "DeploymentNodesResponse": {
+        "title": "DeploymentNodesResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "type": "array",
+            "example": "TBD",
+            "items": {
+              "$ref": "#/components/schemas/DeploymentNode"
+            }
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "DeploymentTask": {
+        "title": "DeploymentTask",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID which can be used to track the status of the deployment task using the Task Service API.",
+            "example": "a1714b90-be06-11eb-bf27-c208c4aa1432"
+          },
+          "message": {
+            "type": "string",
+            "example": "Deployment task initiated. You can use the Task Service Status API to get the status of the task."
+          }
+        }
+      },
+      "DeploymentTaskResponse": {
+        "title": "DeploymentTaskResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/DeploymentTask"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "DhcpProbe": {
+        "title": "DhcpProbe",
+        "type": "object",
+        "properties": {
+          "interfaces": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModelInterface"
+            }
+          },
+          "port": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "The DHCP probe listens for DHCP packets from IP helpers."
+      },
+      "DhcpSpanProbe": {
+        "title": "DhcpSpanProbe",
+        "type": "object",
+        "properties": {
+          "interfaces": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModelInterface"
+            }
+          }
+        },
+        "description": "The DHCP SPAN probe collects DHCP packets."
+      },
+      "DnsProbe": {
+        "title": "DnsProbe",
+        "type": "object",
+        "properties": {
+          "timeout": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          }
+        },
+        "description": "The DNS probe performs a DNS lookup for the FQDN."
+      },
+      "ErrorResponse": {
+        "title": "ErrorResponse",
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/Message"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "Hostname": {
+        "title": "Hostname",
+        "type": "object",
+        "properties": {
+          "hostname": {
+            "type": "string",
+            "example": "isenode"
+          }
+        }
+      },
+      "HttpProbe": {
+        "title": "HttpProbe",
+        "type": "object",
+        "properties": {
+          "interfaces": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModelInterface"
+            }
+          }
+        },
+        "description": "The HTTP probe receives and parses HTTP packets."
+      },
+      "InterfaceResponse": {
+        "title": "InterfaceResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/ModelInterface"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "InterfacesResponse": {
+        "title": "InterfacesResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "type": "array",
+            "example": "TBD",
+            "items": {
+              "$ref": "#/components/schemas/ModelInterface"
+            }
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "Message": {
+        "title": "Message",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Success"
+          }
+        }
+      },
+      "ModelInterface": {
+        "title": "ModelInterface",
+        "required": ["interface"],
+        "type": "object",
+        "properties": {
+          "interface": {
+            "type": "string",
+            "example": "GigabitEthernet 0"
+          }
+        }
+      },
+      "NetflowProbe": {
+        "title": "NetflowProbe",
+        "type": "object",
+        "properties": {
+          "interfaces": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModelInterface"
+            }
+          },
+          "port": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "The NetFlow probe collects the NetFlow packets that are sent to it from routers."
+      },
+      "NodeGroupConfig": {
+        "title": "NodeGroupConfig",
+        "required": ["name"],
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "marCache": {
+            "$ref": "#/components/schemas/NodeGroupConfigMarCache"
+          },
+          "name": {
+            "type": "string",
+            "example": "site1"
+          }
+        }
+      },
+      "NodeGroupConfigMarCache": {
+        "title": "NodeGroupConfigMarCache",
+        "type": "object",
+        "properties": {
+          "query-attempts": {
+            "type": "integer",
+            "description": "The number of times Cisco ISE attempts to perform the cache entry query. (0 - 5). ",
+            "format": "int32",
+            "example": 1
+          },
+          "query-timeout": {
+            "type": "integer",
+            "description": "The time, in seconds, after which the cache entry query times out. (1 - 10). ",
+            "format": "int32",
+            "example": 2
+          },
+          "replication-attempts": {
+            "type": "integer",
+            "description": "The number of times Cisco ISE attempts to perform MAR cache entry replication. (0 - 5). ",
+            "format": "int32",
+            "example": 2
+          },
+          "replication-timeout": {
+            "type": "integer",
+            "description": "The time, in seconds, after which the cache entry replication times out. (1 - 10). ",
+            "format": "int32",
+            "example": 5
+          }
+        }
+      },
+      "NodeGroupNodesResponse": {
+        "title": "NodeGroupNodesResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "type": "array",
+            "example": "[{\"hostname\":\"isenode1\"},{\"hostname\":\"isenode2\"}]",
+            "items": {
+              "$ref": "#/components/schemas/Hostname"
+            }
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "NodeGroupResponse": {
+        "title": "NodeGroupResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/NodeGroupConfig"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "NodeGroupsResponse": {
+        "title": "NodeGroupsResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "type": "array",
+            "example": "TBD",
+            "items": {
+              "$ref": "#/components/schemas/NodeGroupConfig"
+            }
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "NodeRegistrationRequest": {
+        "title": "NodeRegistrationRequest",
+        "required": [
+          "allowCertImport",
+          "fqdn",
+          "password",
+          "roles",
+          "services",
+          "userName"
+        ],
+        "type": "object",
+        "properties": {
+          "allowCertImport": {
+            "type": "boolean",
+            "description": "Consent to import the self-signed certificate of the registering node. ",
+            "example": false
+          },
+          "fqdn": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "example": "changeMe"
+          },
+          "roles": {
+            "type": "array",
+            "description": "Roles can be empty or have many values for a node. ",
+            "items": {
+              "type": "string",
+              "enum": [
+                "PrimaryAdmin",
+                "PrimaryDedicatedMonitoring",
+                "PrimaryMonitoring",
+                "SecondaryAdmin",
+                "SecondaryDedicatedMonitoring",
+                "SecondaryMonitoring",
+                "Standalone"
+              ]
+            }
+          },
+          "services": {
+            "type": "array",
+            "description": "Services can be empty or have many values for a node. ",
+            "items": {
+              "type": "string",
+              "enum": [
+                "DeviceAdmin",
+                "PassiveIdentity",
+                "Profiler",
+                "SXP",
+                "Session",
+                "TC-NAC",
+                "pxGrid",
+                "pxGridCloud"
+              ]
+            }
+          },
+          "userName": {
+            "type": "string",
+            "example": "admin"
+          }
+        }
+      },
+      "NodeUpdateRequest": {
+        "title": "NodeUpdateRequest",
+        "required": ["roles", "services"],
+        "type": "object",
+        "properties": {
+          "roles": {
+            "type": "array",
+            "description": "Roles can be empty or have many values for a node. ",
+            "items": {
+              "type": "string",
+              "enum": [
+                "PrimaryAdmin",
+                "PrimaryDedicatedMonitoring",
+                "PrimaryMonitoring",
+                "SecondaryAdmin",
+                "SecondaryDedicatedMonitoring",
+                "SecondaryMonitoring",
+                "Standalone"
+              ]
+            }
+          },
+          "services": {
+            "type": "array",
+            "description": "Services can be empty or have many values for a node. ",
+            "items": {
+              "type": "string",
+              "enum": [
+                "DeviceAdmin",
+                "PassiveIdentity",
+                "Profiler",
+                "SXP",
+                "Session",
+                "TC-NAC",
+                "pxGrid",
+                "pxGridCloud"
+              ]
+            }
+          }
+        }
+      },
+      "PanHA": {
+        "title": "PanHA",
+        "required": ["isEnabled"],
+        "type": "object",
+        "properties": {
+          "failedAttempts": {
+            "type": "integer",
+            "description": "Failover occurs if the primary PAN is down for the specified number of failure polls. Count (2 - 60).<br> The default value is 5. ",
+            "format": "int32",
+            "example": 5
+          },
+          "isEnabled": {
+            "type": "boolean",
+            "example": true
+          },
+          "pollingInterval": {
+            "type": "integer",
+            "description": "Administration nodes are checked after each interval. Seconds (30 - 300) <br> The default value is 120. ",
+            "format": "int32",
+            "example": 120
+          },
+          "primaryHealthCheckNode": {
+            "$ref": "#/components/schemas/Hostname"
+          },
+          "secondaryHealthCheckNode": {
+            "$ref": "#/components/schemas/Hostname"
+          }
+        }
+      },
+      "PanHAResponse": {
+        "title": "PanHAResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/PanHA"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "ProfilingConfiguration": {
+        "title": "ProfilingConfiguration",
+        "type": "object",
+        "properties": {
+          "activeDirectory": {
+            "$ref": "#/components/schemas/ActiveDirectoryProbe"
+          },
+          "dhcp": {
+            "$ref": "#/components/schemas/DhcpProbe"
+          },
+          "dhcpSpan": {
+            "$ref": "#/components/schemas/DhcpSpanProbe"
+          },
+          "dns": {
+            "$ref": "#/components/schemas/DnsProbe"
+          },
+          "http": {
+            "$ref": "#/components/schemas/HttpProbe"
+          },
+          "netflow": {
+            "$ref": "#/components/schemas/NetflowProbe"
+          },
+          "nmap": {
+            "type": "array",
+            "description": "The NMAP probe scans endpoints for open ports and OS.",
+            "items": {
+              "type": "object"
+            }
+          },
+          "pxgrid": {
+            "type": "array",
+            "description": "The pxGrid probe fetches attributes of MAC address or IP address as a subscriber from the pxGrid queue.",
+            "items": {
+              "type": "object"
+            }
+          },
+          "radius": {
+            "type": "array",
+            "description": "The RADIUS probe collects RADIUS session attributes as well as CDP, LLDP, DHCP, HTTP, and MDM attributes from IOS Sensors.",
+            "items": {
+              "type": "object"
+            }
+          },
+          "snmpQuery": {
+            "$ref": "#/components/schemas/SnmpQueryProbe"
+          },
+          "snmpTrap": {
+            "$ref": "#/components/schemas/SnmpTrapProbe"
+          }
+        }
+      },
+      "ProfilingConfigurationResponse": {
+        "title": "ProfilingConfigurationResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/ProfilingConfiguration"
+          },
+          "version": {
+            "type": "string",
+            "example": "TBD"
+          }
+        }
+      },
+      "SnmpQueryProbe": {
+        "title": "SnmpQueryProbe",
+        "type": "object",
+        "properties": {
+          "eventTimeout": {
+            "type": "integer",
+            "format": "int32",
+            "example": 30
+          },
+          "retries": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          },
+          "timeout": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1000
+          }
+        },
+        "description": "The SNMP query probe collects details from network devices such as interface, CDP, LLDP, and ARP."
+      },
+      "SnmpTrapProbe": {
+        "title": "SnmpTrapProbe",
+        "type": "object",
+        "properties": {
+          "interfaces": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModelInterface"
+            }
+          },
+          "linkTrapQuery": {
+            "type": "boolean",
+            "example": true
+          },
+          "macTrapQuery": {
+            "type": "boolean",
+            "example": true
+          },
+          "port": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "The SNMP trap probe receives linkup, linkdown, and MAC notification traps from network devices."
+      },
+      "SuccessResponse": {
+        "title": "SuccessResponse",
+        "type": "object",
+        "properties": {
+          "success": {
+            "$ref": "#/components/schemas/Message"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,661 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Cisco ISE SGT Reservation",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://example:443",
+      "description": "Inferred Url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "sgt-api-controller",
+      "description": "the sgt API"
+    }
+  ],
+  "paths": {
+    "/api/v1/sgt/reservation": {
+      "get": {
+        "tags": ["SgtRangeReservation"],
+        "summary": "Get all the reserved Security Group tag ranges in ISE.",
+        "description": "Get all the reserved Security Group tag ranges in ISE.",
+        "operationId": "getSgtReservedRanges",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "request Id, will return in the response headers, and appear in logs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Number of objects returned per page",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReserveRangeListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request for this specified resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sgt/reservation/reserveRange": {
+      "post": {
+        "tags": ["SgtRangeReservation"],
+        "summary": "Reserve range of SGT in ISE for the given Client.",
+        "description": "Reserve given number of SGTs in a continuous range for the given Client.",
+        "operationId": "reserveSgtRange",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "request Id, will return in the response headers, and appear in logs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReserveRangePostRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReserveRangePostResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Success. The range has been reserved in the ISE.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReserveRangePostResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request for this specified resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "409": {
+            "description": "Conflict [Returned when attempting to create a SGT Range with ClientId that already exists]",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sgt/reservation/{clientID}": {
+      "get": {
+        "tags": ["SgtRangeReservation"],
+        "summary": "Get the reserved range for the specific Client.",
+        "description": "Get the reserved range of SGT for the specific client which is passed in the URL.",
+        "operationId": "getSgtReservedRange",
+        "parameters": [
+          {
+            "name": "clientID",
+            "in": "path",
+            "description": "Unique name for a Client",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "request Id, will return in the response headers, and appear in logs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservedTagResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request for this specified resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["SgtRangeReservation"],
+        "summary": "Update the reserved ranges of a specific Client",
+        "description": "Update the reserved ranges of a specific Client by giving the custom start and end index",
+        "operationId": "updateReservedRange",
+        "parameters": [
+          {
+            "name": "clientID",
+            "in": "path",
+            "description": "Unique name for a Client",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "request Id, will return in the response headers, and appear in logs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReservedTagRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request for this specified resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["SgtRangeReservation"],
+        "summary": "Delete the reserved range for the given Client",
+        "description": "Delete the reserved range of SGT for the given Client",
+        "operationId": "deleteSgtReserveRange",
+        "parameters": [
+          {
+            "name": "clientID",
+            "in": "path",
+            "description": "Unique name for a Client",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "request Id, will return in the response headers, and appear in logs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request for this specified resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "description": "Basic authorization",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "AllReservedTags": {
+        "title": "AllReservedTags",
+        "required": ["clientName", "endIndex", "startIndex"],
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "string",
+            "description": "Unique ID of the given client",
+            "format": "uuid",
+            "example": "7c9484cf-0ebc-47ad-a9ef-bc12729ed73b"
+          },
+          "clientName": {
+            "type": "string",
+            "description": "Name of the given client",
+            "example": "test.applicationName.com"
+          },
+          "endIndex": {
+            "type": "integer",
+            "description": "End index of the reserved range",
+            "format": "int32",
+            "example": 9020
+          },
+          "startIndex": {
+            "type": "integer",
+            "description": "Start index of the reserved range",
+            "format": "int32",
+            "example": 9010
+          }
+        }
+      },
+      "Error": {
+        "title": "Error",
+        "required": ["code", "message"],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "400"
+          },
+          "message": {
+            "type": "string",
+            "example": "Bad Request"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "title": "ErrorResponse",
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/Message"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "Message": {
+        "title": "Message",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "ReserveRangeListResponse": {
+        "title": "ReserveRangeListResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AllReservedTags"
+            }
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "ReserveRangePostRequest": {
+        "title": "ReserveRangePostRequest",
+        "required": ["clientName", "numberOfTags"],
+        "type": "object",
+        "properties": {
+          "clientName": {
+            "type": "string",
+            "description": "Name of the given client",
+            "example": "test.applicationName.com"
+          },
+          "numberOfTags": {
+            "type": "integer",
+            "description": "Nummber of tags required to be reserved in ISE.",
+            "format": "int32",
+            "example": 100
+          }
+        },
+        "description": "Reserve range request format"
+      },
+      "ReserveRangePostResponse": {
+        "title": "ReserveRangePostResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/ReservedTag"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        },
+        "description": "Reserve range response format"
+      },
+      "ReservedTag": {
+        "title": "ReservedTag",
+        "required": ["clientId", "endIndex", "startIndex"],
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "string",
+            "description": "Unique ID of the given client",
+            "format": "uuid",
+            "example": "7c9484cf-0ebc-47ad-a9ef-bc12729ed73b"
+          },
+          "clientName": {
+            "type": "string",
+            "description": "Name of the given client",
+            "example": "test.applicationName.com"
+          },
+          "endIndex": {
+            "type": "integer",
+            "description": "End index of the reserved range",
+            "format": "int32",
+            "example": 9020
+          },
+          "startIndex": {
+            "type": "integer",
+            "description": "Start index of the reserved range",
+            "format": "int32",
+            "example": 9010
+          }
+        }
+      },
+      "ReservedTagRequest": {
+        "title": "ReservedTagRequest",
+        "required": ["clientId", "endIndex", "startIndex"],
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "string",
+            "description": "Unique ID of the given client",
+            "format": "uuid",
+            "example": "7c9484cf-0ebc-47ad-a9ef-bc12729ed73b"
+          },
+          "endIndex": {
+            "type": "integer",
+            "description": "End index of the reserved range",
+            "format": "int32",
+            "example": 9020
+          },
+          "startIndex": {
+            "type": "integer",
+            "description": "Start index of the reserved range",
+            "format": "int32",
+            "example": 9010
+          }
+        }
+      },
+      "ReservedTagResponse": {
+        "title": "ReservedTagResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/ReservedTag"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        },
+        "description": "Range of reserved tag for the given Client"
+      },
+      "SuccessResponse": {
+        "title": "SuccessResponse",
+        "type": "object",
+        "properties": {
+          "success": {
+            "$ref": "#/components/schemas/Message"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      }
+    }
+  }
+}

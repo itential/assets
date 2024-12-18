@@ -1,0 +1,614 @@
+{
+  "openapi": "3.0.3",
+  "info": { "title": "Cisco ISE MFA", "version": "1.0.0" },
+  "servers": [
+    { "url": "https://example:443", "description": "Inferred Url" }
+  ],
+  "tags": [
+    { "name": "duo-mfa-api-controller", "description": "the duo-mfa API" }
+  ],
+  "paths": {
+    "/api/v1/duo-mfa/mfa": {
+      "get": {
+        "tags": ["Duo-Mfa"],
+        "summary": "Get the list of all Duo-Mfa configurations",
+        "description": "Duo-Mfa - List of Duo-Mfa configurations",
+        "operationId": "getMfa",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "request Id, will return in the response headers, and appear in logs",
+            "required": false,
+            "schema": { "type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all Duo-Mfa configurations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MfaGetAllResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": {
+            "description": "The specified resource was not found / MFA feature is disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      },
+      "post": {
+        "tags": ["Duo-Mfa"],
+        "summary": "Create a new Duo-Mfa configuration",
+        "description": "Duo-Mfa - Create a new Duo-Mfa configuration",
+        "operationId": "createMfa",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "request Id, will return in the response headers, and appear in logs",
+            "required": false,
+            "schema": { "type": "string"}
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MfaInfo"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "type": "string"}
+              }
+            }
+          },
+          "201": {
+            "description": "Duo-Mfa configuration created successfully",
+            "content": {
+              "application/json": {
+                "schema": { "type": "string"}
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": {
+            "description": "The specified resource was not found / MFA feature is disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": { "description": "Not Found" },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/duo-mfa/mfa/testconnection": {
+      "post": {
+        "tags": ["Duo-Mfa"],
+        "summary": "Verify the Auth and Admin API keys of the Duo Host",
+        "description": "Duo-Mfa - Verify the Auth and Admin API keys of the Duo Host.",
+        "operationId": "testConnection",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "request Id, will return in the response headers, and appear in logs",
+            "required": false,
+            "schema": { "type": "string"}
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountConfigurations"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully verified the Auth and Admin Keys of the Duo Host",
+            "content": {
+              "application/json": {
+                "schema": { "type": "string"}
+              }
+            }
+          },
+          "201": { "description": "Created" },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": {
+            "description": "The specified resource was not found / MFA feature is disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": { "description": "Not Found" },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/duo-mfa/mfa/{connectionName}": {
+      "get": {
+        "tags": ["Duo-Mfa"],
+        "summary": "Get the specified Duo-Mfa configuration",
+        "description": "Duo-Mfa - Get the Duo-Mfa configuration specified in the connectionName.",
+        "operationId": "getMfaByconnectionName",
+        "parameters": [
+          {
+            "name": "connectionName",
+            "in": "path",
+            "description": "This name is used to update, delete or retrieve the specific Duo-Mfa configuration.",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "request Id, will return in the response headers, and appear in logs",
+            "required": false,
+            "schema": { "type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Duo-Mfa configuration info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MfaGetResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": {
+            "description": "The specified resource was not found / MFA feature is disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      },
+      "put": {
+        "tags": ["Duo-Mfa"],
+        "summary": "Update the specified Duo-Mfa configuration",
+        "description": "Duo-Mfa - Update the Duo-Mfa configuration specified in the connectionName.",
+        "operationId": "updateMFaByConnectionName",
+        "parameters": [
+          {
+            "name": "connectionName",
+            "in": "path",
+            "description": "This name is used to update, delete or retrieve the specific Duo-Mfa configuration.",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "request Id, will return in the response headers, and appear in logs",
+            "required": false,
+            "schema": { "type": "string"}
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MfaInfo"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the Duo-Mfa configuration",
+            "content": {
+              "application/json": {
+                "schema": { "type": "string"}
+              }
+            }
+          },
+          "201": { "description": "Created" },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": {
+            "description": "The specified resource was not found / MFA feature is disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": { "description": "Not Found" },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      },
+      "delete": {
+        "tags": ["Duo-Mfa"],
+        "summary": "Delete the specified Duo-Mfa configuration",
+        "description": "Duo-Mfa - Delete the Duo-Mfa configuration specified in the connectionName.",
+        "operationId": "deleteMfaByConnectionName",
+        "parameters": [
+          {
+            "name": "connectionName",
+            "in": "path",
+            "description": "This name is used to update, delete or retrieve the specific Duo-Mfa configuration.",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "request Id, will return in the response headers, and appear in logs",
+            "required": false,
+            "schema": { "type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the Duo-Mfa configuration",
+            "content": {
+              "application/json": {
+                "schema": { "type": "string"}
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": {
+            "description": "The specified resource was not found / MFA feature is disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "description": "Basic authorization",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "AccountConfigurations": {
+        "title": "AccountConfigurations",
+        "type": "object",
+        "properties": {
+          "adminApi": {
+            "$ref": "#/components/schemas/Api"
+          },
+          "apiHostName": {
+            "type": "string",
+            "description": "Duo API HostName",
+            "example": "api-xxxxxx.duosecurity.com"
+          },
+          "authenticationApi": {
+            "$ref": "#/components/schemas/Api"
+          }
+        }
+      },
+      "Api": {
+        "title": "Api",
+        "type": "object",
+        "properties": {
+          "ikey": {
+            "type": "string",
+            "description": "Integration Key",
+            "example": "ikey"
+          },
+          "sKey": {
+            "type": "string",
+            "description": "Secret Key",
+            "example": "skey"
+          }
+        },
+        "description": "API type"
+      },
+      "Error": {
+        "title": "Error",
+        "required": ["code", "message"],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Error code",
+            "example": "400"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Bad Request"
+          }
+        }
+      },
+      "MfaGetAllInfo": {
+        "title": "MfaGetAllInfo",
+        "type": "object",
+        "properties": {
+          "apiHostName": {
+            "type": "string",
+            "description": "Duo API HostName",
+            "example": "api-xxxxxx.duosecurity.com"
+          },
+          "identitySync": {
+            "type": "string",
+            "description": "Name of the Identity Sync configuration",
+            "example": "ADSync"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the Duo-Mfa configuration",
+            "example": "DuoConnection"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Name of the Mfa provider",
+            "example": "Duo"
+          },
+          "type": {
+            "type": "string",
+            "description": "Protocol type for which Mfa can be used",
+            "example": "VPN,TACACS"
+          }
+        },
+        "description": "List of Duo-Mfa configurations"
+      },
+      "MfaGetAllResponse": {
+        "title": "MfaGetAllResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MfaGetAllInfo"
+            }
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        },
+        "description": "List of all Duo-Mfa configurations"
+      },
+      "MfaGetResponse": {
+        "title": "MfaGetResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/MfaInfo"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        },
+        "description": "Duo-Mfa configuration information"
+      },
+      "MfaInfo": {
+        "title": "MfaInfo",
+        "type": "object",
+        "properties": {
+          "mfa": {
+            "$ref": "#/components/schemas/MfaInfoMfa"
+          }
+        },
+        "description": "Duo-Mfa configuration information"
+      },
+      "MfaInfoMfa": {
+        "title": "MfaInfoMfa",
+        "type": "object",
+        "properties": {
+          "accountConfigurations": {
+            "$ref": "#/components/schemas/AccountConfigurations"
+          },
+          "connectionName": {
+            "type": "string",
+            "description": "Name of the Duo-Mfa configuration",
+            "example": "DuoConnection"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the Duo-Mfa configuration",
+            "example": "DuoConnection"
+          },
+          "identitySync": {
+            "type": "string",
+            "description": "Name of the Identity Sync configuration",
+            "example": "ADSync"
+          },
+          "type": {
+            "type": "string",
+            "description": "Protocol type for which this Duo-Mfa can be used",
+            "example": "VPN,TACACS"
+          }
+        },
+        "description": "Duo-Mfa information"
+      }
+    }
+  }
+}

@@ -1,0 +1,3082 @@
+{
+  "openapi": "3.0.3",
+  "info": { "title": "Cisco ISE Certificates", "version": "1.0.0" },
+  "servers": [
+    { "url": "https://example:443", "description": "Inferred Url" }
+  ],
+  "tags": [{ "name": "certs-api-controller", "description": "the certs API" }],
+  "paths": {
+    "/api/v1/certs/certificate-signing-request": {
+      "get": {
+        "tags": ["Certificates"],
+        "summary": "Get all Certificate Signing Requests from PAN",
+        "description": "<p style=\"font-size: 15px;\"> This API supports filtering, sorting and pagination. </p><br/> <p style=\"font-size: 14px;\">Filtering and sorting are supported for the following attributes: </p>    <ul style=\"font-size: 14px;\">        <li>friendlyName</li>        <li>subject</li>        <li>timeStamp</li>          <ul>            <li>Supported Date Format: yyyy-MM-dd HH:mm:ss.SSS</li>            <li>Supported Operators: EQ, NEQ, GT and LT</li>          </ul>      </ul> ",
+        "operationId": "getCSRs",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Number of objects returned per page",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "sort type - asc or desc",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "sort column by which objects needs to be sorted",
+            "required": false,
+            "style": "form",
+            "schema": { "type": "string"}
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "<div> <style type=\"text/css\" scoped> .apiServiceTable td, .apiServiceTable th { padding: 5px 10px !important; text-align: left; } </style> <span> <b>Simple filtering</b> should be available through the filter query string parameter. The structure of a filter is a triplet of field operator and value separated with dots. More than one filter can be sent. The logical operator common to ALL filter criteria will be by default AND, and can be changed by using the <i>\"filterType=or\"</i> query string parameter. Each resource Data model description should specify if an attribute is a filtered field. </span> <br /> <table class=\"apiServiceTable\"> <thead> <tr> <th>OPERATOR</th> <th>DESCRIPTION</th> </tr> </thead> <tbody> <tr> <td>EQ</td> <td>Equals</td> </tr> <tr> <td>NEQ</td> <td>Not Equals</td> </tr> <tr> <td>GT</td> <td>Greater Than</td> </tr> <tr> <td>LT</td> <td>Less Then</td> </tr> <tr> <td>STARTSW</td> <td>Starts With</td> </tr> <tr> <td>NSTARTSW</td> <td>Not Starts With</td> </tr> <tr> <td>ENDSW</td> <td>Ends With</td> </tr> <tr> <td>NENDSW</td> <td>Not Ends With</td> </tr> <tr> <td>CONTAINS</td> <td>Contains</td> </tr> <tr> <td>NCONTAINS</td> <td>Not Contains</td> </tr> </tbody> </table> </div>",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": { "type": "string"}
+          },
+          {
+            "name": "filterType",
+            "in": "query",
+            "description": "The logical operator common to ALL filter criteria will be by default AND, and can be changed by using the parameter",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": ["AND", "OR"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paged array of Certificate Signing Requests.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CSRGetAllRsp"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" }
+        },
+        "security": [{ "BasicAuth": [] }]
+      },
+      "post": {
+        "tags": ["Certificates"],
+        "summary": "Generate a Certificate Signing Request (CSR)",
+        "description": " <style type=\"text/css\" scoped> .certTable td , .certTable th { padding: 5px 10px !important; text-align: left;} </style> <h3>Generate a certificate signing request for Multi-Use, Admin, EAP Authentication, RADIUS DTLS, PxGrid, SAML, Portal and IMS Services.</h3> Following parameters are present in the POST request body<br> <table class=\"certTable\"> <thead> <tr> <th>PARAMETER</th> <th>DESCRIPTION</th> <th>EXAMPLE</th> </tr> </thead> <tbody> <tr> <td>hostnames</td> <td>List of Cisco ISE node hostnames for which CSRs should be generated</td> <td>\"hostnames\": [\"ise-host1\", \"ise-host2\"]</td> </tr> <tr> <td>allowWildCardCert</td> <td>Allow use of wildCards in certificates</td> <td>\"allowWildCardCert\": false</td> </tr> <tr> <td>keyLength<sup><font color=red>*required</font></sup></td> <td>Length of the key used for CSR generation.</td> <td>\"keyLength\": \"512\"</td> </tr> <tr> <td>keyType<sup><font color=red>*required</font></sup></td> <td>Type of key used for CSR generation either RSA or ECDSA.</td> <td>\"keyType\": \"RSA\"</td> </tr> <tr> <td>digestType<sup><font color=red>*required</font></sup></td> <td>Hash algorithm used for signing CSR.</td> <td>\"digestType\": \"SHA-256\"</td> </tr> <tr> <td>usedFor<sup><font color=red>*required</font></sup></td> <td>Certificate usage.</td> <td>\"usedFor\": \"MULTI-USE\"</td> </tr> <tr> <td>certificatePolicies</td> <td>Certificate policy OID or list of OIDs that the certificate should conform to. Use comma or space to separate the OIDs. </td> <td>\"certificatePolicies\": \"Certificate Policies\"</td> </tr> <tr> <td>subjectCommonName<sup><font color=red>*required</font></sup></td> <td>Certificate common name (CN).</td> <td>\"subjectCommonName\": \"$FQDN$\"</td> </tr> <tr> <td>subjectOrgUnit</td> <td>Certificate organizational unit (OU).</td> <td>\"subjectOrgUnit\": \"Engineering\"</td> </tr> <tr> <td>subjectOrg</td> <td>Certificate organization (O).</td> <td>\"subjectOrg\": \"Cisco\"</td> </tr> <tr> <td>subjectCity</td> <td>Certificate city or locality (L).</td> <td>\"subjectCity\": \"San Jose\"</td> </tr> <td>subjectState</td> <td>Certificate state (ST).</td> <td>\"subjectState\": \"California\"</td> </tr> <tr> <td>subjectCountry</td> <td>Certificate country (C).</td> <td>\"subjectCountry\": \"US\"</td> </tr> <tr> <td>sanDNS</td> <td>Array of SAN (Subject Alternative Name) DNS entries (optional).</td> <td>\"sanDNS\": [\"ise.example.com\"]</td> </tr> <td>sanIP</td> <td>Array of SAN IP entries (optional).</td> <td>\"sanIP\": [\"1.1.1.1\"]</td> </tr> <tr> <td>sanURI</td> <td>Array of SAN URI entries (optional).</td> <td>\"sanURI\": [\"https://1.1.1.1\"]</td> </tr> <tr> <td>sanDir</td> <td>Array of SAN DIR entries (optional).</td> <td>\"sanDir\": [\"CN=AAA,DC=COM,C=IL\"]</td> </tr> <tr> <td>portalGroupTag</td> <td>Portal Group Tag when using certificate for PORTAL service</td> <td>\"portalGroupTag\": \"Default Portal Certificate Group\"</td> </tr> </tbody> </table></br> <b>NOTE: </b>For <b>allowWildCardCert</b> to be false, the following parameter is mandatory:</br> <b>- hostnames </b></br> <p>When certificate is selected to be used for Portal Service, the following parameter is mandatory:</br> <b>- portalGroupTag</b></br></p> <hr/> ",
+        "operationId": "generateCSR",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CSRRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Generated CSR",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateCSRRespPayload"
+                }
+              }
+            }
+          },
+          "201": { "description": "Created" },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/certs/certificate-signing-request/export/{hostname}/{id}": {
+      "get": {
+        "tags": ["Certificates"],
+        "summary": "Export a CSR for a given CSR ID and hostname",
+        "description": "Response of this API carries a CSR corresponding to the requested ID.",
+        "operationId": "exportCSR",
+        "parameters": [
+          {
+            "name": "hostname",
+            "in": "path",
+            "description": "Hostname to which the CSR belongs.",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the CSR to be exported.",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Exported CSR successfully",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExportCSRFailRespPayload"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExportCSRFailRespPayload"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/certs/certificate-signing-request/intermediate-ca": {
+      "post": {
+        "tags": ["Certificates"],
+        "summary": "Generate an intermediate CA CSR (certificate signing request)",
+        "description": "CSR generation for Intermediate Certificates.",
+        "operationId": "generateIntermediateCACsr",
+        "responses": {
+          "200": {
+            "description": "Generated Cisco ISE Intermediate CA CSR",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateIntermediateCACsrRespPayload"
+                }
+              }
+            }
+          },
+          "201": { "description": "Created" },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/certs/certificate-signing-request/{hostName}/{id}": {
+      "get": {
+        "tags": ["Certificates"],
+        "summary": "Get the certificate signing request for a given ID",
+        "description": "This API displays details of a certificate signing request of a particular node for a given hostname and ID.",
+        "operationId": "getCSRById",
+        "parameters": [
+          {
+            "name": "hostName",
+            "in": "path",
+            "description": "Name of the host of which CSR's should be returned",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Certificate Signing Request returned",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the CSR of given ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CSRGetByIdRsp"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" }
+        },
+        "security": [{ "BasicAuth": [] }]
+      },
+      "delete": {
+        "tags": ["Certificates"],
+        "summary": "Delete the certificate signing request for a given ID",
+        "description": "This API deletes the certificate signing request of a particular node based on a given hostname and ID.",
+        "operationId": "deleteCSR",
+        "parameters": [
+          {
+            "name": "hostName",
+            "in": "path",
+            "description": "Name of the host of which CSR's should be deleted",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Certificate Signing Request to be deleted",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted CSR of the given ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteCSRRespPayload"
+                }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/certs/ise-root-ca/regenerate": {
+      "post": {
+        "tags": ["Certificates"],
+        "summary": "Regenerate entire internal CA certificate chain including root CA on the primary PAN and subordinate CAs on the PSNs (Applicable only for internal CA service)",
+        "description": "This API initiates regeneration of Cisco ISE root CA certificate chain. The response contains an ID which can be used to track the status. <br>  Setting \"removeExistingISEIntermediateCSR\" to true removes existing Cisco ISE Intermediate CSR.",
+        "operationId": "regenerateISERootCA",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegenerateRootCA"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "201": { "description": "Created" },
+          "202": {
+            "description": "Regeneration of Cisco ISE Root CA is initiated. Please use status API to get the status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegenerateRootCaRespPayload"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" },
+          "405": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/certs/renew-certificate": {
+      "post": {
+        "tags": ["Certificates"],
+        "summary": "Renew certificates of OCSP responder and Cisco ISE Messaging Service",
+        "description": "This API initiates regeneration of certificates. The response contains an ID which can be used to track the status.",
+        "operationId": "renewCerts",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenewCertificates"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "201": { "description": "Created" },
+          "202": {
+            "description": "Regeneration of Certificate is initiated. Please use the status API to get the status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RenewCertRespPayload"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" },
+          "405": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/certs/signed-certificate/bind": {
+      "post": {
+        "tags": ["Certificates"],
+        "summary": "Bind CA Signed Certificate",
+        "description": " <style type=\"text/css\" scoped> .certTable td , .certTable th { padding: 5px 10px !important; text-align: left;} </style> <h3>Bind CA Signed Certificate.</h3> <b>NOTE: </b>This API requires an existing certificate signing request, and the root certificate must already be trusted.<br> <b>NOTE: </b>The certificate may have a validity period greater than 398 days. It may be untrusted by many browsers.<br> <b>NOTE: </b>Request parameters accepting True and False as input can be replaced by 1 and 0 respectively.<br> <h4>Following parameters are used in the POST body</h4> <table class=\"certTable\"> <thead> <tr> <th>PARAMETER</th> <th>DESCRIPTION</th> <th>EXAMPLE</th> </tr> </thead> <tbody> <tr> <td>name</td> <td>Friendly name of the certificate.</td> <td>\"name\": \"CA Signed Certificate\"</td> </tr> <tr> <td>data<sup><font color=red>*required</font></sup></td> <td> Plain-text contents of the certificate file. Every space needs to be replaced with a newline escape sequence (\\n).<br/> Use the command <cmd>awk &apos;NF {sub(/\\r/, \"\"); printf \"%s\\\\n\",$0;}&apos; &lt;&lt;your .pem file&gt;&gt;</cmd> to extract data from certificate file. </td> <td>\"data\": \"Plain-text contents of the certificate file.\"</td> </tr> <tr> <td>allowExtendedValidity<sup><font color=red>*required</font></sup></td> <td>Allow the certificates with validity greater than 398 days.</td> <td>\"allowExtendedValidity\": true</td> </tr> <tr> <td>allowOutOfDateCert<sup><font color=red>*required</font></sup></td> <td> Allow out of date certificates.</br> <b>SECURITY ALERT: </b>We recommend to set the parameter the parameter <b>allowOutOfDateCert</b> as <b>false</b> to avoid binding of expired certificates (not secure). </td> <td>\"allowOutOfDateCert\": true</td> </tr> <tr> <td>allowReplacementOfCertificates<sup><font color=red>*required</font></sup></td> <td>Allow Replacement of certificates.</td> <td>\"allowReplacementOfCertificates\": true</td> </tr> <tr> <td>allowReplacementOfPortalGroupTag<sup><font color=red>*required</font></sup></td> <td>Allow Replacement of Portal Group Tag.</td> <td>\"allowReplacementOfPortalGroupTag\": true</td> </tr> <td>admin</td> <td>Use certificate to authenticate the Cisco ISE Admin Portal</td> <td>\"admin\": false</td> </tr> <tr> <td>eap</td> <td>Use certificate for EAP protocols that use SSL/TLS tunneling</td> <td>\"eap\": false</td> </tr> <tr> <td>radius</td> <td>Use certificate for RADSec server</td> <td>\"radius\": false</td> </tr> <tr> <td>pxgrid</td> <td>Use certificate for the pxGrid Controller</td> <td>\"pxgrid\": false</td> </tr> <tr> <td>ims</td> <td>Use certificate for the Cisco ISE Messaging Service</td> <td>\"ims\": false</td> </tr> <tr> <td>saml</td> <td>Use certificate for SAML Signing</td> <td>\"saml\": false</td> </tr> <tr> <td>portal</td> <td>Use certificate for portal</td> <td>\"portal\": false</td> </tr> <tr> <td>portalGroupTag</td> <td>Portal Group Tag for using certificate with portal role</td> <td>\"portalGroupTag\": \"Default Portal Certificate Group\"</td> </tr> <tr> <td>validateCertificateExtensions</td> <td>Validate Certificate Extensions</td> <td>\"validateCertificateExtensions\": false</td> </tr> </tbody> </table> <br/> <h4>Following roles can be used in any combinations</h4> <table class=\"certTable\"> <thead> <tr> <th>ROLE</th> <th>DEFAULT</th> <th>WARNING</th> </tr> </thead> <tbody> <tr> <td>Admin</td> <td>False</td> <td>Enabling admin role for this certificate causes an application server restart on the selected node.<br/><b>Note:</b> Make sure that the required certificate chain is imported under Trusted Certificates.</td> </tr> <tr> <td>EAP Authentication</td> <td>False</td> <td>Only one system certificate can be used for EAP. Assigning EAP to this certificate removes the assignment from another certificate.<br/><b>Note:</b> Make sure that the required certificate chain is imported under Trusted Certificates.</td> </tr> <tr> <td>RADIUS DTLS</td> <td>False</td> <td>Only one system certificate can be used for DTLS. Assigning DTLS to this certificate removes the assignment from another certificate.<br/><b>Note:</b> Make sure that the required certificate chain is imported under Trusted Certificates</td> </tr> <tr> <td>SAML</td> <td>False</td> <td>SAML cannot be used with other Usage. Enabling SAML unchecks all other Usage.</br><b>Note:</b> Make sure that the required certificate chain is imported under Trusted Certificates.</td> </tr> </tbody> </table> ",
+        "operationId": "bindCSR",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BindCSRRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "CSR Binded Successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BindCSRRespPayload"
+                }
+              }
+            }
+          },
+          "201": { "description": "Created" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": { "description": "Not Found" }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/certs/system-certificate/export": {
+      "post": {
+        "tags": ["Certificates"],
+        "summary": "Export a system certificate with a given a certificate ID",
+        "description": " <style type=\"text/css\" scoped> .certTable td , .certTable th { padding: 5px 10px !important; text-align: left;} </style> <h3>Export System Certificate.</h3> Following parameters are used in the POST body <table class=\"certTable\"> <thead> <tr> <th>PARAMETER</th> <th>DESCRIPTION</th> <th>EXAMPLE</th> </tr> </thead> <tbody> <tr> <td>id<sup><font color=red>*required</font></sup></td> <td>ID of a System Certificate.</td> <td>\"id\": \"CERT-ID\"</td> </tr> <tr> <td>hostName<sup><font color=red>*required</font></sup></td> <td>Name of the host for which the system certificate should be exported</td> <td>\"hostName\": \"ise-node-001\"</td> </tr> <tr> <td>export</td> <td> One of the following options is required: <ul> <li><b>\"CERTIFICATE\" :</b>Export only certificate without private key<br/></li> <li><b>\"CERTIFICATE_WITH_PRIVATE_KEY\" :</b>Export both certificate and private key (<b>\"certificatePassword\"</b> is required).</li> </ul> </td> <td>\"export\": \"CERTIFICATE_WITH_PRIVATE_KEY\"</td> </tr> <tr> <td>password<sup><font color=red>*required</font></sup></td> <td>Certificate password (required if <b>\"export\" : CERTIFICATE_WITH_PRIVATE_KEY</b>).</br> <b>Password constraints:</b> <ul> <li>Alphanumeric</li> <li>Minimum of 8 Characters</li> <li>Maximum of 100 Characters</li> </ul> </td> <td>\"password\": \"certificate password\"</td> </tr> </tbody> </table> <b>NOTE: </b>The response of this API carries a ZIP file containing the certificate and private key if  the request contains <b>\"export\" : \"CERTIFICATE_WITH_PRIVATE_KEY\"</b>. If the request body contains <b>\"export\" : \"CERTIFICATE\"</b>, the response carries a ZIP file containing only the certificate. <br/><br/> <b>WARNING: </b>Exporting a private key is not a secure operation. It could lead to possible exposure of the private key. <br/> ",
+        "operationId": "exportSystemCert",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportCertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Exported certificate successfully",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "201": { "description": "Created" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/certs/system-certificate/generate-selfsigned-certificate": {
+      "post": {
+        "tags": ["Certificates"],
+        "summary": "Generate self-signed certificate in Cisco ISE",
+        "description": " <style type=\"text/css\" scoped> .certTable td , .certTable th { padding: 5px 10px !important; text-align: left;} </style> <h3>Generate Self-signed Certificate</h3> <p><b>NOTE: </b>The certificate may have a validity period greater than 398 days. It may be untrusted by many browsers.<br> <b>NOTE: </b>Request parameters accepting True and False as input can be replaced by 1 and 0 respectively. <br> <b>NOTE: </b>Wildcard certificate and SAML certificate can be generated only on the primary PAN or a standalone node.<br></p> <br/> <h4>Following parameters are used in the POST body</h4> <table class=\"certTable\"> <thead> <tr> <th>PARAMETER</th> <th>DESCRIPTION</th> <th>EXAMPLE</th> </tr> </thead> <tbody> <tr> <td>hostName<sup><font color=red>*required</font></sup></td> <td>Hostname or FQDN of the node in which the certificate needs to be created.</td> <td>\"hostName\": \"ise-node-001\"</td> </tr> <tr> <td>name</td> <td>Friendly name of the certificate.</td> <td>\"name\": \"Self-signed System Certificate\"</td> </tr> <tr> <td>subjectCommonName</td> <td> Certificate common name (CN)<br/> <b>NOTE: </b><ul><li>CN is Mandatory if SAN not configured.</li><li>>Subject can contain a multi-valued CN. For multi-valued RDNs, follow the format \"CN=value1, CN=value2\"</li></ul> </td> <td>\"subjectCommonName\": \"$FQDN$\"</td> </tr> <tr> <td>subjectOrgUnit</td> <td> Certificate organizational unit (OU)<br/> <b>NOTE: </b>Subject can contain a multi-valued OU. For multi-valued RDNs, follow the format \"OU=value1, OU=value2\" </td> <td>\"subjectOrgUnit\": \"Engineering\"</td> </tr> <tr> <td>subjectOrg</td> <td> Certificate organization (O)<br/> <b>NOTE: </b>Subject can contain multi-valued O fields. For multi-valued RDNs, follow the format \"O=value1, O=value2\" </td> <td>\"subjectOrg\": \"Cisco\"</td> </tr> <tr> <td>subjectCity</td> <td>Certificate city or locality (L)</td> <td>\"subjectCity\": \"San Jose\"</td> </tr> <tr> <td>subjectState</td> <td>Certificate state (ST)</td> <td>\"subjectState\": \"California\"</td> </tr> <tr> <td>subjectCountry</td> <td>Certificate country (C)</td> <td>\"subjectCountry\": \"US\"</td> </tr> <tr> <td>sanDNS</td> <td>Array of SAN (Subject Alternative Name) DNS entries</td> <td>\"sanDNS\": [\"ise.example.com\"]</td> </tr> <tr> <td>sanIP</td> <td>Array of SAN IP address entries</td> <td>\"sanIP\": [\"1.1.1.1\"]</td> </tr> <tr> <td>sanURI</td> <td>Array of SAN URI entries</td> <td>\"sanURI\": [\"https://1.1.1.1\"]</td> </tr> <tr> <td>keyType<sup><font color=red>*required</font></sup></td> <td>Algorithm to use for certificate public key creation.</td> <td>\"keyType\": \"RSA\"</td> </tr> <tr> <td>keyLength<sup><font color=red>*required</font></sup></td> <td>Bit size of the public key.</td> <td>\"keyLength\": \"4096\"</td> </tr> <tr> <td>digestType<sup><font color=red>*required</font></sup></td> <td>Digest to sign with.</td> <td>\"digestType\": \"SHA-384\"</td> </tr> <tr> <td>certificatePolicies</td> <td>Certificate policy OID or list of OIDs that the certificate should conform to. Use comma or space to separate the OIDs. </td> <td>\"certificatePolicies\": \"Certificate Policies\"</td> </tr> <tr> <td>expirationTTL<sup><font color=red>*required</font></sup></td> <td> Certificate expiration value.<br/> <b>NOTE: </b>Expiration TTL should be within Unix time limit </td> <td>\"expirationTTL\": 2</td> </tr> <tr> <td>expirationTTLUnit<sup><font color=red>*required</font></sup></td> <td>Certificate expiration unit.</td> <td>\"expirationTTLUnit\": \"years\"</td> </tr> <tr> <td>admin</td> <td>Use certificate to authenticate the Cisco ISE Admin Portal</td> <td>\"admin\": false</td> </tr> <tr> <td>eap</td> <td>Use certificate for EAP protocols that use SSL/TLS tunneling</td> <td>\"eap\": false</td> </tr> <tr> <td>radius</td> <td>Use certificate for RADSec server</td> <td>\"radius\": false</td> </tr> <tr> <td>pxgrid</td> <td>Use certificate for the pxGrid controller</td> <td>\"pxgrid\": false</td> </tr> <tr> <td>saml</td> <td>Use certificate for SAML Signing</td> <td>\"saml\": false</td> </tr> <tr> <td>portal</td> <td>Use certificate for portal</td> <td>\"portal\": false</td> </tr> <tr> <td>portalGroupTag</td> <td>Portal Group Tag for using certificate with portal role</td> <td>\"portalGroupTag\": \"Default Portal Certificate Group\"</td> </tr> <tr> <td>allowReplacementOfPortalGroupTag<sup><font color=red>*required</font></sup></td> <td>Allow Replacement of Portal Group Tag.</td> <td>\"allowReplacementOfPortalGroupTag\": true</td> </tr> <tr> <td>allowWildCardCertificates</td> <td>Allow use of WildCards in certificates</td> <td>\"allowWildCardCertificates\": false</td> </tr> <tr> <td>allowReplacementOfCertificates<sup><font color=red>*required</font></sup></td> <td>Allow replacement of certificates.</td> <td>\"allowReplacementOfCertificates\": true</td> </tr> <tr> <td>allowExtendedValidity<sup><font color=red>*required</font></sup></td> <td>Allow generation of self-signed certificate with validity greater than 398 days.</td> <td>\"allowExtendedValidity\": true</td> </tr> <tr> <td>allowRoleTransferForSameSubject<sup><font color=red>*required</font></sup></td> <td>Allow the transfer of roles to certificates with same subject.<br/> If the matching certificate on Cisco ISE has either admin or portal role and if the request has admin or portal role selected along with <b>allowRoleTransferForSameSubject</b> parameter as true, a self-signed certificate would be generated with both admin and portal role enabled.</td> <td>\"allowRoleTransferForSameSubject\": true</td> </tr> <tr> <td>allowPortalTagTransferForSameSubject<sup><font color=red>*required</font></sup></td> <td>Acquire the group tag of the matching certificate.</br> If the request portal groug tag is different from the group tag of the matching certificate (If matching certificate in Cisco ISE has portal role enabled), a self-signed certificate would be generated by acquiring the group tag of the matching certificate if the <b>allowPortalTagTransferForSameSubject</b> parameter is true.</td> <td>\"allowPortalTagTransferForSameSubject\": true</td> </tr> <tr> <td>allowSanDnsBadName<sup><font color=red>*required</font></sup></td> <td> Allow generation of self-signed certificates with bad common name & SAN values such as \"example.org.\",\"invalid.\",\"test.\",\"localhost\" and so on.</br> <b>SECURITY ALERT: </b>We recommend to set the parameter <b>allowSanDnsBadName</b> as <b>false</b> to avoid generation of certificates with bad Common Name & SAN Values which are not secure. </td> <td>\"allowSanDnsBadName\": true</td> </tr> <tr> <td>allowSanDnsNonResolvable<sup><font color=red>*required</font></sup></td> <td>Allow generation of self-signed certificate with non resolvable Common Name or SAN Values .</td> <td>\"allowSanDnsNonResolvable\": true</td> </tr> </tbody> </table> <br/> <table class=\"certTable\"> <thead> <tr> <th>ROLE</th> <th>DEFAULT</th> <th>WARNING</th> </tr> </thead> <tbody> <tr> <td>Admin</td> <td>False</td> <td>Enabling Admin role for this certificate causes an application server restart on the selected node.</td> </tr> <tr> <td>EAP Authentication</td> <td>False</td> <td>Only one system certificate can be used for EAP. Assigning EAP to this certificate removes the assignment from another certificate.</td> </tr> <tr> <td>RADIUS DTLS</td> <td>False</td> <td>Only one system certificate can be used for DTLS. Assigning DTLS to this certificate removes the assignment from another certificate.</td> </tr> <tr> <td>SAML</td> <td>False</td> <td>SAML cannot be used with other Usage.</td> </tr> </tbody> </table> ",
+        "operationId": "generateSelfSignedCertificate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateSelfsignedCertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created Certificate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateSelfsignedCertRespPayload"
+                }
+              }
+            }
+          },
+          "201": { "description": "Created" },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateSelfsignedCertRespPayload"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" },
+          "406": {
+            "description": "Not Acceptable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateSelfsignedCertRespPayload"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/certs/system-certificate/import": {
+      "post": {
+        "tags": ["Certificates"],
+        "summary": "Import system certificate in Cisco ISE",
+        "description": " <style type=\"text/css\" scoped> .certTable td , .certTable th { padding: 5px 10px !important; text-align: left;} </style> <h3>Import an X509 certificate as a system certificate.</h3> <p><b>NOTE: </b>The certificate may have a validity period of more than 398 days. It may be untrusted by many browsers.<br> <b>NOTE: </b>Request parameters accepting True and False as input can be replaced by 1 and 0 respectively.<br></p> <h4>Following parameters are used in the POST body</h4> <table class=\"certTable\"> <thead> <tr> <th>PARAMETER</th> <th>DESCRIPTION</th> <th>EXAMPLE</th> </tr> </thead> <tbody> <tr> <td>name</td> <td>Friendly name of the certificate.</td> <td>\"name\": \"System certificate\"</td> </tr> <tr> <td>password<sup><font color=red>*required</font></sup></td> <td>Password of the certificate to be imported.</td> <td>\"password\": \"certificate password\"</td> </tr> <tr> <td>data<sup><font color=red>*required</font></sup></td> <td> Plain-text contents of the certificate file. Every space needs to be replaced with a newline escape sequence (\\n).<br/> Use the command <cmd>awk &apos;NF {sub(/\\r/, \"\"); printf \"%s\\\\n\",$0;}&apos; &lt;&lt;your .pem file&gt;&gt;</cmd> to extract data from the certificate file. </td> <td>\"data\": \"Plain-text contents of the certificate file.\"</td> </tr> <tr> <td>privateKeyData<sup><font color=red>*required</font></sup></td> <td> Plain-text contents of the private key file. Every space needs to be replaced with a newline escape sequence (\\n).</br> Use the command <cmd>awk &apos;NF {sub(/\\r/, \"\"); printf \"%s\\\\n\",$0;}&apos; &lt;&lt;your .pem file&gt;&gt;</cmd> to extract privateKeyData from private key file. </td> <td>\"data\": \"Plain-text contents of the private key file.\"</td> </tr> <tr> <td>allowOutOfDateCert<sup><font color=red>*required</font></sup></td> <td> Allow out of date certificates .</br> <b>SECURITY ALERT: </b>We recommend to set the parameter <b>allowOutOfDateCert</b> as <b>false</b> to avoid the import of expired certificates (not Secure). </td> <td>\"allowOutOfDateCert\": true</td> </tr> <tr> <td>allowSHA1certificates<sup><font color=red>*required</font></sup></td> <td> Allow import of certificate with signature that uses the SHA-1 hashing algorithm and is considered less secure .</br> <b>SECURITY ALERT: </b>We recommend to set the parameter <b>allowSHA1certificates</b>as <b>false</b> to avoid the import of SHA1 based certificates (less secure). </td> <td>\"allowSHA1certificates\": true</td> </tr> <tr> <td>allowExtendedValidity<sup><font color=red>*required</font></sup></td> <td>Allow the certificates greater than validity of 398 days.</td> <td>\"allowExtendedValidity\": true</td> </tr> <tr> <td>allowRoleTransferForSameSubject</td> <td>password<sup><font color=red>*required</font></sup></td> <td>Allow the transfer of roles to certificates with the same subject</td> <td>\"allowRoleTransferForSameSubject\": true</td> </tr> <tr> <td>allowPortalTagTransferForSameSubject</td> <td>password<sup><font color=red>*required</font></sup></td> <td>Acquire the group tag of the matching certificate</td> <td>\"allowPortalTagTransferForSameSubject\": true</td> </tr> <tr> <td>admin</td> <td>Use the certificate to authenticate the Cisco ISE admin portal</td> <td>\"admin\": false</td> </tr> <tr> <td>eap</td> <td>Use the certificate for EAP protocols that use SSL/TLS tunneling</td> <td>\"eap\": false</td> </tr> <tr> <td>radius</td> <td>Use the certificate for RADSec server</td> <td>\"radius\": false</td> </tr> <tr> <td>pxgrid</td> <td>Use the certificate for the pxGrid Controller</td> <td>\"pxgrid\": false</td> </tr> <tr> <td>ims</td> <td>Use the certificate for the Cisco ISE messaging service</td> <td>\"ims\": false</td> </tr> <tr> <td>saml</td> <td>Use the certificate for SAML Signing</td> <td>\"saml\": false</td> </tr> <tr> <td>portal</td> <td>Use the certificate for portal</td> <td>\"portal\": false</td> </tr> <tr> <td>portalGroupTag</td> <td>Portal Group Tag for using certificate with portal role</td> <td>\"portalGroupTag\": \"Default Portal certificate Group\"</td> </tr> <tr> <td>allowReplacementOfPortalGroupTag<sup><font color=red>*required</font></sup></td> <td>Allow Replacement of Portal Group Tag .</td> <td>\"allowReplacementOfPortalGroupTag\": true</td> </tr> <tr> <td>allowWildCardcertificates</td> <td>Allow use of wildcards in certificates</td> <td>\"allowWildCardcertificates\": false</td> </tr> <tr> <td>validatecertificateExtensions</td> <td>Validate certificate extensions</td> <td>\"validatecertificateExtensions\": false</td> </tr> </tbody> </table> <br/> <h4>Following roles can be used in any combinations</h4> <table class=\"certTable\"> <thead> <tr> <th>ROLE</th> <th>DEFAULT</th> <th>WARNING</th> </tr> </thead> <tbody> <tr> <td>Admin</td> <td>False</td> <td>Enabling Admin role for this certificate causes an application server restart on the selected node.<br/><b>Note:</b> Make sure the required certificate chain is imported under Trusted Certificates</td> </tr> <tr> <td>EAP Authentication</td> <td>False</td> <td>Only one system certificate can be used for EAP. Assigning EAP to this certificate removes the assignment from another certificate.<br/><b>Note:</b> Make sure required Certificate Chain is imported under Trusted Certificates</td> </tr> <tr> <td>RADIUS DTLS</td> <td>False</td> <td>Only one system certificate can be used for DTLS. Assigning DTLS to this certificate removes the assignment from another certificate.<br/><b>Note:</b> Make sure required Certificate Chain is imported under Trusted Certificates</td> </tr> <tr> <td>SAML</td> <td>False</td> <td>SAML cannot be used with other Usage. Enabling SAML unchecks all other Usage.</br><b>Note:</b> Make sure the required certificate chain is imported under Trusted Certificates</td> </tr> </tbody> </table> ",
+        "operationId": "importSystemCert",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SystemCert"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created Certificate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportSystemCertRespPayload"
+                }
+              }
+            }
+          },
+          "201": { "description": "Created" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" },
+          "405": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Not Acceptable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Certificate already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "417": {
+            "description": "Requried parameters missing expectation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request was well-formed but was unable to be followed due to semantic errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/certs/system-certificate/{hostName}": {
+      "get": {
+        "tags": ["Certificates"],
+        "summary": "Get all system certificates of a particular node",
+        "description": "<p style=\"font-size: 15px;\"> This API supports filtering, sorting and pagination. </p><br/> <p style=\"font-size: 14px;\">Filtering and sorting supported for the following attributes: </p>    <ul style=\"font-size: 14px;\">        <li>friendlyName</li>        <li>issuedTo</li>        <li>issuedBy</li>        <li>validFrom</li>          <ul>            <li>Supported Date Format: yyyy-MM-dd HH:mm:ss</li>            <li>Supported Operators: EQ, NEQ, GT and LT</li>          </ul>        <li>expirationDate</li>          <ul>            <li>Supported Date Format: yyyy-MM-dd HH:mm:ss</li>            <li>Supported Operators: EQ, NEQ, GT and LT</li>          </ul>      </ul> ",
+        "operationId": "getSystemCertificates",
+        "parameters": [
+          {
+            "name": "hostName",
+            "in": "path",
+            "description": "Name of the host for which the system certificates should be returned",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Number of objects returned per page",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "sort type - asc or desc",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "sort column by which objects needs to be sorted",
+            "required": false,
+            "style": "form",
+            "schema": { "type": "string"}
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "<div> <style type=\"text/css\" scoped> .apiServiceTable td, .apiServiceTable th { padding: 5px 10px !important; text-align: left; } </style> <span> <b>Simple filtering</b> should be available through the filter query string parameter. The structure of a filter is a triplet of field operator and value separated with dots. More than one filter can be sent. The logical operator common to ALL filter criteria will be by default AND, and can be changed by using the <i>\"filterType=or\"</i> query string parameter. Each resource Data model description should specify if an attribute is a filtered field. </span> <br /> <table class=\"apiServiceTable\"> <thead> <tr> <th>OPERATOR</th> <th>DESCRIPTION</th> </tr> </thead> <tbody> <tr> <td>EQ</td> <td>Equals</td> </tr> <tr> <td>NEQ</td> <td>Not Equals</td> </tr> <tr> <td>GT</td> <td>Greater Than</td> </tr> <tr> <td>LT</td> <td>Less Then</td> </tr> <tr> <td>STARTSW</td> <td>Starts With</td> </tr> <tr> <td>NSTARTSW</td> <td>Not Starts With</td> </tr> <tr> <td>ENDSW</td> <td>Ends With</td> </tr> <tr> <td>NENDSW</td> <td>Not Ends With</td> </tr> <tr> <td>CONTAINS</td> <td>Contains</td> </tr> <tr> <td>NCONTAINS</td> <td>Not Contains</td> </tr> </tbody> </table> </div>",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": { "type": "string"}
+          },
+          {
+            "name": "filterType",
+            "in": "query",
+            "description": "The logical operator common to ALL filter criteria will be by default AND, and can be changed by using the parameter",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": ["AND", "OR"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched list of all system certificates",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemCertGetAllRsp"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" },
+          "405": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/certs/system-certificate/{hostName}/{id}": {
+      "get": {
+        "tags": ["Certificates"],
+        "summary": "Get system certificate of a particular node by ID",
+        "description": "This API provides details of a system certificate of a particular node based on given hostname and ID.",
+        "operationId": "getSystemCertificateById",
+        "parameters": [
+          {
+            "name": "hostName",
+            "in": "path",
+            "description": "Name of the host of which system certificates should be returned",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the system certificate",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched system certificate of given ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemCertGetByIdRsp"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" },
+          "405": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      },
+      "put": {
+        "tags": ["Certificates"],
+        "summary": "Update data for existing system certificate",
+        "description": " <style type=\"text/css\" scoped> .certTable td , .certTable th { padding: 5px 10px !important; text-align: left;} </style> <h3>Update a System Certificate.</h3> <b>NOTE: </b>Renewing a certificate causes an application server restart on the selected node.<br> <b>NOTE: </b>Request parameters accepting True and False as input can be replaced by 1 and 0 respectively.<br> <h4>Following parameters are used in the POST body</h4> <table class=\"certTable\"> <thead> <tr> <th>PARAMETER</th> <th>DESCRIPTION</th> <th>EXAMPLE</th> </tr> </thead> <tbody> <tr> <td>name</td> <td>Friendly name of the certificate.</td> <td>\"name\": \"System Certificate\"</td> </tr> <tr> <td>description</td> <td>Description of the certificate</td> <td>\"description\": \"Description of certificate\"</td> </tr> <tr> <td>admin</td> <td>Use certificate to authenticate the Cisco ISE Admin Portal</td> <td>\"admin\": false</td> </tr> <tr> <td>eap</td> <td>Use certificate for EAP protocols that use SSL/TLS tunneling</td> <td>\"eap\": false</td> </tr> <tr> <td>radius</td> <td>Use certificate for RADSec server</td> <td>\"radius\": false</td> </tr> <tr> <td>pxgrid</td> <td>Use certificate for the pxGrid Controller</td> <td>\"pxgrid\": false</td> </tr> <tr> <td>ims</td> <td>Use certificate for the Cisco ISE Messaging Service</td> <td>\"ims\": false</td> </tr> <tr> <td>saml</td> <td>Use certificate for SAML Signing</td> <td>\"saml\": false</td> </tr> <tr> <td>portal</td> <td>Use certificate for portal</td> <td>\"portal\": false</td> </tr> <tr> <td>portalGroupTag</td> <td>Portal Group Tag for using certificate with portal role</td> <td>\"portalGroupTag\": \"Default Portal Certificate Group\"</td> </tr> <tr> <td>allowReplacementOfPortalGroupTag<sup><font color=red>*required</font></sup></td> <td>Allow Replacement of Portal Group Tag.</td> <td>\"allowReplacementOfPortalGroupTag\": true</td> </tr> <tr> <td>allowRoleTransferForSameSubject<sup><font color=red>*required</font></sup></td> <td>Allow transfer of roles to certificates with same subject.</td> <td>\"allowRoleTransferForSameSubject\": true</td> </tr> <tr> <td>allowPortalTagTransferForSameSubject<sup><font color=red>*required</font></sup></td> <td>Acquire group tag of the matching certificate.</td> <td>\"allowPortalTagTransferForSameSubject\": true</td> </tr> <tr> <td>renewSelfSignedCertificate</td> <td>Renew Self-signed Certificate</td> <td>\"renewSelfSignedCertificate\": false</td> </tr> <tr> <td>expirationTTLPeriod</td> <td>Expiration Period</td> <td>\"expirationTTLPeriod\": 365</td> </tr> <tr> <td>expirationTTLUnits</td> <td>Expiration Units in one of the below formats <ul> <li>days / weeks / months / years</li> </ul> </td> <td>\"expirationTTLUnits\": \"days\"</td> </tr> </tbody> </table> <br/> <h4>Following roles can be used in any combinations</h4> <table class=\"certTable\"> <thead> <tr> <th>ROLE</th> <th>DEFAULT</th> <th>WARNING</th> </tr> </thead> <tbody> <tr> <td>Admin</td> <td>False</td> <td>Enabling Admin role for this certificate causes an application server restart on the selected node.<br/><b>Note:</b> Make sure that the required certificate chain is imported under Trusted Certificates</td> </tr> <tr> <td>EAP Authentication</td> <td>False</td> <td>Only one system certificate can be used for EAP. Assigning EAP to this certificate removes the assignment from another certificate.<br/><b>Note:</b> Make sure that the required certificate chain is imported under Trusted Certificates</td> </tr> <tr> <td>RADIUS DTLS</td> <td>False</td> <td>Only one system certificate can be used for DTLS. Assigning DTLS to this certificate removes the assignment from another certificate.<br/><b>Note:</b> Make sure that the required certificate chain is imported under Trusted Certificates</td> </tr> <tr> <td>SAML</td> <td>False</td> <td>SAML cannot be used with other usage. Enabling SAML unchecks all other usage.</br><b>Note:</b> Make sure that the required certificate chain is imported under Trusted Certificates</td> </tr> </tbody> </table> ",
+        "operationId": "updateSystemCert",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the System Certificate to be updated",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          },
+          {
+            "name": "hostName",
+            "in": "path",
+            "description": "Name of host whose certificate needs to be updated",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSystemCertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created Certificate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateSystemCertRespPayload"
+                }
+              }
+            }
+          },
+          "201": { "description": "Created" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" },
+          "405": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Not Acceptable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Certificate already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "417": {
+            "description": "Requried parameters missing expectation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request was well-formed but was unable to be followed due to semantic errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      },
+      "delete": {
+        "tags": ["Certificates"],
+        "summary": "Delete System Certificate by ID and hostname",
+        "description": "This API deletes a system certificate of a particular node based on the given hostname and ID.",
+        "operationId": "deleteSystemCertificateById",
+        "parameters": [
+          {
+            "name": "hostName",
+            "in": "path",
+            "description": "Name of the host from which system certificate needs to be deleted",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the system certificate to be deleted",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteSystemCertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Deleted the System Certificate of given ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteSystemCertRespPayload"
+                }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Given hostname or certificate ID not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteSystemCertRespPayload"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/certs/trusted-certificate": {
+      "get": {
+        "tags": ["Certificates"],
+        "summary": "Get list of all trusted certificates",
+        "description": "<p style=\"font-size: 15px;\"> This API supports Filtering, Sorting and Pagination. </p><br/> <p style=\"font-size: 14px;\">Filtering and Sorting are supported for the following attributes: </p>    <ul style=\"font-size: 14px;\">        <li>friendlyName</li>        <li>subject</li>        <li>issuedTo</li>        <li>issuedBy</li>        <li>validFrom</li>         <ul>          <li>Supported Date Format: yyyy-MM-dd HH:mm:ss</li>          <li>Supported Operators: EQ, NEQ, GT and LT</li>         </ul>        <li>expirationDate</li>         <ul>          <li>Supported Date Format: yyyy-MM-dd HH:mm:ss</li>          <li>Supported Operators: EQ, NEQ, GT and LT</li>         </ul>        <li>status</li>         <ul>          <li>Allowed values: enabled, disabled</li>          <li>Supported Operators: EQ, NEQ</li>         </ul>      </ul>      <br>    <b>Note: </b> ISE internal CA certificates will not be exported. ",
+        "operationId": "getTrustedCertificates",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Number of objects returned per page",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "sort type - asc or desc",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "sort column by which objects needs to be sorted",
+            "required": false,
+            "style": "form",
+            "schema": { "type": "string"}
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "<div> <style type=\"text/css\" scoped> .apiServiceTable td, .apiServiceTable th { padding: 5px 10px !important; text-align: left; } </style> <span> <b>Simple filtering</b> should be available through the filter query string parameter. The structure of a filter is a triplet of field operator and value separated with dots. More than one filter can be sent. The logical operator common to ALL filter criteria will be by default AND, and can be changed by using the <i>\"filterType=or\"</i> query string parameter. Each resource Data model description should specify if an attribute is a filtered field. </span> <br /> <table class=\"apiServiceTable\"> <thead> <tr> <th>OPERATOR</th> <th>DESCRIPTION</th> </tr> </thead> <tbody> <tr> <td>EQ</td> <td>Equals</td> </tr> <tr> <td>NEQ</td> <td>Not Equals</td> </tr> <tr> <td>GT</td> <td>Greater Than</td> </tr> <tr> <td>LT</td> <td>Less Then</td> </tr> <tr> <td>STARTSW</td> <td>Starts With</td> </tr> <tr> <td>NSTARTSW</td> <td>Not Starts With</td> </tr> <tr> <td>ENDSW</td> <td>Ends With</td> </tr> <tr> <td>NENDSW</td> <td>Not Ends With</td> </tr> <tr> <td>CONTAINS</td> <td>Contains</td> </tr> <tr> <td>NCONTAINS</td> <td>Not Contains</td> </tr> </tbody> </table> </div>",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": { "type": "string"}
+          },
+          {
+            "name": "filterType",
+            "in": "query",
+            "description": "The logical operator common to ALL filter criteria will be by default AND, and can be changed by using the parameter",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": ["AND", "OR"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched list of all trusted certificates",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrustCertGetAllRsp"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/certs/trusted-certificate/export/{id}": {
+      "get": {
+        "tags": ["Certificates"],
+        "summary": "Export a trust certificate by a given certificate ID",
+        "description": "The response of this API carries a trusted certificate file mapped to the requested ID.",
+        "operationId": "exportTrustedCert",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Trusted Certificate to be exported.",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Exported Trusted Certificate successfully",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/certs/trusted-certificate/import": {
+      "post": {
+        "tags": ["Certificates"],
+        "summary": "Add root certificate to the Cisco ISE truststore",
+        "description": " <style type=\"text/css\" scoped> .certTable td , .certTable th { padding: 5px 10px !important; text-align: left;} </style> <h3>Import an X509 certificate as a trust certificate</h3><br> <p><b>NOTE: </b>Request parameters accepting True and False as input can be replaced by 1< and 0< respectively.<br> Following parameters are used in the POST body:</p> <table class=\"certTable\"> <thead> <tr> <th>PARAMETER</th> <th>DESCRIPTION</th> <th>EXAMPLE</th> </tr> </thead> <tbody> <tr> <td>name</td> <td>Friendly name of the certificate</td> <td>\"name\": \"Trust Certificate\"</td> </tr> <tr> <td>description</td> <td>Description of the certificate</td> <td>\"description\": \"Imported Trust Certificate\"</td> </tr> <tr> <td>data<sup><font color=red>*required</font></sup></td> <td> Plain-text contents of the certificate file. Every space needs to be replaced with a newline escape sequence (\\n).<br/> Use the command <cmd>awk &apos;NF {sub(/\\r/, \"\"); printf \"%s\\\\n\",$0;}&apos; &lt;&lt;your .pem file&gt;&gt;</cmd> to extract data from the certificate file. </td> <td>\"data\": \"Plain-text contents of the certificate file.\"</td> </tr> <tr> <td>allowOutOfDateCert<sup><font color=red>*required</font></sup></td> <td> Allow out of date certificates.</br> <b>SECURITY ALERT: </b>We recommend to set the parameter <b>allowOutOfDateCert</b> as <b>false</b> to avoid the import of expired certificates (not secure). </td> <td>\"allowOutOfDateCert\": true</td> </tr> <tr> <td>allowSHA1Certificates<sup><font color=red>*required</font></sup></td> <td> Allow import of certificate with signature that uses SHA-1 hashing algorithm and is considered less secure.</br> <b>SECURITY ALERT: </b>We recommend to set the parameter <b>allowSHA1Certificates</b> as <b>false</b> to avoid the import of SHA1 based certificates (less secure). </td> <td>\"allowSHA1Certificates\": true</td> </tr> <tr> <td>allowBasicConstraintCAFalse<sup><font color=red>*required</font></sup></td> <td> Allow certificates with Basic Constraints CA Field as False.</br> <b>SECURITY ALERT: </b>We recommend to set the parameter <b>allowBasicConstraintCAFalse</b> as <b>false</b> to avoid the import of certificates with <b>Basic Constraints CA Field</b> set as <b>False</b> (not Secure). </td> <td>\"allowBasicConstraintCAFalse\": true</td> </tr> <tr> <td>trustForIseAuth</td> <td>Trust for authentication within Cisco ISE</td> <td>\"trustForIseAuth\": false</td> </tr> <tr> <td>trustForClientAuth</td> <td>Trust for client authentication and syslog</td> <td>\"trustForClientAuth\": false</td> </tr> <tr> <td>trustForCertificateBasedAdminAuth</td> <td>Trust for certificate based admin authentication</td> <td>\"trustForCertificateBasedAdminAuth\": false</td> </tr> <tr> <td>trustForCiscoServicesAuth</td> <td>Trust for authentication of Cisco services</td> <td>\"trustForCiscoServicesAuth\": false</td> </tr> <tr> <td>validateCertificateExtensions</td> <td>Validate extensions for trust certificate</td> <td>\"validateCertificateExtensions\": false</td> </tr> </tbody> </table></br> <p><b>NOTE</b>: If <b>name</b> is not set, a default name with the following format is used where <b>nnnnn</b> is a unique number: </br> <b>- common-name#issuer#nnnnn</b></br> You can always change the friendly name later by editing the certificate.</p> <hr/> <p>You must choose how this certificate is trusted in Cisco ISE. The objective here is to distinguish between certificates that are used for trust within a Cisco ISE deployment and public certificates that are used to trust Cisco services. We recommend not using a given certificate for both purposes.</p> <table class=\"certTable\"> <thead> <tr> <th>Trusted For</th> <th>Usage</th> </tr> </thead> <tbody> <tr> <td>Authentication within Cisco ISE</td> <td>Use <b>\"trustForIseAuth\":true</b> if the certificate is used for trust within Cisco ISE, such as for secure communication between Cisco ISE nodes</td> </tr> <tr> <td>Client authentication and Syslog</td> <td>Use <b>\"trustForClientAuth\":true</b> if the certificate is to be used for authentication of endpoints that contact Cisco ISE over the EAP protocol. This is also used if the certificate is used to trust a Syslog server. Make sure to have keyCertSign bit asserted under KeyUsage extension for this certificate.</br> <b>Note:</b> \"\" can be set true only if the \"trustForIseAuth\" has been set true.</td> </tr> <tr> <td>Certificate based admin authentication</td> <td>Use <b>\"trustForCertificateBasedAdminAuth\":true</b> if the certificate is used for trust within Cisco ISE, such as for secure communication between Cisco ISE nodes</br> <b>Note:</b><b>trustForCertificateBasedAdminAuth</b> can be set true only if both <b>trustForIseAuth</b> and <b>trustForClientAuth</b> are true.</td></td> </tr> <tr> <td>Authentication of Cisco Services</td> <td> Use <b>\"trustForCiscoServicesAuth\":true</b> if the certificate is to be used for trusting external Cisco services, such as Feed Service.</td> </tr> </tbody> </table> ",
+        "operationId": "importTrustCert",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrustCert"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Imported trust certificate successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportTrustCertRespPayload"
+                }
+              }
+            }
+          },
+          "201": { "description": "Created" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" },
+          "405": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Certificate Already Exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "417": {
+            "description": "Requried parameters missing; expectation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request was well-formed but was unable to be followed due to semantic errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/certs/trusted-certificate/{id}": {
+      "get": {
+        "tags": ["Certificates"],
+        "summary": "Get Trust Certificate By ID",
+        "description": "This API can displays details of a Trust Certificate based on a given ID.",
+        "operationId": "getTrustedCertificateById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the trust certificate",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched trust certificate of given ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrustCertGetByIdRsp"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" }
+        },
+        "security": [{ "BasicAuth": [] }]
+      },
+      "put": {
+        "tags": ["Certificates"],
+        "summary": "Update the trust certificate already present in the Cisco ISE trust store",
+        "description": " <style type=\"text/css\" scoped> .certTable td , .certTable th { padding: 5px 10px !important; text-align: left;} </style> <h3>Update a trusted certificate present in Cisco ISE trust store.</h3> The following parameters are used in the PUT request body <table class=\"certTable\"> <thead> <tr> <th>PARAMETER</th> <th>DESCRIPTION</th> <th>EXAMPLE</th> </tr> </thead> <tbody> <tr> <td>name<sup><font color=red>*required</font></sup></td> <td>Friendly name of the certificate.</td> <td>\"name\": \"Trust Certificate\"</td> </tr> <tr> <td>status</td> <td>Status of the certificate</td> <td>\"status\": \"Enabled\"</td> </tr> <tr> <td>description</td> <td>Description of the certificate</td> <td>\"description\": \"Certificate for secure connection to cisco.com\"</td> </tr> <tr> <td>trustForIseAuth</td> <td>Trust for authentication within Cisco ISE</td> <td>\"trustForIseAuth\": false</td> </tr> <tr> <td>trustForClientAuth</td> <td>Trust for client authentication and Syslog</td> <td>\"trustForClientAuth\": false</td> </tr> <tr> <td>trustForCertificateBasedAdminAuth</td> <td>Trust for certificate based Admin authentication</td> <td>\"trustForCertificateBasedAdminAuth\": false</td> </tr> <tr> <td>trustForCiscoServicesAuth</td> <td>Trust for authentication of Cisco Services</td> <td>\"trustForCiscoServicesAuth\": false</td> </tr> <tr> <td>enableOCSPValidation</td> <td>Switch to enable or disable OCSP Validation</td> <td>\"enableOCSPValidation\": false</td> </tr> <tr> <td>selectedOCSPService</td> <td>Name of selected OCSP Service</td> <td>\"selectedOCSPService\": \"INTERNAL_OCSP_SERVICE\"</td> </tr> <tr> <td>rejectIfNoStatusFromOCSP</td> <td>Switch to reject certificate if there is no status from OCSP</td> <td>\"rejectIfNoStatusFromOCSP\": false</td> </tr> <tr> <td>rejectIfUnreachableFromOCSP</td> <td>Switch to reject certificate if unreachable from OCSP</td> <td>\"rejectIfUnreachableFromOCSP\": false</td> </tr> <tr> <td>downloadCRL</td> <td>Switch to enable or disable download of CRL</td> <td>\"downloadCRL\": false</td> </tr> <tr> <td>crlDistributionUrl</td> <td>Certificate Revocation List Distribution URL</td> <td>\"crlDistributionUrl\": \"CRL distribution URL\"</td> </tr> <tr> <td>automaticCRLUpdate</td> <td>Switch to enable or disable automatic CRL update</td> <td>\"automaticCRLUpdate\": false</td> </tr> <tr> <td>automaticCRLUpdatePeriod</td> <td>Automatic CRL update period</td> <td>\"automaticCRLUpdatePeriod\": 5</td> </tr> <tr> <td>automaticCRLUpdateUnits</td> <td>Unit of time for automatic CRL update</td> <td>\"automaticCRLUpdateUnits\": \"Minutes\"</td> </tr> <tr> <td>nonAutomaticCRLUpdatePeriod</td> <td>Non automatic CRL update period</td> <td>\"nonAutomaticCRLUpdatePeriod\": 1</td> </tr> <tr> <td>nonAutomaticCRLUpdateUnits</td> <td>Unit of time of non automatic CRL update</td> <td>\"nonAutomaticCRLUpdateUnits\": \"Hours\"</td> </tr> <tr> <td>crlDownloadFailureRetries</td> <td>If CRL download fails, wait time before retry</td> <td>\"crlDownloadFailureRetries\": 10</td> </tr> <tr> <td>crlDownloadFailureRetriesUnits</td> <td>Unit of time before retry if CRL download fails</td> <td>\"crlDownloadFailureRetriesUnits\": \"Minutes\"</td> </tr> <tr> <td>enableServerIdentityCheck</td> <td>Switch to enable or disable verification if HTTPS or LDAP server certificate name fits the configured server URL</td> <td>\"enableServerIdentityCheck\": false</td> </tr> <tr> <td>authenticateBeforeCRLReceived</td> <td>Switch to enable or disable CRL Verification if CRL is not Received</td> <td>\"authenticateBeforeCRLReceived\": false</td> </tr> <tr> <td>ignoreCRLExpiration</td> <td>Switch to enable or disable ignore CRL Expiration</td> <td>\"ignoreCRLExpiration\": false</td> </tr> </tbody> </table></br> <hr/> <table class=\"certTable\"> <thead> <tr> <th>Trusted For</th> <th>Usage</th> </tr> </thead> <tbody> <tr> <td>Authentication within Cisco ISE</td> <td>Use <b>\"trustForIseAuth\":true</b> if the certificate is used for trust within Cisco ISE, such as for secure communication between Cisco ISE nodes</td> </tr> <tr> <td>Client authentication and Syslog</td> <td>Use <b>\"trustForClientAuth\":true</b> if the certificate is to be used for authentication of endpoints that contact Cisco ISE over the EAP protocol. Also check this box if certificate is used to trust a Syslog server. Make sure to have keyCertSign bit asserted under KeyUsage extension for this certificate.</br> <b>Note:</b> \"trustForClientAuth\" can be set true only if \"trustForIseAuth\" has been set true.</td> </tr> <tr> <td>Certificate based admin authentication</td> <td>Use <b>\"trustForCertificateBasedAdminAuth\":true</b> if the certificate is used for trust within Cisco ISE, such as for secure communication between Cisco ISE nodes</br> <b>Note:</b> \"trustForCertificateBasedAdminAuth\" can be set true only if \"trustForIseAuth\" and \"trustForClientAuth\" are true.</td></td> </tr> <tr> <td>Authentication of Cisco Services</td> <td> Use <b>\"trustForCiscoServicesAuth\":true</b> if the certificate is to be used for trusting external Cisco services, such as Feed Service.</td> </tr> </tbody> </table> <table class=\"certTable\"> <thead> <tr> <th>OCSP Configuration</th> <th>Usage</th> </tr> </thead> <tbody> <tr> <td>Validation against OCSP service</td> <td>Use <b>\"enableOCSPValidation\":true</b> to validate the certificate against OCSP service mentioned in the field <b>selectedOCSPService</b>.</td> </tr> <tr> <td>OCSP Service name</td> <td>Use <b>\"selectedOCSPService\":\"Name of OCSP Service\"</b> to mention the OCSP service name against which the certificate should be validated.</br> <b>Note:</b> <b>selectedOCSPService</b> value is used if <b>enableOCSPValidation</b> has been set true.</td> </tr> <tr> <td>Reject the request if OCSP returns UNKNOWN status</td> <td>Use <b>\"rejectIfNoStatusFromOCSP\":true</b> to reject the certificate if the OCSP service returns UNKNOWN status.</br> <b>Note:</b> <b>\"rejectIfNoStatusFromOCSP\":true</b> can be used only if the parameter <b>enableOCSPValidation</b> has been set true.</td> </tr> <tr> <td>Reject the request if OCSP Responder is unreachable</td> <td> Use <b>\"rejectIfUnreachableFromOCSP\":true</b> to reject the certificate if the OCSP service is unreachable.</br> <b>Note:</b> <b>\"rejectIfUnreachableFromOCSP\":true</b> can be used only if <b>enableOCSPValidation</b> has been set true.</td> </tr> </tbody> </table> <table class=\"certTable\"> <thead> <tr> <th>Certificate Revocation List Configuration</th> <th>Usage</th> </tr> </thead> <tbody> <tr> <td>Validation against CRL</td> <td>Use <b>\"downloadCRL\":true</b> to validate the certificate against CRL downloaded from URL mentioned in the field <b>crlDistributionUrl</b></td> </tr> <tr> <td>CRL distribution url</td> <td>Use <b>\"crlDistributionUrl\"</b> to specify the URL from where the CRL should be downloaded</br> <b>Note:</b> \"crlDistributionUrl\" value is used if \"downloadCRL\" has been set true.</td> </tr> <tr> <td>Retrieve CRL time</td> <td>Use <b>\"automaticCRLUpdate\":true</b>, <b>automaticCRLUpdatePeriod</b>, and <b>automaticCRLUpdatePeriod</b> to set the time before which CRL is automatically retrieved prior to expiration</br> Use <b>nonAutomaticCRLUpdatePeriod</b> and <b>nonAutomaticCRLUpdateUnits</b> to set the time period for CRL retrieval in loop.<br> <b>Note:</b> All the above fields can be used only if <b>\"downloadCRL\"</b> has been set true.</td> </tr> <tr> <td>If download fails</td> <td>Use <b>\"crlDownloadFailureRetries\" and \"crlDownloadFailureRetriesUnits\"</b> to set retry time period if CRL download fails</br> <b>Note:</b><b>crlDownloadFailureRetries</b> and <b>crlDownloadFailureRetriesUnits</b> can be used only if <b>downloadCRL</b> has been set true.</td> </tr> <tr> <td>Enable Server Identity Check</td> <td>Use <b>\"enableServerIdentityCheck\":true</b> to verify that HTTPS or LDAPS server certificate name fits the configured server URL</br> <b>Note:</b><b>\"enableServerIdentityCheck\":true</b> can be used only if <b>downloadCRL</b> has been set true.</td> </tr> <tr> <td>Bypass CRL Verification if CRL is not Received</td> <td>Use <b>\"authenticateBeforeCRLReceived\":true</b> to bypass CRL Verification if CRL is not Received</br> <b>Note:</b><b>\"authenticateBeforeCRLReceived\":true can be used only if <b>downloadCRL</b> has been set true.</td> </tr> <tr> <td>Ignore that CRL is not yet valid or has expired</td> <td> Use <b>\"ignoreCRLExpiration\":true</b> to ignore if CRL is not yet valid or expired</br> <b>Note:</b><b>\"ignoreCRLExpiration\":true</b> can be used only if <b>downloadCRL</b> has been set true.</td> </tr> </tbody> </table> <br> <b>Note: </b>boolean properties accept integers values as well, with 0 considered as false and other values being considered as true ",
+        "operationId": "updateTrustedCertificate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the trust certificate",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTrustCertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update Trust Certificate Successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateTrustCertRespPayload"
+                }
+              }
+            }
+          },
+          "201": { "description": "Created" },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateTrustCertRespPayload"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" },
+          "422": {
+            "description": "Unprocessable entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateTrustCertRespPayload"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      },
+      "delete": {
+        "tags": ["Certificates"],
+        "summary": "Delete a trusted certificate based on a given ID",
+        "description": "This API deletes a Trust Certificate from Trusted Certificate Store based on a given ID.",
+        "operationId": "deleteTrustedCertificateById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Trusted Certificate to be deleted",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted Trusted Certificate of the given ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteTrustedCertRespPayload"
+                }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad request while deleting the trusted cert.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": {
+            "description": "Trusted Certificate with given ID is not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "description": "Basic authorization",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "BindCSRRequest": {
+        "title": "BindCSRRequest",
+        "required": [
+          "allowExtendedValidity",
+          "allowOutOfDateCert",
+          "allowReplacementOfCertificates",
+          "allowReplacementOfPortalGroupTag",
+          "data",
+          "hostName",
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "admin": {
+            "type": "boolean",
+            "description": " Use certificate to authenticate the Cisco ISE Admin Portal",
+            "example": false
+          },
+          "allowExtendedValidity": {
+            "type": "boolean",
+            "description": "Allow import of certificates with validity greater than 398 days ",
+            "example": true
+          },
+          "allowOutOfDateCert": {
+            "type": "boolean",
+            "description": "Allow out of date certificates ",
+            "example": true
+          },
+          "allowReplacementOfCertificates": {
+            "type": "boolean",
+            "description": "Allow Replacement of certificates ",
+            "example": true
+          },
+          "allowReplacementOfPortalGroupTag": {
+            "type": "boolean",
+            "description": "Allow Replacement of Portal Group Tag ",
+            "example": true
+          },
+          "data": {
+            "type": "string",
+            "description": "Signed certificate data ",
+            "example": "Plain-text contents of the signed certificate file."
+          },
+          "eap": {
+            "type": "boolean",
+            "description": "Use certificate for EAP protocols that use SSL/TLS tunneling",
+            "example": false
+          },
+          "hostName": {
+            "type": "string",
+            "description": "Name of Host whose CSR ID has been provided ",
+            "example": "Host Name"
+          },
+          "id": {
+            "type": "string",
+            "description": "ID of the generated CSR ",
+            "example": "CSR ID"
+          },
+          "ims": {
+            "type": "boolean",
+            "description": "Use certificate for the Cisco ISE Messaging Service",
+            "example": false
+          },
+          "name": {
+            "type": "string",
+            "description": "Friendly Name of the certificate",
+            "example": "CA Signed Certificate"
+          },
+          "portal": {
+            "type": "boolean",
+            "description": "Use for portal",
+            "example": false
+          },
+          "portalGroupTag": {
+            "type": "string",
+            "description": "Set Group tag",
+            "example": "Default Portal Certificate Group"
+          },
+          "pxgrid": {
+            "type": "boolean",
+            "description": "Use certificate for the pxGrid Controller",
+            "example": false
+          },
+          "radius": {
+            "type": "boolean",
+            "description": "Use certificate for the RADSec server",
+            "example": false
+          },
+          "saml": {
+            "type": "boolean",
+            "description": "Use certificate for SAML Signing",
+            "example": false
+          },
+          "validateCertificateExtensions": {
+            "type": "boolean",
+            "description": "Validate Certificate Extensions",
+            "example": false
+          }
+        }
+      },
+      "BindCSRRespPayload": {
+        "title": "BindCSRRespPayload",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/BindCSRResponse"
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "BindCSRResponse": {
+        "title": "BindCSRResponse",
+        "type": "object",
+        "properties": {
+          "message": { "type": "string"},
+          "status": {
+            "type": "string",
+            "description": "Response status after import"
+          }
+        }
+      },
+      "CSRByIdResponse": {
+        "title": "CSRByIdResponse",
+        "type": "object",
+        "properties": {
+          "csrContents": {
+            "type": "string",
+            "description": "Contents of the certificate file."
+          },
+          "friendlyName": {
+            "type": "string",
+            "description": "Friendly name of the certificate."
+          },
+          "groupTag": {
+            "type": "string",
+            "description": "GroupTag of the certificate."
+          },
+          "hostName": {
+            "type": "string",
+            "description": "Hostname or IP address of the Cisco ISE node."
+          },
+          "id": {
+            "type": "string",
+            "description": "ID of the certificate."
+          },
+          "keySize": {
+            "type": "string",
+            "description": "Size of the cryptographic key used."
+          },
+          "link": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "signatureAlgorithm": {
+            "type": "string",
+            "description": "Algorithm used for encrypting CSR"
+          },
+          "subject": {
+            "type": "string",
+            "description": "Subject of the certificate. Includes Common Name (CN), Organizational Unit (OU), etc."
+          },
+          "timeStamp": {
+            "type": "string",
+            "description": "Timestamp of the certificate generation."
+          },
+          "usedFor": {
+            "type": "string",
+            "description": "Services for which the certificate is used for (for eg- MGMT, GENERIC)."
+          }
+        }
+      },
+      "CSRGetAllRsp": {
+        "title": "CSRGetAllRsp",
+        "type": "object",
+        "properties": {
+          "nextPage": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "previousPage": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "response": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CSRResponse"
+            }
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "CSRGetByIdRsp": {
+        "title": "CSRGetByIdRsp",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/CSRByIdResponse"
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "CSRRequest": {
+        "title": "CSRRequest",
+        "required": ["digestType", "keyLength", "keyType", "usedFor"],
+        "type": "object",
+        "properties": {
+          "allowWildCardCert": {
+            "type": "boolean",
+            "example": false
+          },
+          "certificatePolicies": { "type": "string"},
+          "digestType": {
+            "type": "string",
+            "enum": ["SHA-256", "SHA-384", "SHA-512"]
+          },
+          "hostnames": {
+            "type": "array",
+            "items": { "type": "string"}
+          },
+          "keyLength": {
+            "type": "string",
+            "enum": ["1024", "2048", "4096", "512"]
+          },
+          "keyType": {
+            "type": "string",
+            "enum": ["ECDSA", "RSA"]
+          },
+          "portalGroupTag": { "type": "string"},
+          "sanDNS": {
+            "type": "array",
+            "items": { "type": "string"}
+          },
+          "sanDir": {
+            "type": "array",
+            "items": { "type": "string"}
+          },
+          "sanIP": {
+            "type": "array",
+            "items": { "type": "string"}
+          },
+          "sanURI": {
+            "type": "array",
+            "items": { "type": "string"}
+          },
+          "subjectCity": { "type": "string"},
+          "subjectCommonName": {
+            "type": "string",
+            "example": "$FQDN$"
+          },
+          "subjectCountry": { "type": "string"},
+          "subjectOrg": { "type": "string"},
+          "subjectOrgUnit": { "type": "string"},
+          "subjectState": { "type": "string"},
+          "usedFor": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "DTLS-AUTH",
+              "EAP-AUTH",
+              "IMS",
+              "MULTI-USE",
+              "PORTAL",
+              "PXGRID",
+              "SAML"
+            ]
+          }
+        }
+      },
+      "CSRResponse": {
+        "title": "CSRResponse",
+        "type": "object",
+        "properties": {
+          "friendlyName": {
+            "type": "string",
+            "description": "Friendly name of the certificate."
+          },
+          "groupTag": {
+            "type": "string",
+            "description": "GroupTag of the certificate."
+          },
+          "hostName": {
+            "type": "string",
+            "description": "Hostname or IP address of the Cisco ISE node."
+          },
+          "id": {
+            "type": "string",
+            "description": "ID of the certificate."
+          },
+          "keySize": {
+            "type": "string",
+            "description": "Size of the cryptographic key used."
+          },
+          "link": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "signatureAlgorithm": {
+            "type": "string",
+            "description": "Algorithm used for encrypting CSR"
+          },
+          "subject": {
+            "type": "string",
+            "description": "Subject of the certificate. Includes Common Name (CN), Organizational Unit (OU), etc."
+          },
+          "timeStamp": {
+            "type": "string",
+            "description": "Timestamp of the certificate generation."
+          },
+          "usedFor": {
+            "type": "string",
+            "description": "Services for which the certificate is used for (for eg- MGMT, GENERIC)."
+          }
+        }
+      },
+      "DeleteCSRRespPayload": {
+        "title": "DeleteCSRRespPayload",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/DeleteCSRResponse"
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "DeleteCSRResponse": {
+        "title": "DeleteCSRResponse",
+        "type": "object",
+        "properties": {
+          "message": { "type": "string"}
+        }
+      },
+      "DeleteSystemCertRequest": {
+        "title": "DeleteSystemCertRequest",
+        "type": "object",
+        "properties": {
+          "allowWildcardDelete": {
+            "type": "boolean",
+            "description": "If the given certificate to be deleted is a wildcard certificate, the corresponding certificate gets deleted on the rest of the nodes in the deployment as well.",
+            "example": false
+          }
+        }
+      },
+      "DeleteSystemCertRespPayload": {
+        "title": "DeleteSystemCertRespPayload",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/DeleteSystemCertResponse"
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "DeleteSystemCertResponse": {
+        "title": "DeleteSystemCertResponse",
+        "type": "object",
+        "properties": {
+          "message": { "type": "string"}
+        }
+      },
+      "DeleteTrustedCertRespPayload": {
+        "title": "DeleteTrustedCertRespPayload",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/DeleteTrustedCertResponse"
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "DeleteTrustedCertResponse": {
+        "title": "DeleteTrustedCertResponse",
+        "type": "object",
+        "properties": {
+          "message": { "type": "string"}
+        }
+      },
+      "Error": {
+        "title": "Error",
+        "required": ["message", "status"],
+        "type": "object",
+        "properties": {
+          "message": { "type": "string"},
+          "status": { "type": "string"}
+        }
+      },
+      "ExportCSRFailRespPayload": {
+        "title": "ExportCSRFailRespPayload",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/ExportCSRFailResponse"
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "ExportCSRFailResponse": {
+        "title": "ExportCSRFailResponse",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message on failure of export CSR"
+          }
+        }
+      },
+      "ExportCertRequest": {
+        "title": "ExportCertRequest",
+        "required": ["export", "id"],
+        "type": "object",
+        "properties": {
+          "export": {
+            "type": "string",
+            "enum": ["CERTIFICATE", "CERTIFICATE_WITH_PRIVATE_KEY"]
+          },
+          "hostName": {
+            "type": "string",
+            "description": "Hostname of the Cisco ISE node in which self-signed certificate should be generated.",
+            "example": "ise-node-001"
+          },
+          "id": {
+            "type": "string",
+            "example": "CERT-ID"
+          },
+          "password": {
+            "type": "string",
+            "example": "password"
+          }
+        }
+      },
+      "GenerateCSRRespPayload": {
+        "title": "GenerateCSRRespPayload",
+        "type": "object",
+        "properties": {
+          "response": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GenerateCSRResponse"
+            }
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "GenerateCSRResponse": {
+        "title": "GenerateCSRResponse",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the generated CSR"
+          },
+          "link": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message on generation of CSR"
+          }
+        }
+      },
+      "GenerateIntermediateCACsrRespPayload": {
+        "title": "GenerateIntermediateCACsrRespPayload",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/GenerateCSRResponse"
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "GenerateSelfSignedCertResponse": {
+        "title": "GenerateSelfSignedCertResponse",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the generated self-signed system certificate"
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message on generation of self-signed system certificate"
+          },
+          "status": {
+            "type": "string",
+            "description": "HTTP response status after import"
+          }
+        }
+      },
+      "GenerateSelfsignedCertRequest": {
+        "title": "GenerateSelfsignedCertRequest",
+        "required": [
+          "allowExtendedValidity",
+          "allowPortalTagTransferForSameSubject",
+          "allowReplacementOfCertificates",
+          "allowReplacementOfPortalGroupTag",
+          "allowRoleTransferForSameSubject",
+          "allowSanDnsBadName",
+          "allowSanDnsNonResolvable",
+          "digestType",
+          "expirationTTL",
+          "expirationTTLUnit",
+          "hostName",
+          "keyLength",
+          "keyType"
+        ],
+        "type": "object",
+        "properties": {
+          "admin": {
+            "type": "boolean",
+            "description": "Use certificate to authenticate the Cisco ISE Admin Portal",
+            "example": false
+          },
+          "allowExtendedValidity": {
+            "type": "boolean",
+            "description": "Allow generation of self-signed certificate with validity greater than 398 days",
+            "example": true
+          },
+          "allowPortalTagTransferForSameSubject": {
+            "type": "boolean",
+            "description": "Allow overwriting the portal tag from matching certificate of same subject",
+            "example": true
+          },
+          "allowReplacementOfCertificates": {
+            "type": "boolean",
+            "description": "Allow Replacement of certificates",
+            "example": true
+          },
+          "allowReplacementOfPortalGroupTag": {
+            "type": "boolean",
+            "description": "Allow Replacement of Portal Group Tag",
+            "example": true
+          },
+          "allowRoleTransferForSameSubject": {
+            "type": "boolean",
+            "description": "Allow transfer of roles for certificate with matching subject",
+            "example": true
+          },
+          "allowSanDnsBadName": {
+            "type": "boolean",
+            "description": "Allow usage of SAN DNS Bad name",
+            "example": true
+          },
+          "allowSanDnsNonResolvable": {
+            "type": "boolean",
+            "description": "Allow use of non resolvable Common Name or SAN Values",
+            "example": true
+          },
+          "allowWildCardCertificates": {
+            "type": "boolean",
+            "description": "Allow Wildcard Certificates",
+            "example": false
+          },
+          "certificatePolicies": {
+            "type": "string",
+            "description": "Certificate Policies"
+          },
+          "digestType": {
+            "type": "string",
+            "description": "Digest to sign with",
+            "example": "SHA-384",
+            "enum": ["SHA-256", "SHA-384", "SHA-512"]
+          },
+          "eap": {
+            "type": "boolean",
+            "description": "Use certificate for EAP protocols that use SSL/TLS tunneling",
+            "example": false
+          },
+          "expirationTTL": {
+            "type": "integer",
+            "description": "Certificate expiration value",
+            "format": "int32",
+            "example": 2
+          },
+          "expirationTTLUnit": {
+            "type": "string",
+            "description": "Certificate expiration unit",
+            "example": "years",
+            "enum": ["days", "months", "weeks", "years"]
+          },
+          "hostName": {
+            "type": "string",
+            "description": "Hostname of the Cisco ISE node in which self-signed certificate should be generated.",
+            "example": "ise-node-001"
+          },
+          "keyLength": {
+            "type": "string",
+            "description": "Bit size of public key",
+            "example": "4096",
+            "enum": ["1024", "2048", "4096", "512"]
+          },
+          "keyType": {
+            "type": "string",
+            "description": "Algorithm to use for certificate public key creation",
+            "example": "RSA",
+            "enum": ["ECDSA", "RSA"]
+          },
+          "name": {
+            "type": "string",
+            "description": "Friendly name of the certificate.",
+            "example": "Self-Signed System Certificate"
+          },
+          "portal": {
+            "type": "boolean",
+            "description": "Use for portal",
+            "example": false
+          },
+          "portalGroupTag": {
+            "type": "string",
+            "description": "Set Group tag",
+            "example": "Default Portal Certificate Group"
+          },
+          "pxgrid": {
+            "type": "boolean",
+            "description": "Use certificate for the pxGrid Controller",
+            "example": false
+          },
+          "radius": {
+            "type": "boolean",
+            "description": "Use certificate for the RADSec server",
+            "example": false
+          },
+          "saml": {
+            "type": "boolean",
+            "description": "Use certificate for SAML Signing",
+            "example": false
+          },
+          "sanDNS": {
+            "type": "array",
+            "description": "Array of SAN (Subject Alternative Name) DNS entries",
+            "items": { "type": "string"}
+          },
+          "sanIP": {
+            "type": "array",
+            "description": "Array of SAN IP entries",
+            "items": { "type": "string"}
+          },
+          "sanURI": {
+            "type": "array",
+            "description": "Array of SAN URI entries",
+            "items": { "type": "string"}
+          },
+          "subjectCity": {
+            "type": "string",
+            "description": "Certificate city or locality (L)"
+          },
+          "subjectCommonName": {
+            "type": "string",
+            "description": "Certificate common name (CN)",
+            "example": "$FQDN$"
+          },
+          "subjectCountry": {
+            "type": "string",
+            "description": "Certificate country (C)"
+          },
+          "subjectOrg": {
+            "type": "string",
+            "description": "Certificate organization (O)"
+          },
+          "subjectOrgUnit": {
+            "type": "string",
+            "description": "Certificate organizational unit (OU)"
+          },
+          "subjectState": {
+            "type": "string",
+            "description": "Certificate state (ST)"
+          }
+        }
+      },
+      "GenerateSelfsignedCertRespPayload": {
+        "title": "GenerateSelfsignedCertRespPayload",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/GenerateSelfSignedCertResponse"
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "ImportCertResponse": {
+        "title": "ImportCertResponse",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the imported trust certificate"
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message on import of system or trust certificate"
+          },
+          "status": {
+            "type": "string",
+            "description": "HTTP response status after import"
+          }
+        }
+      },
+      "ImportSystemCertRespPayload": {
+        "title": "ImportSystemCertRespPayload",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/ImportCertResponse"
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "ImportTrustCertRespPayload": {
+        "title": "ImportTrustCertRespPayload",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/ImportCertResponse"
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "InputStream": {
+        "title": "InputStream",
+        "type": "object"
+      },
+      "Link": {
+        "title": "Link",
+        "type": "object",
+        "properties": {
+          "href": { "type": "string"},
+          "rel": {
+            "type": "string",
+            "enum": ["next", "previous", "self", "status"]
+          },
+          "type": { "type": "string"}
+        }
+      },
+      "RegenerateRootCA": {
+        "title": "RegenerateRootCA",
+        "required": ["removeExistingISEIntermediateCSR"],
+        "type": "object",
+        "properties": {
+          "removeExistingISEIntermediateCSR": {
+            "type": "boolean",
+            "description": "Setting this attribute to true removes existing Cisco ISE Intermediate CSR",
+            "example": false
+          }
+        }
+      },
+      "RegenerateRootCaRespPayload": {
+        "title": "RegenerateRootCaRespPayload",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/RegenerateRootCaResponse"
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "RegenerateRootCaResponse": {
+        "title": "RegenerateRootCaResponse",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID which can be used to track the status of Cisco ISE root CA chain regeneration"
+          },
+          "link": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "message": { "type": "string"}
+        }
+      },
+      "RenewCertRespPayload": {
+        "title": "RenewCertRespPayload",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/RenewCertResponse"
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "RenewCertResponse": {
+        "title": "RenewCertResponse",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID which can be used to track the status of certificate regeneration"
+          },
+          "link": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "message": { "type": "string"}
+        }
+      },
+      "RenewCertificates": {
+        "title": "RenewCertificates",
+        "required": ["certType"],
+        "type": "object",
+        "properties": {
+          "certType": {
+            "type": "string",
+            "enum": ["IMS", "OCSP"]
+          }
+        }
+      },
+      "Resource": {
+        "title": "Resource",
+        "type": "object",
+        "properties": {
+          "description": { "type": "string"},
+          "file": {
+            "type": "string",
+            "format": "binary"
+          },
+          "filename": { "type": "string"},
+          "inputStream": {
+            "$ref": "#/components/schemas/InputStream"
+          },
+          "open": { "type": "boolean"},
+          "readable": { "type": "boolean"},
+          "uri": { "type": "string", "format": "uri"},
+          "url": { "type": "string", "format": "url"}
+        }
+      },
+      "SystemCert": {
+        "title": "SystemCert",
+        "required": [
+          "allowExtendedValidity",
+          "allowOutOfDateCert",
+          "allowPortalTagTransferForSameSubject",
+          "allowReplacementOfCertificates",
+          "allowReplacementOfPortalGroupTag",
+          "allowRoleTransferForSameSubject",
+          "allowSHA1Certificates",
+          "data",
+          "privateKeyData"
+        ],
+        "type": "object",
+        "properties": {
+          "admin": {
+            "type": "boolean",
+            "description": "Use certificate to authenticate the Cisco ISE Admin Portal",
+            "example": false
+          },
+          "allowExtendedValidity": {
+            "type": "boolean",
+            "description": "Allow import of certificates with validity greater than 398 days ",
+            "example": true
+          },
+          "allowOutOfDateCert": {
+            "type": "boolean",
+            "description": "Allow out of date certificates ",
+            "example": true
+          },
+          "allowPortalTagTransferForSameSubject": {
+            "type": "boolean",
+            "description": "Allow overwriting the portal tag from matching certificate of same subject",
+            "example": true
+          },
+          "allowReplacementOfCertificates": {
+            "type": "boolean",
+            "description": "Allow Replacement of certificates ",
+            "example": true
+          },
+          "allowReplacementOfPortalGroupTag": {
+            "type": "boolean",
+            "description": "Allow Replacement of Portal Group Tag ",
+            "example": true
+          },
+          "allowRoleTransferForSameSubject": {
+            "type": "boolean",
+            "description": "Allow transfer of roles for certificate with matching subject ",
+            "example": true
+          },
+          "allowSHA1Certificates": {
+            "type": "boolean",
+            "description": "Allow SHA1 based certificates ",
+            "example": true
+          },
+          "allowWildCardCertificates": {
+            "type": "boolean",
+            "description": "Allow Wildcard certificates",
+            "example": false
+          },
+          "data": {
+            "type": "string",
+            "description": "Certificate Content ",
+            "example": "Plain-text contents of the certificate file."
+          },
+          "eap": {
+            "type": "boolean",
+            "description": "Use certificate for EAP protocols that use SSL/TLS tunneling",
+            "example": false
+          },
+          "ims": {
+            "type": "boolean",
+            "description": "Use certificate for the Cisco ISE Messaging Service",
+            "example": false
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the certificate",
+            "example": "System Certificate"
+          },
+          "password": {
+            "type": "string",
+            "description": "Certificate Password .",
+            "example": "Certificate Password"
+          },
+          "portal": {
+            "type": "boolean",
+            "description": "Use for portal",
+            "example": false
+          },
+          "portalGroupTag": {
+            "type": "string",
+            "description": "Set Group tag",
+            "example": "Default Portal Certificate Group"
+          },
+          "privateKeyData": {
+            "type": "string",
+            "description": "Private Key data ",
+            "example": "Plain-text contents of the certificate private key file."
+          },
+          "pxgrid": {
+            "type": "boolean",
+            "description": "Use certificate for the pxGrid Controller",
+            "example": false
+          },
+          "radius": {
+            "type": "boolean",
+            "description": "Use certificate for the RADSec server",
+            "example": false
+          },
+          "saml": {
+            "type": "boolean",
+            "description": "Use certificate for SAML Signing",
+            "example": false
+          },
+          "validateCertificateExtensions": {
+            "type": "boolean",
+            "description": "Validate certificate extensions",
+            "example": false
+          }
+        }
+      },
+      "SystemCertGetAllRsp": {
+        "title": "SystemCertGetAllRsp",
+        "type": "object",
+        "properties": {
+          "nextPage": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "previousPage": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "response": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SystemCertificateResponse"
+            }
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "SystemCertGetByIdRsp": {
+        "title": "SystemCertGetByIdRsp",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/SystemCertificateResponse"
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "SystemCertificateResponse": {
+        "title": "SystemCertificateResponse",
+        "type": "object",
+        "properties": {
+          "expirationDate": {
+            "type": "string",
+            "description": "Time and date past which the certificate is no longer valid"
+          },
+          "friendlyName": {
+            "type": "string",
+            "description": "Friendly name of system certificate"
+          },
+          "groupTag": { "type": "string"},
+          "id": {
+            "type": "string",
+            "description": "ID of system certificate"
+          },
+          "issuedBy": {
+            "type": "string",
+            "description": "Common Name of the certificate issuer"
+          },
+          "issuedTo": {
+            "type": "string",
+            "description": "Common Name of the certificate subject"
+          },
+          "keySize": {
+            "type": "integer",
+            "description": "Length of the key used for encrypting system certificate",
+            "format": "int32"
+          },
+          "link": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "portalsUsingTheTag": { "type": "string"},
+          "selfSigned": {
+            "type": "boolean",
+            "example": false
+          },
+          "serialNumberDecimalFormat": {
+            "type": "string",
+            "description": "Used to uniquely identify the certificate within a CA's systems"
+          },
+          "sha256Fingerprint": { "type": "string"},
+          "signatureAlgorithm": { "type": "string"},
+          "usedBy": { "type": "string"},
+          "validFrom": {
+            "type": "string",
+            "description": "Time and date on which the certificate was created, also known as the Not Before certificate attribute"
+          }
+        }
+      },
+      "TrustCert": {
+        "title": "TrustCert",
+        "required": [
+          "allowBasicConstraintCAFalse",
+          "allowOutOfDateCert",
+          "allowSHA1Certificates",
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "allowBasicConstraintCAFalse": {
+            "type": "boolean",
+            "description": "Allow certificates with Basic Constraints CA Field as False ",
+            "example": true
+          },
+          "allowOutOfDateCert": {
+            "type": "boolean",
+            "description": "Allow out of date certificates ",
+            "example": true
+          },
+          "allowSHA1Certificates": {
+            "type": "boolean",
+            "description": "Allow SHA1 based certificates ",
+            "example": true
+          },
+          "data": {
+            "type": "string",
+            "description": "Certificate content ",
+            "example": "Plain-text contents of the certificate file."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the certificate",
+            "example": "Imported Trust Certificate"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the certificate",
+            "example": "Trust Certificate"
+          },
+          "trustForCertificateBasedAdminAuth": {
+            "type": "boolean",
+            "description": "Trust for Certificate based Admin authentication",
+            "example": false
+          },
+          "trustForCiscoServicesAuth": {
+            "type": "boolean",
+            "description": "Trust for authentication of Cisco Services",
+            "example": false
+          },
+          "trustForClientAuth": {
+            "type": "boolean",
+            "description": "Trust for client authentication and Syslog",
+            "example": false
+          },
+          "trustForIseAuth": {
+            "type": "boolean",
+            "description": "Trust for authentication within Cisco ISE",
+            "example": false
+          },
+          "validateCertificateExtensions": {
+            "type": "boolean",
+            "description": "Validate trust certificate extension",
+            "example": false
+          }
+        }
+      },
+      "TrustCertGetAllRsp": {
+        "title": "TrustCertGetAllRsp",
+        "type": "object",
+        "properties": {
+          "nextPage": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "previousPage": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "response": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrustCertificateResponse"
+            }
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "TrustCertGetByIdRsp": {
+        "title": "TrustCertGetByIdRsp",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/TrustCertificateGetByIdResponse"
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "TrustCertificateGetByIdResponse": {
+        "title": "TrustCertificateGetByIdResponse",
+        "type": "object",
+        "properties": {
+          "authenticateBeforeCRLReceived": {
+            "type": "string",
+            "description": "Switch to enable or disable authentication before receiving CRL"
+          },
+          "automaticCRLUpdate": {
+            "type": "string",
+            "description": "Switch to enable or disable automatic CRL update"
+          },
+          "automaticCRLUpdatePeriod": {
+            "type": "string",
+            "description": "Automatic CRL update period"
+          },
+          "automaticCRLUpdateUnits": {
+            "type": "string",
+            "description": "Unit of time of automatic CRL update"
+          },
+          "crlDistributionUrl": {
+            "type": "string",
+            "description": "CRL Distribution URL"
+          },
+          "crlDownloadFailureRetries": {
+            "type": "string",
+            "description": "If CRL download fails, wait time before retry"
+          },
+          "crlDownloadFailureRetriesUnits": {
+            "type": "string",
+            "description": "Unit of time before retry if CRL download fails"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of trust certificate"
+          },
+          "downloadCRL": {
+            "type": "string",
+            "description": "Switch to enable or disable download of CRL"
+          },
+          "enableOCSPValidation": {
+            "type": "string",
+            "description": "Switch to enable or disable OCSP Validation"
+          },
+          "enableServerIdentityCheck": {
+            "type": "string",
+            "description": "Switch to enable or disable Server Identity Check"
+          },
+          "expirationDate": {
+            "type": "string",
+            "description": "The time and date past which the certificate is no longer valid"
+          },
+          "friendlyName": {
+            "type": "string",
+            "description": "Friendly name of trust certificate"
+          },
+          "id": {
+            "type": "string",
+            "description": "ID of trust certificate"
+          },
+          "ignoreCRLExpiration": {
+            "type": "string",
+            "description": "Switch to enable or disable ignore CRL Expiration"
+          },
+          "internalCA": {
+            "type": "boolean",
+            "example": false
+          },
+          "isReferredInPolicy": {
+            "type": "boolean",
+            "example": false
+          },
+          "issuedBy": {
+            "type": "string",
+            "description": "The entity that verified the information and signed the certificate"
+          },
+          "issuedTo": {
+            "type": "string",
+            "description": "Entity to which trust certificate is issued"
+          },
+          "keySize": {
+            "type": "string",
+            "description": "Length of the key used for encrypting trust certificate"
+          },
+          "link": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "nonAutomaticCRLUpdatePeriod": {
+            "type": "string",
+            "description": "Non automatic CRL update period"
+          },
+          "nonAutomaticCRLUpdateUnits": {
+            "type": "string",
+            "description": "Unit of time of non automatic CRL update"
+          },
+          "rejectIfNoStatusFromOCSP": {
+            "type": "string",
+            "description": "Switch to reject certificate if there is no status from OCSP"
+          },
+          "rejectIfUnreachableFromOCSP": {
+            "type": "string",
+            "description": "Switch to reject certificate if unreachable from OCSP"
+          },
+          "selectedOCSPService": {
+            "type": "string",
+            "description": "Name of selected OCSP Service"
+          },
+          "serialNumberDecimalFormat": {
+            "type": "string",
+            "description": "Used to uniquely identify the certificate within a CA's systems"
+          },
+          "sha256Fingerprint": { "type": "string"},
+          "signatureAlgorithm": {
+            "type": "string",
+            "description": "Algorithm used for encrypting trust certificate"
+          },
+          "status": { "type": "string"},
+          "subject": {
+            "type": "string",
+            "description": "The Subject or entity with which public key of trust certificate is associated"
+          },
+          "trustedFor": {
+            "type": "string",
+            "description": "Different services for which the certificated is trusted"
+          },
+          "validFrom": {
+            "type": "string",
+            "description": "The earliest time and date on which the certificate is valid"
+          }
+        }
+      },
+      "TrustCertificateResponse": {
+        "title": "TrustCertificateResponse",
+        "type": "object",
+        "properties": {
+          "authenticateBeforeCRLReceived": {
+            "type": "string",
+            "description": "Switch to enable or disable authentication before receiving CRL"
+          },
+          "automaticCRLUpdate": {
+            "type": "string",
+            "description": "Switch to enable or disable automatic CRL update"
+          },
+          "automaticCRLUpdatePeriod": {
+            "type": "string",
+            "description": "Automatic CRL update period"
+          },
+          "automaticCRLUpdateUnits": {
+            "type": "string",
+            "description": "Unit of time of automatic CRL update"
+          },
+          "crlDistributionUrl": {
+            "type": "string",
+            "description": "CRL Distribution URL"
+          },
+          "crlDownloadFailureRetries": {
+            "type": "string",
+            "description": "If CRL download fails, wait time before retry"
+          },
+          "crlDownloadFailureRetriesUnits": {
+            "type": "string",
+            "description": "Unit of time before retry if CRL download fails"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of trust certificate"
+          },
+          "downloadCRL": {
+            "type": "string",
+            "description": "Switch to enable or disable download of CRL"
+          },
+          "enableOCSPValidation": {
+            "type": "string",
+            "description": "Switch to enable or disable OCSP Validation"
+          },
+          "enableServerIdentityCheck": {
+            "type": "string",
+            "description": "Switch to enable or disable Server Identity Check"
+          },
+          "expirationDate": {
+            "type": "string",
+            "description": "The time and date past which the certificate is no longer valid"
+          },
+          "friendlyName": {
+            "type": "string",
+            "description": "Friendly name of trust certificate"
+          },
+          "id": {
+            "type": "string",
+            "description": "ID of trust certificate"
+          },
+          "ignoreCRLExpiration": {
+            "type": "string",
+            "description": "Switch to enable or disable ignore CRL Expiration"
+          },
+          "internalCA": {
+            "type": "boolean",
+            "example": false
+          },
+          "issuedBy": {
+            "type": "string",
+            "description": "The entity that verified the information and signed the certificate"
+          },
+          "issuedTo": {
+            "type": "string",
+            "description": "Entity to which trust certificate is issued"
+          },
+          "keySize": {
+            "type": "string",
+            "description": "Length of the key used for encrypting trust certificate"
+          },
+          "link": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "nonAutomaticCRLUpdatePeriod": {
+            "type": "string",
+            "description": "Non automatic CRL update period"
+          },
+          "nonAutomaticCRLUpdateUnits": {
+            "type": "string",
+            "description": "Unit of time of non automatic CRL update"
+          },
+          "rejectIfNoStatusFromOCSP": {
+            "type": "string",
+            "description": "Switch to reject certificate if there is no status from OCSP"
+          },
+          "rejectIfUnreachableFromOCSP": {
+            "type": "string",
+            "description": "Switch to reject certificate if unreachable from OCSP"
+          },
+          "selectedOCSPService": {
+            "type": "string",
+            "description": "Name of selected OCSP Service"
+          },
+          "serialNumberDecimalFormat": {
+            "type": "string",
+            "description": "Used to uniquely identify the certificate within a CA's systems"
+          },
+          "sha256Fingerprint": { "type": "string"},
+          "signatureAlgorithm": {
+            "type": "string",
+            "description": "Algorithm used for encrypting trust certificate"
+          },
+          "status": { "type": "string"},
+          "subject": {
+            "type": "string",
+            "description": "The Subject or entity with which public key of trust certificate is associated"
+          },
+          "trustedFor": {
+            "type": "string",
+            "description": "Different services for which the certificated is trusted"
+          },
+          "validFrom": {
+            "type": "string",
+            "description": "The earliest time and date on which the certificate is valid"
+          }
+        }
+      },
+      "UpdateSystemCertRequest": {
+        "title": "UpdateSystemCertRequest",
+        "required": [
+          "allowPortalTagTransferForSameSubject",
+          "allowReplacementOfPortalGroupTag",
+          "allowRoleTransferForSameSubject"
+        ],
+        "type": "object",
+        "properties": {
+          "admin": {
+            "type": "boolean",
+            "description": "Use certificate to authenticate the Cisco ISE Admin Portal",
+            "example": false
+          },
+          "allowPortalTagTransferForSameSubject": {
+            "type": "boolean",
+            "description": "Allow overwriting the portal tag from matching certificate of same subject",
+            "example": true
+          },
+          "allowReplacementOfPortalGroupTag": {
+            "type": "boolean",
+            "description": "Allow Replacement of Portal Group Tag ",
+            "example": true
+          },
+          "allowRoleTransferForSameSubject": {
+            "type": "boolean",
+            "description": "Allow transfer of roles for certificate with matching subject ",
+            "example": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of System Certificate",
+            "example": "Description of certificate"
+          },
+          "eap": {
+            "type": "boolean",
+            "description": "Use certificate for EAP protocols that use SSL/TLS tunneling",
+            "example": false
+          },
+          "expirationTTLPeriod": {
+            "type": "integer",
+            "format": "int32",
+            "example": 36
+          },
+          "expirationTTLUnits": {
+            "type": "string",
+            "enum": ["days", "months", "weeks", "years"]
+          },
+          "ims": {
+            "type": "boolean",
+            "description": "Use certificate for the Cisco ISE Messaging Service",
+            "example": false
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the certificate",
+            "example": "System Certificate"
+          },
+          "portal": {
+            "type": "boolean",
+            "description": "Use for portal",
+            "example": false
+          },
+          "portalGroupTag": {
+            "type": "string",
+            "description": "Set Group tag",
+            "example": "Default Portal Certificate Group"
+          },
+          "pxgrid": {
+            "type": "boolean",
+            "description": "Use certificate for the pxGrid Controller",
+            "example": false
+          },
+          "radius": {
+            "type": "boolean",
+            "description": "Use certificate for the RADSec server",
+            "example": false
+          },
+          "renewSelfSignedCertificate": {
+            "type": "boolean",
+            "description": "Renew Self-signed Certificate",
+            "example": false
+          },
+          "saml": {
+            "type": "boolean",
+            "description": "Use certificate for SAML Signing",
+            "example": false
+          }
+        }
+      },
+      "UpdateSystemCertRespPayload": {
+        "title": "UpdateSystemCertRespPayload",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/UpdateSystemCertResponse"
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "UpdateSystemCertResponse": {
+        "title": "UpdateSystemCertResponse",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the imported trust certificate"
+          },
+          "link": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message on import of system or trust certificate"
+          },
+          "status": {
+            "type": "string",
+            "description": "HTTP response status after import"
+          }
+        }
+      },
+      "UpdateTrustCertRequest": {
+        "title": "UpdateTrustCertRequest",
+        "required": ["name"],
+        "type": "object",
+        "properties": {
+          "authenticateBeforeCRLReceived": {
+            "type": "boolean",
+            "description": "Switch to enable or disable CRL verification if CRL is not received",
+            "example": false
+          },
+          "automaticCRLUpdate": {
+            "type": "boolean",
+            "description": "Switch to enable or disable automatic CRL update",
+            "example": false
+          },
+          "automaticCRLUpdatePeriod": {
+            "type": "integer",
+            "description": "Automatic CRL update period",
+            "format": "int32",
+            "example": 5
+          },
+          "automaticCRLUpdateUnits": {
+            "type": "string",
+            "description": "Unit of time for automatic CRL update",
+            "example": "Minutes",
+            "enum": ["Days", "Hours", "Minutes", "Weeks"]
+          },
+          "crlDistributionUrl": {
+            "type": "string",
+            "description": "CRL Distribution URL"
+          },
+          "crlDownloadFailureRetries": {
+            "type": "integer",
+            "description": "If CRL download fails, wait time before retry",
+            "format": "int32",
+            "example": 10
+          },
+          "crlDownloadFailureRetriesUnits": {
+            "type": "string",
+            "description": "Unit of time before retry if CRL download fails",
+            "example": "Minutes",
+            "enum": ["Days", "Hours", "Minutes", "Weeks"]
+          },
+          "description": {
+            "type": "string",
+            "description": "Description for trust certificate"
+          },
+          "downloadCRL": {
+            "type": "boolean",
+            "description": "Switch to enable or disable download of CRL",
+            "example": false
+          },
+          "enableOCSPValidation": {
+            "type": "boolean",
+            "description": "Switch to enable or disable OCSP Validation",
+            "example": false
+          },
+          "enableServerIdentityCheck": {
+            "type": "boolean",
+            "description": "Switch to enable or disable verification if HTTPS or LDAP server certificate name fits the configured server URL",
+            "example": false
+          },
+          "ignoreCRLExpiration": {
+            "type": "boolean",
+            "description": "Switch to enable or disable ignore CRL expiration",
+            "example": false
+          },
+          "name": {
+            "type": "string",
+            "description": "Friendly name of the certificate",
+            "example": "Trust Certificate"
+          },
+          "nonAutomaticCRLUpdatePeriod": {
+            "type": "integer",
+            "description": "Non automatic CRL update period",
+            "format": "int32",
+            "example": 1
+          },
+          "nonAutomaticCRLUpdateUnits": {
+            "type": "string",
+            "description": "Unit of time of non automatic CRL update",
+            "example": "Hours",
+            "enum": ["Days", "Hours", "Minutes", "Weeks"]
+          },
+          "rejectIfNoStatusFromOCSP": {
+            "type": "boolean",
+            "description": "Switch to reject certificate if there is no status from OCSP",
+            "example": false
+          },
+          "rejectIfUnreachableFromOCSP": {
+            "type": "boolean",
+            "description": "Switch to reject certificate if unreachable from OCSP",
+            "example": false
+          },
+          "selectedOCSPService": {
+            "type": "string",
+            "description": "Name of selected OCSP Service"
+          },
+          "status": {
+            "type": "string",
+            "example": "Enabled",
+            "enum": ["Disabled", "Enabled"]
+          },
+          "trustForCertificateBasedAdminAuth": {
+            "type": "boolean",
+            "description": "Trust for Certificate based Admin authentication",
+            "example": false
+          },
+          "trustForCiscoServicesAuth": {
+            "type": "boolean",
+            "description": "Trust for authentication of Cisco Services",
+            "example": false
+          },
+          "trustForClientAuth": {
+            "type": "boolean",
+            "description": "Trust for client authentication and Syslog",
+            "example": false
+          },
+          "trustForIseAuth": {
+            "type": "boolean",
+            "description": "Trust for authentication within Cisco ISE",
+            "example": false
+          }
+        }
+      },
+      "UpdateTrustCertRespPayload": {
+        "title": "UpdateTrustCertRespPayload",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/UpdateTrustCertResponse"
+          },
+          "version": { "type": "string"}
+        }
+      },
+      "UpdateTrustCertResponse": {
+        "title": "UpdateTrustCertResponse",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the trust certificate"
+          },
+          "link": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message on successful update of trust certificate"
+          }
+        }
+      }
+    }
+  }
+}

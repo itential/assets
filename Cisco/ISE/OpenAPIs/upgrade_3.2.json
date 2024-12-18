@@ -1,0 +1,1014 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Cisco ISE Upgrade",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://example:443",
+      "description": "Inferred Url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "prepare-api-controller",
+      "description": "the prepare API"
+    },
+    {
+      "name": "proceed-api-controller",
+      "description": "the proceed API"
+    },
+    {
+      "name": "stage-api-controller",
+      "description": "the stage API"
+    },
+    {
+      "name": "summary-api-controller",
+      "description": "the summary API"
+    }
+  ],
+  "paths": {
+    "/api/v1/upgrade/prepare/get-status": {
+      "get": {
+        "tags": ["full upgrade"],
+        "summary": "gets status of pre-checks",
+        "description": "get the latest precheck report ",
+        "operationId": "getPrecheckStatus",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "request Id, will return in the response headers, and appear in logs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "preCheckReportID",
+            "in": "query",
+            "description": "preCheckReportID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "preCheckID",
+            "in": "query",
+            "description": "preCheckID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpgradePrecheckResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid reportId. Please provide valid reportId",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/upgrade/prepare/pre-checks": {
+      "post": {
+        "tags": ["full upgrade"],
+        "summary": "API's to initiate pre-checks execution on PPAN",
+        "description": "API's purpose is to initiate pre-checks execution on PPAN ",
+        "operationId": "runPreChecksInPPAN",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "request Id, will return in the response headers, and appear in logs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrecheckRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpgradeTaskResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "202": {
+            "description": "Prechecks initiated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpgradeTaskResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input. Please provide valid inputs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/upgrade/proceed/get-status": {
+      "get": {
+        "tags": ["full upgrade"],
+        "summary": "get the status of upgrade proceed process",
+        "description": "get the status of upgrade process for the requested nodes ",
+        "operationId": "proceedStatus",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "request Id, will return in the response headers, and appear in logs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "preCheckReportID",
+            "in": "query",
+            "description": "preCheckReportID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpgradeProceed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/upgrade/proceed/initiate-upgrade": {
+      "post": {
+        "tags": ["full upgrade"],
+        "summary": "API's purpose would be to orchestrate upgrade execution on PPAN",
+        "description": "API's purpose would be to orchestrate upgrade execution on PPAN ",
+        "operationId": "initiateUpgradeOnPPAN",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "request Id, will return in the response headers, and appear in logs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpgradeProceedRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpgradeTaskResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "202": {
+            "description": "Upgrade initiated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpgradeTaskResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unable to trigger upgrade , check error response for more details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/upgrade/stage/cancel-stage": {
+      "post": {
+        "tags": ["full upgrade"],
+        "summary": "API to cancel staging process from PPAN",
+        "description": "API to cancel staging process of specified nodes from PPAN ",
+        "operationId": "cancelStagingOnPPAN",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "request Id, will return in the response headers, and appear in logs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelStageRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpgradeTaskResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "202": {
+            "description": "Staging termination task initiated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpgradeTaskResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/upgrade/stage/get-status": {
+      "get": {
+        "tags": ["full upgrade"],
+        "summary": "get the status a particular upgrade stage process",
+        "description": "get the status of upgrade stage process for the requested nodes ",
+        "operationId": "stageStatus",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "request Id, will return in the response headers, and appear in logs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "preCheckReportID",
+            "in": "query",
+            "description": "preCheckReportID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpgradeListStage"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/upgrade/stage/start-stage": {
+      "post": {
+        "tags": ["full upgrade"],
+        "summary": "API to initiate staging orcheastration from PPAN",
+        "description": "API to initiate staging orcheastration from PPAN ",
+        "operationId": "initiateStagingOnPPAN",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "request Id, will return in the response headers, and appear in logs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StageRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpgradeTaskResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "202": {
+            "description": "Staging initiated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpgradeTaskResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/upgrade/summary/get-status": {
+      "get": {
+        "tags": ["full upgrade"],
+        "summary": "get the summary of upgrade process",
+        "description": "get the summary of upgrade process ",
+        "operationId": "upgradeSummary",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "request Id, will return in the response headers, and appear in logs",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpgradeProceed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "description": "Basic authorization",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "CancelStageRequest": {
+        "title": "CancelStageRequest",
+        "type": "object",
+        "properties": {
+          "hostnames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "preCheckReportID": {
+            "type": "string",
+            "example": "f2b7ba4b-6692-48f4-aec8-8681ce651a57"
+          },
+          "upgradeType": {
+            "type": "string",
+            "example": "FULL_UPGRADE or SPLIT_UPGRADE"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "title": "ErrorResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/Message"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "ListNode": {
+        "title": "ListNode",
+        "type": "object",
+        "properties": {
+          "msg": {
+            "type": "string",
+            "example": "repository precheck passed"
+          },
+          "name": {
+            "type": "string",
+            "example": "ise1.sn.test"
+          },
+          "status": {
+            "type": "string",
+            "example": "Success"
+          }
+        }
+      },
+      "ListNodeProceed": {
+        "title": "ListNodeProceed",
+        "type": "object",
+        "properties": {
+          "dbStatus": {
+            "type": "string",
+            "example": "UPGRADE_EXEC_COMPLETED"
+          },
+          "message": {
+            "type": "string",
+            "example": "Upgrade completed successfully"
+          },
+          "node": {
+            "type": "string",
+            "example": "ise1.sn.test"
+          },
+          "percentage": {
+            "type": "integer",
+            "format": "int32",
+            "example": 100
+          },
+          "progressMsg": {
+            "type": "string",
+            "example": "Upgrade completed successfully"
+          },
+          "status": {
+            "type": "string",
+            "example": "passed"
+          },
+          "upgradeTime": {
+            "type": "integer",
+            "format": "int32",
+            "example": 127
+          }
+        }
+      },
+      "Message": {
+        "title": "Message",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Repository (repo_name) does not exist. Please configure the repository from ISE UI to proceed"
+          }
+        }
+      },
+      "PrecheckRequest": {
+        "title": "PrecheckRequest",
+        "type": "object",
+        "properties": {
+          "bundleName": {
+            "type": "string",
+            "example": "ise-upgradebundle-2.6.x-3.0.x-to-3.1.0.486.NOT_FOR_RELEASE.x86_64.tar.gz"
+          },
+          "hostnames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "patchBundleName": {
+            "type": "string",
+            "example": "ise-patchbundle-2.6.0.156-Patch1-20061206.SPA.x86_64.tar.gz"
+          },
+          "preCheckReportID": {
+            "type": "string",
+            "example": "50bc7f99-057a-4d9f-aec4-20b7d4b89846"
+          },
+          "preChecks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reTrigger": {
+            "type": "boolean",
+            "example": false
+          },
+          "repoName": {
+            "type": "string",
+            "example": "repo_name"
+          },
+          "upgradeType": {
+            "type": "string",
+            "example": "FULL_UPGRADE or SPLIT_UPGRADE"
+          }
+        }
+      },
+      "PrecheckType": {
+        "title": "PrecheckType",
+        "type": "object",
+        "properties": {
+          "checkType": {
+            "type": "string",
+            "example": "local"
+          },
+          "displayname": {
+            "type": "string",
+            "example": "Repository Validation"
+          },
+          "executionTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "message": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "example": "REPOSITORY_CHECK"
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListNode"
+            }
+          },
+          "onFailure": {
+            "type": "string",
+            "example": "fail"
+          },
+          "percentage": {
+            "type": "integer",
+            "format": "int32",
+            "example": 100
+          },
+          "remediationMsg": {
+            "type": "string",
+            "example": "Repository validation failed. Check if repository configuration is correct and manually validate from UI in Repository page or in CLI using, show repository"
+          },
+          "status": {
+            "type": "string",
+            "example": "Success"
+          },
+          "successMsg": {
+            "type": "string",
+            "example": "Repository for bundle is validated successfully"
+          },
+          "successNodes": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "updateTime": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1631513275877
+          }
+        }
+      },
+      "StageRequest": {
+        "title": "StageRequest",
+        "type": "object",
+        "properties": {
+          "hostnames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "preCheckReportID": {
+            "type": "string",
+            "example": "f2b7ba4b-6692-48f4-aec8-8681ce651a57"
+          },
+          "reTrigger": {
+            "type": "boolean",
+            "example": false
+          },
+          "upgradeType": {
+            "type": "string",
+            "example": "FULL_UPGRADE or SPLIT_UPGRADE"
+          }
+        }
+      },
+      "TaskIdResponse": {
+        "title": "TaskIdResponse",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Upgrade task has been initiated."
+          },
+          "preCheckReportID": {
+            "type": "string",
+            "description": "ID which can be used to track the status of upgrade task.",
+            "example": "c4aa1432-be06-bf27-11eb-c208a1714b90"
+          }
+        }
+      },
+      "UpgradeListStage": {
+        "title": "UpgradeListStage",
+        "type": "object",
+        "properties": {
+          "response": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UpgradeStage"
+            }
+          }
+        }
+      },
+      "UpgradePrecheckResponse": {
+        "title": "UpgradePrecheckResponse",
+        "type": "object",
+        "properties": {
+          "isValid": {
+            "type": "boolean",
+            "example": false
+          },
+          "nodecount": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "preCheckReportID": {
+            "type": "string",
+            "example": "f2b7ba4b-6692-48f4-aec8-8681ce651a57"
+          },
+          "preChecks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrecheckType"
+            }
+          },
+          "status": {
+            "type": "string",
+            "example": "valid"
+          }
+        }
+      },
+      "UpgradeProceed": {
+        "title": "UpgradeProceed",
+        "type": "object",
+        "properties": {
+          "nodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListNodeProceed"
+            }
+          },
+          "percentage": {
+            "type": "integer",
+            "format": "int32",
+            "example": 100
+          },
+          "remainingUpgradeTime": {
+            "type": "integer",
+            "format": "int32",
+            "example": 0
+          },
+          "status": {
+            "type": "string",
+            "example": "success"
+          }
+        }
+      },
+      "UpgradeProceedRequest": {
+        "title": "UpgradeProceedRequest",
+        "required": ["preCheckReportID", "upgradeType"],
+        "type": "object",
+        "properties": {
+          "hostnames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "preCheckReportID": {
+            "type": "string",
+            "example": "f2b7ba4b-6692-48f4-aec8-8681ce651a57"
+          },
+          "upgradeType": {
+            "type": "string",
+            "example": "FULL_UPGRADE or SPLIT_UPGRADE"
+          }
+        }
+      },
+      "UpgradeStage": {
+        "title": "UpgradeStage",
+        "type": "object",
+        "properties": {
+          "dbStatus": {
+            "type": "string",
+            "example": "UPGRADE_STAGING_COMPLETED"
+          },
+          "message": {
+            "type": "string",
+            "example": "Config Files Backup $ Copy Upgrade DB dump"
+          },
+          "node": {
+            "type": "string",
+            "example": "ise1.sn.test"
+          },
+          "percentage": {
+            "type": "integer",
+            "format": "int32",
+            "example": 100
+          },
+          "progressMsg": {
+            "type": "string",
+            "example": "Config files backed up successfully"
+          },
+          "status": {
+            "type": "string",
+            "example": "passed"
+          }
+        }
+      },
+      "UpgradeTaskResponse": {
+        "title": "UpgradeTaskResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/TaskIdResponse"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      }
+    }
+  }
+}

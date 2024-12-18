@@ -1,0 +1,638 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Cisco ISE Endpoints",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://example:443",
+      "description": "Inferred Url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "endpoint-api-controller",
+      "description": "the endpoint API"
+    },
+    {
+      "name": "endpoint-task-api-controller",
+      "description": "the endpointTask API"
+    }
+  ],
+  "paths": {
+    "/api/v1/endpoint": {
+      "get": {
+        "tags": ["endpoints"],
+        "summary": "Get all endpoints",
+        "operationId": "list_1",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Number of objects returned per page",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "sort type - asc or desc",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "sort column by which objects needs to be sorted",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "<div> <style type=\"text/css\" scoped> .apiServiceTable td, .apiServiceTable th { padding: 5px 10px !important; text-align: left; } </style> <span> <b>Simple filtering</b> should be available through the filter query string parameter. The structure of a filter is a triplet of field operator and value separated with dots. More than one filter can be sent. The logical operator common to ALL filter criteria will be by default AND, and can be changed by using the <i>\"filterType=or\"</i> query string parameter. Each resource Data model description should specify if an attribute is a filtered field. </span> <br /> <table class=\"apiServiceTable\"> <thead> <tr> <th>OPERATOR</th> <th>DESCRIPTION</th> </tr> </thead> <tbody> <tr> <td>EQ</td> <td>Equals</td> </tr> <tr> <td>NEQ</td> <td>Not Equals</td> </tr> <tr> <td>GT</td> <td>Greater Than</td> </tr> <tr> <td>LT</td> <td>Less Then</td> </tr> <tr> <td>STARTSW</td> <td>Starts With</td> </tr> <tr> <td>NSTARTSW</td> <td>Not Starts With</td> </tr> <tr> <td>ENDSW</td> <td>Ends With</td> </tr> <tr> <td>NENDSW</td> <td>Not Ends With</td> </tr> <tr> <td>CONTAINS</td> <td>Contains</td> </tr> <tr> <td>NCONTAINS</td> <td>Not Contains</td> </tr> </tbody> </table> </div>",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filterType",
+            "in": "query",
+            "description": "The logical operator common to ALL filter criteria will be by default AND, and can be changed by using the parameter",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": ["AND", "OR"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A paged array of endpoints",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OpenAPIEndpoint"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request for this specified resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "post": {
+        "tags": ["endpoints"],
+        "summary": "Create Endpoint",
+        "operationId": "createEndPoint",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenAPIEndpoint"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Added endpoint successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/v1/endpoint/bulk": {
+      "put": {
+        "tags": ["endpoints"],
+        "summary": "Update Endpoint in bulk",
+        "operationId": "updateBulkEndPoints",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/OpenAPIEndpoint"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated bulk endpoints successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "post": {
+        "tags": ["endpoints"],
+        "summary": "Create Endpoint in bulk",
+        "operationId": "createBulkEndPoints",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/OpenAPIEndpoint"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Added bulk endpoints successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["endpoints"],
+        "summary": "Delete Endpoint in bulk",
+        "operationId": "deleteBulkEndPoints",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkEndpoints"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Delete bulk endpoints successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/v1/endpoint/deviceType/summary": {
+      "get": {
+        "tags": ["endpoints"],
+        "summary": "Get aggregate of device types",
+        "operationId": "getDeviceTypeSummary",
+        "responses": {
+          "200": {
+            "description": "List of devicetypes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DeviceTypeEntry"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request for this specified resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/v1/endpoint/{value}": {
+      "get": {
+        "tags": ["endpoints"],
+        "summary": "Get endpoint by id or MAC",
+        "operationId": "get_1",
+        "parameters": [
+          {
+            "name": "value",
+            "in": "path",
+            "description": "The id or MAC of the endpoint",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Expected response to a valid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenAPIEndpoint"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["endpoints"],
+        "summary": "Update Endpoint by id or mac",
+        "operationId": "updateEndpoint",
+        "parameters": [
+          {
+            "name": "value",
+            "in": "path",
+            "description": "The id or MAC of the endpoint",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenAPIEndpoint"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated endpoint successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenAPIEndpoint"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Endpoint not found."
+          }
+        }
+      },
+      "delete": {
+        "tags": ["endpoints"],
+        "summary": "Delete endpoint by id or mac",
+        "operationId": "deleteEndpoint",
+        "parameters": [
+          {
+            "name": "value",
+            "in": "path",
+            "description": "The id or MAC of the endpoint",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "endpoint deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Endpoint not found."
+          }
+        }
+      }
+    },
+    "/api/v1/endpointTask": {
+      "post": {
+        "tags": ["endpoints"],
+        "summary": "Create Endpoint task",
+        "operationId": "createEndPointTask",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenAPIEndpoint"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Endpoint task successfully submitted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "description": "Basic authorization",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "BulkEndpoints": {
+        "title": "BulkEndpoints",
+        "type": "object",
+        "properties": {
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "DeviceTypeEntry": {
+        "title": "DeviceTypeEntry",
+        "type": "object",
+        "properties": {
+          "deviceType": {
+            "type": "string"
+          },
+          "total": {
+            "type": "string"
+          }
+        }
+      },
+      "Error": {
+        "title": "Error",
+        "required": ["code", "message"],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "OpenAPIEndpoint": {
+        "title": "OpenAPIEndpoint",
+        "required": ["mac"],
+        "type": "object",
+        "properties": {
+          "connectedLinks": {
+            "type": "object"
+          },
+          "customAttributes": {
+            "type": "object"
+          },
+          "description": {
+            "type": "string"
+          },
+          "deviceType": {
+            "type": "string"
+          },
+          "groupId": {
+            "type": "string"
+          },
+          "hardwareRevision": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "identityStore": {
+            "type": "string"
+          },
+          "identityStoreId": {
+            "type": "string"
+          },
+          "ipAddress": {
+            "type": "string"
+          },
+          "mac": {
+            "type": "string"
+          },
+          "mdmAttributes": {
+            "type": "object"
+          },
+          "name": {
+            "type": "string"
+          },
+          "portalUser": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "profileId": {
+            "type": "string"
+          },
+          "protocol": {
+            "type": "string"
+          },
+          "serialNumber": {
+            "type": "string"
+          },
+          "softwareRevision": {
+            "type": "string"
+          },
+          "staticGroupAssignment": {
+            "type": "boolean",
+            "example": false
+          },
+          "staticProfileAssignment": {
+            "type": "boolean",
+            "example": false
+          },
+          "vendor": {
+            "type": "string"
+          }
+        }
+      },
+      "TaskResponse": {
+        "title": "TaskResponse",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

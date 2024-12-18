@@ -1,0 +1,606 @@
+{
+  "openapi": "3.0.3",
+  "info": { "title": "Cisco ISE Patch", "version": "1.0.0" },
+  "servers": [
+    { "url": "https://example:443", "description": "Inferred Url" }
+  ],
+  "tags": [
+    { "name": "hotpatch-api-controller", "description": "the hotpatch API" },
+    { "name": "patch-api-controller", "description": "the patch API" }
+  ],
+  "paths": {
+    "/api/v1/hotpatch": {
+      "get": {
+        "tags": ["Patching"],
+        "summary": "List installed hot patches",
+        "description": "List all the installed hot patches in the system. ",
+        "operationId": "listInstalledHotpatches",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "The request ID header consists of the request ID which is returned in the response headers and also appears in the API service logs.",
+            "required": false,
+            "schema": { "type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HotpatchListResponse"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/hotpatch/install": {
+      "post": {
+        "tags": ["Patching"],
+        "summary": "Trigger hotpatch installation on Cisco ISE node.",
+        "description": "Triggers hot patch installation on the Cisco ISE node. A task ID is returned which  can be used to monitor the progress of the hot patch installation process.  As hot patch installation triggers the Cisco ISE to restart, the task API becomes  unavailable for a certain period of time. ",
+        "operationId": "installHotpatch",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "The request ID header consists of the request ID which is returned in the response headers and also appears in the API service logs.",
+            "required": false,
+            "schema": { "type": "string"}
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HotpatchInstallRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchTaskResponse"
+                }
+              }
+            }
+          },
+          "201": { "description": "Created" },
+          "202": {
+            "description": "Hotpatch installation triggered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchTaskResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input. A valid hotpatch name and repository name should be provided as query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" },
+          "409": {
+            "description": "Conflict in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/hotpatch/rollback": {
+      "post": {
+        "tags": ["Patching"],
+        "summary": "Rollback hotpatch from the Cisco ISE node.",
+        "description": "Triggers hot patch rollback on the Cisco ISE node. A task ID is returned which  can be used to monitor the progress of the hot patch rollback process.  As hot patch rollback triggers the Cisco ISE to restart, the task API becomes  unavailable for a certain period of time. ",
+        "operationId": "rollbackHotpatch",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "The request ID header consists of the request ID which is returned in the response headers and also appears in the API service logs.",
+            "required": false,
+            "schema": { "type": "string"}
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HotpatchRollbackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchTaskResponse"
+                }
+              }
+            }
+          },
+          "201": { "description": "Created" },
+          "202": {
+            "description": "Hotpatch rollback triggered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchTaskResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input. A valid rollback hotpatch name and repository name should be provided as query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" },
+          "409": {
+            "description": "Conflict in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/patch": {
+      "get": {
+        "tags": ["Patching"],
+        "summary": "List installed patches",
+        "description": "List all the installed patches in the system, with the patch number for rollback. ",
+        "operationId": "listInstalledPatches",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "The request ID header consists of the request ID which is returned in the response headers and also appears in the API service logs.",
+            "required": false,
+            "schema": { "type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchListResponse"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/patch/install": {
+      "post": {
+        "tags": ["Patching"],
+        "summary": "Trigger patch installation on the Cisco ISE node.",
+        "description": "Triggers patch installation on the Cisco ISE node. A task ID is returned which can be used to monitor the progress of the patch installation process. As the patch   installation triggers the Cisco ISE to restart, the task API becomes unavailable for  a certain period of time. ",
+        "operationId": "installPatch",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "The request ID header consists of the request ID which is returned in the response headers and also appears in the API service logs.",
+            "required": false,
+            "schema": { "type": "string"}
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchInstallRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchTaskResponse"
+                }
+              }
+            }
+          },
+          "201": { "description": "Created" },
+          "202": {
+            "description": "Patch installation triggered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchTaskResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input. A valid patch name and repository name should be provided as query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" },
+          "409": {
+            "description": "Conflict in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    },
+    "/api/v1/patch/rollback": {
+      "post": {
+        "tags": ["Patching"],
+        "summary": "Removes patch from the Cisco ISE node.",
+        "description": "Triggers patch rollback on the Cisco ISE node. A task ID is returned which can be used to monitor the progress of the patch rollback process. As the patch   rollback triggers the Cisco ISE to restart, the task API becomes unavailable for  a certain period of time. ",
+        "operationId": "rollbackPatch",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "The request ID header consists of the request ID which is returned in the response headers and also appears in the API service logs.",
+            "required": false,
+            "schema": { "type": "string"}
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchRollbackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchTaskResponse"
+                }
+              }
+            }
+          },
+          "201": { "description": "Created" },
+          "202": {
+            "description": "Patch rollback triggered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchTaskResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input. A valid patch number must be provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" },
+          "409": {
+            "description": "Conflict in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "BasicAuth": [] }]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "description": "Basic authorization",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "ErrorResponse": {
+        "title": "ErrorResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/Message"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "Hotpatch": {
+        "title": "Hotpatch",
+        "type": "object",
+        "properties": {
+          "hotpatchName": { "type": "string"},
+          "installDate": { "type": "string"}
+        }
+      },
+      "HotpatchInstallRequest": {
+        "title": "HotpatchInstallRequest",
+        "required": ["hotpatchName", "repositoryName"],
+        "type": "object",
+        "properties": {
+          "hotpatchName": {
+            "type": "string",
+            "example": "ise-apply-CSCxx99999_3.1.0.518_patch1-SPA.tar.gz"
+          },
+          "isDirectoryListed": {
+            "type": "boolean",
+            "example": true
+          },
+          "repositoryName": {
+            "type": "string",
+            "example": "repo_name"
+          }
+        }
+      },
+      "HotpatchListResponse": {
+        "title": "HotpatchListResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hotpatch"
+            }
+          }
+        }
+      },
+      "HotpatchRollbackRequest": {
+        "title": "HotpatchRollbackRequest",
+        "required": ["hotpatchName", "repositoryName"],
+        "type": "object",
+        "properties": {
+          "hotpatchName": {
+            "type": "string",
+            "example": "ise-rollback-CSCxx99999_3.1.0.518_patch1-SPA.tar.gz"
+          },
+          "isDirectoryListed": {
+            "type": "boolean",
+            "example": true
+          },
+          "repositoryName": {
+            "type": "string",
+            "example": "repo_name"
+          }
+        }
+      },
+      "Message": {
+        "title": "Message",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Repository (repo_name) does not exist. Please configure the repository from Cisco ISE UI to proceed"
+          }
+        }
+      },
+      "Patch": {
+        "title": "Patch",
+        "type": "object",
+        "properties": {
+          "installDate": { "type": "string"},
+          "patchNumber": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "PatchInstallRequest": {
+        "title": "PatchInstallRequest",
+        "required": ["patchName", "repositoryName"],
+        "type": "object",
+        "properties": {
+          "isDirectoryListed": {
+            "type": "boolean",
+            "example": true
+          },
+          "patchName": {
+            "type": "string",
+            "example": "ise-patchbundle-3.1.0.518-Patch1-21061111.SPA.x86_64.tar.gz"
+          },
+          "repositoryName": {
+            "type": "string",
+            "example": "repo_name"
+          }
+        }
+      },
+      "PatchListResponse": {
+        "title": "PatchListResponse",
+        "type": "object",
+        "properties": {
+          "iseVersion": { "type": "string"},
+          "patchVersion": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Patch"
+            }
+          }
+        }
+      },
+      "PatchRollbackRequest": {
+        "title": "PatchRollbackRequest",
+        "required": ["patchNumber"],
+        "type": "object",
+        "properties": {
+          "patchNumber": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          }
+        }
+      },
+      "PatchTaskResponse": {
+        "title": "PatchTaskResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/TaskIdResponse"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "TaskIdResponse": {
+        "title": "TaskIdResponse",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID which can be used to track the status of install / rollback of patch and hotpatch.",
+            "example": "a1714b90-be06-11eb-bf27-c208c4aa1432"
+          },
+          "message": {
+            "type": "string",
+            "example": "Patch install task has been initiated. Please use Task Service status API to get the status of the patch install job"
+          }
+        }
+      }
+    }
+  }
+}

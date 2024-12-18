@@ -1,0 +1,1399 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Cisco ISE IPSec",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://example:443",
+      "description": "Inferred Url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "ipsec-api-controller",
+      "description": "the ipsec API"
+    }
+  ],
+  "paths": {
+    "/api/v1/ipsec": {
+      "get": {
+        "tags": ["Native IPSec"],
+        "summary": "Get all IPSec enabled nodes",
+        "description": "<p style=\"font-size: 15px;\"> Returns all the IPSec enabled nodes with configuration details. </p><br/> <p style=\"font-size: 15px;\"> This API supports filtering, sorting and pagination. </p> <p style=\"font-size: 14px;\">The attributes that are suppported for filtering are: </p>   <ul style=\"font-size: 14px;\">       <li>hostName</li>       <li>nadIp</li>       <li>status</li>       <li>authType</li>       </ul>  <p style=\"font-size: 14px;\">The attribute that is suppported for sorting is: </p>    <ul style=\"font-size: 14px;\">       <li>hostName</li>       </ul> ",
+        "operationId": "getIpsecEnabledNodes",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Number of objects returned per page",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "<div> <style type=\"text/css\" scoped> .apiServiceTable td, .apiServiceTable th { padding: 5px 10px !important; text-align: left; } </style> <span> <b>Simple filtering</b> should be available through the filter query string parameter. The structure of a filter is a triplet of field operator and value separated with dots. More than one filter can be sent. The logical operator common to ALL filter criteria will be by default AND, and can be changed by using the <i>\"filterType=or\"</i> query string parameter. Each resource Data model description should specify if an attribute is a filtered field. </span> <br /> <br/> <table class=\"apiServiceTable\"> <thead> <tr> <th>OPERATOR</th> <th>DESCRIPTION</th> <th>APPLICABLE ON FIELDS<th> </tr> </thead> <tbody> <tr> <td>EQ</td> <td>Equals</td> <td>authType</td> </tr> <tr> <td>NEQ</td> <td>Not Equals</td> <td>authType</td> </tr> <tr> <td>EQ</td> <td>Equals</td> <td>hostName</td> </tr> <tr> <td>NEQ</td> <td>Not Equals</td> <td>hostName</td> </tr> <tr> <td>EQ</td> <td>Equals</td> <td>nadIp</td> </tr> <tr> <td>NEQ</td> <td>Not Equals</td> <td>nadIp</td> </tr> <tr> <td>EQ</td> <td>Equals</td> <td>status</td> </tr> <tr> <td>NEQ</td> <td>Not Equals</td> <td>status</td> </tr> </tbody> </table> </div>",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filterType",
+            "in": "query",
+            "description": "The logical operator common to ALL filter criteria will be by default AND, and can be changed by using the parameter",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": ["AND", "OR"]
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "sort type - asc or desc",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Sort column -  The IPSec enabled nodes are sorted based on the columns. This is applicable for the field - hostName.",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "IPSec enabled nodes retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IPSecGetAllResponsePayload"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request for this specified resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request was well-formed but was unable to be followed due to semantic errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["Native IPSec"],
+        "summary": "Update the configuration of an existing IPSec connection on a node",
+        "description": " <style type=\"text/css\" scoped> .certTable td , .certTable th { padding: 5px 10px !important; text-align: left;} </style> <h3>Updates the configuration of existing IPSec connection.</h3> The following parameters are present in the PUT request body:<br> <table class=\"IpsecTable\"> <thead> <tr> <th>PARAMETER</th> <th>DESCRIPTION</th> <th>EXAMPLE</th> </tr> </thead> <tbody> <tr> <td>id<sup><font color=red>*required</font></sup></td> <td>ID of the existing IPSec configuration.</td> <td>\"id\": \"7c9484cf-0ebc-47ad-a9ef-bc12729ed73b\"</td> </tr> <tr> <td>iface<sup><font color=red>*required</font></sup></td> <td>Ethernet port used for establishing connection</td> <td>\"iface\": \"0\"</td> </tr> <tr> <td>psk<sup><font color=red>*required</font></sup></td> <td>Pre-shared key used for establishing connection.</td> <td>\"psk\": \"psk12345\"</td> </tr> <tr> <td>authType<sup><font color=red>*required</font></sup></td> <td>Pre-shared key used for establishing connection.</td> <td>\"authType\": \"psk\"</td> </tr> <tr> <td>certId<sup><font color=red>*required</font></sup></td> <td>ID of the certificate for establishing connection.</td> <td>\"certId\": \"21323243545433\"</td> </tr> <tr> <td>phaseOneEncryptionAlgo<sup><font color=red>*required</font></sup></td> <td>Phase-one encryption algorithm used for establishing connection.</td> <td>\"phaseOneEncryptionAlgo\": \"aes\"</td> </tr> <tr> <td>phaseTwoEncryptionAlgo<sup><font color=red>*required</font></sup></td> <td>Phase-two encryption algorithm used for establishing connection.</td> <td>\"phaseTwoEncryptionAlgo\": \"aes\"</td> </tr> <tr> <td>espAhProtocol<sup><font color=red>*required</font></sup></td> <td>Encryption protocol used for establishing connection.</td> <td>\"espAhProtocol\": \"ah\"</td> </tr> <tr> <td>phaseOneHashAlgo<sup><font color=red>*required</font></sup></td> <td>Phase-one hashing algorithm used for establishing connection.</td> <td>\"phaseOneHashAlgo\": \"sha\"</td> </tr> <tr> <td>phaseTwoHashAlgo<sup><font color=red>*required</font></sup></td> <td>Phase-two hashing algorithm used for establishing connection.</td> <td>\"phaseTwoHashAlgo\": \"sha\"</td> </tr> <tr> <td>phaseOneDHGroup<sup><font color=red>*required</font></sup></td> <td>Phase-one DH group used for establishing connection.</td> <td>\"phaseOneDHGroup\": \"GROUP1\"</td> </tr> <tr> <td>phaseTwoDHGroup</td> <td>Phase-two DH group used for establishing connection.</td> <td>\"phaseTwoDHGroup\": \"GROUP1\"</td> </tr> <tr> <td>phaseOneLifeTime</td> <td>DH Phase-one connection lifetime.</td> <td>\"phaseOneLifeTime\": 14400</td> </tr> <tr> <td>phaseTwoLifeTime</td> <td>DH Phase-two connection lifetime.</td> <td>\"phaseTwoLifeTime\": 14400</td> </tr> <tr> <td>ikeVersion<sup><font color=red>*required</font></sup></td> <td>IKE version.</td> <td>\"ikeVersion\": \"1\"</td> </tr> <tr> <td>ikeReAuthTime</td> <td>IKE re-authentication time.</td> <td>\"ikeReAuthTime\": 86400</td> </tr> <tr> <td>nadIp<sup><font color=red>*required</font></sup></td> <td>NAD IP for establishing connection.</td> <td>\"nadIp\": \"1.1.1.1\"</td> </tr> <tr> <td>modeOption<sup><font color=red>*required</font></sup></td> <td>The Mode type used for establishing the connection.</td> <td>\"modeOption\": \"tunnel\"</td> </tr> </tbody> </table></br> <b>NOTE: </b> <p><b>psk </b>field is mandatory if authType=psk </br> <p><b>certId </b>field is mandatory if authType=x509 </p> <p>If FIPS mode is on.: </p> <ul style=\"font-size: 14px;\"> <li>Cannot choose DES or 3DES for Phase-one and Phase-two Encryption algorithms.</li> <li>PSK length must be 14 characters or more.</li> <li>DH Groups 1, 2, and 5 cannot be chosen for Phase-one and Phase-two fields.</li> </ul> <hr/> ",
+        "operationId": "updateIpsecConnectionConfig",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IPSecRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IPSecResponsePayload"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "202": {
+            "description": "The IPSec connection is re-initiated with the updated configuration.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IPSecResponsePayload"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request for this specified resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request was well-formed but was unable to be followed due to semantic errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["Native IPSec"],
+        "summary": "Create an IPSec connection on a node",
+        "description": " <style type=\"text/css\" scoped> .certTable td , .certTable th { padding: 5px 10px !important; text-align: left;} </style> <h3>Creates an IPSec connection.</h3> The following parameters are present in the POST request body:<br> <table class=\"IpsecTable\"> <thead> <tr> <th>PARAMETER</th> <th>DESCRIPTION</th> <th>EXAMPLE</th> </tr> </thead> <tbody> <tr> <td>hostName<sup><font color=red>*required</font></sup></td> <td>Hostname of the node for which IPSec should be enabled</td> <td>\"hostName\": \"ise-host1\"</td> </tr> <tr> <td>iface<sup><font color=red>*required</font></sup></td> <td>Ethernet port used for establishing connection</td> <td>\"iface\": \"0\"</td> </tr> <tr> <td>psk<sup><font color=red>*required</font></sup></td> <td>Pre-shared key used for establishing connection.</td> <td>\"psk\": \"psk12345\"</td> </tr> <tr> <td>authType<sup><font color=red>*required</font></sup></td> <td>Pre-shared key used for establishing connection.</td> <td>\"authType\": \"psk\"</td> </tr> <tr> <td>certId<sup><font color=red>*required</font></sup></td> <td>ID of the certificate for establishing connection.</td> <td>\"certId\": \"21323243545433\"</td> </tr> <tr> <td>phaseOneEncryptionAlgo<sup><font color=red>*required</font></sup></td> <td>Phase-one encryption algorithm used for establishing connection.</td> <td>\"phaseOneEncryptionAlgo\": \"aes\"</td> </tr> <tr> <td>phaseTwoEncryptionAlgo<sup><font color=red>*required</font></sup></td> <td>Phase-two encryption algorithm used for establishing connection.</td> <td>\"phaseTwoEncryptionAlgo\": \"aes\"</td> </tr> <tr> <td>espAhProtocol<sup><font color=red>*required</font></sup></td> <td>Encryption protocol used for establishing connection.</td> <td>\"espAhProtocol\": \"ah\"</td> </tr> <tr> <td>phaseOneHashAlgo<sup><font color=red>*required</font></sup></td> <td>Phase-one hashing algorithm used for establishing connection.</td> <td>\"phaseOneHashAlgo\": \"sha\"</td> </tr> <tr> <td>phaseTwoHashAlgo<sup><font color=red>*required</font></sup></td> <td>Phase-two hashing algorithm used for establishing connection.</td> <td>\"phaseTwoHashAlgo\": \"sha\"</td> </tr> <tr> <td>phaseOneDHGroup<sup><font color=red>*required</font></sup></td> <td>Phase-one DH group used for establishing connection.</td> <td>\"phaseOneDHGroup\": \"GROUP1\"</td> </tr> <tr> <td>phaseTwoDHGroup</td> <td>Phase-two DH group used for establishing connection.</td> <td>\"phaseTwoDHGroup\": \"GROUP1\"</td> </tr> <tr> <td>phaseOneLifeTime</td> <td>DH Phase-one connection lifetime.</td> <td>\"phaseOneLifeTime\": 14400</td> </tr> <tr> <td>phaseTwoLifeTime</td> <td>DH Phase-two connection lifetime.</td> <td>\"phaseTwoLifeTime\": 14400</td> </tr> <tr> <td>ikeVersion<sup><font color=red>*required</font></sup></td> <td>IKE version.</td> <td>\"ikeVersion\": \"1\"</td> </tr> <tr> <td>ikeReAuthTime</td> <td>IKE re-authentication time.</td> <td>\"ikeReAuthTime\": 86400</td> </tr> <tr> <td>nadIp<sup><font color=red>*required</font></sup></td> <td>NAD IP for establishing the connection.</td> <td>\"nadIp\": \"1.1.1.1\"</td> </tr> <tr> <td>modeOption<sup><font color=red>*required</font></sup></td> <td>The Mode type used for establishing the connection.</td> <td>\"modeOption\": \"tunnel\"</td> </tr> </tbody> </table></br> <b>NOTE: </b> <p><b>psk </b>field is mandatory if authType=psk </br> <p><b>certId </b>field is mandatory if authType=x509 </p> <p>If FIPS mode is on.: </p> <ul style=\"font-size: 14px;\"> <li>Cannot choose DES or 3DES for Phase-one and Phase-two Encryption algorithms.</li> <li>PSK length must be 14 characters or more.</li> <li>DH Groups 1, 2, and 5 cannot be chosen for Phase-one and Phase-two fields.</li> </ul> <hr/> ",
+        "operationId": "createIpsecConnection",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IPSecRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IPSecResponsePayload"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "202": {
+            "description": "The IPSec connection is initiated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IPSecResponsePayload"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request for this specified resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request was well-formed but was unable to be followed due to semantic errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/ipsec/bulk": {
+      "post": {
+        "tags": ["Native IPSec"],
+        "summary": "Create, update, disable, enable and remove IPSec connections in bulk",
+        "operationId": "bulkIPSecOperation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Operations"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task accepted ID can be used to track the task through the task API",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request for this specified resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "The request was well-formed but was unable to be followed due to semantic errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/ipsec/certificates": {
+      "get": {
+        "tags": ["Native IPSec"],
+        "summary": "Get all IPSec related certificates",
+        "description": "<p style=\"font-size: 15px;\"> Returns all the certificates for IPSec role. </p><br/> ",
+        "operationId": "getIPSecCertificates",
+        "responses": {
+          "200": {
+            "description": "IPSec certificates retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IPSecCertificateGetAllResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request for this specified resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request was well-formed but was unable to be followed due to semantic errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/ipsec/disable/{hostName}/{nadIp}": {
+      "put": {
+        "tags": ["Native IPSec"],
+        "summary": "Disable the IPSec connection on a node for a given hostname and NAD IP",
+        "description": "Disables an enabled IPSec node connection.",
+        "operationId": "disableIpsecConnection",
+        "parameters": [
+          {
+            "name": "hostName",
+            "in": "path",
+            "description": "Hostname of the deployed node.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "nadIp",
+            "in": "path",
+            "description": "IP address of the NAD.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "IPSec connection has been disabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisableResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request for this specified resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request was well-formed but was unable to be followed due to semantic errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/ipsec/enable/{hostName}/{nadIp}": {
+      "put": {
+        "tags": ["Native IPSec"],
+        "summary": "Enable the IPSec connection on a node for a given hostname and NAD IP",
+        "description": "Enables an disabled IPSec node connection.",
+        "operationId": "enableIpsecConnection",
+        "parameters": [
+          {
+            "name": "hostName",
+            "in": "path",
+            "description": "Hostname of the deployed node.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "nadIp",
+            "in": "path",
+            "description": "IP address of the NAD.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnableResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "202": {
+            "description": "Enabling of the IPSec connection initiated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnableResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request for this specified resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request was well-formed but was unable to be followed due to semantic errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/ipsec/{hostName}/{nadIp}": {
+      "get": {
+        "tags": ["Native IPSec"],
+        "summary": "Get the IPSec connection details for a given node with the hostname and the NAD IP",
+        "description": "Returns the IPSec configuration details of a given node with the hostname and the NAD IP.",
+        "operationId": "getIpsecNode",
+        "parameters": [
+          {
+            "name": "hostName",
+            "in": "path",
+            "description": "Hostname of the deployed node.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "nadIp",
+            "in": "path",
+            "description": "IP address of the NAD.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The IPSec connection configuration details are retrieved successfully for the given hostname and NAD IP.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IPSecResponsePayload"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request for this specified resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "The request was well-formed but was unable to be followed due to semantic errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["Native IPSec"],
+        "summary": "Remove the IPSec connection on a node for a given hostname and NAD IP",
+        "description": "Removes an enabled IPSec node connection.",
+        "operationId": "removeIpsecConnection",
+        "parameters": [
+          {
+            "name": "hostName",
+            "in": "path",
+            "description": "Hostname of the deployed node.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "nadIp",
+            "in": "path",
+            "description": "IP address of the NAD.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "IPSec connection for the given hostname and NAD IP has been removed successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemoveResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request for this specified resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request was well-formed but was unable to be followed due to semantic errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "description": "Basic authorization",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "DisableResponse": {
+        "title": "DisableResponse",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "IPSec connection for node with hostname: node-1, and nadIp: 1.1.1.1 has been disabled"
+          }
+        }
+      },
+      "EnableResponse": {
+        "title": "EnableResponse",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "IPSec connection is initiated for node with hostname: node-1, and nadIp: 1.1.1.1"
+          }
+        }
+      },
+      "Error": {
+        "title": "Error",
+        "required": ["code", "message"],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "IPSecCertificate": {
+        "title": "IPSecCertificate",
+        "type": "object",
+        "properties": {
+          "friendlyName": {
+            "type": "string",
+            "description": "Friendly name of system certificate"
+          },
+          "id": {
+            "type": "string",
+            "description": "ID of system certificate"
+          }
+        }
+      },
+      "IPSecCertificateGetAllResponse": {
+        "title": "IPSecCertificateGetAllResponse",
+        "type": "object",
+        "properties": {
+          "response": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IPSecCertificate"
+            }
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "IPSecConfig": {
+        "title": "IPSecConfig",
+        "type": "object",
+        "properties": {
+          "authType": {
+            "type": "string",
+            "description": "Authentication type for establishing connection",
+            "example": "psk",
+            "enum": ["psk", "x509"]
+          },
+          "certId": {
+            "type": "string",
+            "description": "ID of the certificate for establishing connection",
+            "example": "123243432"
+          },
+          "createTime": {
+            "type": "string"
+          },
+          "espAhProtocol": {
+            "type": "string",
+            "description": "Encryption protocol used for establishing connection",
+            "example": "ah",
+            "enum": ["ah", "esp"]
+          },
+          "hostName": {
+            "type": "string",
+            "description": "Hostname of the node",
+            "example": "isenode-1"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "7c9484cf-0ebc-47ad-a9ef-bc12729ed73b"
+          },
+          "iface": {
+            "type": "string",
+            "description": "Ethernet port of the node",
+            "example": "1"
+          },
+          "ikeReAuthTime": {
+            "type": "integer",
+            "description": "IKE re-authentication time",
+            "format": "int32",
+            "example": 86400
+          },
+          "ikeVersion": {
+            "type": "string",
+            "description": "IKE version",
+            "example": "1",
+            "enum": ["1", "2"]
+          },
+          "modeOption": {
+            "type": "string",
+            "description": "The Mode type used for establishing the connection",
+            "example": "tunnel",
+            "enum": ["transport", "tunnel"]
+          },
+          "nadIp": {
+            "type": "string",
+            "description": "NAD IP address for establishing connection",
+            "example": "1.1.1.1"
+          },
+          "phaseOneDHGroup": {
+            "type": "string",
+            "description": "Phase-one DH group used for establishing connection",
+            "example": "GROUP1",
+            "enum": [
+              "GROUP1",
+              "GROUP14",
+              "GROUP15",
+              "GROUP16",
+              "GROUP19",
+              "GROUP2",
+              "GROUP20",
+              "GROUP21",
+              "GROUP24",
+              "GROUP5"
+            ]
+          },
+          "phaseOneEncryptionAlgo": {
+            "type": "string",
+            "description": "Phase-one encryption algorithm used for establishing connection",
+            "example": "aes128",
+            "enum": ["3des", "aes", "aes128", "aes192", "aes256", "des"]
+          },
+          "phaseOneHashAlgo": {
+            "type": "string",
+            "description": "Phase-one hashing algorithm used for establishing connection",
+            "example": "sha",
+            "enum": ["sha", "sha256", "sha384", "sha512"]
+          },
+          "phaseOneLifeTime": {
+            "type": "integer",
+            "description": "Phase-one connection lifetime",
+            "format": "int32",
+            "example": 14400
+          },
+          "phaseTwoDHGroup": {
+            "type": "string",
+            "description": "Phase-two DH group used for establishing connection",
+            "example": "GROUP1",
+            "enum": [
+              "GROUP1",
+              "GROUP14",
+              "GROUP15",
+              "GROUP16",
+              "GROUP19",
+              "GROUP2",
+              "GROUP20",
+              "GROUP21",
+              "GROUP24",
+              "GROUP5",
+              "NONE"
+            ]
+          },
+          "phaseTwoEncryptionAlgo": {
+            "type": "string",
+            "description": "Phase-two encryption algorithm used for establishing connection",
+            "example": "aes128",
+            "enum": [
+              "3des",
+              "aes",
+              "aes128",
+              "aes192",
+              "aes256",
+              "des",
+              "gcm",
+              "gmac"
+            ]
+          },
+          "phaseTwoHashAlgo": {
+            "type": "string",
+            "description": "Phase-two hashing algorithm used for establishing connection",
+            "example": "sha",
+            "enum": ["sha", "sha256", "sha384", "sha512"]
+          },
+          "phaseTwoLifeTime": {
+            "type": "integer",
+            "description": "Phase-two connection lifetime",
+            "format": "int32",
+            "example": 14400
+          },
+          "psk": {
+            "type": "string",
+            "description": "Pre-shared key used for establishing connection",
+            "example": "psk12345"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ESTABLISHED", "IN_PROGRESS", "NOT_ESTABLISHED"]
+          },
+          "updateTime": {
+            "type": "string"
+          }
+        }
+      },
+      "IPSecGetAllResponsePayload": {
+        "title": "IPSecGetAllResponsePayload",
+        "type": "object",
+        "properties": {
+          "nextPage": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "previousPage": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "response": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IPSecConfig"
+            }
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "IPSecRequest": {
+        "title": "IPSecRequest",
+        "type": "object",
+        "properties": {
+          "authType": {
+            "type": "string",
+            "description": "Authentication type for establishing connection",
+            "example": "psk",
+            "enum": ["psk", "x509"]
+          },
+          "certId": {
+            "type": "string",
+            "description": "ID of the certificate for establishing connection",
+            "example": "123243432"
+          },
+          "espAhProtocol": {
+            "type": "string",
+            "description": "Encryption protocol used for establishing connection",
+            "example": "ah",
+            "enum": ["ah", "esp"]
+          },
+          "hostName": {
+            "type": "string",
+            "description": "Hostname of the node",
+            "example": "isenode-1"
+          },
+          "iface": {
+            "type": "string",
+            "description": "Ethernet port of the node",
+            "example": "1"
+          },
+          "ikeReAuthTime": {
+            "type": "integer",
+            "description": "IKE re-authentication time",
+            "format": "int32",
+            "example": 86400
+          },
+          "ikeVersion": {
+            "type": "string",
+            "description": "IKE version",
+            "example": "1",
+            "enum": ["1", "2"]
+          },
+          "modeOption": {
+            "type": "string",
+            "description": "The Mode type used for establishing the connection",
+            "example": "tunnel",
+            "enum": ["transport", "tunnel"]
+          },
+          "nadIp": {
+            "type": "string",
+            "description": "NAD IP address for establishing connection",
+            "example": "1.1.1.1"
+          },
+          "phaseOneDHGroup": {
+            "type": "string",
+            "description": "Phase-one DH group used for establishing connection",
+            "example": "GROUP1",
+            "enum": [
+              "GROUP1",
+              "GROUP14",
+              "GROUP15",
+              "GROUP16",
+              "GROUP19",
+              "GROUP2",
+              "GROUP20",
+              "GROUP21",
+              "GROUP24",
+              "GROUP5"
+            ]
+          },
+          "phaseOneEncryptionAlgo": {
+            "type": "string",
+            "description": "Phase-one encryption algorithm used for establishing connection",
+            "example": "aes128",
+            "enum": ["3des", "aes", "aes128", "aes192", "aes256", "des"]
+          },
+          "phaseOneHashAlgo": {
+            "type": "string",
+            "description": "Phase-one hashing algorithm used for establishing connection",
+            "example": "sha",
+            "enum": ["sha", "sha256", "sha384", "sha512"]
+          },
+          "phaseOneLifeTime": {
+            "type": "integer",
+            "description": "Phase-one connection lifetime",
+            "format": "int32",
+            "example": 14400
+          },
+          "phaseTwoDHGroup": {
+            "type": "string",
+            "description": "Phase-two DH group used for establishing connection",
+            "example": "GROUP1",
+            "enum": [
+              "GROUP1",
+              "GROUP14",
+              "GROUP15",
+              "GROUP16",
+              "GROUP19",
+              "GROUP2",
+              "GROUP20",
+              "GROUP21",
+              "GROUP24",
+              "GROUP5",
+              "NONE"
+            ]
+          },
+          "phaseTwoEncryptionAlgo": {
+            "type": "string",
+            "description": "Phase-two encryption algorithm used for establishing connection",
+            "example": "aes128",
+            "enum": [
+              "3des",
+              "aes",
+              "aes128",
+              "aes192",
+              "aes256",
+              "des",
+              "gcm",
+              "gmac"
+            ]
+          },
+          "phaseTwoHashAlgo": {
+            "type": "string",
+            "description": "Phase-two hashing algorithm used for establishing connection",
+            "example": "sha",
+            "enum": ["sha", "sha256", "sha384", "sha512"]
+          },
+          "phaseTwoLifeTime": {
+            "type": "integer",
+            "description": "Phase-two connection lifetime",
+            "format": "int32",
+            "example": 14400
+          },
+          "psk": {
+            "type": "string",
+            "description": "Pre-shared key used for establishing connection",
+            "example": "psk12345"
+          }
+        }
+      },
+      "IPSecResponse": {
+        "title": "IPSecResponse",
+        "type": "object",
+        "properties": {
+          "authType": {
+            "type": "string",
+            "description": "Authentication type for establishing connection",
+            "example": "psk",
+            "enum": ["psk", "x509"]
+          },
+          "certId": {
+            "type": "string",
+            "description": "ID of the certificate for establishing connection",
+            "example": "123243432"
+          },
+          "createTime": {
+            "type": "string"
+          },
+          "espAhProtocol": {
+            "type": "string",
+            "description": "Encryption protocol used for establishing connection",
+            "example": "ah",
+            "enum": ["ah", "esp"]
+          },
+          "hostName": {
+            "type": "string",
+            "description": "Hostname of the node",
+            "example": "isenode-1"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "7c9484cf-0ebc-47ad-a9ef-bc12729ed73b"
+          },
+          "iface": {
+            "type": "string",
+            "description": "Ethernet port of the node",
+            "example": "1"
+          },
+          "ikeReAuthTime": {
+            "type": "integer",
+            "description": "IKE re-authentication time",
+            "format": "int32",
+            "example": 86400
+          },
+          "ikeVersion": {
+            "type": "string",
+            "description": "IKE version",
+            "example": "1",
+            "enum": ["1", "2"]
+          },
+          "link": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "modeOption": {
+            "type": "string",
+            "description": "The Mode type used for establishing the connection",
+            "example": "tunnel",
+            "enum": ["transport", "tunnel"]
+          },
+          "nadIp": {
+            "type": "string",
+            "description": "NAD IP address for establishing connection",
+            "example": "1.1.1.1"
+          },
+          "phaseOneDHGroup": {
+            "type": "string",
+            "description": "Phase-one DH group used for establishing connection",
+            "example": "GROUP1",
+            "enum": [
+              "GROUP1",
+              "GROUP14",
+              "GROUP15",
+              "GROUP16",
+              "GROUP19",
+              "GROUP2",
+              "GROUP20",
+              "GROUP21",
+              "GROUP24",
+              "GROUP5"
+            ]
+          },
+          "phaseOneEncryptionAlgo": {
+            "type": "string",
+            "description": "Phase-one encryption algorithm used for establishing connection",
+            "example": "aes128",
+            "enum": ["3des", "aes", "aes128", "aes192", "aes256", "des"]
+          },
+          "phaseOneHashAlgo": {
+            "type": "string",
+            "description": "Phase-one hashing algorithm used for establishing connection",
+            "example": "sha",
+            "enum": ["sha", "sha256", "sha384", "sha512"]
+          },
+          "phaseOneLifeTime": {
+            "type": "integer",
+            "description": "Phase-one connection lifetime",
+            "format": "int32",
+            "example": 14400
+          },
+          "phaseTwoDHGroup": {
+            "type": "string",
+            "description": "Phase-two DH group used for establishing connection",
+            "example": "GROUP1",
+            "enum": [
+              "GROUP1",
+              "GROUP14",
+              "GROUP15",
+              "GROUP16",
+              "GROUP19",
+              "GROUP2",
+              "GROUP20",
+              "GROUP21",
+              "GROUP24",
+              "GROUP5",
+              "NONE"
+            ]
+          },
+          "phaseTwoEncryptionAlgo": {
+            "type": "string",
+            "description": "Phase-two encryption algorithm used for establishing connection",
+            "example": "aes128",
+            "enum": [
+              "3des",
+              "aes",
+              "aes128",
+              "aes192",
+              "aes256",
+              "des",
+              "gcm",
+              "gmac"
+            ]
+          },
+          "phaseTwoHashAlgo": {
+            "type": "string",
+            "description": "Phase-two hashing algorithm used for establishing connection",
+            "example": "sha",
+            "enum": ["sha", "sha256", "sha384", "sha512"]
+          },
+          "phaseTwoLifeTime": {
+            "type": "integer",
+            "description": "Phase-two connection lifetime",
+            "format": "int32",
+            "example": 14400
+          },
+          "psk": {
+            "type": "string",
+            "description": "Pre-shared key used for establishing connection",
+            "example": "psk12345"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ESTABLISHED", "IN_PROGRESS", "NOT_ESTABLISHED"]
+          },
+          "updateTime": {
+            "type": "string"
+          }
+        }
+      },
+      "IPSecResponsePayload": {
+        "title": "IPSecResponsePayload",
+        "type": "object",
+        "properties": {
+          "response": {
+            "$ref": "#/components/schemas/IPSecResponse"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "Link": {
+        "title": "Link",
+        "type": "object",
+        "properties": {
+          "href": {
+            "type": "string",
+            "example": "https://<ip>/api/v1/ipsec/<ID>"
+          },
+          "rel": {
+            "type": "string",
+            "example": "self",
+            "enum": ["next", "previous", "self", "status"]
+          },
+          "type": {
+            "type": "string",
+            "example": "application/json"
+          }
+        }
+      },
+      "Operations": {
+        "title": "Operations",
+        "type": "object",
+        "properties": {
+          "ItemList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IPSecRequest"
+            }
+          },
+          "operation": {
+            "type": "string",
+            "enum": ["Create", "Delete", "Disable", "Enable", "Update"]
+          }
+        }
+      },
+      "RemoveResponse": {
+        "title": "RemoveResponse",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "The IPSec connection for a node with hostname: node-1, and nadIp: 1.1.1.1 has been removed successfully."
+          }
+        }
+      },
+      "TaskResponse": {
+        "title": "TaskResponse",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
