@@ -4,8 +4,6 @@ Assets for the Itential Platform.
 ## Projects
 ### Apache Kafka 2.x Project
 - Produce Message
-- _Sample Use Cases_
-    - Consume Message
 
 #### Dependencies
 - [Apache Kafka 2.x Adapter](https://gitlab.com/itentialopensource/adapters/adapter-kafkav2)
