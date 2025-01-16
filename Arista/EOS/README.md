@@ -1,6 +1,17 @@
 # Arista EOS
 Assets for the Itential Platform.
 
+## Projects
+### Arista EOS Project
+- Perform a Software Upgrade
+- Turn Up a Port
+- Create a VLAN
+- File Transfer
+
+#### Dependencies
+- [Automation Gateway 4.x](https://www.itential.com/automation-gateway/)
+- Automation Gateway Adapter (_ships with Itential Platform_)
+
 ## IAG Inventory
 Sample IAG 4.x Inventory using Ansible:
 ```
@@ -16,14 +27,3 @@ Sample IAG 4.x Inventory using Ansible:
   "ansible_become_password": "PASSWORD"
 }
 ```
-
-## Projects
-### Arista EOS Project
-- Perform a Software Upgrade
-- Turn Up a Port
-- Create a VLAN
-- File Transfer
-
-#### Dependencies
-- [Automation Gateway 4.x](https://www.itential.com/automation-gateway/)
-- Automation Gateway Adapter (_ships with Itential Platform_)
