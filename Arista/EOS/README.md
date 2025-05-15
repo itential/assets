@@ -27,3 +27,16 @@ Sample IAG 4.x Inventory using Ansible:
   "ansible_become_password": "PASSWORD"
 }
 ```
+
+## Projects
+### Arista EOS Project
+- Perform a Software Upgrade
+- Turn Up a Port
+- Create a VLAN
+- File Transfer
+- Command Template Runner (Shared Asset)
+- Command Template Runner v2
+
+#### Dependencies
+- [Automation Gateway 4.x](https://www.itential.com/automation-gateway/)
+- Automation Gateway Adapter (_ships with Itential Platform_)
