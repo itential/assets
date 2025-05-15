@@ -10,7 +10,6 @@ Assets for the Itential Platform.
 - Commit a File
 - Create a Branch
 - Get a File
-- Create a Repository
 
 #### Dependencies
 - [GitHub Adapter](https://gitlab.com/itentialopensource/adapters/adapter-github)
