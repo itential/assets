@@ -17,6 +17,3 @@ As applicable, the directories in this repository will be structured as follows:
     │   ├── Projects/
     │   └── README.md
 
-## Getting Started
-
-Even though manual downloads and uploads are always an option, what fun is that? Use our CLI tool located [here]() to automate your experience.
