@@ -20,17 +20,13 @@ The tree below outlines the structure of the project:
 ```
 ┐
 └── FortiManager
-    ├── ForTesting
-    │   ├── fm_testFortiManager (Workflow)
-    │   ├── fm_testFortiManager2 (Workflow)
-    │   └── lhTest_FortiManager (Workflow)
     ├── Delete Objects
     │   ├── Delete Firewall Policy (Workflow)
     │   ├── Delete Policy Package (Workflow)
     │   ├── Delete Adom (Workflow)
-    │   ├── FortiManager Delete Policy Package (Json Form)
-    │   ├── FortiManager Delete FW Policy (Json Form)
-    │   └── FortiManager Delete Adom (Json Form)
+    │   ├── Delete Policy Package (Json Form)
+    │   ├── Delete FW Policy (Json Form)
+    │   └── Delete Adom (Json Form)
     ├── Update Objects
     │   ├── Update Firewall Policy (Workflow)
     │   ├── Update Adom (Workflow)
@@ -135,76 +131,64 @@ The table below outlines all the adapter and integration dependencies of this pr
   </thead>
   <tbody>
     <tr>
-      <td>fm_testFortiManager</td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>fm_testFortiManager2</td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>lhTest_FortiManager</td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>Delete Firewall Policy</td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>Delete Policy Package</td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>Delete Adom</td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>Update Firewall Policy</td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>Update Adom</td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>Update Policy Package</td>
-      <td></td>
-    </tr>
-    <tr>
       <td>Create Adom</td>
-      <td></td>
+      <td> This workflow creates a new Adom using the provided Adom name as input. </td>
     </tr>
     <tr>
       <td>Create Policy Package</td>
-      <td></td>
+      <td> This workflow creates a new Policy Package using the provided Policy Package name and Adom name as inputs. </td>
     </tr>
     <tr>
       <td>Create Firewall Policy</td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>Read Policy Package</td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>Read Firewall Policy</td>
-      <td></td>
+      <td> This workflow creates a new Firewall Policy using the provided Firewall Policy Object,  Policy Package name and Adom name as inputs. </td>
     </tr>
     <tr>
       <td>Read ADOM</td>
-      <td></td>
+      <td> This workflow retrieves the full data object of the specified Adom. Input: Adom name. </td>
     </tr>
     <tr>
-      <td>Check Policy Package's existence</td>
-      <td></td>
+      <td>Read Policy Package</td>
+      <td> This workflow retrieves the full data object of a specified Policy Package within a given Adom. Inputs: Adom name and Policy Package name. </td>
+    </tr>
+    <tr>
+      <td>Read Firewall Policy</td>
+      <td> This workflow retrieves the full data object of a specified Firewall Policy. Inputs: Adom name, Policy Package name, and Firewall Policy name. </td>
     </tr>
     <tr>
       <td>Check ADOM's existence</td>
-      <td></td>
+      <td> This workflow checks whether the specified Adom exists. It returns true if found, otherwise false. Input: Adom name. </td>
+    </tr>
+    <tr>
+      <td>Check Policy Package's existence</td>
+      <td> This workflow verifies the existence of a specified Policy Package within a given Adom. It returns true if found, otherwise false. Inputs: Adom name and Policy Package name. </td>
     </tr>
     <tr>
       <td>Check Firewall Policy's existence</td>
-      <td></td>
+      <td> This workflow checks whether a specified Firewall Policy exists within a Policy Package and Adom. It returns true if the policy is found, otherwise false. Inputs: Adom name, Policy Package name, and Firewall Policy name. </td>
+    </tr>
+    <tr>
+      <td>Update Adom</td>
+      <td> This workflow updates the specified ADOM by adding a device to it and setting a description. It uses the following inputs: Adom name, Device name, and Description. </td>
+    </tr>
+    <tr>
+      <td>Update Policy Package</td>
+      <td> This workflow updates the policy offload level of the specified policy package. It uses the following inputs: Adom name, Policy Package name, and Policy Offload Level. </td>
+    </tr>
+    <tr>
+      <td>Update Firewall Policy</td>
+      <td> This workflow updates the specified firewall policy's comment using provided inputs: Adom name, Policy Package name, Firewall Policy, and Comment. </td>
+    </tr>
+    <tr>
+      <td>Delete Adom</td>
+      <td> This workflow deletes a specific Adom by taking one required parameter: the Adom name. </td>
+    </tr>
+    <tr>
+      <td>Delete Policy Package</td>
+      <td> This workflow deletes a specific policy package by taking two required parameters: the Adom name, policy package name. </td>
+    </tr>
+    <tr>
+      <td>Delete Firewall Policy</td>
+      <td> This workflow deletes a specific firewall policy by taking three required parameters: the Adom name, policy package name, and firewall policy name.  </td>
     </tr>
   </tbody>
 </table>
@@ -220,57 +204,14 @@ The table below outlines all the adapter and integration dependencies of this pr
 <tbody>
 <tr>
 <td>Create Firewall Policy Payload</td>
-<td></td>
+<td> This JST prepares the request payload required to create a new firewall policy. </td>
 </tr>
 <tr>
 <td>Standard Output</td>
-<td></td>
+<td> This JST provides a standardized success or failure message for workflows. In the event of failure, it outputs a failed reason; on success, it confirms completion.</td>
 </tr>
 </tbody>
 </table>
-
-### Templates
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
-
-<!---
-No command templates were found in this project. Uncomment and fill in this section if this is inaccurate.
-### Command Templates
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
--->
-
-<!---
-No analytic templates were found in this project. Uncomment and fill in this section if this is inaccurate.
-### Analytic Templates
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
--->
 
 ### JSON Forms
 <table>
@@ -282,15 +223,15 @@ No analytic templates were found in this project. Uncomment and fill in this sec
 </thead>
 <tbody>
 <tr>
-<td>FortiManager Delete Policy Package</td>
+<td>Delete Policy Package</td>
 <td></td>
 </tr>
 <tr>
-<td>FortiManager Delete FW Policy</td>
+<td>Delete FW Policy</td>
 <td></td>
 </tr>
 <tr>
-<td>FortiManager Delete Adom</td>
+<td>Delete Adom</td>
 <td></td>
 </tr>
 <tr>
@@ -335,22 +276,6 @@ No analytic templates were found in this project. Uncomment and fill in this sec
 </tr>
 <tr>
 <td>Check Adom</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-## Gateway Assets
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><em>None</em></td>
 <td></td>
 </tr>
 </tbody>
