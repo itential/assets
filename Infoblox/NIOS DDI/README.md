@@ -1,8 +1,8 @@
-# Infoblox DDI Assets
+# Infoblox NIOS DDI Assets
 Assets for the Itential Platform.
 
 ## OpenAPIs
-- [Infoblox DDI](./OpenAPIs/infoblox_wapi_1.0.1.json)
+- [Infoblox NIOS DDI](./OpenAPIs/infoblox_wapi_1.0.1.json)
 
 ## Projects
 ### ServiceNow Project
@@ -29,4 +29,4 @@ Assets for the Itential Platform.
 - Delete DNS PTR Record
 
 #### Dependencies
-- [Infoblox DDI Adapter](https://gitlab.com/itentialopensource/adapters/adapter-infoblox)
+- [Infoblox NIOS DDI Adapter](https://gitlab.com/itentialopensource/adapters/adapter-infoblox)
