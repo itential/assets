@@ -8,6 +8,110 @@
     }
   },
   "paths": {
+    "/graphql/": {
+      "post": {
+        "operationId": "graphql_query",
+        "description": "Execute a GraphQL query against the NetBox GraphQL API. NetBox provides a read-only GraphQL API powered by Strawberry Django. All queries are submitted as JSON payloads to this single endpoint. Use the 'query' field to specify GraphQL query strings. Both singular object lookups (e.g. device(id: 123)) and list queries (e.g. device_list) are supported. Supports filtering, pagination (offset-based and cursor-based), and nested field selection.",
+        "tags": [
+          "graphql"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GraphQLRequest"
+              },
+              "examples": {
+                "list_query": {
+                  "summary": "List active circuits",
+                  "value": {
+                    "query": "query { circuit_list(filters: { status: STATUS_ACTIVE }) { cid provider { name } } }"
+                  }
+                },
+                "single_object_query": {
+                  "summary": "Fetch a single device by ID",
+                  "value": {
+                    "query": "query { device(id: 123) { id name status { value label } } }"
+                  }
+                },
+                "paginated_query": {
+                  "summary": "Paginated device list (offset-based)",
+                  "value": {
+                    "query": "query { device_list(pagination: { offset: 0, limit: 20 }) { id name } }"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "tokenAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-NetBox-Branch",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Optional branch header for NetBox."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful GraphQL response. The 'data' field contains the query results. If errors occur, an 'errors' array is included.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphQLResponse"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "Successful response",
+                    "value": {
+                      "data": {
+                        "circuit_list": [
+                          {
+                            "cid": "1002840283",
+                            "provider": {
+                              "name": "CenturyLink"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "error": {
+                    "summary": "Error response",
+                    "value": {
+                      "data": null,
+                      "errors": [
+                        {
+                          "message": "Cannot query field 'unknown' on type 'Query'.",
+                          "locations": [
+                            {
+                              "line": 1,
+                              "column": 9
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/circuits/circuit-group-assignments/": {
       "get": {
         "operationId": "circuits_circuit_group_assignments_list",
@@ -221605,6 +221709,74 @@
           "interface_a",
           "interface_b"
         ]
+      },
+      "GraphQLRequest": {
+        "type": "object",
+        "description": "A GraphQL request payload.",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The GraphQL query string to execute."
+          },
+          "variables": {
+            "type": "object",
+            "description": "Optional key-value map of variables referenced in the query using $variable syntax.",
+            "additionalProperties": true,
+            "nullable": true
+          },
+          "operationName": {
+            "type": "string",
+            "description": "Optional name of the operation to execute when the query contains multiple named operations.",
+            "nullable": true
+          }
+        }
+      },
+      "GraphQLResponse": {
+        "type": "object",
+        "description": "A GraphQL response envelope.",
+        "properties": {
+          "data": {
+            "description": "The query result data. Structure varies depending on the query.",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "description": "List of errors encountered during query execution, if any.",
+            "nullable": true,
+            "items": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "locations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "line": {
+                        "type": "integer"
+                      },
+                      "column": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "nullable": true
+                }
+              }
+            }
+          }
+        }
       }
     },
     "securitySchemes": {
