@@ -2,7 +2,9 @@
 Assets for the Itential Platform.
 
 ## OpenAPIs
-- [Meraki 1.48.0](./OpenAPIs/meraki_1.48.0.json)
+- [Cisco Meraki v1](./OpenAPIs/meraki_v1.json) — API key (X-Cisco-Meraki-API-Key header)
+- [Meraki 1.48.0](./OpenAPIs/meraki_1.48.0.json) — API key (X-Cisco-Meraki-API-Key header)
+- [Meraki 1.48.0 Bearer](./OpenAPIs/meraki_1.48.0_bearer.json) — Bearer token (OAuth-style)
 
 ## Projects
 ### Meraki Project

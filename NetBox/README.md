@@ -2,6 +2,8 @@
 Assets for the Itential Platform.
 
 ## OpenAPIs
+- [NetBox 4.6.1](./OpenAPIs/netbox_4.6.1.json)
+- [NetBox 3.7.8](./OpenAPIs/netbox_3.7.8.json)
 - [NetBox 4.1](./OpenAPIs/netbox_4.1.json)
 
 ## Projects
