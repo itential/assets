@@ -13,3 +13,4 @@ Assets for the Itential Platform.
 
 #### Dependencies
 - [GitHub Adapter](https://gitlab.com/itentialopensource/adapters/adapter-github)
+- [GitHub REST API (api.github.com)](./OpenAPIs/github_api.json)
