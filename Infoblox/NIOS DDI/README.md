@@ -30,3 +30,7 @@ Assets for the Itential Platform.
 
 #### Dependencies
 - [Infoblox NIOS DDI Adapter](https://gitlab.com/itentialopensource/adapters/adapter-infoblox)
+- [NIOS WAPI dhcp](./OpenAPIs/dhcp.json)
+- [NIOS WAPI dns](./OpenAPIs/dns.json)
+- [NIOS WAPI grid](./OpenAPIs/grid.json)
+- [NIOS WAPI ipam](./OpenAPIs/ipam.json)
