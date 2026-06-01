@@ -1,0 +1,203 @@
+---
+repositories:
+  - name: itential-assets
+    description: Itential community assets repository
+    url: https://github.com/itential/assets.git
+    reference: devel
+
+decorators:
+  - name: junos-netconf-run-command-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: junos-netconf-run-command inputs
+      type: object
+      properties:
+        command:
+          description: Operational CLI command to execute (e.g. "show version")
+          type: string
+      required: [command]
+      additionalProperties: false
+
+  - name: junos-netconf-get-config-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: junos-netconf-get-config inputs
+      type: object
+      properties:
+        source:
+          description: Datastore to read from (running or candidate)
+          type: string
+          enum: [running, candidate]
+        filter:
+          description: Optional XML subtree filter
+          type: string
+      additionalProperties: false
+
+  - name: junos-netconf-send-config-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: junos-netconf-send-config inputs
+      type: object
+      properties:
+        config:
+          description: Multi-line Junos set-style config block to apply and commit
+          type: string
+        lock_timeout:
+          description: Seconds to wait for the candidate datastore lock before failing (0 = fail immediately)
+          type: integer
+          default: 30
+        dry_run:
+          description: Validate config against the candidate datastore without committing (true = validate only)
+          type: boolean
+          default: false
+        confirmed:
+          description: Use a confirmed commit — device auto-rolls back unless a second commit arrives within confirm_timeout minutes
+          type: boolean
+          default: false
+        confirm_timeout:
+          description: Minutes before auto-rollback for a confirmed commit (only used when confirmed is true)
+          type: integer
+          default: 10
+      additionalProperties: false
+
+  - name: junos-netconf-reboot-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: junos-netconf-reboot inputs
+      type: object
+      properties:
+        at:
+          description: Junos time spec for reboot (e.g. "+5" for 5 minutes from now)
+          type: string
+        message:
+          description: Optional broadcast message shown to logged-in users before reboot
+          type: string
+      additionalProperties: false
+
+  - name: junos-netconf-set-config-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: junos-netconf-set-config inputs
+      type: object
+      properties:
+        config:
+          description: JSON-encoded Config Manager changes array [{parents, old, new}]
+          type: string
+      required: [config]
+      additionalProperties: false
+
+  - name: junos-netconf-send-command-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: junos-netconf-send-command inputs
+      type: object
+      properties:
+        commands:
+          description: Array of Junos set-style config commands to apply and commit
+          type: array
+          items:
+            type: string
+        lock_timeout:
+          description: Seconds to wait for the candidate datastore lock before failing (0 = fail immediately)
+          type: integer
+          default: 30
+        dry_run:
+          description: Validate config against the candidate datastore without committing (true = validate only)
+          type: boolean
+          default: false
+        confirmed:
+          description: Use a confirmed commit — device auto-rolls back unless a second commit arrives within confirm_timeout minutes
+          type: boolean
+          default: false
+        confirm_timeout:
+          description: Minutes before auto-rollback for a confirmed commit (only used when confirmed is true)
+          type: integer
+          default: 10
+      required: [commands]
+      additionalProperties: false
+
+services:
+  - name: junos-netconf-is-alive
+    type: python-script
+    description: Junos NETCONF — verify reachability via NETCONF capability exchange
+    repository: itential-assets
+    working-directory: Juniper/JUNOS/device-drivers/netconf-python
+    filename: main.py
+    runtime:
+      env:
+        JUNOS_OP: is-alive
+    tags: [driver, junos, netconf]
+
+  - name: junos-netconf-run-command
+    type: python-script
+    description: Junos NETCONF — execute operational CLI commands via <command/> RPC
+    repository: itential-assets
+    working-directory: Juniper/JUNOS/device-drivers/netconf-python
+    filename: main.py
+    decorator: junos-netconf-run-command-input
+    runtime:
+      env:
+        JUNOS_OP: run-command
+    tags: [driver, junos, netconf]
+
+  - name: junos-netconf-get-config
+    type: python-script
+    description: Junos NETCONF — retrieve running or candidate configuration
+    repository: itential-assets
+    working-directory: Juniper/JUNOS/device-drivers/netconf-python
+    filename: main.py
+    decorator: junos-netconf-get-config-input
+    runtime:
+      env:
+        JUNOS_OP: get-config
+    tags: [driver, junos, netconf]
+
+  - name: junos-netconf-send-config
+    type: python-script
+    description: Junos NETCONF — apply multi-line set-style config block with candidate lock and commit (workflow task)
+    repository: itential-assets
+    working-directory: Juniper/JUNOS/device-drivers/netconf-python
+    filename: main.py
+    decorator: junos-netconf-send-config-input
+    runtime:
+      env:
+        JUNOS_OP: send-command
+    tags: [driver, junos, netconf]
+
+  - name: junos-netconf-send-command
+    type: python-script
+    description: Junos NETCONF — apply an array of set-style config commands with candidate lock and commit (workflow task)
+    repository: itential-assets
+    working-directory: Juniper/JUNOS/device-drivers/netconf-python
+    filename: main.py
+    decorator: junos-netconf-send-command-input
+    runtime:
+      env:
+        JUNOS_OP: send-command
+    tags: [driver, junos, netconf]
+
+  - name: junos-netconf-reboot
+    type: python-script
+    description: Junos NETCONF — schedule reboot via <request-reboot/> RPC
+    repository: itential-assets
+    working-directory: Juniper/JUNOS/device-drivers/netconf-python
+    filename: main.py
+    decorator: junos-netconf-reboot-input
+    runtime:
+      env:
+        JUNOS_OP: reboot
+    tags: [driver, junos, netconf]
+
+  - name: junos-netconf-set-config
+    type: python-script
+    description: Junos NETCONF — Config Manager remediation via IM iag5-service action (broker entry point)
+    repository: itential-assets
+    working-directory: Juniper/JUNOS/device-drivers/netconf-python
+    filename: main.py
+    decorator: junos-netconf-set-config-input
+    runtime:
+      env:
+        JUNOS_OP: set-config
+    tags: [driver, junos, netconf, broker]
+
+
