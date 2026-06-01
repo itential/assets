@@ -199,7 +199,7 @@ each tree to your devices in Config Manager after importing.
 
 ### Juniper JUNOS set
 
-Device type: `juniper-junos-set`
+Device type: `juniper-junos-set` · Config format: `set`
 
 Baseline configuration using JUNOS `set`-format lines. Suited for environments where
 configuration is managed and retrieved in set format. Supports Config Manager remediation
