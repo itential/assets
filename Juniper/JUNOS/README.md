@@ -80,7 +80,6 @@ Or copy the `services` and `decorators` blocks from
 | `junos-netconf-send-command` | Apply set-style config lines and commit |
 | `junos-netconf-reboot` | Schedule reboot via `<request-reboot/>` |
 | `junos-netconf-set-config` | Config Manager remediation (broker path) |
-| `send-config` | Broker alias — `GatewayManager.sendConfig` entry point |
 
 **Dependencies:**
 - [Automation Gateway 5.x](https://www.itential.com/automation-gateway/)
