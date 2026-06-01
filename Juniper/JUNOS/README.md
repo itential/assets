@@ -200,16 +200,17 @@ via the `junos-netconf-set-config` service.
 
 ### Juniper JUNOS text - Jinja2
 
-Device type: `juniper-junos`
+Device type: `juniper-junos` · Config format: `text`
 
-Baseline configuration using Jinja2 template expressions for flexible value matching.
-Use this when your environment has multiple allowed values for a field — for example,
-permitting two software versions during a phased upgrade rollout.
+Baseline configuration using `text`-format (curly-brace) lines with Jinja2 template
+expressions for flexible value matching. Use this when your environment has multiple
+allowed values for a field — for example, permitting two software versions during a
+phased upgrade rollout.
 
 ### Juniper JUNOS text - Simple
 
-Device type: `juniper-junos`
+Device type: `juniper-junos` · Config format: `text`
 
-Baseline configuration using literal text matching. Use this as a starting point when
-all devices in a group are expected to share identical configuration values with no
-variation.
+Baseline configuration using `text`-format (curly-brace) lines with literal matching.
+Use this as a starting point when all devices in a group are expected to share identical
+configuration values with no variation.
