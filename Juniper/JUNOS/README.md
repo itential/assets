@@ -153,3 +153,57 @@ Device type: `juniper-junos`
 Baseline configuration using literal text matching. Use this as a starting point when
 all devices in a group are expected to share identical configuration values with no
 variation.
+
+---
+
+## Inventory Action Mapping
+
+When creating or updating an inventory in Inventory Manager, wire the four broker
+contracts to their `junos-netconf-*` services. Replace `your-cluster-id` with the
+`clusterId` of your IAG5 instance.
+
+```json
+{
+  "actions": [
+    {
+      "name": "is-alive",
+      "action_type": "iag5-service",
+      "action_config": {
+        "serviceName": "junos-netconf-is-alive",
+        "clusterId": "your-cluster-id"
+      },
+      "action_parameters": {}
+    },
+    {
+      "name": "run-command",
+      "action_type": "iag5-service",
+      "action_config": {
+        "serviceName": "junos-netconf-run-command",
+        "clusterId": "your-cluster-id"
+      },
+      "action_parameters": {}
+    },
+    {
+      "name": "get-config",
+      "action_type": "iag5-service",
+      "action_config": {
+        "serviceName": "junos-netconf-get-config",
+        "clusterId": "your-cluster-id"
+      },
+      "action_parameters": {}
+    },
+    {
+      "name": "set-config",
+      "action_type": "iag5-service",
+      "action_config": {
+        "serviceName": "junos-netconf-set-config",
+        "clusterId": "your-cluster-id"
+      },
+      "action_parameters": {}
+    }
+  ]
+}
+```
+
+The `name` field is the broker contract name the platform calls. The `serviceName` is
+the IAG5 service that handles it. They do not need to match — the mapping is the bridge.
