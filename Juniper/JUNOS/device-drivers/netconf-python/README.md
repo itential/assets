@@ -14,9 +14,49 @@ netconf ssh` committed on the target device.
 |---|---|---|
 | `is-alive` | Confirm device responds to NETCONF | Returns `{alive: true, session_id: N}` on success |
 | `run-command` | Execute one or more operational CLI commands | Wraps the Junos `<command format="text">` RPC. `--command` is repeatable. |
-| `get-config` | Retrieve running or candidate configuration | Defaults to `running`. Optional subtree filter. |
+| `get-config` | Retrieve running or candidate configuration | Defaults to `running` datastore, `xml` format. Optional subtree filter. See [get-config format options](#get-config-format-options). |
 | `send-command` | Apply Junos `set …` config and commit | Locks candidate, loads `action="set" format="text"`, commits, unlocks. Discards on failure. |
 | `reboot` | Schedule a reboot via `<request-reboot/>` RPC | No `[yes,no]` prompt. `--at +5` for delayed reboot. |
+
+## get-config format options
+
+`get-config` supports four output formats controlled by the `config_format` attribute in
+the device's inventory record (or `--config-format` when testing locally).
+
+| Format | How it works | Datastores | Output |
+|---|---|---|---|
+| `xml` | NETCONF `get-config` RPC | `running`, `candidate` | Pretty-printed XML with full NETCONF namespace decorations |
+| `text` | `show configuration` via NETCONF `<command>` RPC | `running` only | Curly-brace Junos text format — same as CLI output |
+| `set` | `show configuration \| display set` via NETCONF | `running` only | One `set …` line per statement — matches Config Manager input format |
+| `json` | `show configuration \| display json` via NETCONF | `running` only | JSON-encoded configuration hierarchy |
+
+**`xml` is the default** if `config_format` is not set.
+
+**Use `set` for Config Manager.** The `junos-netconf-set-config` broker service applies changes
+as `set`-format lines, and the `juniper-junos-set` parser tokenizes the running config
+in the same format — so `config_format: set` keeps the fetch and the remediation consistent.
+
+**Subtree filter (`filter`) is only available with `xml`** — it is passed directly to the
+NETCONF RPC. Text, set, and json formats retrieve the full configuration via CLI commands
+and do not support filtering.
+
+Set the format per device in Inventory Manager:
+
+```json
+"itential_driver_options": {
+  "netconf": {
+    "config_format": "set"
+  }
+}
+```
+
+Or override per invocation when testing locally:
+
+```bash
+JUNOS_OP=get-config python main.py \
+  --host 10.0.16.8 --user itential --password "$JUNOS_PASS" \
+  --config-format set
+```
 
 ## Invocation model
 
@@ -38,7 +78,7 @@ script's stdin automatically when invoked through an inventory action.
 |---|---|---|
 | `junos-netconf-is-alive` | is-alive | No runtime args needed |
 | `junos-netconf-run-command` | run-command | Workflow passes `command` |
-| `junos-netconf-get-config` | get-config | Optional `source`, `filter` |
+| `junos-netconf-get-config` | get-config | Optional `source`, `filter`, `config_format` |
 | `junos-netconf-send-command` | send-command | Workflow passes `command` |
 | `junos-netconf-reboot` | reboot | Optional `at`, `message` |
 

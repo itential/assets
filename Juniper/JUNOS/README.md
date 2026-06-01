@@ -19,6 +19,11 @@ Assets for the Itential Platform — Juniper JUNOS device automation using NETCO
 
 ## Inventory Manager Configuration
 
+Itential Platform ships with netmiko and scrapli drivers for Juniper JUNOS out of the box.
+This repo provides a **NETCONF alternative** — use it when you need operations that survive
+a mid-response session restart (software upgrades, reboots) or when you want to retrieve
+configuration in a specific format (`xml`, `text`, `set`, `json`).
+
 ### Action Configuration
 
 Wire the four broker contracts to their `junos-netconf-*` services when creating or
@@ -86,6 +91,7 @@ Devices use NETCONF over SSH (port 830). Set these attributes on each node in In
         "port": 830,
         "timeout": 30,
         "command_timeout": 300,
+        "config_format": "set",
         "lock_timeout": 60,
         "lock_poll_interval": 2
       }
@@ -94,16 +100,21 @@ Devices use NETCONF over SSH (port 830). Set these attributes on each node in In
 }
 ```
 
+| Attribute | Type | Unit | Description |
+|---|---|---|---|
+| `port` | integer | — | NETCONF SSH port on the device (default: `830`) |
+| `timeout` | integer | seconds | Connection handshake timeout for all operations except `run-command` |
+| `command_timeout` | integer | seconds | RPC wait timeout for `run-command` only — set high (300–600 s) for long-running commands like `request system software add` |
+| `config_format` | string | — | Output format for `get-config`: `xml` (default, NETCONF RPC), `text` (curly-brace), `set` (set-format lines), or `json`. Use `set` to match Config Manager. |
+| `lock_timeout` | integer | seconds | Max time to wait for the candidate datastore lock before `send-command` or `send-config` fails (`0` = fail immediately) |
+| `lock_poll_interval` | integer | seconds | Polling interval between lock-acquire retries |
+
 > **Required on the device before use:**
 > ```
 > set system services netconf ssh
 > commit
 > ```
 > TCP/830 must be reachable from the IAG5 host.
-
-`command_timeout` applies only to `run-command` and is used for long-running operations
-like `request system software add` (typically 1–3 minutes on a vSRX). All other operations
-use `timeout` for the connection handshake.
 
 ---
 
