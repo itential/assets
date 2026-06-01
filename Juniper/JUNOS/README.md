@@ -1,6 +1,6 @@
 # Juniper JUNOS
 
-Assets for the Itential Platform — Juniper Junos device automation using NETCONF.
+Assets for the Itential Platform — Juniper JUNOS device automation using NETCONF.
 
 **Requirements:** Itential Platform >= 6.4 · Itential Automation Gateway >= 5.4
 
@@ -10,7 +10,7 @@ Assets for the Itential Platform — Juniper Junos device automation using NETCO
 |---|---|
 | [device-drivers/netconf-python](./device-drivers/netconf-python/) | IAG5 Python NETCONF driver — is-alive, run-command, get-config, send-command, reboot |
 | [Projects/Juniper JUNOS](./Projects/Juniper%20JUNOS.project.json) | IAG5 project — software upgrade, port turn-up, push configuration, command runner |
-| [Golden Configurations/Juniper JUNOS set](./Golden%20Configurations/Juniper%20JUNOS%20set.json) | Golden config tree using Junos `set`-format lines |
+| [Golden Configurations/Juniper JUNOS set](./Golden%20Configurations/Juniper%20JUNOS%20set.json) | Golden config tree using JUNOS `set`-format lines |
 | [Golden Configurations/Juniper JUNOS text - Jinja2](./Golden%20Configurations/Juniper%20JUNOS%20text%20-%20Jinja2.json) | Golden config tree using Jinja2 templates for flexible value matching |
 | [Golden Configurations/Juniper JUNOS text - Simple](./Golden%20Configurations/Juniper%20JUNOS%20text%20-%20Simple.json) | Golden config tree using literal text matching |
 
@@ -110,7 +110,7 @@ use `timeout` for the connection handshake.
 
 ### netconf-python
 
-A native Python NETCONF driver for IAG5. Use this for any Junos operation that would
+A native Python NETCONF driver for IAG5. Use this for any JUNOS operation that would
 drop a CLI/SSH session mid-response — software installs and reboots in particular.
 
 See [device-drivers/netconf-python/README.md](./device-drivers/netconf-python/README.md)
@@ -154,7 +154,7 @@ Use them in workflow tasks to give operators structured, typed inputs:
 
 ### Juniper JUNOS
 
-An IAG5 project for Juniper Junos device automation via NETCONF, organized into three folders.
+An IAG5 project for Juniper JUNOS device automation via NETCONF, organized into three folders.
 
 **Software Upgrade**
 - **JUNOS Upgrade** — backs up the running config, stages the image, verifies SHA-256, runs pre/post checks, installs, and reboots
@@ -189,7 +189,7 @@ each tree to your devices in Config Manager after importing.
 
 Device type: `juniper-junos-set`
 
-Baseline configuration using Junos `set`-format lines. Suited for environments where
+Baseline configuration using JUNOS `set`-format lines. Suited for environments where
 configuration is managed and retrieved in set format. Supports Config Manager remediation
 via the `junos-netconf-set-config` service.
 
