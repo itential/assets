@@ -10,7 +10,8 @@ Assets for the Itential Platform — Juniper JUNOS device automation using NETCO
 |---|---|
 | [device-drivers/netconf-python](./device-drivers/netconf-python/) | IAG5 Python NETCONF driver — is-alive, run-command, get-config, send-command, reboot |
 | [Projects/Juniper JUNOS](./Projects/Juniper%20JUNOS.project.json) | IAG5 project — software upgrade, port turn-up, push configuration, command runner |
-| [Golden Configurations/Juniper JUNOS set](./Golden%20Configurations/Juniper%20JUNOS%20set.json) | Golden config tree using JUNOS `set`-format lines |
+| [Configuration Parser/juniper-junos-set.json](./Configuration%20Parser/juniper-junos-set.json) | Config Manager parser defining the `juniper-junos-set` device type |
+| [Golden Configurations/Juniper JUNOS set](./Golden%20Configurations/Juniper%20JUNOS%20set.json) | Golden config tree using JUNOS `set`-format lines — requires `juniper-junos-set` parser |
 | [Golden Configurations/Juniper JUNOS text - Jinja2](./Golden%20Configurations/Juniper%20JUNOS%20text%20-%20Jinja2.json) | Golden config tree using Jinja2 templates for flexible value matching |
 | [Golden Configurations/Juniper JUNOS text - Simple](./Golden%20Configurations/Juniper%20JUNOS%20text%20-%20Simple.json) | Golden config tree using literal text matching |
 
@@ -177,6 +178,20 @@ An IAG5 project for Juniper JUNOS device automation via NETCONF, organized into 
 
 ---
 
+## Configuration Parsers
+
+### juniper-junos-set
+
+Defines the `juniper-junos-set` device type in Config Manager. This parser must be
+imported before the **Juniper JUNOS set** golden configuration tree can be created or
+used. It tokenizes JUNOS `set`-format lines using the `cisco-ios` lexer template, treating
+each line as a sequence of words delimited by whitespace, with `#` comments and
+quoted strings handled correctly.
+
+Import via Config Manager → Configuration Parsers → Import.
+
+---
+
 ## Golden Configurations
 
 Three golden configuration trees are provided. All ship with no device bindings — bind
@@ -190,10 +205,11 @@ Baseline configuration using JUNOS `set`-format lines. Suited for environments w
 configuration is managed and retrieved in set format. Supports Config Manager remediation
 via the `junos-netconf-set-config` service.
 
-> **Before importing:** Update `"devices"` in the root node to match your Inventory
-> Manager group name and device name.
+> **Before importing:** The `juniper-junos-set` parser must be registered in Config Manager
+> first (see Configuration Parsers above). Then update `"devices"` in the root node to
+> match your Inventory Manager group name and device name.
 
-**Dependencies:** Config Manager enabled · `junos-netconf-set-config` registered in IAG5
+**Dependencies:** `juniper-junos-set` parser · Config Manager enabled · `junos-netconf-set-config` registered in IAG5
 
 ### Juniper JUNOS text - Jinja2
 
