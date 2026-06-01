@@ -16,10 +16,62 @@ Assets for the Itential Platform — Juniper Junos device automation using NETCO
 
 ---
 
-## IAG5 Inventory Configuration
+## Inventory Manager Configuration
 
-Devices managed by this driver use NETCONF over SSH (port 830). Set these attributes on each
-device in Inventory Manager:
+### Action Configuration
+
+Wire the four broker contracts to their `junos-netconf-*` services when creating or
+updating an inventory. Replace `your-cluster-id` with the `clusterId` of your IAG5 instance.
+
+```json
+{
+  "actions": [
+    {
+      "name": "is-alive",
+      "action_type": "iag5-service",
+      "action_config": {
+        "serviceName": "junos-netconf-is-alive",
+        "clusterId": "your-cluster-id"
+      },
+      "action_parameters": {}
+    },
+    {
+      "name": "run-command",
+      "action_type": "iag5-service",
+      "action_config": {
+        "serviceName": "junos-netconf-run-command",
+        "clusterId": "your-cluster-id"
+      },
+      "action_parameters": {}
+    },
+    {
+      "name": "get-config",
+      "action_type": "iag5-service",
+      "action_config": {
+        "serviceName": "junos-netconf-get-config",
+        "clusterId": "your-cluster-id"
+      },
+      "action_parameters": {}
+    },
+    {
+      "name": "set-config",
+      "action_type": "iag5-service",
+      "action_config": {
+        "serviceName": "junos-netconf-set-config",
+        "clusterId": "your-cluster-id"
+      },
+      "action_parameters": {}
+    }
+  ]
+}
+```
+
+The `name` field is the broker contract the platform calls. The `serviceName` is the IAG5
+service that handles it. They do not need to match — the mapping is the bridge.
+
+### Node Attributes
+
+Devices use NETCONF over SSH (port 830). Set these attributes on each node in Inventory Manager:
 
 ```json
 {
@@ -161,57 +213,3 @@ Device type: `juniper-junos`
 Baseline configuration using literal text matching. Use this as a starting point when
 all devices in a group are expected to share identical configuration values with no
 variation.
-
----
-
-## Inventory Action Mapping
-
-When creating or updating an inventory in Inventory Manager, wire the four broker
-contracts to their `junos-netconf-*` services. Replace `your-cluster-id` with the
-`clusterId` of your IAG5 instance.
-
-```json
-{
-  "actions": [
-    {
-      "name": "is-alive",
-      "action_type": "iag5-service",
-      "action_config": {
-        "serviceName": "junos-netconf-is-alive",
-        "clusterId": "your-cluster-id"
-      },
-      "action_parameters": {}
-    },
-    {
-      "name": "run-command",
-      "action_type": "iag5-service",
-      "action_config": {
-        "serviceName": "junos-netconf-run-command",
-        "clusterId": "your-cluster-id"
-      },
-      "action_parameters": {}
-    },
-    {
-      "name": "get-config",
-      "action_type": "iag5-service",
-      "action_config": {
-        "serviceName": "junos-netconf-get-config",
-        "clusterId": "your-cluster-id"
-      },
-      "action_parameters": {}
-    },
-    {
-      "name": "set-config",
-      "action_type": "iag5-service",
-      "action_config": {
-        "serviceName": "junos-netconf-set-config",
-        "clusterId": "your-cluster-id"
-      },
-      "action_parameters": {}
-    }
-  ]
-}
-```
-
-The `name` field is the broker contract name the platform calls. The `serviceName` is
-the IAG5 service that handles it. They do not need to match — the mapping is the bridge.
