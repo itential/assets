@@ -72,15 +72,24 @@ Or copy the `services` and `decorators` blocks from
 
 **Registered services:**
 
-| Service | Caller | Operation |
+Four services implement the IAG5 device broker input/output contracts and are called
+directly by the gateway adapter (is-alive checks, Config Manager remediation, etc.):
+
+| Service | Broker contract | Notes |
 |---|---|---|
-| `junos-netconf-is-alive` | Workflow task | Verify NETCONF reachability |
-| `junos-netconf-run-command` | Workflow task | Execute operational CLI commands |
-| `junos-netconf-get-config` | Workflow task | Retrieve running or candidate configuration |
-| `junos-netconf-send-command` | Workflow task | Apply an array of set-style config lines and commit |
-| `junos-netconf-send-config` | Workflow task | Apply a multi-line config block string and commit |
-| `junos-netconf-reboot` | Workflow task | Schedule reboot via `<request-reboot/>` |
-| `junos-netconf-set-config` | Broker / IM remediation | Apply Config Manager changes array and commit |
+| `junos-netconf-is-alive` | `is-alive` | Returns bare `true` or `false` — no JSON wrapper |
+| `junos-netconf-run-command` | `run-command` | Returns plain text command output |
+| `junos-netconf-get-config` | `get-config` | Returns plain text configuration |
+| `junos-netconf-set-config` | `set-config` | Accepts Config Manager changes array; returns results array |
+
+Three additional services are workflow-only tasks — the broker never calls them directly.
+Use them in workflow tasks to give operators structured, typed inputs:
+
+| Service | Operation |
+|---|---|
+| `junos-netconf-send-command` | Apply an array of set-style config lines and commit |
+| `junos-netconf-send-config` | Apply a multi-line config block string and commit |
+| `junos-netconf-reboot` | Schedule reboot via `<request-reboot/>` |
 
 **Dependencies:**
 - [Automation Gateway 5.x](https://www.itential.com/automation-gateway/)
