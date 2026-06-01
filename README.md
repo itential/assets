@@ -11,6 +11,8 @@ As applicable, the directories in this repository will be structured as follows:
     Vendor
     ├── Product
     │   ├── Automations/
+    │   ├── Configuration Parsers/
+    │   ├── device-drivers/
     │   ├── Golden Configurations/
     │   ├── LCM Resource Models/
     │   ├── OpenAPIs/
