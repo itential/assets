@@ -72,14 +72,15 @@ Or copy the `services` and `decorators` blocks from
 
 **Registered services:**
 
-| Service | Operation |
-|---|---|
-| `junos-netconf-is-alive` | Verify NETCONF reachability |
-| `junos-netconf-run-command` | Execute operational CLI commands |
-| `junos-netconf-get-config` | Retrieve running or candidate configuration |
-| `junos-netconf-send-command` | Apply set-style config lines and commit |
-| `junos-netconf-reboot` | Schedule reboot via `<request-reboot/>` |
-| `junos-netconf-set-config` | Config Manager remediation (broker path) |
+| Service | Caller | Operation |
+|---|---|---|
+| `junos-netconf-is-alive` | Workflow task | Verify NETCONF reachability |
+| `junos-netconf-run-command` | Workflow task | Execute operational CLI commands |
+| `junos-netconf-get-config` | Workflow task | Retrieve running or candidate configuration |
+| `junos-netconf-send-command` | Workflow task | Apply an array of set-style config lines and commit |
+| `junos-netconf-send-config` | Workflow task | Apply a multi-line config block string and commit |
+| `junos-netconf-reboot` | Workflow task | Schedule reboot via `<request-reboot/>` |
+| `junos-netconf-set-config` | Broker / IM remediation | Apply Config Manager changes array and commit |
 
 **Dependencies:**
 - [Automation Gateway 5.x](https://www.itential.com/automation-gateway/)
