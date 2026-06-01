@@ -173,9 +173,6 @@ An IAG5 project for Juniper JUNOS device automation via NETCONF, organized into 
 - **Create & Update Inventory from NetBox** — creates or updates an Inventory Manager inventory using NetBox as the source of truth
 - **Clear & Delete Inventory** — removes all nodes from an inventory and deletes it
 
-**Utility**
-- **Teams Message** — sends a Microsoft Teams notification with a direct link to the related job
-
 **Dependencies:** `junos-netconf-*` services registered in IAG5 (see Device Drivers above)
 
 ---

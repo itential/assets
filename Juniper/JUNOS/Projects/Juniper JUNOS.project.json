@@ -286,7 +286,7 @@
       "document": {
         "tags": [],
         "name": "Pre and Post Checks",
-        "description": "Captures pre/post device state for a Junos device. Runs show version, show system storage, show interfaces terse, and show route summary. Rules are sanity-only — the workflow reads commands_results[].response for the actual diff inputs.",
+        "description": "Captures pre/post device state for a Junos device. Runs show version, show system storage, show interfaces terse, and show route summary. Rules are sanity-only \u2014 the workflow reads commands_results[].response for the actual diff inputs.",
         "os": "juniper_junos",
         "passRule": true,
         "ignoreWarnings": null,
@@ -396,7 +396,7 @@
               "incoming": {
                 "clusterId": "cluster-itential",
                 "language": "python",
-                "code": "import sys\nimport json\nimport re\n\n# ── Read inputs from stdin (IAG runCode standard) ────────────────────────────\ndata = json.load(sys.stdin)\n\ndevice_results = data.get('device_results', {})\ntarget_version  = data.get('target_version', '')\n\n# ── Extract device name and version from 'show version' output ───────────────\ncommands    = device_results.get('commands_results', [])\ndevice_name = commands[0].get('device') if commands else None\n\nfound_version = None\nfor cmd in commands:\n    if cmd.get('raw', '').strip().lower() == 'show version':\n        response = cmd.get('response', '')\n        match = re.search(r'^Junos:\\s+(\\S+)', response, re.MULTILINE)\n        if match:\n            found_version = match.group(1)\n        break\n\n# ── Build result ─────────────────────────────────────────────────────────────\nif found_version is None:\n    result = {\n        'passed':  False,\n        'found':   None,\n        'target':  target_version,\n        'device':  device_name,\n        'message': \"Could not extract Junos version — 'show version' output missing or malformed.\"\n    }\nelse:\n    passed = found_version == target_version\n    result = {\n        'passed':  passed,\n        'found':   found_version,\n        'target':  target_version,\n        'device':  device_name,\n        'message': (\n            f\"Device '{device_name}' is running Junos {found_version} — matches target {target_version}.\"\n            if passed else\n            f\"Device '{device_name}' is running Junos {found_version} — expected {target_version}.\"\n        )\n    }\n\n# ── Emit JSON to stdout (captured as stdout_json by the platform) ─────────────\nprint(json.dumps(result))",
+                "code": "import sys\nimport json\nimport re\n\n# \u2500\u2500 Read inputs from stdin (IAG runCode standard) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\ndata = json.load(sys.stdin)\n\ndevice_results = data.get('device_results', {})\ntarget_version  = data.get('target_version', '')\n\n# \u2500\u2500 Extract device name and version from 'show version' output \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\ncommands    = device_results.get('commands_results', [])\ndevice_name = commands[0].get('device') if commands else None\n\nfound_version = None\nfor cmd in commands:\n    if cmd.get('raw', '').strip().lower() == 'show version':\n        response = cmd.get('response', '')\n        match = re.search(r'^Junos:\\s+(\\S+)', response, re.MULTILINE)\n        if match:\n            found_version = match.group(1)\n        break\n\n# \u2500\u2500 Build result \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nif found_version is None:\n    result = {\n        'passed':  False,\n        'found':   None,\n        'target':  target_version,\n        'device':  device_name,\n        'message': \"Could not extract Junos version \u2014 'show version' output missing or malformed.\"\n    }\nelse:\n    passed = found_version == target_version\n    result = {\n        'passed':  passed,\n        'found':   found_version,\n        'target':  target_version,\n        'device':  device_name,\n        'message': (\n            f\"Device '{device_name}' is running Junos {found_version} \u2014 matches target {target_version}.\"\n            if passed else\n            f\"Device '{device_name}' is running Junos {found_version} \u2014 expected {target_version}.\"\n        )\n    }\n\n# \u2500\u2500 Emit JSON to stdout (captured as stdout_json by the platform) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nprint(json.dumps(result))",
                 "data": {
                   "target_version": "$var.job.formData#/target_version",
                   "device_results": "$var.a2.mop_template_results"
@@ -1834,223 +1834,6 @@
       }
     },
     {
-      "iid": 37,
-      "type": "workflow",
-      "folder": "/",
-      "reference": "ce6a138d-3625-43a4-93d9-fa2e9f09c3a9",
-      "document": {
-        "name": "Teams Message",
-        "description": "Send a teams message. Pass the _id of the related job that needs to be referenced. This will create the url for the user to click on to pull up the job. Should look something like this: 7feeaabba98d4aeaa837d57f",
-        "tasks": {
-          "workflow_start": {
-            "name": "workflow_start",
-            "groups": [],
-            "x": 0,
-            "y": 0.5,
-            "nodeLocation": {
-              "x": 0,
-              "y": -500
-            }
-          },
-          "workflow_end": {
-            "name": "workflow_end",
-            "groups": [],
-            "x": 1,
-            "y": 0.5,
-            "nodeLocation": {
-              "x": 0,
-              "y": -228
-            }
-          },
-          "91bb": {
-            "name": "runCode",
-            "canvasName": "runCode",
-            "summary": "Send Teams Message Starting Upgrade",
-            "description": "Execute code (e.g. Python) on a Gateway5 cluster without requiring a pre-configured service. The code is sent directly to the gateway for execution.",
-            "location": "Application",
-            "locationType": null,
-            "app": "GatewayManager",
-            "type": "automatic",
-            "displayName": "GatewayManager",
-            "variables": {
-              "incoming": {
-                "clusterId": "cluster-itential",
-                "language": "python",
-                "code": "import sys, json\nimport requests\n\ndata = json.load(sys.stdin)\nwebhook_url = data.get(\"webhook_url\")\ntitle       = data.get(\"title\")\nmessage     = data.get(\"message\")\ndevice      = data.get(\"device\")\njob_id      = data.get(\"job_id\")\n\njob_url = f\"https://forcepoint-poc-iap01.trial.itential.io/operations-manager/#/jobs/{job_id}\"\n\ncard = {\n    \"type\": \"AdaptiveCard\",\n    \"$schema\": \"http://adaptivecards.io/schemas/adaptive-card.json\",\n    \"version\": \"1.4\",\n    \"msteams\": {\"width\": \"Full\"},\n    \"body\": [\n        {\n            \"type\": \"Container\",\n            \"style\": \"accent\",\n            \"bleed\": True,\n            \"items\": [{\"type\": \"TextBlock\", \"text\": title, \"weight\": \"Bolder\", \"size\": \"Large\", \"color\": \"Light\", \"wrap\": True}]\n        },\n        {\n            \"type\": \"TextBlock\",\n            \"text\": f\"Device: {device}\",\n            \"isSubtle\": True,\n            \"spacing\": \"Small\",\n            \"wrap\": True\n        },\n        {\n            \"type\": \"TextBlock\",\n            \"text\": message,\n            \"wrap\": True,\n            \"spacing\": \"Small\"\n        }\n    ],\n    \"actions\": [\n        {\"type\": \"Action.OpenUrl\", \"title\": \"View job\", \"url\": job_url}\n    ]\n}\n\npayload = {\n    \"type\": \"message\",\n    \"attachments\": [\n        {\n            \"contentType\": \"application/vnd.microsoft.card.adaptive\",\n            \"contentUrl\": None,\n            \"content\": card\n        }\n    ]\n}\n\nr = requests.post(webhook_url, headers={\"Content-Type\": \"application/json\"}, json=payload)\nprint(json.dumps({\"ok\": r.ok, \"status_code\": r.status_code}))",
-                "data": {
-                  "message": "$var.job.message",
-                  "webhook_url": "https://defaulta8413c8024954b90a9226e9ff29745.31.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/5ef009e2bfe845d091b47b2fdff827d3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=cOq_PhlXaoVt2M7-W4sfZp-o6T-fSQfkO8blSrKkw-Q",
-                  "device": "$var.job.device",
-                  "title": "$var.job.title",
-                  "job_id": "$var.job.job_id"
-                },
-                "safety": {
-                  "timeout": 1
-                },
-                "packages": [
-                  "requests"
-                ]
-              },
-              "outgoing": {
-                "result": ""
-              },
-              "decorators": []
-            },
-            "actor": "Pronghorn",
-            "groups": [],
-            "nodeLocation": {
-              "x": 0,
-              "y": -360
-            }
-          }
-        },
-        "transitions": {
-          "workflow_start": {
-            "91bb": {
-              "state": "success",
-              "type": "standard"
-            }
-          },
-          "workflow_end": {},
-          "91bb": {
-            "workflow_end": {
-              "state": "success",
-              "type": "standard"
-            }
-          }
-        },
-        "inputSchema": {
-          "type": "object",
-          "properties": {
-            "message": {
-              "type": [
-                "array",
-                "boolean",
-                "null",
-                "number",
-                "object",
-                "string"
-              ]
-            },
-            "device": {
-              "type": [
-                "array",
-                "boolean",
-                "null",
-                "number",
-                "object",
-                "string"
-              ]
-            },
-            "title": {
-              "type": [
-                "array",
-                "boolean",
-                "null",
-                "number",
-                "object",
-                "string"
-              ]
-            },
-            "job_id": {
-              "type": [
-                "array",
-                "boolean",
-                "null",
-                "number",
-                "object",
-                "string"
-              ]
-            }
-          },
-          "required": [
-            "message",
-            "device",
-            "title",
-            "job_id"
-          ]
-        },
-        "outputSchema": {
-          "type": "object",
-          "properties": {
-            "message": {
-              "type": [
-                "array",
-                "boolean",
-                "null",
-                "number",
-                "object",
-                "string"
-              ]
-            },
-            "device": {
-              "type": [
-                "array",
-                "boolean",
-                "null",
-                "number",
-                "object",
-                "string"
-              ]
-            },
-            "title": {
-              "type": [
-                "array",
-                "boolean",
-                "null",
-                "number",
-                "object",
-                "string"
-              ]
-            },
-            "job_id": {
-              "type": [
-                "array",
-                "boolean",
-                "null",
-                "number",
-                "object",
-                "string"
-              ]
-            },
-            "_id": {
-              "type": "string",
-              "pattern": "^[0-9a-f]{24}$"
-            },
-            "initiator": {
-              "type": "string"
-            }
-          }
-        },
-        "scenarios": [],
-        "type": "automation",
-        "font_size": 12,
-        "canvasVersion": 3,
-        "last_updated": "2026-06-01T01:25:52.500Z",
-        "last_updated_by": {
-          "provenance": "CloudAAA",
-          "username": "mike.elrom@itential.com",
-          "firstname": "Mike",
-          "inactive": false
-        },
-        "lastUpdatedVersion": "5.55.5",
-        "uuid": "78d82031-cbb6-44b6-8f59-7f0e9f808533",
-        "created": "2026-05-29T01:44:50.509Z",
-        "created_by": {
-          "provenance": "CloudAAA",
-          "username": "mike.elrom@itential.com",
-          "firstname": "Mike",
-          "inactive": false
-        },
-        "createdVersion": "5.55.5",
-        "preAutomationTime": 0,
-        "sla": 0,
-        "tags": [],
-        "groups": [],
-        "migrationVersion": 7
-      }
-    },
-    {
       "iid": 38,
       "type": "workflow",
       "folder": "/Golden Configuration",
@@ -2186,7 +1969,7 @@
             "displayName": "TemplateBuilder",
             "variables": {
               "incoming": {
-                "template": "<h2 style=\"font-size:16px;font-family:Arial,sans-serif;margin:0 0 8px 0;\">Golden Config Compliance Report</h2>\n<p style=\"font-size:12px;color:#555;font-family:Arial,sans-serif;\">Batch ID: <strong>{{ batchId }}</strong> &nbsp;|&nbsp; Status: <strong>{{ status }}</strong> &nbsp;|&nbsp; {{ reports | length }} device report(s)</p>\n\n<h3 style=\"font-size:14px;font-family:Arial,sans-serif;border-bottom:1px solid #ddd;padding-bottom:4px;\">Summary</h3>\n<table style=\"border-collapse:collapse;width:100%;font-size:12px;font-family:Arial,sans-serif;margin-bottom:16px;\">\n  <thead>\n    <tr>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Device</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Node Path</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Score</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Grade</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Warnings</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Errors</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Passes</th>\n    </tr>\n  </thead>\n  <tbody>\n  {% for report in reports %}\n    {% if report.grade == 'fail' %}\n      {% set scoreColor = '#c0392b' %}\n      {% set badgeBg = '#fdecea' %}\n      {% set badgeColor = '#c0392b' %}\n      {% set badgeBorder = '#e5b4b1' %}\n    {% else %}\n      {% set scoreColor = '#27ae60' %}\n      {% set badgeBg = '#eafaf1' %}\n      {% set badgeColor = '#27ae60' %}\n      {% set badgeBorder = '#a9dfbf' %}\n    {% endif %}\n    <tr>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.device }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.nodePath }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;color:{{ scoreColor }};\">{{ report.score }}%</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">\n        <span style=\"display:inline-block;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:bold;background:{{ badgeBg }};color:{{ badgeColor }};border:1px solid {{ badgeBorder }};\">{{ report.grade }}</span>\n      </td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.totals.warnings }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.totals.errors }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.totals.passes }}</td>\n    </tr>\n  {% endfor %}\n  </tbody>\n</table>\n\n{% for report in reports %}\n  {% if report.grade == 'fail' %}\n    {% set scoreColor = '#c0392b' %}\n    {% set badgeBg = '#fdecea' %}\n    {% set badgeColor = '#c0392b' %}\n    {% set badgeBorder = '#e5b4b1' %}\n  {% else %}\n    {% set scoreColor = '#27ae60' %}\n    {% set badgeBg = '#eafaf1' %}\n    {% set badgeColor = '#27ae60' %}\n    {% set badgeBorder = '#a9dfbf' %}\n  {% endif %}\n<h3 style=\"font-size:14px;font-family:Arial,sans-serif;border-bottom:1px solid #ddd;padding-bottom:4px;margin-top:16px;\">{{ report.device }} — {{ report.nodePath }}</h3>\n<div style=\"background:#f9f9f9;border:1px solid #ddd;border-radius:4px;padding:10px 14px;margin-bottom:12px;font-family:Arial,sans-serif;font-size:12px;\">\n  Score: <strong style=\"color:{{ scoreColor }};\">{{ report.score }}%</strong> &nbsp;|&nbsp;\n  Grade: <strong style=\"color:{{ badgeColor }};\">{{ report.grade }}</strong> &nbsp;|&nbsp;\n  Warnings: <strong>{{ report.totals.warnings }}</strong> &nbsp;|&nbsp;\n  Errors: <strong>{{ report.totals.errors }}</strong> &nbsp;|&nbsp;\n  Passes: <strong>{{ report.totals.passes }}</strong> &nbsp;|&nbsp;\n  Device Type: <strong>{{ report.deviceType }}</strong> &nbsp;|&nbsp;\n  Timestamp: <strong>{{ report.timestamp }}</strong>\n</div>\n\n{% if report.issues %}\n<table style=\"border-collapse:collapse;width:100%;font-size:12px;font-family:Arial,sans-serif;margin-bottom:16px;\">\n  <thead>\n    <tr>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Severity</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Type</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Required Config (set command)</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Fix Mode</th>\n    </tr>\n  </thead>\n  <tbody>\n  {% for issue in report.issues %}\n    <tr>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ issue.severity }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ issue.type }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\"><code style=\"font-family:monospace;font-size:11px;background:#f8f8f8;padding:2px 5px;border:1px solid #e0e0e0;border-radius:2px;\">{{ issue.spec.words | join(\" \", \"value\") }}</code></td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ issue.spec.fixMode }}</td>\n    </tr>\n  {% endfor %}\n  </tbody>\n</table>\n{% else %}\n<p style=\"color:#27ae60;font-family:Arial,sans-serif;font-size:12px;\">No issues found.</p>\n{% endif %}\n\n{% endfor %}",
+                "template": "<h2 style=\"font-size:16px;font-family:Arial,sans-serif;margin:0 0 8px 0;\">Golden Config Compliance Report</h2>\n<p style=\"font-size:12px;color:#555;font-family:Arial,sans-serif;\">Batch ID: <strong>{{ batchId }}</strong> &nbsp;|&nbsp; Status: <strong>{{ status }}</strong> &nbsp;|&nbsp; {{ reports | length }} device report(s)</p>\n\n<h3 style=\"font-size:14px;font-family:Arial,sans-serif;border-bottom:1px solid #ddd;padding-bottom:4px;\">Summary</h3>\n<table style=\"border-collapse:collapse;width:100%;font-size:12px;font-family:Arial,sans-serif;margin-bottom:16px;\">\n  <thead>\n    <tr>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Device</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Node Path</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Score</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Grade</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Warnings</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Errors</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Passes</th>\n    </tr>\n  </thead>\n  <tbody>\n  {% for report in reports %}\n    {% if report.grade == 'fail' %}\n      {% set scoreColor = '#c0392b' %}\n      {% set badgeBg = '#fdecea' %}\n      {% set badgeColor = '#c0392b' %}\n      {% set badgeBorder = '#e5b4b1' %}\n    {% else %}\n      {% set scoreColor = '#27ae60' %}\n      {% set badgeBg = '#eafaf1' %}\n      {% set badgeColor = '#27ae60' %}\n      {% set badgeBorder = '#a9dfbf' %}\n    {% endif %}\n    <tr>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.device }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.nodePath }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;color:{{ scoreColor }};\">{{ report.score }}%</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">\n        <span style=\"display:inline-block;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:bold;background:{{ badgeBg }};color:{{ badgeColor }};border:1px solid {{ badgeBorder }};\">{{ report.grade }}</span>\n      </td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.totals.warnings }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.totals.errors }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.totals.passes }}</td>\n    </tr>\n  {% endfor %}\n  </tbody>\n</table>\n\n{% for report in reports %}\n  {% if report.grade == 'fail' %}\n    {% set scoreColor = '#c0392b' %}\n    {% set badgeBg = '#fdecea' %}\n    {% set badgeColor = '#c0392b' %}\n    {% set badgeBorder = '#e5b4b1' %}\n  {% else %}\n    {% set scoreColor = '#27ae60' %}\n    {% set badgeBg = '#eafaf1' %}\n    {% set badgeColor = '#27ae60' %}\n    {% set badgeBorder = '#a9dfbf' %}\n  {% endif %}\n<h3 style=\"font-size:14px;font-family:Arial,sans-serif;border-bottom:1px solid #ddd;padding-bottom:4px;margin-top:16px;\">{{ report.device }} \u2014 {{ report.nodePath }}</h3>\n<div style=\"background:#f9f9f9;border:1px solid #ddd;border-radius:4px;padding:10px 14px;margin-bottom:12px;font-family:Arial,sans-serif;font-size:12px;\">\n  Score: <strong style=\"color:{{ scoreColor }};\">{{ report.score }}%</strong> &nbsp;|&nbsp;\n  Grade: <strong style=\"color:{{ badgeColor }};\">{{ report.grade }}</strong> &nbsp;|&nbsp;\n  Warnings: <strong>{{ report.totals.warnings }}</strong> &nbsp;|&nbsp;\n  Errors: <strong>{{ report.totals.errors }}</strong> &nbsp;|&nbsp;\n  Passes: <strong>{{ report.totals.passes }}</strong> &nbsp;|&nbsp;\n  Device Type: <strong>{{ report.deviceType }}</strong> &nbsp;|&nbsp;\n  Timestamp: <strong>{{ report.timestamp }}</strong>\n</div>\n\n{% if report.issues %}\n<table style=\"border-collapse:collapse;width:100%;font-size:12px;font-family:Arial,sans-serif;margin-bottom:16px;\">\n  <thead>\n    <tr>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Severity</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Type</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Required Config (set command)</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Fix Mode</th>\n    </tr>\n  </thead>\n  <tbody>\n  {% for issue in report.issues %}\n    <tr>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ issue.severity }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ issue.type }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\"><code style=\"font-family:monospace;font-size:11px;background:#f8f8f8;padding:2px 5px;border:1px solid #e0e0e0;border-radius:2px;\">{{ issue.spec.words | join(\" \", \"value\") }}</code></td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ issue.spec.fixMode }}</td>\n    </tr>\n  {% endfor %}\n  </tbody>\n</table>\n{% else %}\n<p style=\"color:#27ae60;font-family:Arial,sans-serif;font-size:12px;\">No issues found.</p>\n{% endif %}\n\n{% endfor %}",
                 "variables": "$var.509b.runComplianceBatchResult",
                 "castDataType": "string"
               },
@@ -2783,7 +2566,7 @@
             "displayName": "TemplateBuilder",
             "variables": {
               "incoming": {
-                "template": "{#-\n  NetBox -> IAG5 Inventory Template — JUNOS / Hybrid\n  Filters: active Junos devices with an IP.\nAdjust as desired, make sure to set passwords with SECRETS\n-#}\n\n{% set junos_slugs = ['juniper-junos', 'vsrx'] %}\n\n{% set credentials = {'user': 'itential', 'password': 'password'} %}\n\n{% set device_overrides = {} %}\n\n{% set netmiko_opts = {\n    'banner_timeout':        60,\n    'session_timeout':       300,\n    'read_timeout_override': 600,\n    'conn_timeout':          60,\n    'global_delay_factor':   3,\n    'enable_fast_mode':      false\n} %}\n\n{% set netconf_opts = {\n    'port':               830,\n    'timeout':            30,\n    'lock_timeout':       60,\n    'lock_poll_interval': 2,\n    'command_timeout': 600,\n    'config_format':  'set'\n} %}\n\n[\n{%- set ns = namespace(first=true) %}\n{%- for device in body.results %}\n\n  {%- set nb_platform = (device.platform.slug if device.platform else device.device_type.slug) or '' %}\n\n  {%- if device.primary_ip4 %}\n    {%- set ip_address = device.primary_ip4.address.split('/')[0] %}\n  {%- elif device.config_context and device.config_context.ipAddress %}\n    {%- set ip_address = device.config_context.ipAddress %}\n  {%- else %}\n    {%- set ip_address = '' %}\n  {%- endif %}\n\n  {%- set creds = device_overrides.get(device.name, credentials) %}\n\n  {%- set driver_options = {'netmiko': netmiko_opts, 'netconf': netconf_opts} %}\n\n  {%- if ip_address and nb_platform in junos_slugs and device.status and device.status.value == 'active' %}\n{{ \",\" if not ns.first else \"\" }}\n{%- set ns.first = false %}\n  {\n    \"name\": \"{{ device.name }}\",\n    \"attributes\": {\n      \"itential_host\":           \"{{ ip_address }}\",\n      \"itential_port\":           22,\n      \"itential_driver\":         \"netmiko\",\n      \"itential_platform\":       \"juniper_junos\",\n      \"itential_user\":           \"{{ creds.user }}\",\n      \"itential_password\":       \"{{ creds.password }}\",\n      \"itential_driver_options\": {{ driver_options | tojson }}\n    },\n    \"tags\": [\n      \"{{ (device.role.slug if device.role else 'unknown') }}\",\n      \"{{ (device.site.slug if device.site else 'unknown') }}\",\n      \"{{ (device.status.value if device.status else 'unknown') }}\",\n      \"driver:netmiko\",\n      \"platform:juniper_junos\",\n      \"transport:cli+netconf\"\n    ]\n  }\n  {%- endif %}\n{%- endfor %}\n]\n",
+                "template": "{#-\n  NetBox -> IAG5 Inventory Template \u2014 JUNOS / Hybrid\n  Filters: active Junos devices with an IP.\nAdjust as desired, make sure to set passwords with SECRETS\n-#}\n\n{% set junos_slugs = ['juniper-junos', 'vsrx'] %}\n\n{% set credentials = {'user': 'itential', 'password': 'password'} %}\n\n{% set device_overrides = {} %}\n\n{% set netmiko_opts = {\n    'banner_timeout':        60,\n    'session_timeout':       300,\n    'read_timeout_override': 600,\n    'conn_timeout':          60,\n    'global_delay_factor':   3,\n    'enable_fast_mode':      false\n} %}\n\n{% set netconf_opts = {\n    'port':               830,\n    'timeout':            30,\n    'lock_timeout':       60,\n    'lock_poll_interval': 2,\n    'command_timeout': 600,\n    'config_format':  'set'\n} %}\n\n[\n{%- set ns = namespace(first=true) %}\n{%- for device in body.results %}\n\n  {%- set nb_platform = (device.platform.slug if device.platform else device.device_type.slug) or '' %}\n\n  {%- if device.primary_ip4 %}\n    {%- set ip_address = device.primary_ip4.address.split('/')[0] %}\n  {%- elif device.config_context and device.config_context.ipAddress %}\n    {%- set ip_address = device.config_context.ipAddress %}\n  {%- else %}\n    {%- set ip_address = '' %}\n  {%- endif %}\n\n  {%- set creds = device_overrides.get(device.name, credentials) %}\n\n  {%- set driver_options = {'netmiko': netmiko_opts, 'netconf': netconf_opts} %}\n\n  {%- if ip_address and nb_platform in junos_slugs and device.status and device.status.value == 'active' %}\n{{ \",\" if not ns.first else \"\" }}\n{%- set ns.first = false %}\n  {\n    \"name\": \"{{ device.name }}\",\n    \"attributes\": {\n      \"itential_host\":           \"{{ ip_address }}\",\n      \"itential_port\":           22,\n      \"itential_driver\":         \"netmiko\",\n      \"itential_platform\":       \"juniper_junos\",\n      \"itential_user\":           \"{{ creds.user }}\",\n      \"itential_password\":       \"{{ creds.password }}\",\n      \"itential_driver_options\": {{ driver_options | tojson }}\n    },\n    \"tags\": [\n      \"{{ (device.role.slug if device.role else 'unknown') }}\",\n      \"{{ (device.site.slug if device.site else 'unknown') }}\",\n      \"{{ (device.status.value if device.status else 'unknown') }}\",\n      \"driver:netmiko\",\n      \"platform:juniper_junos\",\n      \"transport:cli+netconf\"\n    ]\n  }\n  {%- endif %}\n{%- endfor %}\n]\n",
                 "variables": {},
                 "castDataType": "object"
               },
