@@ -8,9 +8,11 @@ Assets for the Itential Platform — Juniper Junos device automation using NETCO
 
 | Asset | Description |
 |---|---|
-| [Device Drivers/netconf-python](./Device%20Drivers/netconf-python/) | IAG5 Python NETCONF driver — is-alive, run-command, get-config, send-command, reboot |
+| [device-drivers/netconf-python](./device-drivers/netconf-python/) | IAG5 Python NETCONF driver — is-alive, run-command, get-config, send-command, reboot |
 | [Projects/Juniper JUNOS](./Projects/Juniper%20JUNOS.project.json) | IAG5 project — software upgrade, port turn-up, push configuration, command runner |
 | [Golden Configurations/Juniper JUNOS set](./Golden%20Configurations/Juniper%20JUNOS%20set.json) | Golden config tree using Junos `set`-format lines |
+| [Golden Configurations/Juniper JUNOS text - Jinja2](./Golden%20Configurations/Juniper%20JUNOS%20text%20-%20Jinja2.json) | Golden config tree using Jinja2 templates for flexible value matching |
+| [Golden Configurations/Juniper JUNOS text - Simple](./Golden%20Configurations/Juniper%20JUNOS%20text%20-%20Simple.json) | Golden config tree using literal text matching |
 
 ---
 
@@ -59,18 +61,17 @@ use `timeout` for the connection handshake.
 A native Python NETCONF driver for IAG5. Use this for any Junos operation that would
 drop a CLI/SSH session mid-response — software installs and reboots in particular.
 
-See [Device Drivers/netconf-python/README.md](./Device%20Drivers/netconf-python/README.md)
+See [device-drivers/netconf-python/README.md](./device-drivers/netconf-python/README.md)
 for full documentation including all operations, locking behavior, and local testing.
 
 **Quick start — register services in IAG5:**
 
 ```bash
-# Drop import.yaml into your IAG5 asset repo and run:
-iagctl db import Device\ Drivers/netconf-python/import.yaml --force
+iagctl db import device-drivers/netconf-python/import.yaml --force
 ```
 
 Or copy the `services` and `decorators` blocks from
-[import.yaml](./Device%20Drivers/netconf-python/import.yaml) into your own `import.yml`.
+[import.yaml](./device-drivers/netconf-python/import.yaml) into your own `import.yml`.
 
 **Registered services:**
 
@@ -121,14 +122,34 @@ command template execution for Juniper Junos devices via NETCONF.
 
 ## Golden Configurations
 
+Three golden configuration trees are provided. All ship with no device bindings — bind
+each tree to your devices in Config Manager after importing.
+
 ### Juniper JUNOS set
 
-A golden configuration tree using Junos `set`-format lines (`juniper-junos-set` device
-type). Captures baseline configuration for vSRX and tracks per-section nodes for
-navigation and compliance.
+Device type: `juniper-junos-set`
 
-> **Before importing:** The tree's root node binds to a specific device —
-> `"devices": ["Itential Lab JUNOS::aws-lab-junos"]` in the exported JSON. Update this
-> to match your Inventory Manager group name and device name before importing.
+Baseline configuration using Junos `set`-format lines. Suited for environments where
+configuration is managed and retrieved in set format. Supports Config Manager remediation
+via the `junos-netconf-set-config` service.
+
+> **Before importing:** Update `"devices"` in the root node to match your Inventory
+> Manager group name and device name.
 
 **Dependencies:** Config Manager enabled · `junos-netconf-set-config` registered in IAG5
+
+### Juniper JUNOS text - Jinja2
+
+Device type: `juniper-junos`
+
+Baseline configuration using Jinja2 template expressions for flexible value matching.
+Use this when your environment has multiple allowed values for a field — for example,
+permitting two software versions during a phased upgrade rollout.
+
+### Juniper JUNOS text - Simple
+
+Device type: `juniper-junos`
+
+Baseline configuration using literal text matching. Use this as a starting point when
+all devices in a group are expected to share identical configuration values with no
+variation.
