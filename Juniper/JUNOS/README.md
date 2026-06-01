@@ -102,19 +102,27 @@ Use them in workflow tasks to give operators structured, typed inputs:
 
 ### Juniper JUNOS
 
-An IAG5 project covering software upgrade, port turn-up, push configuration, and
-command template execution for Juniper Junos devices via NETCONF.
+An IAG5 project for Juniper Junos device automation via NETCONF, organized into three folders.
 
-**Workflows included:**
-- **Software Upgrade** — stage image, verify SHA-256, install, reboot, and confirm version
-- **Port Turn Up** — configure and activate an interface
-- **Push Configuration** — apply a set-format config block
-- **Command Template Runner** — run operational commands from a template
+**Software Upgrade**
+- **JUNOS Upgrade** — backs up the running config, stages the image, verifies SHA-256, runs pre/post checks, installs, and reboots
+- Command templates: Verify Image · Version Check · Pre and Post Checks · Stage Upgrade · Reboot
+- Form: Upgrade Form — input for device name, target version, image path, and expected SHA-256
 
-> **Before importing:** The Software Upgrade form contains example image paths
+> **Before importing:** The Upgrade Form contains example image paths
 > (`/var/tmp/junos-install-vsrx3-x86-64-22.4R2.8.tgz`) and SHA-256 hashes for
 > specific vSRX packages. Update the form's `enum` fields under "Image Path on Device"
 > and "Expected Image SHA-256" to match the software images staged in your environment.
+
+**Golden Configuration**
+- **Run Compliance** — runs a compliance check against a golden config tree
+
+**Inventory Management**
+- **Create & Update Inventory from NetBox** — creates or updates an Inventory Manager inventory using NetBox as the source of truth
+- **Clear & Delete Inventory** — removes all nodes from an inventory and deletes it
+
+**Utility**
+- **Teams Message** — sends a Microsoft Teams notification with a direct link to the related job
 
 **Dependencies:** `junos-netconf-*` services registered in IAG5 (see Device Drivers above)
 
