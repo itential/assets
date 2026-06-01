@@ -32,10 +32,6 @@ the device's inventory record (or `--config-format` when testing locally).
 
 **`xml` is the default** if `config_format` is not set.
 
-**Use `set` for Config Manager.** The `junos-netconf-set-config` broker service applies changes
-as `set`-format lines, and the `juniper-junos-set` parser tokenizes the running config
-in the same format — so `config_format: set` keeps the fetch and the remediation consistent.
-
 **Subtree filter (`filter`) is only available with `xml`** — it is passed directly to the
 NETCONF RPC. Text, set, and json formats retrieve the full configuration via CLI commands
 and do not support filtering.
