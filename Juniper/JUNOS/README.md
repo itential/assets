@@ -180,6 +180,7 @@ An IAG5 project for Juniper JUNOS device automation via NETCONF, organized into 
 
 **Golden Configuration**
 - **Run Compliance** — runs a compliance check against a golden config tree
+- Form: **Compliance Form** — select the golden config tree name and version to run against
 
 **Inventory Management**
 - **Create & Update Inventory from NetBox** — creates or updates an Inventory Manager inventory using NetBox as the source of truth

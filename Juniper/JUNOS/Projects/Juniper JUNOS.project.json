@@ -1,18 +1,18 @@
 {
-  "_id": "6a138e0000000000ffff0001",
+  "_id": "6a1de7f998f25fd9d4056c91",
   "name": "Juniper JUNOS",
   "description": "Juniper JUNOS inventory using NETCONF, software upgrade, and golden configuration",
   "components": [
     {
       "iid": 22,
+      "reference": "6a1de7f998f25fd9d4056c92",
       "type": "jsonForm",
-      "reference": "6a13848a75bc43e3a0bf3492",
       "folder": "/Software Upgrade",
       "document": {
-        "id": "6a13848a75bc43e3a0bf3492",
+        "id": "6a1de7f998f25fd9d4056c92",
         "created": "2026-05-24T23:06:50.250Z",
-        "createdBy": "itential-02",
-        "lastUpdated": "2026-06-01T01:25:52.503Z",
+        "createdBy": "mike.elrom@itential.com",
+        "lastUpdated": "2026-06-01T20:13:46.827Z",
         "lastUpdatedBy": "mike.elrom@itential.com",
         "name": "Upgrade Form",
         "description": "Form input for the  Juniper software upgrade automation.",
@@ -117,7 +117,7 @@
         },
         "schema": {
           "title": "Upgrade Form",
-          "description": "Form input for the Forcepoint Juniper software upgrade automation. Captures device, target version, image staging details, and run options (dry-run, change ref).",
+          "description": "Form input for the Juniper software upgrade automation. Captures device, target version, image staging details, and run options (dry-run, change ref).",
           "type": "object",
           "required": [
             "device",
@@ -199,94 +199,143 @@
       }
     },
     {
-      "iid": 27,
-      "type": "mopCommandTemplate",
-      "reference": "@6a138e0000000000ffff0001: Verify Image",
-      "folder": "/Software Upgrade",
+      "iid": 42,
+      "reference": "6a1de7f998f25fd9d4056c93",
+      "type": "jsonForm",
+      "folder": "/Golden Configuration",
       "document": {
-        "tags": [],
-        "name": "Verify Image",
-        "description": "Confirms staged image exists at the specified path and sha-256 matches expected hash.",
-        "os": "juniper_junos",
-        "passRule": true,
-        "ignoreWarnings": false,
-        "commands": [
-          {
-            "command": "file list <!image_path!>",
-            "passRule": true,
-            "rules": [
-              {
-                "rule": "No such file",
-                "eval": "!contains",
-                "severity": "error"
-              }
-            ]
+        "id": "6a1de7f998f25fd9d4056c93",
+        "created": "2026-06-01T19:52:47.654Z",
+        "createdBy": "mike.elrom@itential.com",
+        "lastUpdated": "2026-06-01T20:13:46.827Z",
+        "lastUpdatedBy": "mike.elrom@itential.com",
+        "name": "Compliance Form",
+        "description": "",
+        "struct": {
+          "type": "array",
+          "items": [
+            {
+              "nodeId": "95e19ca7-6692-4f15-b362-2d4c8fa0d1f4",
+              "type": "string",
+              "title": "Tree Name",
+              "description": "",
+              "placeholder": "Select an item",
+              "required": true,
+              "enum": [],
+              "enumNames": [],
+              "binding": true,
+              "rel": "collection",
+              "targetPointer": "/enum",
+              "customKey": "tree_name",
+              "readOnly": false,
+              "method": "GET",
+              "uniqueItems": false,
+              "base": "/configuration_manager",
+              "href": "/configs",
+              "sourcePointer": "/",
+              "sourceKeyPointer": "/name"
+            },
+            {
+              "nodeId": "0e0602fd-c568-4f7e-81c6-5f4accaf4752",
+              "type": "string",
+              "title": "Tree Version",
+              "description": "",
+              "placeholder": "Enter text",
+              "required": true,
+              "readOnly": false,
+              "binding": false,
+              "rel": "item",
+              "targetPointer": "/default",
+              "customKey": "version",
+              "default": "initial"
+            }
+          ]
+        },
+        "schema": {
+          "title": "Compliance Form",
+          "description": "",
+          "type": "object",
+          "required": [
+            "tree_name",
+            "version"
+          ],
+          "properties": {
+            "tree_name": {
+              "type": "string",
+              "title": "Tree Name",
+              "_id": "/properties/tree_name",
+              "description": "",
+              "enum": [],
+              "enumNames": []
+            },
+            "version": {
+              "type": "string",
+              "title": "Tree Version",
+              "_id": "/properties/version",
+              "description": "",
+              "default": "initial"
+            }
+          }
+        },
+        "uiSchema": {
+          "tree_name": {
+            "ui:placeholder": "Select an item"
           },
-          {
-            "command": "file checksum sha-256 <!image_path!>",
-            "passRule": true,
-            "rules": [
-              {
-                "rule": "<!image_sha256!>",
-                "eval": "contains",
-                "severity": "error"
-              }
-            ]
-          }
-        ],
-        "created": 1779674845008,
-        "createdBy": "itential-02",
-        "lastUpdated": 1780277152699,
-        "lastUpdatedBy": "mike.elrom@itential.com"
-      }
-    },
-    {
-      "iid": 30,
-      "type": "mopCommandTemplate",
-      "reference": "@6a138e0000000000ffff0001: Version Check",
-      "folder": "/Software Upgrade",
-      "document": {
-        "tags": [],
-        "name": "Version Check",
-        "description": "Verifies the running Junos version matches an expected string.",
-        "os": "juniper_junos",
-        "passRule": true,
-        "ignoreWarnings": false,
-        "commands": [
-          {
-            "command": "show version",
-            "passRule": true,
-            "rules": [
-              {
-                "rule": "<!target_version!>",
-                "eval": "contains",
-                "severity": "error",
-                "evaluation": "pass"
+          "version": {
+            "ui:placeholder": "Enter text"
+          },
+          "ui:order": [
+            "tree_name",
+            "version",
+            "*"
+          ]
+        },
+        "bindingSchema": {
+          "properties": {
+            "tree_name": {
+              "binding:method": "GET",
+              "binding:link": {
+                "$ref": "/links",
+                "rel": "collection"
               },
-              {
-                "rule": "Service execution failed (exit code 1): No error output",
-                "eval": "!contains",
-                "severity": "error",
-                "evaluation": "pass"
+              "binding:target": {
+                "propertyPointer": "/enum"
+              },
+              "binding:hyperSchema": {
+                "type": "object",
+                "base": "/configuration_manager",
+                "links": [
+                  {
+                    "rel": "collection",
+                    "href": "/configs",
+                    "targetMediaType": "application/json",
+                    "targetSchema": {
+                      "$ref": "#"
+                    },
+                    "variables": []
+                  }
+                ]
+              },
+              "binding:source": {
+                "propertyPointer": "/",
+                "keyPointer": "/name"
               }
-            ]
+            }
           }
-        ],
-        "created": 1779674846087,
-        "createdBy": "itential-02",
-        "lastUpdated": 1780277152936,
-        "lastUpdatedBy": "mike.elrom@itential.com"
+        },
+        "validationSchema": {},
+        "version": "2020.1"
       }
     },
     {
       "iid": 31,
+      "reference": "@6a1de7f998f25fd9d4056c91: Pre and Post Checks",
       "type": "mopCommandTemplate",
-      "reference": "@6a138e0000000000ffff0001: Pre and Post Checks",
       "folder": "/Software Upgrade",
       "document": {
         "tags": [],
         "name": "Pre and Post Checks",
-        "description": "Captures pre/post device state for a Junos device. Runs show version, show system storage, show interfaces terse, and show route summary. Rules are sanity-only \u2014 the workflow reads commands_results[].response for the actual diff inputs.",
+        "description": "Captures pre/post device state for a Junos device. Runs show version, show system storage, show interfaces terse, and show route summary. Rules are sanity-only — the workflow reads commands_results[].response for the actual diff inputs.",
         "os": "juniper_junos",
         "passRule": true,
         "ignoreWarnings": null,
@@ -338,14 +387,45 @@
         ],
         "created": 1779675515376,
         "createdBy": "itential-02",
-        "lastUpdated": 1780277153213,
+        "lastUpdated": 1780344827025,
+        "lastUpdatedBy": "mike.elrom@itential.com"
+      }
+    },
+    {
+      "iid": 36,
+      "reference": "@6a1de7f998f25fd9d4056c91: Reboot",
+      "type": "mopCommandTemplate",
+      "folder": "/Software Upgrade",
+      "document": {
+        "tags": [],
+        "name": "Reboot",
+        "description": "Runs request system software add <image_path> no-validate no-copy, then request system reboot. Reboot response may be partial because SSH terminates.",
+        "os": "juniper_junos",
+        "passRule": true,
+        "ignoreWarnings": null,
+        "commands": [
+          {
+            "command": "request system reboot",
+            "passRule": true,
+            "rules": [
+              {
+                "rule": "Shutdown NOW!",
+                "eval": "contains",
+                "severity": "warn"
+              }
+            ]
+          }
+        ],
+        "created": 1779719937714,
+        "createdBy": "6a0c557474e890f65883e175",
+        "lastUpdated": 1780344827162,
         "lastUpdatedBy": "mike.elrom@itential.com"
       }
     },
     {
       "iid": 32,
+      "reference": "@6a1de7f998f25fd9d4056c91: Stage Upgrade",
       "type": "mopCommandTemplate",
-      "reference": "@6a138e0000000000ffff0001: Stage Upgrade",
       "folder": "/Software Upgrade",
       "document": {
         "tags": [],
@@ -369,14 +449,94 @@
         ],
         "created": 1779675515780,
         "createdBy": "itential-02",
-        "lastUpdated": 1780277153111,
+        "lastUpdated": 1780344827212,
+        "lastUpdatedBy": "mike.elrom@itential.com"
+      }
+    },
+    {
+      "iid": 27,
+      "reference": "@6a1de7f998f25fd9d4056c91: Verify Image",
+      "type": "mopCommandTemplate",
+      "folder": "/Software Upgrade",
+      "document": {
+        "tags": [],
+        "name": "Verify Image",
+        "description": "Confirms staged image exists at the specified path and sha-256 matches expected hash.",
+        "os": "juniper_junos",
+        "passRule": true,
+        "ignoreWarnings": false,
+        "commands": [
+          {
+            "command": "file list <!image_path!>",
+            "passRule": true,
+            "rules": [
+              {
+                "rule": "No such file",
+                "eval": "!contains",
+                "severity": "error"
+              }
+            ]
+          },
+          {
+            "command": "file checksum sha-256 <!image_path!>",
+            "passRule": true,
+            "rules": [
+              {
+                "rule": "<!image_sha256!>",
+                "eval": "contains",
+                "severity": "error"
+              }
+            ]
+          }
+        ],
+        "created": 1779674845008,
+        "createdBy": "itential-02",
+        "lastUpdated": 1780344827250,
+        "lastUpdatedBy": "mike.elrom@itential.com"
+      }
+    },
+    {
+      "iid": 30,
+      "reference": "@6a1de7f998f25fd9d4056c91: Version Check",
+      "type": "mopCommandTemplate",
+      "folder": "/Software Upgrade",
+      "document": {
+        "tags": [],
+        "name": "Version Check",
+        "description": "Verifies the running Junos version matches an expected string.",
+        "os": "juniper_junos",
+        "passRule": true,
+        "ignoreWarnings": false,
+        "commands": [
+          {
+            "command": "show version",
+            "passRule": true,
+            "rules": [
+              {
+                "rule": "<!target_version!>",
+                "eval": "contains",
+                "severity": "error",
+                "evaluation": "pass"
+              },
+              {
+                "rule": "Service execution failed (exit code 1): No error output",
+                "eval": "!contains",
+                "severity": "error",
+                "evaluation": "pass"
+              }
+            ]
+          }
+        ],
+        "created": 1779674846087,
+        "createdBy": "itential-02",
+        "lastUpdated": 1780344827300,
         "lastUpdatedBy": "mike.elrom@itential.com"
       }
     },
     {
       "iid": 33,
+      "reference": "ccebebcc-0955-4202-8fda-32d4845e4a12",
       "type": "workflow",
-      "reference": "d7825e52-44a8-4aaf-a485-341981d34e01",
       "folder": "/Software Upgrade",
       "document": {
         "name": "JUNOS Upgrade",
@@ -396,7 +556,7 @@
               "incoming": {
                 "clusterId": "cluster-itential",
                 "language": "python",
-                "code": "import sys\nimport json\nimport re\n\n# \u2500\u2500 Read inputs from stdin (IAG runCode standard) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\ndata = json.load(sys.stdin)\n\ndevice_results = data.get('device_results', {})\ntarget_version  = data.get('target_version', '')\n\n# \u2500\u2500 Extract device name and version from 'show version' output \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\ncommands    = device_results.get('commands_results', [])\ndevice_name = commands[0].get('device') if commands else None\n\nfound_version = None\nfor cmd in commands:\n    if cmd.get('raw', '').strip().lower() == 'show version':\n        response = cmd.get('response', '')\n        match = re.search(r'^Junos:\\s+(\\S+)', response, re.MULTILINE)\n        if match:\n            found_version = match.group(1)\n        break\n\n# \u2500\u2500 Build result \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nif found_version is None:\n    result = {\n        'passed':  False,\n        'found':   None,\n        'target':  target_version,\n        'device':  device_name,\n        'message': \"Could not extract Junos version \u2014 'show version' output missing or malformed.\"\n    }\nelse:\n    passed = found_version == target_version\n    result = {\n        'passed':  passed,\n        'found':   found_version,\n        'target':  target_version,\n        'device':  device_name,\n        'message': (\n            f\"Device '{device_name}' is running Junos {found_version} \u2014 matches target {target_version}.\"\n            if passed else\n            f\"Device '{device_name}' is running Junos {found_version} \u2014 expected {target_version}.\"\n        )\n    }\n\n# \u2500\u2500 Emit JSON to stdout (captured as stdout_json by the platform) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nprint(json.dumps(result))",
+                "code": "import sys\nimport json\nimport re\n\n# ── Read inputs from stdin (IAG runCode standard) ────────────────────────────\ndata = json.load(sys.stdin)\n\ndevice_results = data.get('device_results', {})\ntarget_version  = data.get('target_version', '')\n\n# ── Extract device name and version from 'show version' output ───────────────\ncommands    = device_results.get('commands_results', [])\ndevice_name = commands[0].get('device') if commands else None\n\nfound_version = None\nfor cmd in commands:\n    if cmd.get('raw', '').strip().lower() == 'show version':\n        response = cmd.get('response', '')\n        match = re.search(r'^Junos:\\s+(\\S+)', response, re.MULTILINE)\n        if match:\n            found_version = match.group(1)\n        break\n\n# ── Build result ─────────────────────────────────────────────────────────────\nif found_version is None:\n    result = {\n        'passed':  False,\n        'found':   None,\n        'target':  target_version,\n        'device':  device_name,\n        'message': \"Could not extract Junos version — 'show version' output missing or malformed.\"\n    }\nelse:\n    passed = found_version == target_version\n    result = {\n        'passed':  passed,\n        'found':   found_version,\n        'target':  target_version,\n        'device':  device_name,\n        'message': (\n            f\"Device '{device_name}' is running Junos {found_version} — matches target {target_version}.\"\n            if passed else\n            f\"Device '{device_name}' is running Junos {found_version} — expected {target_version}.\"\n        )\n    }\n\n# ── Emit JSON to stdout (captured as stdout_json by the platform) ─────────────\nprint(json.dumps(result))",
                 "data": {
                   "target_version": "$var.job.formData#/target_version",
                   "device_results": "$var.a2.mop_template_results"
@@ -444,7 +604,7 @@
             "displayName": "MOP",
             "variables": {
               "incoming": {
-                "template": "@6a138e0000000000ffff0001: Pre and Post Checks",
+                "template": "@6a1de7f998f25fd9d4056c91: Pre and Post Checks",
                 "variables": "$var.job.formData",
                 "devices": "$var.job.formData#/device"
               },
@@ -515,7 +675,7 @@
             "displayName": "MOP",
             "variables": {
               "incoming": {
-                "template": "@6a138e0000000000ffff0001: Verify Image",
+                "template": "@6a1de7f998f25fd9d4056c91: Verify Image",
                 "variables": "$var.job.formData",
                 "devices": "$var.job.formData#/device"
               },
@@ -651,7 +811,7 @@
             "displayName": "MOP",
             "variables": {
               "incoming": {
-                "template": "@6a138e0000000000ffff0001: Stage Upgrade",
+                "template": "@6a1de7f998f25fd9d4056c91: Stage Upgrade",
                 "variables": "$var.job.formData",
                 "devices": "$var.job.formData#/device"
               },
@@ -715,7 +875,7 @@
             "displayName": "MOP",
             "variables": {
               "incoming": {
-                "template": "@6a138e0000000000ffff0001: Version Check",
+                "template": "@6a1de7f998f25fd9d4056c91: Version Check",
                 "variables": "$var.job.formData",
                 "devices": "$var.job.formData#/device"
               },
@@ -843,7 +1003,7 @@
             "displayName": "MOP",
             "variables": {
               "incoming": {
-                "template": "@6a138e0000000000ffff0001: Reboot",
+                "template": "@6a1de7f998f25fd9d4056c91: Reboot",
                 "variables": "$var.job.formData",
                 "devices": "$var.job.formData#/device"
               },
@@ -925,7 +1085,7 @@
             "displayName": "MOP",
             "variables": {
               "incoming": {
-                "template": "@6a138e0000000000ffff0001: Pre and Post Checks",
+                "template": "@6a1de7f998f25fd9d4056c91: Pre and Post Checks",
                 "variables": "$var.job.formData",
                 "devices": "$var.job.formData#/device"
               },
@@ -1782,14 +1942,11 @@
           }
         },
         "scenarios": [],
-        "tags": [],
         "type": "automation",
-        "canvasVersion": 3,
         "font_size": 12,
-        "migrationVersion": 7,
         "createdVersion": "6.4.0",
-        "lastUpdatedVersion": "5.55.5",
-        "last_updated": "2026-06-01T01:25:52.499Z",
+        "lastUpdatedVersion": "4.69.69",
+        "last_updated": "2026-06-01T20:13:46.849Z",
         "last_updated_by": {
           "provenance": "CloudAAA",
           "username": "mike.elrom@itential.com",
@@ -1799,45 +1956,24 @@
         "created": "1970-01-01T00:00:00.000Z",
         "preAutomationTime": 0,
         "sla": 0,
-        "groups": []
-      }
-    },
-    {
-      "iid": 36,
-      "type": "mopCommandTemplate",
-      "reference": "@6a138e0000000000ffff0001: Reboot",
-      "folder": "/Software Upgrade",
-      "document": {
+        "uuid": "b675b3f5-eca8-4eb7-be6e-ba9535725995",
+        "canvasVersion": 3,
+        "created_by": {
+          "provenance": "CloudAAA",
+          "username": "mike.elrom@itential.com",
+          "firstname": "Mike",
+          "inactive": false
+        },
         "tags": [],
-        "name": "Reboot",
-        "description": "Runs request system software add <image_path> no-validate no-copy, then request system reboot. Reboot response may be partial because SSH terminates.",
-        "os": "juniper_junos",
-        "passRule": true,
-        "ignoreWarnings": null,
-        "commands": [
-          {
-            "command": "request system reboot",
-            "passRule": true,
-            "rules": [
-              {
-                "rule": "Shutdown NOW!",
-                "eval": "contains",
-                "severity": "warn"
-              }
-            ]
-          }
-        ],
-        "created": 1779719937714,
-        "createdBy": "6a0c557474e890f65883e175",
-        "lastUpdated": 1780277153295,
-        "lastUpdatedBy": "mike.elrom@itential.com"
+        "groups": [],
+        "migrationVersion": 7
       }
     },
     {
       "iid": 38,
+      "reference": "8bf53e31-fcf7-421d-a217-2c154e5cb96e",
       "type": "workflow",
       "folder": "/Golden Configuration",
-      "reference": "e12afde2-c824-492f-b76a-794d1eeda432",
       "document": {
         "name": "Run Compliance",
         "tasks": {
@@ -1848,7 +1984,7 @@
             "y": 0.5,
             "nodeLocation": {
               "x": -420,
-              "y": -984
+              "y": -996
             }
           },
           "workflow_end": {
@@ -1969,7 +2105,7 @@
             "displayName": "TemplateBuilder",
             "variables": {
               "incoming": {
-                "template": "<h2 style=\"font-size:16px;font-family:Arial,sans-serif;margin:0 0 8px 0;\">Golden Config Compliance Report</h2>\n<p style=\"font-size:12px;color:#555;font-family:Arial,sans-serif;\">Batch ID: <strong>{{ batchId }}</strong> &nbsp;|&nbsp; Status: <strong>{{ status }}</strong> &nbsp;|&nbsp; {{ reports | length }} device report(s)</p>\n\n<h3 style=\"font-size:14px;font-family:Arial,sans-serif;border-bottom:1px solid #ddd;padding-bottom:4px;\">Summary</h3>\n<table style=\"border-collapse:collapse;width:100%;font-size:12px;font-family:Arial,sans-serif;margin-bottom:16px;\">\n  <thead>\n    <tr>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Device</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Node Path</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Score</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Grade</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Warnings</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Errors</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Passes</th>\n    </tr>\n  </thead>\n  <tbody>\n  {% for report in reports %}\n    {% if report.grade == 'fail' %}\n      {% set scoreColor = '#c0392b' %}\n      {% set badgeBg = '#fdecea' %}\n      {% set badgeColor = '#c0392b' %}\n      {% set badgeBorder = '#e5b4b1' %}\n    {% else %}\n      {% set scoreColor = '#27ae60' %}\n      {% set badgeBg = '#eafaf1' %}\n      {% set badgeColor = '#27ae60' %}\n      {% set badgeBorder = '#a9dfbf' %}\n    {% endif %}\n    <tr>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.device }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.nodePath }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;color:{{ scoreColor }};\">{{ report.score }}%</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">\n        <span style=\"display:inline-block;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:bold;background:{{ badgeBg }};color:{{ badgeColor }};border:1px solid {{ badgeBorder }};\">{{ report.grade }}</span>\n      </td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.totals.warnings }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.totals.errors }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.totals.passes }}</td>\n    </tr>\n  {% endfor %}\n  </tbody>\n</table>\n\n{% for report in reports %}\n  {% if report.grade == 'fail' %}\n    {% set scoreColor = '#c0392b' %}\n    {% set badgeBg = '#fdecea' %}\n    {% set badgeColor = '#c0392b' %}\n    {% set badgeBorder = '#e5b4b1' %}\n  {% else %}\n    {% set scoreColor = '#27ae60' %}\n    {% set badgeBg = '#eafaf1' %}\n    {% set badgeColor = '#27ae60' %}\n    {% set badgeBorder = '#a9dfbf' %}\n  {% endif %}\n<h3 style=\"font-size:14px;font-family:Arial,sans-serif;border-bottom:1px solid #ddd;padding-bottom:4px;margin-top:16px;\">{{ report.device }} \u2014 {{ report.nodePath }}</h3>\n<div style=\"background:#f9f9f9;border:1px solid #ddd;border-radius:4px;padding:10px 14px;margin-bottom:12px;font-family:Arial,sans-serif;font-size:12px;\">\n  Score: <strong style=\"color:{{ scoreColor }};\">{{ report.score }}%</strong> &nbsp;|&nbsp;\n  Grade: <strong style=\"color:{{ badgeColor }};\">{{ report.grade }}</strong> &nbsp;|&nbsp;\n  Warnings: <strong>{{ report.totals.warnings }}</strong> &nbsp;|&nbsp;\n  Errors: <strong>{{ report.totals.errors }}</strong> &nbsp;|&nbsp;\n  Passes: <strong>{{ report.totals.passes }}</strong> &nbsp;|&nbsp;\n  Device Type: <strong>{{ report.deviceType }}</strong> &nbsp;|&nbsp;\n  Timestamp: <strong>{{ report.timestamp }}</strong>\n</div>\n\n{% if report.issues %}\n<table style=\"border-collapse:collapse;width:100%;font-size:12px;font-family:Arial,sans-serif;margin-bottom:16px;\">\n  <thead>\n    <tr>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Severity</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Type</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Required Config (set command)</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Fix Mode</th>\n    </tr>\n  </thead>\n  <tbody>\n  {% for issue in report.issues %}\n    <tr>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ issue.severity }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ issue.type }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\"><code style=\"font-family:monospace;font-size:11px;background:#f8f8f8;padding:2px 5px;border:1px solid #e0e0e0;border-radius:2px;\">{{ issue.spec.words | join(\" \", \"value\") }}</code></td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ issue.spec.fixMode }}</td>\n    </tr>\n  {% endfor %}\n  </tbody>\n</table>\n{% else %}\n<p style=\"color:#27ae60;font-family:Arial,sans-serif;font-size:12px;\">No issues found.</p>\n{% endif %}\n\n{% endfor %}",
+                "template": "<h2 style=\"font-size:16px;font-family:Arial,sans-serif;margin:0 0 8px 0;\">Golden Config Compliance Report</h2>\n<p style=\"font-size:12px;color:#555;font-family:Arial,sans-serif;\">Batch ID: <strong>{{ batchId }}</strong> &nbsp;|&nbsp; Status: <strong>{{ status }}</strong> &nbsp;|&nbsp; {{ reports | length }} device report(s)</p>\n\n<h3 style=\"font-size:14px;font-family:Arial,sans-serif;border-bottom:1px solid #ddd;padding-bottom:4px;\">Summary</h3>\n<table style=\"border-collapse:collapse;width:100%;font-size:12px;font-family:Arial,sans-serif;margin-bottom:16px;\">\n  <thead>\n    <tr>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Device</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Node Path</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Score</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Grade</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Warnings</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Errors</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Passes</th>\n    </tr>\n  </thead>\n  <tbody>\n  {% for report in reports %}\n    {% if report.grade == 'fail' %}\n      {% set scoreColor = '#c0392b' %}\n      {% set badgeBg = '#fdecea' %}\n      {% set badgeColor = '#c0392b' %}\n      {% set badgeBorder = '#e5b4b1' %}\n    {% else %}\n      {% set scoreColor = '#27ae60' %}\n      {% set badgeBg = '#eafaf1' %}\n      {% set badgeColor = '#27ae60' %}\n      {% set badgeBorder = '#a9dfbf' %}\n    {% endif %}\n    <tr>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.device }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.nodePath }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;color:{{ scoreColor }};\">{{ report.score }}%</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">\n        <span style=\"display:inline-block;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:bold;background:{{ badgeBg }};color:{{ badgeColor }};border:1px solid {{ badgeBorder }};\">{{ report.grade }}</span>\n      </td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.totals.warnings }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.totals.errors }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ report.totals.passes }}</td>\n    </tr>\n  {% endfor %}\n  </tbody>\n</table>\n\n{% for report in reports %}\n  {% if report.grade == 'fail' %}\n    {% set scoreColor = '#c0392b' %}\n    {% set badgeBg = '#fdecea' %}\n    {% set badgeColor = '#c0392b' %}\n    {% set badgeBorder = '#e5b4b1' %}\n  {% else %}\n    {% set scoreColor = '#27ae60' %}\n    {% set badgeBg = '#eafaf1' %}\n    {% set badgeColor = '#27ae60' %}\n    {% set badgeBorder = '#a9dfbf' %}\n  {% endif %}\n<h3 style=\"font-size:14px;font-family:Arial,sans-serif;border-bottom:1px solid #ddd;padding-bottom:4px;margin-top:16px;\">{{ report.device }} — {{ report.nodePath }}</h3>\n<div style=\"background:#f9f9f9;border:1px solid #ddd;border-radius:4px;padding:10px 14px;margin-bottom:12px;font-family:Arial,sans-serif;font-size:12px;\">\n  Score: <strong style=\"color:{{ scoreColor }};\">{{ report.score }}%</strong> &nbsp;|&nbsp;\n  Grade: <strong style=\"color:{{ badgeColor }};\">{{ report.grade }}</strong> &nbsp;|&nbsp;\n  Warnings: <strong>{{ report.totals.warnings }}</strong> &nbsp;|&nbsp;\n  Errors: <strong>{{ report.totals.errors }}</strong> &nbsp;|&nbsp;\n  Passes: <strong>{{ report.totals.passes }}</strong> &nbsp;|&nbsp;\n  Device Type: <strong>{{ report.deviceType }}</strong> &nbsp;|&nbsp;\n  Timestamp: <strong>{{ report.timestamp }}</strong>\n</div>\n\n{% if report.issues %}\n<table style=\"border-collapse:collapse;width:100%;font-size:12px;font-family:Arial,sans-serif;margin-bottom:16px;\">\n  <thead>\n    <tr>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Severity</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Type</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Required Config (set command)</th>\n      <th style=\"background:#f0f0f0;text-align:left;padding:6px 8px;border:1px solid #ccc;\">Fix Mode</th>\n    </tr>\n  </thead>\n  <tbody>\n  {% for issue in report.issues %}\n    <tr>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ issue.severity }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ issue.type }}</td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\"><code style=\"font-family:monospace;font-size:11px;background:#f8f8f8;padding:2px 5px;border:1px solid #e0e0e0;border-radius:2px;\">{{ issue.spec.words | join(\" \", \"value\") }}</code></td>\n      <td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">{{ issue.spec.fixMode }}</td>\n    </tr>\n  {% endfor %}\n  </tbody>\n</table>\n{% else %}\n<p style=\"color:#27ae60;font-family:Arial,sans-serif;font-size:12px;\">No issues found.</p>\n{% endif %}\n\n{% endfor %}",
                 "variables": "$var.509b.runComplianceBatchResult",
                 "castDataType": "string"
               },
@@ -2114,16 +2250,15 @@
         "scenarios": [],
         "type": "automation",
         "font_size": 12,
-        "canvasVersion": 3,
-        "last_updated": "2026-06-01T01:25:52.502Z",
+        "last_updated": "2026-06-01T20:13:46.849Z",
         "last_updated_by": {
           "provenance": "CloudAAA",
           "username": "mike.elrom@itential.com",
           "firstname": "Mike",
           "inactive": false
         },
-        "lastUpdatedVersion": "5.55.5",
-        "uuid": "9d48564f-80c2-40c5-a95e-b897050c0314",
+        "lastUpdatedVersion": "4.69.69",
+        "uuid": "f6ebada7-804a-4f25-b9b2-d0b12b878736",
         "created": "2026-05-31T20:05:43.869Z",
         "created_by": {
           "provenance": "CloudAAA",
@@ -2132,6 +2267,7 @@
           "inactive": false
         },
         "createdVersion": "5.55.5",
+        "canvasVersion": 3,
         "tags": [],
         "groups": [],
         "migrationVersion": 7
@@ -2139,11 +2275,10 @@
     },
     {
       "iid": 39,
+      "reference": "c9a2fce6-4de8-4325-8a2b-10d24197a737",
       "type": "workflow",
       "folder": "/Inventory Management",
-      "reference": "8d63cf1e-a93a-419f-bde8-a42a3bf20244",
       "document": {
-        "tags": [],
         "description": "Create inventory in Itential Inventory Manager from NetBox as a source of truth",
         "tasks": {
           "7291": {
@@ -2566,7 +2701,7 @@
             "displayName": "TemplateBuilder",
             "variables": {
               "incoming": {
-                "template": "{#-\n  NetBox -> IAG5 Inventory Template \u2014 JUNOS / Hybrid\n  Filters: active Junos devices with an IP.\nAdjust as desired, make sure to set passwords with SECRETS\n-#}\n\n{% set junos_slugs = ['juniper-junos', 'vsrx'] %}\n\n{% set credentials = {'user': 'itential', 'password': 'password'} %}\n\n{% set device_overrides = {} %}\n\n{% set netmiko_opts = {\n    'banner_timeout':        60,\n    'session_timeout':       300,\n    'read_timeout_override': 600,\n    'conn_timeout':          60,\n    'global_delay_factor':   3,\n    'enable_fast_mode':      false\n} %}\n\n{% set netconf_opts = {\n    'port':               830,\n    'timeout':            30,\n    'lock_timeout':       60,\n    'lock_poll_interval': 2,\n    'command_timeout': 600,\n    'config_format':  'set'\n} %}\n\n[\n{%- set ns = namespace(first=true) %}\n{%- for device in body.results %}\n\n  {%- set nb_platform = (device.platform.slug if device.platform else device.device_type.slug) or '' %}\n\n  {%- if device.primary_ip4 %}\n    {%- set ip_address = device.primary_ip4.address.split('/')[0] %}\n  {%- elif device.config_context and device.config_context.ipAddress %}\n    {%- set ip_address = device.config_context.ipAddress %}\n  {%- else %}\n    {%- set ip_address = '' %}\n  {%- endif %}\n\n  {%- set creds = device_overrides.get(device.name, credentials) %}\n\n  {%- set driver_options = {'netmiko': netmiko_opts, 'netconf': netconf_opts} %}\n\n  {%- if ip_address and nb_platform in junos_slugs and device.status and device.status.value == 'active' %}\n{{ \",\" if not ns.first else \"\" }}\n{%- set ns.first = false %}\n  {\n    \"name\": \"{{ device.name }}\",\n    \"attributes\": {\n      \"itential_host\":           \"{{ ip_address }}\",\n      \"itential_port\":           22,\n      \"itential_driver\":         \"netmiko\",\n      \"itential_platform\":       \"juniper_junos\",\n      \"itential_user\":           \"{{ creds.user }}\",\n      \"itential_password\":       \"{{ creds.password }}\",\n      \"itential_driver_options\": {{ driver_options | tojson }}\n    },\n    \"tags\": [\n      \"{{ (device.role.slug if device.role else 'unknown') }}\",\n      \"{{ (device.site.slug if device.site else 'unknown') }}\",\n      \"{{ (device.status.value if device.status else 'unknown') }}\",\n      \"driver:netmiko\",\n      \"platform:juniper_junos\",\n      \"transport:cli+netconf\"\n    ]\n  }\n  {%- endif %}\n{%- endfor %}\n]\n",
+                "template": "{#-\n  NetBox -> IAG5 Inventory Template — JUNOS / Hybrid\n  Filters: active Junos devices with an IP.\nAdjust as desired, make sure to set passwords with SECRETS\n-#}\n\n{% set junos_slugs = ['juniper-junos', 'vsrx'] %}\n\n{% set credentials = {'user': 'itential', 'password': 'password'} %}\n\n{% set device_overrides = {} %}\n\n{% set netmiko_opts = {\n    'banner_timeout':        60,\n    'session_timeout':       300,\n    'read_timeout_override': 600,\n    'conn_timeout':          60,\n    'global_delay_factor':   3,\n    'enable_fast_mode':      false\n} %}\n\n{% set netconf_opts = {\n    'port':               830,\n    'timeout':            30,\n    'lock_timeout':       60,\n    'lock_poll_interval': 2,\n    'command_timeout': 600,\n    'config_format':  'set'\n} %}\n\n[\n{%- set ns = namespace(first=true) %}\n{%- for device in body.results %}\n\n  {%- set nb_platform = (device.platform.slug if device.platform else device.device_type.slug) or '' %}\n\n  {%- if device.primary_ip4 %}\n    {%- set ip_address = device.primary_ip4.address.split('/')[0] %}\n  {%- elif device.config_context and device.config_context.ipAddress %}\n    {%- set ip_address = device.config_context.ipAddress %}\n  {%- else %}\n    {%- set ip_address = '' %}\n  {%- endif %}\n\n  {%- set creds = device_overrides.get(device.name, credentials) %}\n\n  {%- set driver_options = {'netmiko': netmiko_opts, 'netconf': netconf_opts} %}\n\n  {%- if ip_address and nb_platform in junos_slugs and device.status and device.status.value == 'active' %}\n{{ \",\" if not ns.first else \"\" }}\n{%- set ns.first = false %}\n  {\n    \"name\": \"{{ device.name }}\",\n    \"attributes\": {\n      \"itential_host\":           \"{{ ip_address }}\",\n      \"itential_port\":           22,\n      \"itential_driver\":         \"netmiko\",\n      \"itential_platform\":       \"juniper_junos\",\n      \"itential_user\":           \"{{ creds.user }}\",\n      \"itential_password\":       \"{{ creds.password }}\",\n      \"itential_driver_options\": {{ driver_options | tojson }}\n    },\n    \"tags\": [\n      \"{{ (device.role.slug if device.role else 'unknown') }}\",\n      \"{{ (device.site.slug if device.site else 'unknown') }}\",\n      \"{{ (device.status.value if device.status else 'unknown') }}\",\n      \"driver:netmiko\",\n      \"platform:juniper_junos\",\n      \"transport:cli+netconf\"\n    ]\n  }\n  {%- endif %}\n{%- endfor %}\n]\n",
                 "variables": {},
                 "castDataType": "object"
               },
@@ -2759,10 +2894,9 @@
         "scenarios": [],
         "type": "automation",
         "font_size": 12,
-        "canvasVersion": 3,
-        "last_updated": "2026-06-01T01:25:52.499Z",
-        "lastUpdatedVersion": "5.55.5",
-        "uuid": "512b9055-e2c8-4a17-b3f2-d34dd8f5afa5",
+        "last_updated": "2026-06-01T20:13:46.849Z",
+        "lastUpdatedVersion": "4.69.69",
+        "uuid": "cb518afd-c1cf-4960-897d-30b02fb8d74c",
         "createdVersion": "5.55.5",
         "name": "Create & Update Inventory from NetBox",
         "last_updated_by": {
@@ -2772,17 +2906,24 @@
           "inactive": false
         },
         "created": "1970-01-01T00:00:00.000Z",
+        "canvasVersion": 3,
+        "created_by": {
+          "provenance": "CloudAAA",
+          "username": "mike.elrom@itential.com",
+          "firstname": "Mike",
+          "inactive": false
+        },
+        "tags": [],
         "groups": [],
         "migrationVersion": 7
       }
     },
     {
       "iid": 40,
+      "reference": "2f0ea1c3-c50f-4d44-a059-65f07c5d5be1",
       "type": "workflow",
       "folder": "/Inventory Management",
-      "reference": "2494ad56-105b-44e6-96c8-6120b442f60d",
       "document": {
-        "tags": [],
         "tasks": {
           "workflow_start": {
             "name": "workflow_start",
@@ -2957,10 +3098,9 @@
         "scenarios": [],
         "type": "automation",
         "font_size": 12,
-        "canvasVersion": 3,
-        "last_updated": "2026-06-01T01:25:52.504Z",
-        "lastUpdatedVersion": "5.55.5",
-        "uuid": "970643a5-f94e-4bc8-a896-c93665f550c6",
+        "last_updated": "2026-06-01T20:13:46.849Z",
+        "lastUpdatedVersion": "4.69.69",
+        "uuid": "9497efd3-4b3a-43c3-a737-cb2fd75a5e28",
         "createdVersion": "5.55.5",
         "name": "Clear & Delete Inventory",
         "last_updated_by": {
@@ -2970,6 +3110,14 @@
           "inactive": false
         },
         "created": "1970-01-01T00:00:00.000Z",
+        "canvasVersion": 3,
+        "created_by": {
+          "provenance": "CloudAAA",
+          "username": "mike.elrom@itential.com",
+          "firstname": "Mike",
+          "inactive": false
+        },
+        "tags": [],
         "groups": [],
         "migrationVersion": 7
       }
@@ -2981,18 +3129,13 @@
     "provenance": "CloudAAA",
     "username": "mike.elrom@itential.com"
   },
-  "lastUpdated": "2026-06-01T01:25:53.310Z",
+  "lastUpdated": "2026-06-01T20:14:20.120Z",
   "lastUpdatedBy": {
     "_id": "6a0c557474e890f65883e175",
     "provenance": "CloudAAA",
     "username": "mike.elrom@itential.com"
   },
-  "iid": 25,
   "folders": [
-    {
-      "iid": 37,
-      "nodeType": "component"
-    },
     {
       "nodeType": "folder",
       "name": "Software Upgrade",
@@ -3046,32 +3189,18 @@
       "name": "Golden Configuration",
       "children": [
         {
+          "iid": 42,
+          "nodeType": "component"
+        },
+        {
           "iid": 38,
           "nodeType": "component"
         }
       ]
     }
   ],
+  "iid": 40,
   "thumbnail": "",
   "backgroundColor": "#FFFFFF",
-  "referencedComponentHashes": [
-    {
-      "type": "automation",
-      "reference": "6a13a94c84f0ff3625737607",
-      "name": "JUNOS Software Upgrade",
-      "hash": "4f4a11f259a6f112431a7b3a82b5165a3ad46805"
-    },
-    {
-      "type": "trigger",
-      "reference": "6a13a94c84f0ff3625737608",
-      "name": "JunOS Upgrade",
-      "hash": "d65db93cf1732b754a430ebce3b98fea0e2cde2b"
-    },
-    {
-      "type": "trigger",
-      "reference": "6a17894e9040a809d7077499",
-      "name": "Software Upgrade",
-      "hash": "1a7c931d63f26f8c1942e2f36e1a2ca0a2adb8fb"
-    }
-  ]
+  "referencedComponentHashes": []
 }
