@@ -2,6 +2,8 @@
 
 Assets for the Itential Platform — Juniper Junos device automation using NETCONF.
 
+**Requirements:** Itential Platform >= 6.4 · Itential Automation Gateway >= 5.4
+
 ## Contents
 
 | Asset | Description |
@@ -91,9 +93,7 @@ Use them in workflow tasks to give operators structured, typed inputs:
 | `junos-netconf-send-config` | Apply a multi-line config block string and commit |
 | `junos-netconf-reboot` | Schedule reboot via `<request-reboot/>` |
 
-**Dependencies:**
-- [Automation Gateway 5.x](https://www.itential.com/automation-gateway/)
-- Python packages: `ncclient>=0.6.13`, `lxml>=4.9.0`
+**Dependencies:** `ncclient>=0.6.13`, `lxml>=4.9.0`
 
 ---
 
@@ -115,10 +115,7 @@ command template execution for Juniper Junos devices via NETCONF.
 > specific vSRX packages. Update the form's `enum` fields under "Image Path on Device"
 > and "Expected Image SHA-256" to match the software images staged in your environment.
 
-**Dependencies:**
-- [Automation Gateway 5.x](https://www.itential.com/automation-gateway/)
-- Automation Gateway Adapter (_ships with Itential Platform_)
-- `junos-netconf-*` services registered in IAG5 (see Device Drivers above)
+**Dependencies:** `junos-netconf-*` services registered in IAG5 (see Device Drivers above)
 
 ---
 
@@ -134,28 +131,4 @@ navigation and compliance.
 > `"devices": ["Itential Lab JUNOS::aws-lab-junos"]` in the exported JSON. Update this
 > to match your Inventory Manager group name and device name before importing.
 
-**Dependencies:**
-- Itential Platform with Config Manager enabled
-- `junos-netconf-set-config` or `send-config` service registered in IAG5 (for remediation)
-
----
-
-## IAG4 (legacy)
-
-The Ansible-based IAG4 inventory and project have been superseded by the IAG5 NETCONF
-driver above. If you are still on IAG4, the previous inventory format was:
-
-```json
-{
-  "ansible_connection": "netconf",
-  "ansible_host": "XXX.XX.XXX.XX",
-  "ansible_network_os": "junos",
-  "ansible_port": 22,
-  "ansible_password": "PASSWORD",
-  "ansible_user": "USERNAME"
-}
-```
-
-**Dependencies (IAG4):**
-- [Automation Gateway 4.x](https://www.itential.com/automation-gateway/)
-- Automation Gateway Adapter (_ships with Itential Platform_)
+**Dependencies:** Config Manager enabled · `junos-netconf-set-config` registered in IAG5
