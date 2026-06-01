@@ -12,8 +12,8 @@ Assets for the Itential Platform — Juniper JUNOS device automation using NETCO
 | [Projects/Juniper JUNOS](./Projects/Juniper%20JUNOS.project.json) | IAG5 project — software upgrade, port turn-up, push configuration, command runner |
 | [Configuration Parser/juniper-junos-set.json](./Configuration%20Parser/juniper-junos-set.json) | Config Manager parser defining the `juniper-junos-set` device type |
 | [Golden Configurations/Juniper JUNOS set](./Golden%20Configurations/Juniper%20JUNOS%20set.json) | Golden config tree using JUNOS `set`-format lines — requires `juniper-junos-set` parser |
-| [Golden Configurations/Juniper JUNOS text - Jinja2](./Golden%20Configurations/Juniper%20JUNOS%20text%20-%20Jinja2.json) | Golden config tree using Jinja2 templates for flexible value matching |
-| [Golden Configurations/Juniper JUNOS text - Simple](./Golden%20Configurations/Juniper%20JUNOS%20text%20-%20Simple.json) | Golden config tree using literal text matching |
+| [Golden Configurations/Juniper JUNOS text - Jinja2](./Golden%20Configurations/Juniper%20JUNOS%20text%20-%20Jinja2.json) | Golden config tree using `text`-format lines with Jinja2 templates for flexible value matching |
+| [Golden Configurations/Juniper JUNOS text - Simple](./Golden%20Configurations/Juniper%20JUNOS%20text%20-%20Simple.json) | Golden config tree using `text`-format lines with literal matching |
 
 ---
 
