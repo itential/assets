@@ -186,6 +186,15 @@ An IAG5 project for Juniper JUNOS device automation via NETCONF, organized into 
 - **Create & Update Inventory from NetBox** — creates or updates an Inventory Manager inventory using NetBox as the source of truth
 - **Clear & Delete Inventory** — removes all nodes from an inventory and deletes it
 
+**Port Turn Up**
+- **Port Turn Up** — provisions an 802.1Q sub-interface on a Juniper JUNOS device: fetches device details from inventory, runs a pre-check, backs up the running config, renders the sub-interface config via Jinja2, pushes it with `send-config`, and verifies with a post-check
+- Command templates: Port Turn Up Pre Check · Port Turn Up Post Check — capture `show configuration interfaces`, `show security zones`, and `show route table inet.0` before and after the change
+- Template: **802.1Q Sub Interface** — Jinja2 template generating `set`-format lines for the interface unit, VLAN ID, IP address, and security zone assignment
+- Form: **8021.Q Sub Interface Form** — inputs: device, interface, VLAN ID, description, IP address, zone
+
+> **Before running:** Ensure the target interface supports VLAN tagging and the security zone
+> already exists on the device. The form's `zone` field must match an existing zone name exactly.
+
 **Dependencies:** `junos-netconf-*` services registered in IAG5 (see Device Drivers above)
 
 ---
