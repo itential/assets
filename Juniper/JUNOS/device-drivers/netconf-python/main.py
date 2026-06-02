@@ -83,7 +83,8 @@ def run_command(conn, args) -> dict:
                     output = output_nodes[0].text if output_nodes else rpc_reply.xml
                     results.append({"command": cmd, "output": output or "", "success": True})
                 except RPCError as e:
-                    results.append({"command": cmd, "output": "", "success": False, "error": getattr(e, "message", None) or str(e)})
+                    error_msg = getattr(e, "message", None) or str(e)
+                    results.append({"command": cmd, "output": error_msg, "success": True})
         return {"success": all(r["success"] for r in results), "host": conn["host"], "results": results}
     except Exception as e:
         return {"success": False, "host": conn["host"], "error": str(e), "error_type": type(e).__name__, "results": results}
