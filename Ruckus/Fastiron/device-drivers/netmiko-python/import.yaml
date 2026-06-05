@@ -1,0 +1,118 @@
+---
+repositories:
+  - name: itential-assets
+    description: Itential community assets repository
+    url: https://github.com/itential/assets.git
+    reference: devel
+
+decorators:
+  - name: fastiron-netmiko-run-command-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: fastiron-netmiko-run-command inputs
+      type: object
+      properties:
+        command:
+          description: CLI command to execute (e.g. "show version")
+          type: string
+      required: [command]
+      additionalProperties: false
+
+  - name: fastiron-netmiko-get-config-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: fastiron-netmiko-get-config inputs
+      type: object
+      properties:
+        section:
+          description: >
+            Optional section to retrieve (e.g. "interface ethernet 1/1/1", "vlan 100").
+            Omit to retrieve the full running configuration.
+          type: string
+      additionalProperties: false
+
+  - name: fastiron-netmiko-send-command-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: fastiron-netmiko-send-command inputs
+      type: object
+      properties:
+        commands:
+          description: Array of IronWare config commands to apply (e.g. ["interface ethernet 1/1/1", "port-name uplink"])
+          type: array
+          items:
+            type: string
+      required: [commands]
+      additionalProperties: false
+
+  - name: fastiron-netmiko-set-config-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: fastiron-netmiko-set-config inputs
+      type: object
+      properties:
+        config:
+          description: JSON-encoded Config Manager changes array [{parents, old, new}]
+          type: string
+      required: [config]
+      additionalProperties: false
+
+services:
+  - name: fastiron-netmiko-is-alive
+    type: python-script
+    description: Ruckus Fastiron — verify SSH reachability via show version
+    repository: itential-assets
+    working-directory: Ruckus/Fastiron/device-drivers/netmiko-python
+    filename: main.py
+    runtime:
+      env:
+        FASTIRON_OP: is-alive
+    tags: [driver, fastiron, netmiko]
+
+  - name: fastiron-netmiko-run-command
+    type: python-script
+    description: Ruckus Fastiron — execute one or more CLI show/exec commands
+    repository: itential-assets
+    working-directory: Ruckus/Fastiron/device-drivers/netmiko-python
+    filename: main.py
+    decorator: fastiron-netmiko-run-command-input
+    runtime:
+      env:
+        FASTIRON_OP: run-command
+    tags: [driver, fastiron, netmiko]
+
+  - name: fastiron-netmiko-get-config
+    type: python-script
+    description: Ruckus Fastiron — retrieve running configuration (full or by section)
+    repository: itential-assets
+    working-directory: Ruckus/Fastiron/device-drivers/netmiko-python
+    filename: main.py
+    decorator: fastiron-netmiko-get-config-input
+    runtime:
+      env:
+        FASTIRON_OP: get-config
+    tags: [driver, fastiron, netmiko]
+
+  - name: fastiron-netmiko-send-command
+    type: python-script
+    description: Ruckus Fastiron — apply an array of config commands and save (write memory)
+    repository: itential-assets
+    working-directory: Ruckus/Fastiron/device-drivers/netmiko-python
+    filename: main.py
+    decorator: fastiron-netmiko-send-command-input
+    runtime:
+      env:
+        FASTIRON_OP: send-command
+    tags: [driver, fastiron, netmiko]
+
+  - name: fastiron-netmiko-set-config
+    type: python-script
+    description: Ruckus Fastiron — Config Manager remediation via IM iag5-service action (broker entry point)
+    repository: itential-assets
+    working-directory: Ruckus/Fastiron/device-drivers/netmiko-python
+    filename: main.py
+    decorator: fastiron-netmiko-set-config-input
+    runtime:
+      env:
+        FASTIRON_OP: set-config
+    tags: [driver, fastiron, netmiko, broker]
