@@ -424,12 +424,16 @@ def _format_for_humans(result, op):
 
 def main() -> int:
     # temporary debug — remove before contributing to itential/assets
-    try:
-        with open("/tmp/fastiron_debug.json", "w") as _f:
-            json.dump({"started": True, "argv": sys.argv,
-                       "FASTIRON_OP": os.environ.get("FASTIRON_OP")}, _f, indent=2)
-    except Exception:
-        pass
+    for _debug_path in ["/tmp/fastiron_debug.json", "/var/lib/gateway/fastiron_debug.json",
+                        "/var/tmp/fastiron_debug.json"]:
+        try:
+            with open(_debug_path, "w") as _f:
+                json.dump({"started": True, "argv": sys.argv,
+                           "FASTIRON_OP": os.environ.get("FASTIRON_OP"),
+                           "uid": os.getuid(), "cwd": os.getcwd()}, _f, indent=2)
+            break
+        except Exception:
+            pass
 
     args = build_parser().parse_args()
     if not args.op:
