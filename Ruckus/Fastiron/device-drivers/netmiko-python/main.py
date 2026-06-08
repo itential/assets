@@ -242,9 +242,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--password",     default=None, help="Override the inventory's itential_password")
     parser.add_argument("--secret",       default=None, help="Enable password (privileged EXEC)")
     parser.add_argument("--timeout",      default=None, help="Override SSH connection timeout (default 30s)")
-    parser.add_argument("--command-timeout", dest="command_timeout", default=None,
+    parser.add_argument("--command-timeout", "--command_timeout", dest="command_timeout", default=None,
                         help="Override CLI read timeout for run-command (use for slow commands)")
-    parser.add_argument("--device-type",  dest="device_type", default=None,
+    parser.add_argument("--device-type", "--device_type", dest="device_type", default=None,
                         help="netmiko device type (default: ruckus_fastiron)")
 
     # Operation params
