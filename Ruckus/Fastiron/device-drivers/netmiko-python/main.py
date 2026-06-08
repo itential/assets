@@ -432,8 +432,10 @@ def main() -> int:
     result = _DISPATCH[args.op](conn, args)
     formatted = _format_for_humans(result, args.op)
     print(formatted, end="" if args.op == "is-alive" else "\n")
+    sys.stdout.flush()
     if not result.get("success"):
         print(formatted, file=sys.stderr)
+        sys.stderr.flush()
     return 0 if result.get("success") else 1
 
 
