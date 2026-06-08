@@ -164,8 +164,16 @@ _DISPATCH = {
 
 
 def _read_stdin_inventory():
-    """Read the InventoryInfo JSON gateway5 pipes to stdin. Returns None if no data."""
+    """Read the InventoryInfo JSON gateway5 pipes to stdin. Returns None if no data.
+
+    When invoked directly via iagctl (no inventory node), stdin is an open pipe
+    with no data and no EOF — select() prevents blocking indefinitely.
+    """
+    import select
     if sys.stdin.isatty():
+        return None
+    ready, _, _ = select.select([sys.stdin], [], [], 2.0)
+    if not ready:
         return None
     raw = sys.stdin.read()
     if not raw or not raw.strip():
