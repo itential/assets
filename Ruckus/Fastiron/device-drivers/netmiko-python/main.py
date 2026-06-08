@@ -443,7 +443,7 @@ def main() -> int:
     conn = _resolve_connection(args, node)
     result = _DISPATCH[args.op](conn, args)
     formatted = _format_for_humans(result, args.op)
-    print(formatted, end="" if args.op == "is-alive" else "\n")
+    print(formatted)
     sys.stdout.flush()
     if not result.get("success"):
         print(formatted, file=sys.stderr)
