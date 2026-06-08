@@ -436,6 +436,13 @@ def main() -> int:
     if not result.get("success"):
         print(formatted, file=sys.stderr)
         sys.stderr.flush()
+    # temporary debug — remove before contributing to itential/assets
+    try:
+        with open("/tmp/fastiron_debug.json", "w") as _f:
+            json.dump({"op": args.op, "result": result, "formatted": formatted,
+                       "exit_code": 0 if result.get("success") else 1}, _f, indent=2, default=str)
+    except Exception:
+        pass
     return 0 if result.get("success") else 1
 
 
