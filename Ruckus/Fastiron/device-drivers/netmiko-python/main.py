@@ -423,6 +423,14 @@ def _format_for_humans(result, op):
 
 
 def main() -> int:
+    # temporary debug — remove before contributing to itential/assets
+    try:
+        with open("/tmp/fastiron_debug.json", "w") as _f:
+            json.dump({"started": True, "argv": sys.argv,
+                       "FASTIRON_OP": os.environ.get("FASTIRON_OP")}, _f, indent=2)
+    except Exception:
+        pass
+
     args = build_parser().parse_args()
     if not args.op:
         raise SystemExit("--op flag or FASTIRON_OP env var must be set")
@@ -436,13 +444,6 @@ def main() -> int:
     if not result.get("success"):
         print(formatted, file=sys.stderr)
         sys.stderr.flush()
-    # temporary debug — remove before contributing to itential/assets
-    try:
-        with open("/tmp/fastiron_debug.json", "w") as _f:
-            json.dump({"op": args.op, "result": result, "formatted": formatted,
-                       "exit_code": 0 if result.get("success") else 1}, _f, indent=2, default=str)
-    except Exception:
-        pass
     return 0 if result.get("success") else 1
 
 
