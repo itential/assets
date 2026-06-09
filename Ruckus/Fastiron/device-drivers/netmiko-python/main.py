@@ -164,39 +164,10 @@ _DISPATCH = {
 
 
 def _read_stdin_inventory():
-    """Read the InventoryInfo JSON gateway5 pipes to stdin. Returns None if no data.
-
-    IAG5 pipes InventoryInfo JSON to stdin via a Go I/O goroutine. Reading until
-    EOF is critical: if Python exits while IAG5's goroutine is still writing, Go's
-    cmd.Wait() receives a broken-pipe error (not an ExitError) and reports -255.
-    We read until EOF or a 5-second total timeout. When invoked without inventory
-    (direct iagctl test), stdin has no data and the 2-second initial select() times
-    out cleanly.
-    """
-    import select, os, time
+    """Read the InventoryInfo JSON gateway5 pipes to stdin. Returns None if no data."""
     if sys.stdin.isatty():
         return None
-    fd = sys.stdin.fileno()
-    # Wait up to 2 seconds for the first byte
-    ready, _, _ = select.select([sys.stdin], [], [], 2.0)
-    if not ready:
-        return None
-    # Read until EOF or 5-second total timeout
-    deadline = time.monotonic() + 5.0
-    chunks = []
-    while time.monotonic() < deadline:
-        remaining = deadline - time.monotonic()
-        ready, _, _ = select.select([sys.stdin], [], [], min(remaining, 1.0))
-        if not ready:
-            break
-        try:
-            chunk = os.read(fd, 65536)
-        except OSError:
-            break
-        if not chunk:
-            break  # EOF
-        chunks.append(chunk)
-    raw = b"".join(chunks).decode("utf-8", errors="replace")
+    raw = sys.stdin.read()
     if not raw or not raw.strip():
         return None
     try:
@@ -452,28 +423,10 @@ def main() -> int:
     conn = _resolve_connection(args, node)
     result = _DISPATCH[args.op](conn, args)
     formatted = _format_for_humans(result, args.op)
-    print(formatted)
-    sys.stdout.flush()
+    print(formatted, end="" if args.op == "is-alive" else "\n")
     if not result.get("success"):
         print(formatted, file=sys.stderr)
-        sys.stderr.flush()
-    # Drain any remaining stdin so IAG5's stdin-copy goroutine finishes cleanly.
-    # Without this, Python closing stdin mid-write causes cmd.Wait() to return a
-    # non-ExitError in Go, which IAG5 maps to -255 and discards stdout.
-    _drain_stdin()
     return 0 if result.get("success") else 1
-
-
-def _drain_stdin():
-    import select, os
-    if sys.stdin.isatty():
-        return
-    try:
-        while select.select([sys.stdin], [], [], 0.2)[0]:
-            if not os.read(sys.stdin.fileno(), 65536):
-                break
-    except OSError:
-        pass
 
 
 if __name__ == "__main__":
