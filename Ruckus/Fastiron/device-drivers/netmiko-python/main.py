@@ -166,16 +166,34 @@ _DISPATCH = {
 def _read_stdin_inventory():
     """Read the InventoryInfo JSON gateway5 pipes to stdin. Returns None if no data.
 
-    When invoked directly via iagctl (no inventory node), stdin is an open pipe
-    with no data and no EOF — select() prevents blocking indefinitely.
+    IAG5 pipes InventoryInfo JSON to stdin but may keep the pipe open after
+    writing — sys.stdin.read() would block indefinitely waiting for EOF.
+    Instead we read in chunks, stopping when no new data arrives within 0.5s.
+    When invoked without inventory (direct iagctl test), stdin has no data and
+    the initial 2-second select() times out cleanly.
     """
-    import select
+    import select, os
     if sys.stdin.isatty():
         return None
+    fd = sys.stdin.fileno()
+    chunks = []
+    # Wait up to 2 seconds for the first byte
     ready, _, _ = select.select([sys.stdin], [], [], 2.0)
     if not ready:
         return None
-    raw = sys.stdin.read()
+    # Read all available data; stop when nothing new arrives within 0.5s
+    while True:
+        ready, _, _ = select.select([sys.stdin], [], [], 0.5)
+        if not ready:
+            break
+        try:
+            chunk = os.read(fd, 65536)
+        except OSError:
+            break
+        if not chunk:
+            break
+        chunks.append(chunk)
+    raw = b"".join(chunks).decode("utf-8", errors="replace")
     if not raw or not raw.strip():
         return None
     try:
