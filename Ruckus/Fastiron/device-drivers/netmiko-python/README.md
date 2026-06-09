@@ -130,10 +130,7 @@ Set these on the device record in Inventory Manager:
     "itential_password": "$SECRET_vault $KEY_fastiron_pass",
     "itential_driver_options": {
       "netmiko": {
-        "port": 22,
-        "timeout": 30,
-        "device_type": "ruckus_fastiron",
-        "command_timeout": 60
+        "device_type": "ruckus_fastiron"
       }
     }
   }
@@ -145,10 +142,9 @@ Set these on the device record in Inventory Manager:
 | `itential_host` | — | Device management IP (required) |
 | `itential_user` | — | SSH username (required) |
 | `itential_password` | — | SSH password (required) |
-| `port` | `22` | SSH port |
-| `timeout` | `30` | SSH connection timeout (seconds) |
 | `device_type` | `ruckus_fastiron` | netmiko device type |
-| `command_timeout` | — | CLI read timeout for `run-command` (seconds); use for slow commands |
+
+> **Note:** Do not set `port`, `timeout`, or `command_timeout` inside `itential_driver_options.netmiko` — IAG5's internal `DriverOptions` schema rejects unrecognised fields. The driver uses sensible defaults (port 22, timeout 30s). Override connection params via CLI flags when testing locally instead.
 
 > **Note:** Fastiron has user EXEC and privileged EXEC modes. If your devices are configured to auto-elevate to privileged mode on SSH login, no enable password is needed. If your devices require a separate enable password, add `"secret": "<enable-password>"` under `itential_driver_options.netmiko` and pass `--secret` when testing locally.
 
