@@ -38,6 +38,11 @@ def _connect(conn):
         conn_timeout=conn["timeout"],
         # ssh-rsa host keys are disabled by default in paramiko 3.3+; re-enable for legacy devices
         disabled_algorithms={"pubkeys": []},
+        # Reduce from netmiko's generous defaults (banner=15s, auth=20s) to cut session setup time
+        banner_timeout=10,
+        auth_timeout=10,
+        # Use timing-based detection for internal session steps (config mode entry/exit)
+        fast_cli=True,
     )
     if conn.get("secret"):
         kwargs["secret"] = conn["secret"]
@@ -204,7 +209,7 @@ def _resolve_connection(args, node):
     user        = pick(args.user,        "itential_user",     default=None)
     password    = pick(args.password,    "itential_password", default=None)
     port        = pick(args.port,        "port",              default=22)
-    timeout     = pick(args.timeout,     "timeout",           default=30)
+    timeout     = pick(args.timeout,     "timeout",           default=10)
     device_type = pick(args.device_type, "device_type",       default="ruckus_fastiron")
     secret      = pick(args.secret,      "secret",            default=None)
     command_timeout = pick(args.command_timeout, "command_timeout", default=None)
