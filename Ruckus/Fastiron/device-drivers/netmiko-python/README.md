@@ -147,8 +147,7 @@ Set these on the device record in Inventory Manager:
     "itential_password": "$SECRET_vault $KEY_fastiron_pass",
     "itential_driver_options": {
       "netmiko": {
-        "device_type": "ruckus_fastiron",
-        "disabled_algorithms": {"pubkeys": []}
+        "device_type": "ruckus_fastiron"
       }
     }
   }
