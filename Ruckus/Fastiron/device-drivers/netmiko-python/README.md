@@ -45,6 +45,23 @@ FASTIRON_OP=get-config python main.py ... --section "vlan 100"
 The `section` value is appended directly to `show running-config`, so any valid
 IronWare filter string works.
 
+## Known incompatible workflow tasks
+
+### `sendCommand` (GatewayManager)
+
+**Do not use** `GatewayManager.sendCommand` with this driver. That task routes through netsdk's built-in netmiko driver, which expects a structured `CommandResult` response with timing fields (`start_time`, `end_time`, `elapsed_time`). This driver returns plain text output and does not produce that format, resulting in:
+
+```
+"data": "failed to parse start_time for command 0: failed to parse timestamp string '':
+parsing time \"\" as \"2006-01-02 15:04:05\": cannot parse \"\" as \"2006\""
+```
+
+**Use instead:**
+- `GatewayManager.runService` — call the IAG5 service directly by name
+- `MOP.runCommandTemplate` — brokered device tasks such as MOP command templates
+
+---
+
 ## Invocation model
 
 One service per operation — each points at the same `main.py` and sets a
