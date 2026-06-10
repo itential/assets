@@ -130,7 +130,8 @@ Set these on the device record in Inventory Manager:
     "itential_password": "$SECRET_vault $KEY_fastiron_pass",
     "itential_driver_options": {
       "netmiko": {
-        "device_type": "ruckus_fastiron"
+        "device_type": "ruckus_fastiron",
+        "disabled_algorithms": {"pubkeys": []}
       }
     }
   }
@@ -143,8 +144,9 @@ Set these on the device record in Inventory Manager:
 | `itential_user` | — | SSH username (required) |
 | `itential_password` | — | SSH password (required) |
 | `device_type` | `ruckus_fastiron` | netmiko device type |
+| `disabled_algorithms` | — | Re-enables `ssh-rsa` host keys disabled by default in newer paramiko versions. Required for Fastiron devices. Set to `{"pubkeys": []}` |
 
-> **Note:** Do not set `port`, `timeout`, or `command_timeout` inside `itential_driver_options.netmiko` — IAG5's internal `DriverOptions` schema rejects unrecognised fields. The driver uses sensible defaults (port 22, timeout 30s). Override connection params via CLI flags when testing locally instead.
+> **Note:** Only fields defined in netsdk's `DriverOptions` model are allowed inside `itential_driver_options.netmiko`. Do not add `port`, `timeout`, or other unrecognised fields — IAG5 will reject the inventory node with a pydantic validation error.
 
 > **Note:** Fastiron has user EXEC and privileged EXEC modes. If your devices are configured to auto-elevate to privileged mode on SSH login, no enable password is needed. If your devices require a separate enable password, add `"secret": "<enable-password>"` under `itential_driver_options.netmiko` and pass `--secret` when testing locally.
 
