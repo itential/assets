@@ -102,15 +102,53 @@ iagctl run service python-script fastiron-netmiko-send-command \
 ### From an Inventory Manager action mapping
 
 ```json
-{
-  "name": "run-command",
-  "action_type": "iag5-service",
-  "action_config": {
-    "service_name": "fastiron-netmiko-run-command",
-    "cluster_id": "cluster-itential"
+[
+  {
+    "name": "is-alive",
+    "action_type": "iag5-service",
+    "action_config": {
+      "service_name": "fastiron-netmiko-is-alive",
+      "cluster_id": "cluster-itential"
+    },
+    "action_parameters": {}
   },
-  "action_parameters": {}
-}
+  {
+    "name": "run-command",
+    "action_type": "iag5-service",
+    "action_config": {
+      "service_name": "fastiron-netmiko-run-command",
+      "cluster_id": "cluster-itential"
+    },
+    "action_parameters": {}
+  },
+  {
+    "name": "get-config",
+    "action_type": "iag5-service",
+    "action_config": {
+      "service_name": "fastiron-netmiko-get-config",
+      "cluster_id": "cluster-itential"
+    },
+    "action_parameters": {}
+  },
+  {
+    "name": "send-command",
+    "action_type": "iag5-service",
+    "action_config": {
+      "service_name": "fastiron-netmiko-send-command",
+      "cluster_id": "cluster-itential"
+    },
+    "action_parameters": {}
+  },
+  {
+    "name": "set-config",
+    "action_type": "iag5-service",
+    "action_config": {
+      "service_name": "fastiron-netmiko-set-config",
+      "cluster_id": "cluster-itential"
+    },
+    "action_parameters": {}
+  }
+]
 ```
 
 ### Direct local testing
