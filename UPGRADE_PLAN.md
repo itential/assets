@@ -11,7 +11,7 @@ Tracks the upgrade of all POC-Sample assets for compatibility with Gateway 5 (IA
 
 | Asset | Branch | Planning Doc | Status |
 |---|---|---|---|
-| Alkira | `feature/gw5-upgrade/alkira` | [UPGRADE_NOTES.md](Alkira/UPGRADE_NOTES.md) | Planning |
+| Alkira | `feature/gw5-upgrade/alkira` | [UPGRADE_NOTES.md](Alkira/UPGRADE_NOTES.md) | Complete |
 | Arista EOS | `feature/gw5-upgrade/arista-eos` | [UPGRADE_NOTES.md](Arista/EOS/UPGRADE_NOTES.md) | Planning |
 | Cisco ASA | `feature/gw5-upgrade/cisco-asa` | [UPGRADE_NOTES.md](Cisco/ASA/UPGRADE_NOTES.md) | Planning |
 | F5 BIG-IP | `feature/gw5-upgrade/f5-bigip` | [UPGRADE_NOTES.md](F5/BIG-IP/UPGRADE_NOTES.md) | Planning |

@@ -1,7 +1,7 @@
 # Alkira — Gateway5 Upgrade Notes
 
 **Branch:** `feature/gw5-upgrade/alkira`  
-**Status:** Planning  
+**Status:** Complete  
 **Files to modify:** `Alkira/Projects/Alkira.project.json`
 
 ---
@@ -66,3 +66,22 @@ Incoming variables to remap:
 
 - [ ] Configure Firewall workflow executes against a test Alkira device
 - [ ] Onboard Device workflow creates and connects a device via IAG5 inventory
+
+## Changes Made
+
+### Configure Firewall
+- Tasks `9903` and `c06b`: `AGManager/itential_netmiko_set_config` → `GatewayManager/sendConfig`
+- `_hosts` → `inventory`: `$var.3509.deviceArray`
+- `lines` → `config`: `$var.b9ed.renderedTemplate` (task 9903) / `["commit"]` (task c06b)
+- Added `clusterId: "cluster-itential"`
+- Removed: `_groups`, `enable_mode`, `end_command`, `parents`, `provider`, `save_command`, `transactions`
+
+### Onboard Device - IAG
+- Task `2918`: `AutomationGateway/createDeviceRaw` → `InventoryManager/addNodesToInventory`
+  - `inventory_identifier: $var.job.deviceGroup` (device group IS the inventory in IAG5)
+  - `nodes: [{name: $var.job.deviceName, variables: $var.29f0.merged_object}]`
+- Task `27f0`: Removed (`addDeviceToDeviceGroup` — implicit in `addNodesToInventory` above)
+- Task `4d96`: `AutomationGateway/connectDevice` → `InventoryManager/getInventoryByIdentifier`
+  - `identifier: $var.job.deviceGroup` (verifies inventory/device is registered)
+- Removed `automationGatewayAdapterId` from inputSchema/outputSchema
+- Updated transitions: `2918 → 4d96 → end` (27f0 removed from chain)
