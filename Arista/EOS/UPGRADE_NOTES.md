@@ -1,8 +1,8 @@
 # Arista EOS — Gateway5 Upgrade Notes
 
 **Branch:** `feature/gw5-upgrade/arista-eos`  
-**Status:** Planning  
-**Files to modify:** `Arista/EOS/Projects/Arista EOS.project.json`
+**Status:** Complete  
+**Files modified:** `Arista/EOS/Projects/Arista EOS.project.json`
 
 ---
 
@@ -29,7 +29,7 @@ One `AGManager` task in one workflow. Straightforward CLI → `GatewayManager se
 }
 ```
 
-**Change:** Replace with `GatewayManager` `sendConfig` task:
+**Implemented:** `GatewayManager` `sendConfig` task (task key `ca47`):
 ```json
 {
   "app": "GatewayManager",
@@ -39,8 +39,8 @@ One `AGManager` task in one workflow. Straightforward CLI → `GatewayManager se
   "variables": {
     "incoming": {
       "clusterId": "cluster-itential",
-      "config": "<rendered config template var>",
-      "inventory": "<rendered inventory template var>"
+      "config": "$var.582e.configurationList",
+      "inventory": "$var.582e.deviceList"
     },
     "outgoing": {
       "result": ""
@@ -49,7 +49,7 @@ One `AGManager` task in one workflow. Straightforward CLI → `GatewayManager se
 }
 ```
 
-> **Note:** The config and inventory variable references need to be traced from the workflow context. Identify which template task produces the rendered config and inventory values, and update the var references accordingly.
+Both `config` and `inventory` come from the `582e` transformation task, which processes the rendered Jinja template (`b9ed`) and device input (`$var.job.device`) into CLI-ready `configurationList` and `deviceList` outputs.
 
 ---
 
@@ -80,4 +80,4 @@ One `AGManager` task in one workflow. Straightforward CLI → `GatewayManager se
 
 ## Testing
 
-- [ ] Push Configuration to Device - IAG workflow pushes config successfully via GatewayManager
+- [x] Push Configuration to Device - IAG workflow pushes config successfully via GatewayManager
