@@ -1,0 +1,1113 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Forcepoint NGFW \u2014 Security Management Center",
+    "version": "7.0",
+    "description": "Forcepoint NGFW Security Management Center (SMC) REST API provides programmatic management of NGFW elements, policies, VPNs, hosts, and routing.\n\nAuthentication: Session cookie (JSESSIONID) \u2014 POST /7.0/login with an authenticationkey generated in the SMC Management Client. The server sets a JSESSIONID cookie valid for 30 minutes. NOTE: Itential Integration Models cannot perform this auth flow declaratively until IPSO-9866 is resolved. Current workaround: log in via curl, paste the JSESSIONID into a static cookie security scheme on the instance.\n\nSource: https://help.forcepoint.com/ngfw/en-us/7.0.0/smc_api_ug/",
+    "contact": {
+      "name": "Forcepoint Support",
+      "url": "https://help.forcepoint.com/ngfw/en-us/7.0.0/smc_api_ug/"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://{host}:{port}",
+      "description": "SMC Management Server",
+      "variables": {
+        "host": {
+          "default": "localhost",
+          "description": "Hostname or IP of the SMC Management Server"
+        },
+        "port": {
+          "default": "8082",
+          "description": "Port the SMC API is configured on"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "Discovery",
+      "description": "API version and entry-point discovery endpoints"
+    },
+    {
+      "name": "Authentication",
+      "description": "Login and logout"
+    },
+    {
+      "name": "Elements",
+      "description": "Generic element CRUD operations (hosts, networks, services, policies, etc.)"
+    },
+    {
+      "name": "Hosts",
+      "description": "Host element management"
+    },
+    {
+      "name": "Policies",
+      "description": "Policy element management and upload actions"
+    },
+    {
+      "name": "VPN",
+      "description": "VPN gateway and topology management"
+    },
+    {
+      "name": "Search",
+      "description": "Element search and filtering operations"
+    },
+    {
+      "name": "Routing",
+      "description": "Routing and antispoofing information"
+    }
+  ],
+  "paths": {
+    "/api": {
+      "get": {
+        "tags": [
+          "Discovery"
+        ],
+        "summary": "List all API versions",
+        "description": "Returns all supported API versions and their version-specific entry points. Use this endpoint to discover the correct versioned base path.\n",
+        "operationId": "getApiVersions",
+        "responses": {
+          "200": {
+            "description": "List of supported API versions and their entry-point URIs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiVersionList"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiVersionList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/7.0/api": {
+      "get": {
+        "tags": [
+          "Discovery"
+        ],
+        "summary": "List all entry points for API version 7.0",
+        "description": "Returns all available entry-point URIs for API version 7.0. Each entry point has an `href` (URI) and a `rel` (relation keyword). Use OPTIONS on any entry-point URI to discover supported HTTP methods.\n",
+        "operationId": "getEntryPoints",
+        "responses": {
+          "200": {
+            "description": "List of entry points for version 7.0",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntryPointList"
+                },
+                "example": {
+                  "entry_point": [
+                    {
+                      "href": "http://localhost:8082/7.0/logout",
+                      "rel": "logout"
+                    },
+                    {
+                      "href": "http://localhost:8082/7.0/elements",
+                      "rel": "elements"
+                    },
+                    {
+                      "href": "http://localhost:8082/7.0/elements/host",
+                      "rel": "host"
+                    },
+                    {
+                      "href": "http://localhost:8082/7.0/elements/network",
+                      "rel": "network"
+                    },
+                    {
+                      "href": "http://localhost:8082/7.0/elements/fw_policy",
+                      "rel": "fw_policy"
+                    },
+                    {
+                      "href": "http://localhost:8082/7.0/elements/sub_ipv6_fw_policy",
+                      "rel": "sub_ipv6_fw_policy"
+                    }
+                  ]
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntryPointList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/7.0/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Authenticate with the SMC API",
+        "description": "Authenticates the client using an API Client authentication key configured in the SMC Management Client. On success, the server establishes a session (typically via a cookie). All subsequent requests to protected resources require an active session.\n",
+        "operationId": "login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              },
+              "example": {
+                "authenticationkey": "sqfTm8UCd6havtycRP7P0001"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful. Session established.",
+            "headers": {
+              "Set-Cookie": {
+                "description": "Session cookie for subsequent authenticated requests",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed \u2014 invalid or missing authentication key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/7.0/logout": {
+      "put": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Terminate the current API session",
+        "description": "Logs out the current authenticated session. Use PUT as indicated by the OPTIONS method on the logout entry point.\n",
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "description": "Logout successful"
+          },
+          "401": {
+            "description": "Not authenticated"
+          }
+        }
+      }
+    },
+    "/7.0/elements": {
+      "get": {
+        "tags": [
+          "Elements"
+        ],
+        "summary": "List all elements",
+        "description": "Returns a collection of all top-level SMC elements. Supports filtering by name, comment, or IP address via query parameters.\n",
+        "operationId": "listElements",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/FilterParam"
+          },
+          {
+            "$ref": "#/components/parameters/FilterContextParam"
+          },
+          {
+            "$ref": "#/components/parameters/AcceptHeader"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of elements",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ElementCollection"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ElementCollection"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "304": {
+            "$ref": "#/components/responses/NotModified"
+          }
+        }
+      }
+    },
+    "/7.0/elements/{elementType}": {
+      "get": {
+        "tags": [
+          "Elements"
+        ],
+        "summary": "List elements of a specific type",
+        "description": "Returns all elements of the given type (e.g., `host`, `network`, `fw_policy`, `router`, `group`, etc.). The element type corresponds to the `rel` value returned from the entry-point discovery endpoint.\n",
+        "operationId": "listElementsByType",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ElementTypeParam"
+          },
+          {
+            "$ref": "#/components/parameters/FilterParam"
+          },
+          {
+            "$ref": "#/components/parameters/FilterContextParam"
+          },
+          {
+            "$ref": "#/components/parameters/AcceptHeader"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Collection of elements of the specified type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ElementCollection"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ElementCollection"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "304": {
+            "$ref": "#/components/responses/NotModified"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Elements"
+        ],
+        "summary": "Create a new element of a specific type",
+        "description": "Creates a new element under the given type collection. The URI of the newly created resource is returned in the `Location` response header.\n",
+        "operationId": "createElement",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ElementTypeParam"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ElementBody"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ElementBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Element created successfully",
+            "headers": {
+              "Location": {
+                "description": "URI of the newly created element",
+                "schema": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          }
+        }
+      }
+    },
+    "/7.0/elements/{elementType}/{elementId}": {
+      "get": {
+        "tags": [
+          "Elements"
+        ],
+        "summary": "Retrieve a specific element",
+        "description": "Returns the full representation of the specified element. Supports conditional GETs via `If-None-Match` and `If-Modified-Since` headers.\n",
+        "operationId": "getElement",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ElementTypeParam"
+          },
+          {
+            "$ref": "#/components/parameters/ElementIdParam"
+          },
+          {
+            "name": "If-None-Match",
+            "in": "header",
+            "description": "ETag value for conditional GET (returns 304 if unchanged)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "If-Modified-Since",
+            "in": "header",
+            "description": "Returns 304 if the resource has not been modified since this date",
+            "schema": {
+              "type": "string",
+              "format": "http-date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Element data",
+            "headers": {
+              "ETag": {
+                "description": "ETag for caching and conditional updates",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ElementBody"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ElementBody"
+                }
+              }
+            }
+          },
+          "304": {
+            "$ref": "#/components/responses/NotModified"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Elements"
+        ],
+        "summary": "Update a specific element",
+        "description": "Replaces the element with the provided representation. Requires the `If-Match` header with the current ETag value for optimistic concurrency control. Note: ETag as a header parameter is not supported in SMC API 6.4 or higher \u2014 use `If-Match` instead.\n",
+        "operationId": "updateElement",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ElementTypeParam"
+          },
+          {
+            "$ref": "#/components/parameters/ElementIdParam"
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "description": "ETag of the current resource version (required for all updates)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ElementBody"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ElementBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Element updated successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "412": {
+            "description": "Precondition failed \u2014 ETag mismatch, resource was modified by another client",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Elements"
+        ],
+        "summary": "Delete a specific element",
+        "description": "Deletes the specified element. Requires the `If-Match` header for conditional delete. The operation is idempotent but should not be repeated unnecessarily.\n",
+        "operationId": "deleteElement",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ElementTypeParam"
+          },
+          {
+            "$ref": "#/components/parameters/ElementIdParam"
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "description": "ETag of the current resource version (required for delete)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Element deleted successfully"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "412": {
+            "description": "Precondition failed \u2014 ETag mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "head": {
+        "tags": [
+          "Elements"
+        ],
+        "summary": "Check element existence / metadata",
+        "description": "Returns headers only for the specified element. Useful for cache validation with `If-None-Match` and `If-Modified-Since` without transferring the body.\n",
+        "operationId": "headElement",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ElementTypeParam"
+          },
+          {
+            "$ref": "#/components/parameters/ElementIdParam"
+          },
+          {
+            "name": "If-None-Match",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Element exists",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "304": {
+            "$ref": "#/components/responses/NotModified"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/7.0/elements/host": {
+      "get": {
+        "tags": [
+          "Hosts"
+        ],
+        "summary": "List all Host elements",
+        "description": "Returns all Host elements defined in the SMC.",
+        "operationId": "listHosts",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/FilterParam"
+          },
+          {
+            "$ref": "#/components/parameters/FilterContextParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of Host elements",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ElementCollection"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Hosts"
+        ],
+        "summary": "Create a Host element",
+        "description": "Creates a new Host element.",
+        "operationId": "createHost",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HostElement"
+              },
+              "example": {
+                "name": "MyServer",
+                "address": "192.168.1.100",
+                "comment": "Production web server"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Host created",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/7.0/elements/fw_policy/{policyId}/upload": {
+      "post": {
+        "tags": [
+          "Policies"
+        ],
+        "summary": "Upload (install) a firewall policy to engines",
+        "description": "Triggers a policy upload/install action on one or more NGFW engines. This is an action endpoint (side-effecting POST).\n",
+        "operationId": "uploadPolicy",
+        "parameters": [
+          {
+            "name": "policyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the firewall policy to upload"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "engine": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of engine URIs to upload the policy to"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Policy upload triggered successfully"
+          },
+          "202": {
+            "description": "Policy upload accepted and in progress"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    },
+    "/7.0/elements/{engineType}/{engineId}/routing": {
+      "get": {
+        "tags": [
+          "Routing"
+        ],
+        "summary": "Retrieve routing information for an engine",
+        "description": "Returns static or dynamic routing information from the specified engine.",
+        "operationId": "getRouting",
+        "parameters": [
+          {
+            "name": "engineType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Engine element type (e.g., `single_fw`, `fw_cluster`)"
+          },
+          {
+            "name": "engineId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Engine element ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Routing information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/7.0/elements/{engineType}/{engineId}/antispoofing": {
+      "get": {
+        "tags": [
+          "Routing"
+        ],
+        "summary": "Retrieve antispoofing information for an engine",
+        "description": "Returns antispoofing configuration from the specified engine.",
+        "operationId": "getAntispoofing",
+        "parameters": [
+          {
+            "name": "engineType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "engineId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Antispoofing information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "ElementTypeParam": {
+        "name": "elementType",
+        "in": "path",
+        "required": true,
+        "description": "The element type/rel (e.g., `host`, `network`, `router`, `group`, `fw_policy`, `ipv6_fw_policy`, `single_fw`, `fw_cluster`, `vpn`, etc.). Discovered via the entry-point API.\n",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "ElementIdParam": {
+        "name": "elementId",
+        "in": "path",
+        "required": true,
+        "description": "Unique identifier of the element (numeric or string)",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "FilterParam": {
+        "name": "filter",
+        "in": "query",
+        "required": false,
+        "description": "Filter elements by a partial match on name, comment, or IP address.\n",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "FilterContextParam": {
+        "name": "filter_context",
+        "in": "query",
+        "required": false,
+        "description": "Scope the filter to a specific context (e.g., `name`, `comment`, `ip`)",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "name",
+            "comment",
+            "ip"
+          ]
+        }
+      },
+      "AcceptHeader": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "description": "Desired response format. Defaults to application/json.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "application/json",
+            "application/xml"
+          ],
+          "default": "application/json"
+        }
+      }
+    },
+    "responses": {
+      "NotModified": {
+        "description": "Resource not modified since the version referenced by If-None-Match or If-Modified-Since"
+      },
+      "BadRequest": {
+        "description": "Bad request \u2014 invalid or malformed input",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Not authenticated \u2014 login required",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "UnsupportedMediaType": {
+        "description": "415 Unsupported Media Type \u2014 the server cannot process the request body format for the requested method\n",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "ServiceUnavailable": {
+        "description": "503 Service Unavailable \u2014 the server is currently running a system task that is accessing the same resource\n",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "required": [
+          "authenticationkey"
+        ],
+        "properties": {
+          "authenticationkey": {
+            "type": "string",
+            "description": "API Client authentication key generated in the SMC Management Client",
+            "example": "sqfTm8UCd6havtycRP7P0001"
+          }
+        }
+      },
+      "ApiVersionList": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "rel": {
+                  "type": "string",
+                  "description": "Version label (e.g., \"7.0\")"
+                },
+                "href": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Entry-point URI for this version"
+                }
+              }
+            }
+          }
+        }
+      },
+      "EntryPointList": {
+        "type": "object",
+        "properties": {
+          "entry_point": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EntryPoint"
+            }
+          }
+        }
+      },
+      "EntryPoint": {
+        "type": "object",
+        "properties": {
+          "href": {
+            "type": "string",
+            "format": "uri",
+            "description": "The URI for this entry point"
+          },
+          "rel": {
+            "type": "string",
+            "description": "Relation keyword identifying the resource type (e.g., \"logout\", \"elements\", \"host\", \"fw_policy\", \"vpn\")\n"
+          }
+        }
+      },
+      "ElementCollection": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ElementRef"
+            }
+          }
+        }
+      },
+      "ElementRef": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Human-readable name of the element"
+          },
+          "href": {
+            "type": "string",
+            "format": "uri",
+            "description": "URI of the element (opaque \u2014 do not construct manually)"
+          },
+          "type": {
+            "type": "string",
+            "description": "Element type"
+          }
+        }
+      },
+      "ElementBody": {
+        "type": "object",
+        "description": "Generic element representation. Actual fields vary by element type. All elements include at minimum `name` and a set of `link` relations.\n",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "link": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LinkRef"
+            }
+          }
+        },
+        "additionalProperties": true
+      },
+      "HostElement": {
+        "type": "object",
+        "required": [
+          "name",
+          "address"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the Host element"
+          },
+          "address": {
+            "type": "string",
+            "description": "IPv4 address of the host",
+            "example": "192.168.1.1"
+          },
+          "ipv6_address": {
+            "type": "string",
+            "description": "Optional IPv6 address"
+          },
+          "secondary": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Additional IP addresses for the host"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "link": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LinkRef"
+            }
+          }
+        }
+      },
+      "LinkRef": {
+        "type": "object",
+        "properties": {
+          "href": {
+            "type": "string",
+            "format": "uri"
+          },
+          "rel": {
+            "type": "string",
+            "description": "Relation type (e.g., \"self\", \"type\", \"delete\")"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Human-readable error message"
+          },
+          "details": {
+            "type": "string",
+            "description": "Additional error details"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "sessionCookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "JSESSIONID",
+        "description": "Session cookie obtained after a successful POST to /7.0/login. All protected endpoints require an active session.\n"
+      }
+    }
+  },
+  "security": [
+    {
+      "sessionCookie": []
+    }
+  ]
+}

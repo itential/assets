@@ -1,0 +1,414 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Cisco Crosswork Network Controller \u2014 Device Management",
+    "version": "7.2.0",
+    "description": "Cisco Crosswork Network Controller (CNC) Device Management service provides inventory and element management for network devices managed by CNC.\n\nAuthentication: Bearer JWT \u2014 obtain via a two-step CAS exchange: (1) POST /crosswork/sso/v1/tickets with credentials to get a TGT, (2) POST the TGT URL with service=https://<cnc-host>/app-dashboard to receive the JWT. Paste the JWT as the bearer token. JWTs expire and must be refreshed manually until IPSO-9866 is resolved.\n\nSource: https://developer.cisco.com/docs/crosswork/"
+  },
+  "servers": [
+    {
+      "url": "https://{host}:{port}/crosswork/inventory/v1",
+      "description": "Configurable per integration instance.",
+      "variables": {
+        "host": {
+          "default": "cnc.example.com"
+        },
+        "port": {
+          "default": "30603"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/deepinventory/query": {
+      "get": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "Get all devices",
+        "description": "Detailed description of all the devices.",
+        "operationId": "getDevices",
+        "parameters": [
+          {
+            "name": "Range",
+            "in": "header",
+            "required": true,
+            "description": "items=<start_index>-<end_index>",
+            "schema": {
+              "type": "string",
+              "example": "items=0-99"
+            }
+          },
+          {
+            "name": "uriQueryParams",
+            "in": "query",
+            "required": false,
+            "description": "Filtering result with user specific SQL queries",
+            "schema": {
+              "$ref": "#/components/schemas/MultiValueMapStringString",
+              "example": {}
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DeviceDTO"
+                  }
+                },
+                "examples": {
+                  "example": {
+                    "$ref": "#/components/examples/DeepInvQuerySampleResponse"
+                  }
+                }
+              }
+            }
+          },
+          "206": {
+            "description": "Partial Content. Server successfully fulfilled a range request. Response will have records falling in items range passed in headers.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DeviceDTO"
+                  }
+                },
+                "examples": {
+                  "example": {
+                    "$ref": "#/components/examples/DeepInvQuerySampleResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid request"
+          },
+          "401": {
+            "description": "Unauthorized. The request has not been applied because it lacks valid authentication credentials for the target resource."
+          },
+          "403": {
+            "description": "Forbidden. The server recognizes the authentication credentials, but the client is not authorized to perform this request."
+          },
+          "500": {
+            "description": "Internal Server Error - operation-failed"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DeviceDTO": {
+        "type": "object",
+        "description": "DeviceDTO",
+        "properties": {
+          "deviceName": {
+            "type": "string",
+            "description": "deviceName"
+          },
+          "deviceAddress": {
+            "type": "string",
+            "description": "deviceAddress"
+          },
+          "deviceContact": {
+            "type": "string",
+            "description": "deviceContact"
+          },
+          "deviceDescription": {
+            "type": "string",
+            "description": "deviceDescription"
+          },
+          "deviceLocation": {
+            "type": "string",
+            "description": "deviceLocation"
+          },
+          "deviceReachabilityStatus": {
+            "type": "string",
+            "description": "deviceReachabilityStatus"
+          },
+          "productFamily": {
+            "type": "string",
+            "description": "productFamily"
+          },
+          "productSeries": {
+            "type": "string",
+            "description": "productSeries"
+          },
+          "productType": {
+            "type": "string",
+            "description": "productType"
+          },
+          "owningEntityID": {
+            "type": "string",
+            "description": "owningEntityID"
+          },
+          "neID": {
+            "type": "string",
+            "description": "neID"
+          },
+          "lifeCycleState": {
+            "type": "string",
+            "description": "lifeCycleState"
+          },
+          "inventoryCollectionTime": {
+            "type": "string",
+            "description": "inventoryCollectionTime"
+          },
+          "softwareType": {
+            "type": "string",
+            "description": "softwareType"
+          },
+          "softwareVersion": {
+            "type": "string",
+            "description": "softwareVersion"
+          },
+          "creationTime": {
+            "type": "string",
+            "description": "creationTime"
+          },
+          "inventoryStatusDetail": {
+            "type": "string",
+            "description": "inventoryStatusDetail"
+          },
+          "netFlowVersion": {
+            "type": "string",
+            "description": "netFlowVersion"
+          },
+          "netFlowAvailable": {
+            "type": "string",
+            "description": "netFlowAvailable"
+          },
+          "nbarAvailable": {
+            "type": "string",
+            "description": "nbarAvailable"
+          },
+          "rspanAvailable": {
+            "type": "string",
+            "description": "rspanAvailable"
+          },
+          "erspanAvailable": {
+            "type": "string",
+            "description": "erspanAvailable"
+          },
+          "spanAvailable": {
+            "type": "string",
+            "description": "spanAvailable"
+          },
+          "deviceUpTime": {
+            "type": "string",
+            "description": "deviceUpTime"
+          },
+          "adminStatus": {
+            "type": "string",
+            "description": "adminStatus"
+          },
+          "inventoryCollectionStatus": {
+            "type": "string",
+            "description": "inventoryCollectionStatus"
+          },
+          "cdaStatus": {
+            "type": "string",
+            "description": "cdaStatus"
+          },
+          "CDADetailedStatus": {
+            "type": "string",
+            "description": "CDADetailedStatus"
+          },
+          "apStatus": {
+            "type": "string",
+            "description": "apStatus"
+          },
+          "meshStatus": {
+            "type": "string",
+            "description": "meshStatus"
+          },
+          "clientCount": {
+            "type": "string",
+            "description": "clientCount"
+          },
+          "apContactedat": {
+            "type": "string",
+            "description": "apContactedat"
+          },
+          "wcInstanceId": {
+            "type": "string",
+            "description": "wcInstanceId"
+          },
+          "webMode": {
+            "type": "string",
+            "description": "webMode"
+          },
+          "serialNumber": {
+            "type": "string",
+            "description": "serialNumber"
+          },
+          "model": {
+            "type": "string",
+            "description": "model"
+          },
+          "networkName": {
+            "type": "string",
+            "description": "networkName"
+          },
+          "controllerAddress": {
+            "type": "string",
+            "description": "controllerAddress"
+          },
+          "macAddress": {
+            "type": "string",
+            "description": "macAddress"
+          },
+          "communityString": {
+            "type": "string",
+            "description": "communityString"
+          },
+          "managedAddress": {
+            "type": "string",
+            "description": "managedAddress"
+          },
+          "entityId": {
+            "type": "string",
+            "description": "entityId"
+          },
+          "hostName": {
+            "type": "string",
+            "description": "hostName"
+          },
+          "activeProxyIP": {
+            "type": "string",
+            "description": "activeProxyIP"
+          },
+          "invCollectionTimeTemp": {
+            "type": "string",
+            "description": "invCollectionTimeTemp"
+          },
+          "wirelessFeatureEnabled": {
+            "type": "string",
+            "description": "wirelessFeatureEnabled"
+          },
+          "assignedNetworkRoles": {
+            "type": "string",
+            "description": "assignedNetworkRoles"
+          },
+          "standByVersion": {
+            "type": "string",
+            "description": "standByVersion"
+          },
+          "vrfFeaturePresent": {
+            "type": "boolean",
+            "description": "vrfFeaturePresent"
+          },
+          "giSyncEnabled": {
+            "type": "boolean",
+            "description": "giSyncEnabled"
+          }
+        }
+      },
+      "MultiValueMapStringString": {
+        "type": "object",
+        "description": "MultiValueMapStringString",
+        "properties": {
+          "all": {
+            "type": "object",
+            "description": "all",
+            "additionalProperties": {
+              "type": "string",
+              "description": "additionalProperties"
+            },
+            "writeOnly": true
+          },
+          "empty": {
+            "type": "boolean",
+            "description": "empty"
+          }
+        },
+        "additionalProperties": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "additionalProperties"
+          }
+        }
+      }
+    },
+    "examples": {
+      "DeepInvQuerySampleResponse": {
+        "summary": "Sample Response",
+        "value": [
+          {
+            "deviceName": "R2",
+            "deviceAddress": "10.65.110.17",
+            "deviceContact": "null",
+            "deviceDescription": "null",
+            "deviceLocation": "",
+            "deviceReachabilityStatus": "REACHABLE",
+            "productFamily": "Third Party Device",
+            "productSeries": "null",
+            "productType": "Third Party Device",
+            "owningEntityID": "439454_10.65.110.17",
+            "neID": "463463",
+            "lifeCycleState": "MANAGED_AND_SYNCHRONIZED",
+            "inventoryCollectionTime": "November 11, 2024 4:30:12 PM UTC",
+            "softwareType": "",
+            "softwareVersion": "",
+            "creationTime": "November 7, 2024 3:05:30 AM UTC",
+            "inventoryStatusDetail": "",
+            "netFlowVersion": "null",
+            "netFlowAvailable": "null",
+            "nbarAvailable": "null",
+            "rspanAvailable": "null",
+            "erspanAvailable": "null",
+            "spanAvailable": "null",
+            "deviceUpTime": "2024-11-11 22:00:12.189",
+            "adminStatus": "Managed",
+            "inventoryCollectionStatus": "Completed",
+            "cdaStatus": "null",
+            "apStatus": "null",
+            "meshStatus": "null",
+            "clientCount": "null",
+            "apContactedat": "null",
+            "wcInstanceId": "0",
+            "webMode": "0",
+            "serialNumber": "null",
+            "model": "null",
+            "networkName": "null",
+            "controllerAddress": "null",
+            "macAddress": "null",
+            "communityString": "null",
+            "managedAddress": "10.65.110.17",
+            "entityId": "439454",
+            "hostName": "10.65.110.17",
+            "activeProxyIP": "null",
+            "invCollectionTimeTemp": "1731342612187",
+            "wirelessFeatureEnabled": "null",
+            "assignedNetworkRoles": "null",
+            "standByVersion": "",
+            "vrfFeaturePresent": false,
+            "giSyncEnabled": true,
+            "CDADetailedStatus": "null"
+          }
+        ]
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "CNC JWT, obtained out-of-band via the CAS TGT exchange. See README for details."
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}

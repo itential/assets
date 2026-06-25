@@ -1,0 +1,1423 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Cisco Umbrella \u2014 Destination Lists",
+    "version": "2.0.0",
+    "description": "Cisco Umbrella Destination Lists API enables management of allow and block lists for Umbrella DNS-layer security policies.\n\nAuthentication: OAuth2 Client Credentials \u2014 obtain a client key and secret from Cisco Umbrella Admin \u2192 API Keys \u2192 Umbrella API. The token endpoint requires the client credentials as HTTP Basic auth on the Authorization header (handled via x-itential-parameters on this spec).\n\nSource: https://developer.cisco.com/docs/cloud-security/destination-lists-api/"
+  },
+  "servers": [
+    {
+      "url": "https://api.umbrella.com/{basePath}",
+      "description": "Configurable per integration instance.",
+      "variables": {
+        "basePath": {
+          "default": "policies/v2",
+          "description": "Umbrella API base path for the Destination Lists service"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "Destination Lists",
+      "description": "Destination Lists"
+    },
+    {
+      "name": "Destinations",
+      "description": "Destinations"
+    },
+    {
+      "name": "Umbrella"
+    }
+  ],
+  "security": [
+    {
+      "oauthFlow": []
+    }
+  ],
+  "paths": {
+    "/destinationlists": {
+      "get": {
+        "tags": [
+          "Destination Lists",
+          "Umbrella"
+        ],
+        "description": "Get the destination lists in your organization.",
+        "summary": "Get Destination Lists",
+        "operationId": "getDestinationLists",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/paginationPageParam"
+          },
+          {
+            "$ref": "#/components/parameters/paginationLimitParam"
+          }
+        ],
+        "security": [
+          {
+            "oauthFlow": [
+              "policies.destinationLists:read"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedDestinationListsResponse"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "text": "OK"
+                  },
+                  "meta": {
+                    "page": 1,
+                    "limit": 100,
+                    "total": 100
+                  },
+                  "data": [
+                    {
+                      "id": 1234567,
+                      "organizationId": 2345678,
+                      "access": "allow",
+                      "isGlobal": true,
+                      "name": "Global Allow List",
+                      "thirdpartyCategoryId": 0,
+                      "createdAt": 1490206249,
+                      "modifiedAt": 1520476127,
+                      "isMspDefault": false,
+                      "markedForDeletion": false,
+                      "bundleTypeId": 2,
+                      "meta": {
+                        "destinationCount": 5,
+                        "domainCount": 5,
+                        "urlCount": 0,
+                        "ipv4Count": 0,
+                        "applicationCount": 0
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerErr"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Destination Lists",
+          "Umbrella"
+        ],
+        "description": "Create a destination list in your organization.",
+        "summary": "Create Destination List",
+        "operationId": "createDestinationList",
+        "security": [
+          {
+            "oauthFlow": [
+              "policies.destinationLists:write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "description": "Provide destination information and an optional array of destination objects.\nAccepts no more than 500 destination objects.\n\nIf you make an API request on the POST operation that adds a URL on a high-volume domain to a destination list,\nthe operation may succeed (`HTTP/200 OK`).\nHowever, the server returns an error message (`HTTP/400 Bad Request`) that indicates that the destination is on a high-volume domain.\n**Note:** Umbrella does not add URLs that are on high-volume domains to destination lists. Instead, we recommend that you add the domain only.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DestinationListCreate"
+              },
+              "example": {
+                "access": "allow",
+                "isGlobal": false,
+                "name": "New Destination List"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DestinationListResponse"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "text": "OK"
+                  },
+                  "data": {
+                    "id": 2477857,
+                    "organizationId": 22429759,
+                    "access": "allow",
+                    "isGlobal": false,
+                    "name": "New Destination List",
+                    "thirdpartyCategoryId": 0,
+                    "createdAt": 1532628019,
+                    "modifiedAt": 1532628019,
+                    "isMspDefault": false,
+                    "markedForDeletion": false,
+                    "bundleTypeId": 2,
+                    "meta": {
+                      "destinationCount": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerErr"
+          }
+        }
+      }
+    },
+    "/destinationlists/{destinationListId}": {
+      "patch": {
+        "tags": [
+          "Destination Lists",
+          "Umbrella"
+        ],
+        "description": "Update a destination list in your organization.",
+        "summary": "Update Destination List",
+        "operationId": "updateDestinationLists",
+        "security": [
+          {
+            "oauthFlow": [
+              "policies.destinationLists:write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/destinationListId"
+          }
+        ],
+        "requestBody": {
+          "description": "Update a destination list.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DestinationListPatch"
+              },
+              "example": {
+                "name": "Updated name of destination list"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DestinationListResponse"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "text": "OK"
+                  },
+                  "data": {
+                    "id": 2477857,
+                    "organizationId": 22429759,
+                    "access": "allow",
+                    "isGlobal": false,
+                    "name": "New name of destination list",
+                    "thirdpartyCategoryId": 0,
+                    "createdAt": 1532628019,
+                    "modifiedAt": 1532628019,
+                    "isMspDefault": false,
+                    "markedForDeletion": false,
+                    "bundleTypeId": 2,
+                    "meta": {
+                      "destinationCount": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerErr"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Destination Lists",
+          "Umbrella"
+        ],
+        "summary": "Delete Destination List",
+        "description": "Delete a destination list from your organization.",
+        "operationId": "deleteDestinationList",
+        "security": [
+          {
+            "oauthFlow": [
+              "policies.destinationLists:write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/destinationListId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DestinationListDelete"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "text": "OK"
+                  },
+                  "data": []
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerErr"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Destination Lists",
+          "Umbrella"
+        ],
+        "summary": "Get Destination List",
+        "description": "Get a destination list.",
+        "operationId": "getDestinationList",
+        "security": [
+          {
+            "oauthFlow": [
+              "policies.destinationLists:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/destinationListId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DestinationListResponse"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "text": "OK"
+                  },
+                  "data": {
+                    "id": 2477857,
+                    "organizationId": 22429759,
+                    "access": "allow",
+                    "isGlobal": false,
+                    "name": "New name of destination list",
+                    "thirdpartyCategoryId": 0,
+                    "createdAt": 1532628019,
+                    "modifiedAt": 1532628019,
+                    "isMspDefault": false,
+                    "markedForDeletion": false,
+                    "bundleTypeId": 2,
+                    "meta": {
+                      "destinationCount": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerErr"
+          }
+        }
+      }
+    },
+    "/destinationlists/{destinationListId}/destinations": {
+      "get": {
+        "tags": [
+          "Destinations",
+          "Umbrella"
+        ],
+        "description": "Get destinations in a destination list.",
+        "summary": "Get Destinations in Destination List",
+        "operationId": "getDestinations",
+        "security": [
+          {
+            "oauthFlow": [
+              "policies.destinations:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/destinationListId"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageParam"
+          },
+          {
+            "$ref": "#/components/parameters/paginationLimitParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedDestinationObjectResponse"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "text": "OK"
+                  },
+                  "meta": {
+                    "page": 1,
+                    "limit": 100,
+                    "total": 24
+                  },
+                  "data": [
+                    {
+                      "id": "1234590",
+                      "destination": "cisco.com",
+                      "type": "domain",
+                      "comment": "A comment about test destination",
+                      "createdAt": "2021-07-23 19:36:45"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerErr"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Destinations",
+          "Umbrella"
+        ],
+        "summary": "Add Destinations to Destination List",
+        "description": "Add destinations to a destination list.",
+        "operationId": "createDestinations",
+        "security": [
+          {
+            "oauthFlow": [
+              "policies.destinations:write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/destinationListId"
+          }
+        ],
+        "requestBody": {
+          "description": "Add destinations to a destination list.\nAccepts no more than 500 destination objects in the body of the request.\n\nIf you make an API request on the POST operation that adds a URL on a high-volume domain to a destination list,\nthe operation may succeed (`HTTP/200 OK`).\nHowever, the server returns an error message (`HTTP/400 Bad Request`) that indicates that the destination is on a high-volume domain.\n**Note:** Umbrella does not add URLs that are on high-volume domains to destination lists. Instead, we recommend that you add the domain only.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DestinationCreateObject"
+                }
+              },
+              "example": [
+                {
+                  "destination": "cisco.com"
+                },
+                {
+                  "destination": "10.10.10.10"
+                },
+                {
+                  "destination": "mydestination/telemetry.com"
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DestinationListResponse"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "text": "OK"
+                  },
+                  "data": {
+                    "id": 2477857,
+                    "organizationId": 22429759,
+                    "access": "allow",
+                    "isGlobal": false,
+                    "name": "New Destination List",
+                    "thirdpartyCategoryId": 0,
+                    "createdAt": 1532628019,
+                    "modifiedAt": 1532628019,
+                    "isMspDefault": false,
+                    "markedForDeletion": false,
+                    "bundleTypeId": 2,
+                    "meta": {
+                      "destinationCount": 5
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerErr"
+          }
+        }
+      }
+    },
+    "/destinationlists/{destinationListId}/destinations/remove": {
+      "delete": {
+        "tags": [
+          "Destinations",
+          "Umbrella"
+        ],
+        "summary": "Delete Destinations from Destination List",
+        "description": "Remove destinations from the destination list.\n\n**Note:** Accepts a list that contains no more than 500 destination IDs.\n\nYou can retrieve a list of the destinations in the destination list through the GET `/destinationlists/{destinationListId}/destinations` operation.\nThen, to remove destinations in a destination list, provide a list of destination IDs in the request body of the\nDELETE `/destinationlists/{destinationListId}/destinations/remove` operation.",
+        "operationId": "deleteDestinations",
+        "security": [
+          {
+            "oauthFlow": [
+              "policies.destinations:write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/destinationListId"
+          }
+        ],
+        "requestBody": {
+          "description": "Add a list of destination ID.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DestinationIdsList"
+              },
+              "example": [
+                12345,
+                987435
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DestinationListResponse"
+                },
+                "example": {
+                  "status": {
+                    "code": 200,
+                    "text": "OK"
+                  },
+                  "data": {
+                    "id": 2477857,
+                    "organizationId": 22429759,
+                    "access": "allow",
+                    "isGlobal": false,
+                    "name": "New Destination List",
+                    "thirdpartyCategoryId": 0,
+                    "createdAt": 1532628019,
+                    "modifiedAt": 1532628019,
+                    "isMspDefault": false,
+                    "markedForDeletion": false,
+                    "bundleTypeId": 2,
+                    "meta": {
+                      "destinationCount": 5
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerErr"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "oauthFlow": {
+        "type": "oauth2",
+        "description": "OAuth2 Client Credentials. Token endpoint requires HTTP Basic auth using the API client key/secret.",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://api.umbrella.com/auth/v2/token",
+            "scopes": {
+              "policies.destinationLists:write": "Write policies destination lists",
+              "policies.destinationLists:read": "Read policies destination lists",
+              "policies.destinations:write": "Write policies destinations",
+              "policies.destinations:read": "Read policies destinations"
+            }
+          }
+        },
+        "x-itential-parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "x-itential-use-in": [
+              "token"
+            ]
+          }
+        ]
+      }
+    },
+    "headers": {
+      "Content-Type": {
+        "schema": {
+          "type": "string"
+        },
+        "description": "The MIME content type of the response body.",
+        "example": "application/json"
+      },
+      "Date": {
+        "schema": {
+          "type": "string",
+          "pattern": "^[0-90-90-90-9-0-90-9-0-90-9T0-90-9:0-90-9:0-90-9Z]+$"
+        },
+        "description": "The timestamp of the response.",
+        "example": "2023-03-14T18:34:25Z"
+      }
+    },
+    "parameters": {
+      "paginationPageParam": {
+        "name": "page",
+        "in": "query",
+        "description": "The number of a page in the collection.",
+        "required": false,
+        "schema": {
+          "default": 1,
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1
+        },
+        "example": 4
+      },
+      "paginationLimitParam": {
+        "name": "limit",
+        "in": "query",
+        "description": "The number of records in the collection to return on the page.",
+        "required": false,
+        "schema": {
+          "default": 100,
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "example": 50
+      },
+      "destinationListId": {
+        "name": "destinationListId",
+        "in": "path",
+        "schema": {
+          "type": "integer"
+        },
+        "description": "The unique ID of the destination list.",
+        "required": true,
+        "example": 245
+      }
+    },
+    "schemas": {
+      "status": {
+        "type": "object",
+        "required": [
+          "code",
+          "text"
+        ],
+        "description": "The status information for the response.",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The HTTP status code of the response.",
+            "example": 200
+          },
+          "text": {
+            "type": "string",
+            "description": "The HTTP message that describes the response.",
+            "example": "OK"
+          }
+        },
+        "example": {
+          "code": 200,
+          "text": "OK"
+        }
+      },
+      "meta": {
+        "type": "object",
+        "description": "The pagination information for the response.",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "The number of the page in the collection.",
+            "example": 50
+          },
+          "limit": {
+            "type": "integer",
+            "description": "The maximum number of items that are returned on the page.",
+            "example": 10
+          },
+          "total": {
+            "type": "integer",
+            "description": "The total number of items in the collection.",
+            "example": 20
+          }
+        }
+      },
+      "bundleTypeId": {
+        "type": "integer",
+        "default": 1,
+        "enum": [
+          1,
+          2,
+          4
+        ],
+        "example": 4,
+        "description": "The type of the destination list in the policy.\nSet `1` for DNS, `2` for web, and `4` for SAML Bypass.\nIf the field is not specified, the default value is `1`."
+      },
+      "isGlobal": {
+        "type": "boolean",
+        "example": false,
+        "description": "Specifies whether the destination list is a global destination list.\nThere is only one default `allow` destination list and one default `block` destination list for an organization."
+      },
+      "access": {
+        "type": "string",
+        "enum": [
+          "allow",
+          "block"
+        ],
+        "example": "allow",
+        "description": "The type of access for the destination list."
+      },
+      "id": {
+        "type": "integer",
+        "example": 1234567,
+        "description": "The unique ID of the destination list."
+      },
+      "idDestinationString": {
+        "type": "string",
+        "example": "1234567",
+        "description": "The unique ID of the destination."
+      },
+      "organizationId": {
+        "type": "integer",
+        "example": 2345678,
+        "description": "The organization ID."
+      },
+      "PaginatedDestinationListsResponse": {
+        "type": "object",
+        "description": "The status, metadata, and properties of the destination lists.",
+        "required": [
+          "status",
+          "meta",
+          "data"
+        ],
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/status"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          },
+          "data": {
+            "type": "array",
+            "description": "The list of destination lists.",
+            "items": {
+              "$ref": "#/components/schemas/DestinationListObject"
+            }
+          }
+        }
+      },
+      "DestinationListResponse": {
+        "type": "object",
+        "description": "The status and properties of the destination lists.",
+        "required": [
+          "status",
+          "data"
+        ],
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/status"
+          },
+          "data": {
+            "$ref": "#/components/schemas/DestinationListObject"
+          }
+        }
+      },
+      "DestinationListObject": {
+        "type": "object",
+        "required": [
+          "id",
+          "organizationId",
+          "access",
+          "isGlobal",
+          "name",
+          "thirdpartyCategoryId",
+          "createdAt",
+          "modifiedAt",
+          "isMspDefault",
+          "markedForDeletion"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/id"
+          },
+          "organizationId": {
+            "$ref": "#/components/schemas/organizationId"
+          },
+          "access": {
+            "$ref": "#/components/schemas/access"
+          },
+          "isGlobal": {
+            "$ref": "#/components/schemas/isGlobal"
+          },
+          "name": {
+            "$ref": "#/components/schemas/name"
+          },
+          "thirdpartyCategoryId": {
+            "type": "integer",
+            "example": 1,
+            "description": "The third-party category ID of the destination list."
+          },
+          "createdAt": {
+            "type": "integer",
+            "example": 1490206249,
+            "description": "The date and time when the destination list was created."
+          },
+          "modifiedAt": {
+            "type": "integer",
+            "example": 1520476127,
+            "description": "The date and time when the destination list was modified."
+          },
+          "isMspDefault": {
+            "type": "boolean",
+            "description": "Specifies whether MSP is the default.",
+            "example": false
+          },
+          "markedForDeletion": {
+            "type": "boolean",
+            "example": false,
+            "description": "Specifies whether the destination list is marked for deletion."
+          },
+          "bundleTypeId": {
+            "$ref": "#/components/schemas/bundleTypeId"
+          },
+          "meta": {
+            "type": "object",
+            "description": "The total number of each type of destination in the destination list. The fields in the `meta` object are optional.",
+            "properties": {
+              "destinationCount": {
+                "type": "integer",
+                "example": 5,
+                "description": "The total number of destinations in a destination list."
+              },
+              "domainCount": {
+                "type": "integer",
+                "example": 5,
+                "description": "The total number of domains in a destination list.\nDomains are part of the total number of destinations in a destination list."
+              },
+              "urlCount": {
+                "type": "integer",
+                "example": 0,
+                "description": "The total number of URLs in a destination list.\nUrls are part of the total number of destinations in a destination list."
+              },
+              "ipv4Count": {
+                "type": "integer",
+                "example": 0,
+                "description": "The total number of IP addresses in a destination list.\nIP addresses are part of the total number of destinations in a destination list."
+              },
+              "applicationCount": {
+                "type": "integer",
+                "example": 0,
+                "description": "The total number of applications in a destination list.\nApplications are part of the total number of destinations in a destination list."
+              }
+            },
+            "example": {
+              "domainCount": 1,
+              "urlCount": 0,
+              "ipv4Count": 1,
+              "destinationCount": 2,
+              "applicationCount": 0
+            }
+          }
+        },
+        "example": {
+          "id": 1234567,
+          "organizationId": 2345678,
+          "access": "allow",
+          "isGlobal": true,
+          "name": "Global Allow List",
+          "thirdpartyCategoryId": 0,
+          "createdAt": 1490206249,
+          "modifiedAt": 1520476127,
+          "isMspDefault": false,
+          "markedForDeletion": false,
+          "bundleTypeId": 2,
+          "meta": {
+            "destinationCount": 5,
+            "domainCount": 5,
+            "urlCount": 0,
+            "ipv4Count": 0,
+            "applicationCount": 0
+          }
+        }
+      },
+      "DestinationListCreate": {
+        "type": "object",
+        "required": [
+          "access",
+          "isGlobal",
+          "name"
+        ],
+        "description": "The properties of the destination list.",
+        "properties": {
+          "access": {
+            "$ref": "#/components/schemas/access"
+          },
+          "isGlobal": {
+            "$ref": "#/components/schemas/isGlobal"
+          },
+          "name": {
+            "$ref": "#/components/schemas/name"
+          },
+          "bundleTypeId": {
+            "$ref": "#/components/schemas/bundleTypeId"
+          },
+          "destinations": {
+            "type": "array",
+            "description": "The list of destinations.",
+            "maxItems": 500,
+            "items": {
+              "type": "object",
+              "description": "The properties of the destination.",
+              "properties": {
+                "destination": {
+                  "$ref": "#/components/schemas/destination"
+                },
+                "type": {
+                  "$ref": "#/components/schemas/type"
+                },
+                "comment": {
+                  "$ref": "#/components/schemas/comment"
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "access": "allow",
+          "isGlobal": false,
+          "name": "The name of the destination list."
+        }
+      },
+      "DestinationListPatch": {
+        "type": "object",
+        "description": "Update the name of the destination list.",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/name"
+          }
+        }
+      },
+      "DestinationIdsList": {
+        "type": "array",
+        "items": {
+          "type": "integer",
+          "example": 1234
+        },
+        "maxItems": 500,
+        "description": "The list of destination ID.",
+        "example": [
+          1234,
+          187575
+        ]
+      },
+      "destination": {
+        "type": "string",
+        "example": "cisco.com",
+        "description": "A domain, URL, or IP."
+      },
+      "name": {
+        "type": "string",
+        "example": "Global Allow list",
+        "description": "The name of the destination list."
+      },
+      "comment": {
+        "type": "string",
+        "description": "The comment about the destination.",
+        "example": "Add new destination list"
+      },
+      "type": {
+        "type": "string",
+        "enum": [
+          "domain",
+          "url",
+          "ipv4"
+        ],
+        "example": "domain",
+        "description": "The type of the destination."
+      },
+      "DestinationCreateObject": {
+        "type": "object",
+        "required": [
+          "destination"
+        ],
+        "description": "The properties of the destination.",
+        "properties": {
+          "destination": {
+            "$ref": "#/components/schemas/destination"
+          },
+          "comment": {
+            "type": "string",
+            "example": "A comment about the destination",
+            "description": "A comment about the destination."
+          }
+        },
+        "example": {
+          "destination": "mydestination.com",
+          "comment": "A comment about the destination"
+        }
+      },
+      "PaginatedDestinationObjectResponse": {
+        "type": "object",
+        "description": "The status, metadata, and list of destinations for the destination list.",
+        "required": [
+          "status",
+          "meta",
+          "data"
+        ],
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/status"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          },
+          "data": {
+            "type": "array",
+            "description": "The list of destinations in the destination list.",
+            "items": {
+              "$ref": "#/components/schemas/DestinationObjectWithStringId"
+            }
+          }
+        }
+      },
+      "DestinationObjectWithStringId": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "destination",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/idDestinationString"
+          },
+          "destination": {
+            "$ref": "#/components/schemas/destination"
+          },
+          "type": {
+            "$ref": "#/components/schemas/type"
+          },
+          "comment": {
+            "$ref": "#/components/schemas/comment"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "The date and time when the destination list was created.",
+            "example": "2018-07-23 19:36:45"
+          }
+        },
+        "example": {
+          "id": "1234590",
+          "destination": "destination-two.com",
+          "type": "domain",
+          "comment": "A comment about test destination",
+          "createdAt": "2021-07-23 19:36:45"
+        }
+      },
+      "DestinationListDelete": {
+        "type": "object",
+        "description": "Delete the destination list. The data field is empty in the response.",
+        "required": [
+          "status",
+          "data"
+        ],
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/status"
+          },
+          "data": {
+            "type": "array",
+            "items": {}
+          }
+        },
+        "example": {
+          "status": {
+            "code": 200,
+            "text": "OK"
+          },
+          "data": []
+        }
+      },
+      "BadRequestError": {
+        "type": "object",
+        "description": "Bad Request",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "example": 400,
+            "description": "HTTP status code"
+          },
+          "error": {
+            "type": "string",
+            "example": "Bad Request",
+            "description": "A brief description of the error"
+          },
+          "message": {
+            "type": "string",
+            "example": "Validation Error"
+          },
+          "txId": {
+            "type": "string",
+            "example": "d479k9i2b723"
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "type": "object",
+        "description": "Unauthorized",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "example": 401,
+            "description": "HTTP status code"
+          },
+          "error": {
+            "type": "string",
+            "example": "Unauthorized",
+            "description": "The authorization header is missing or the token is unauthorized."
+          },
+          "txId": {
+            "type": "string",
+            "example": "a478k9i2b723"
+          }
+        }
+      },
+      "ForbiddenError": {
+        "type": "object",
+        "description": "Forbidden",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "example": 403,
+            "description": "HTTP status code"
+          },
+          "error": {
+            "type": "string",
+            "example": "Forbidden",
+            "description": "The token is invalid."
+          },
+          "txId": {
+            "type": "string",
+            "example": "a478k9i2b723"
+          }
+        }
+      },
+      "NotFoundError": {
+        "type": "object",
+        "description": "Not Found",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "example": 404,
+            "description": "HTTP status code"
+          },
+          "error": {
+            "type": "string",
+            "example": "Not Found",
+            "description": "A resource specified in the URL was not found."
+          },
+          "txId": {
+            "type": "string",
+            "example": "a478k9i2b723"
+          }
+        }
+      },
+      "ServerError": {
+        "type": "object",
+        "description": "Internal Server Error",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "example": 500,
+            "description": "HTTP status code"
+          },
+          "error": {
+            "type": "string",
+            "example": "Internal Server Error",
+            "description": "The server can not process the request."
+          },
+          "message": {
+            "type": "string",
+            "example": "An internal server error occurred"
+          },
+          "txId": {
+            "type": "string",
+            "example": "l477k9i2b893"
+          }
+        }
+      }
+    },
+    "responses": {
+      "InvalidRequest": {
+        "description": "Bad Request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/BadRequestError"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/UnauthorizedError"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Forbidden",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ForbiddenError"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Not Found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/NotFoundError"
+            }
+          }
+        }
+      },
+      "ServerErr": {
+        "description": "Internal Server Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ServerError"
+            }
+          }
+        }
+      }
+    }
+  }
+}
