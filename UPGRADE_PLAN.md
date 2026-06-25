@@ -16,7 +16,7 @@ Tracks the upgrade of all POC-Sample assets for compatibility with Gateway 5 (IA
 | Cisco ASA | `feature/gw5-upgrade/cisco-asa` | [UPGRADE_NOTES.md](Cisco/ASA/UPGRADE_NOTES.md) | Planning |
 | F5 BIG-IP | `feature/gw5-upgrade/f5-bigip` | [UPGRADE_NOTES.md](F5/BIG-IP/UPGRADE_NOTES.md) | Planning |
 | Itential Platform Config Mgmt | `feature/gw5-upgrade/itential-config-mgmt` | [UPGRADE_NOTES.md](Itential/Platform/UPGRADE_NOTES.md) | Planning |
-| Kentik | `feature/gw5-upgrade/kentik` | [UPGRADE_NOTES.md](Kentik/UPGRADE_NOTES.md) | Planning |
+| Kentik | `feature/gw5-upgrade/kentik` | [UPGRADE_NOTES.md](Kentik/UPGRADE_NOTES.md) | Complete |
 
 ---
 

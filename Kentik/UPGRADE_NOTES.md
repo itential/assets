@@ -1,8 +1,8 @@
 # Kentik — Gateway5 Upgrade Notes
 
 **Branch:** `feature/gw5-upgrade/kentik`  
-**Status:** Planning  
-**Files to modify:** `Kentik/Projects/Kentik.project.json`
+**Status:** Complete  
+**Files modified:** `Kentik/Projects/Kentik.project.json`
 
 ---
 
@@ -29,27 +29,12 @@ One `AGManager` task in one workflow within a large, multi-adapter project (13 w
 }
 ```
 
-**Change:** Replace with `GatewayManager` `sendConfig`:
-```json
-{
-  "app": "GatewayManager",
-  "displayName": "GatewayManager",
-  "name": "sendConfig",
-  "description": "Send configuration to inventory nodes through a Gateway5 service",
-  "variables": {
-    "incoming": {
-      "clusterId": "cluster-itential",
-      "config": "<rendered config template var>",
-      "inventory": "<rendered inventory template var>"
-    },
-    "outgoing": {
-      "result": ""
-    }
-  }
-}
-```
+**Implemented:** Task `ca47` replaced with `GatewayManager sendConfig`:
+- `config`: `$var.4a43.configurationArray`
+- `inventory`: `$var.4a43.deviceArray`
+- `clusterId`: `cluster-itential`
 
-> **Note:** The Kentik project has 13 workflows and many adapters. Make the targeted change only in `Push Configuration to Device - IAG`. All other workflows use `KentikV5`, `NetboxV33`, `Servicenow`, `Msteams`, `Awsec2` — leave those untouched.
+All other 12 workflows left untouched.
 
 ---
 
@@ -73,5 +58,5 @@ One `AGManager` task in one workflow within a large, multi-adapter project (13 w
 
 ## Testing
 
-- [ ] Push Configuration to Device - IAG workflow deploys config via GatewayManager
-- [ ] All other Kentik workflows unaffected
+- [x] Push Configuration to Device - IAG workflow deploys config via GatewayManager
+- [x] All other Kentik workflows unaffected
