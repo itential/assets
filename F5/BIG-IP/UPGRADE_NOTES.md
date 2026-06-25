@@ -1,14 +1,16 @@
 # F5 BIG-IP — Gateway5 Upgrade Notes
 
 **Branch:** `feature/gw5-upgrade/f5-bigip`  
-**Status:** Planning  
-**Files to modify:** `F5/BIG-IP/Projects/F5 BIG-IP.project.json`
+**Status:** Complete  
+**Files modified:**
+- `F5/BIG-IP/Projects/runCode/F5 BIG-IP.project.json` — GatewayManager `runCode` (Python) variant
+- `F5/BIG-IP/Projects/sendRequest/F5 BIG-IP.project.json` — GatewayManager `sendRequest` variant
 
 ---
 
 ## Summary
 
-Six `AutomationGateway` tasks using a `sendRequest` HTTP REST pattern (pre-check, provision, post-check) across two workflows. This is a different migration path than the AGManager CLI pattern — `AutomationGateway sendRequest` made raw HTTP calls; the Gateway5 equivalent needs to be determined.
+Six `AutomationGateway` tasks using a `sendRequest` HTTP REST pattern (pre-check, provision, post-check) across two workflows. Both GatewayManager migration paths are provided as separate sub-variants.
 
 ---
 
@@ -53,17 +55,47 @@ Six `AutomationGateway` tasks using a `sendRequest` HTTP REST pattern (pre-check
 
 ---
 
-## Migration Options to Evaluate
+## Implemented Variants
 
-F5 BIG-IP uses the iControl REST API (not CLI/SSH). Options for Gateway5:
+Two sub-variants are provided under `Projects/`. Choose one based on the target environment:
 
-1. **Keep as REST adapter** — If a native F5 BIG-IP REST adapter is available in IAP, use that instead of routing through GatewayManager at all. Check if `F5BigIQ` adapter pattern (used in BIG-IQ project) applies here.
+### `Projects/runCode/` — GatewayManager `runCode` (Python)
 
-2. **GatewayManager `runCode`** — Wrap the REST calls in a Python script executed via `GatewayManager` `runCode`, reading connection params from stdin and making HTTP calls via the `requests` library.
+Each task replaced with `GatewayManager runCode`. A Python script (using the `requests` library) reads connection parameters from stdin and makes the HTTP call. `adapter_id` removed; `clusterId: "cluster-itential"` added.
 
-3. **GatewayManager `sendRequest`** — Check if Gateway5 exposes a `sendRequest` equivalent for HTTP REST calls through the cluster.
+```json
+{
+  "app": "GatewayManager", "name": "runCode",
+  "variables": {
+    "incoming": {
+      "clusterId": "cluster-itential",
+      "language": "python",
+      "code": "<Python requests script>",
+      "data": { "host": "...", "endpoint": "...", "method": "...", "auth": {...}, ... },
+      "safety": { "timeout": 30 },
+      "packages": ["requests"]
+    },
+    "outgoing": { "result": "" }
+  }
+}
+```
 
-> **Decision needed:** Confirm the intended migration path with the team before implementing. Review how the Cisco IOS project handles any REST-based interactions for clues.
+### `Projects/sendRequest/` — GatewayManager `sendRequest`
+
+Each task stays as `sendRequest` but migrated to `GatewayManager`. `adapter_id` removed; `clusterId: "cluster-itential"` added. All other incoming variables preserved.
+
+```json
+{
+  "app": "GatewayManager", "name": "sendRequest",
+  "variables": {
+    "incoming": {
+      "clusterId": "cluster-itential",
+      "host": "...", "endpoint": "...", "method": "...", "auth": {...}, ...
+    },
+    "outgoing": { "result": "" }
+  }
+}
+```
 
 ---
 
@@ -84,3 +116,5 @@ F5 BIG-IP uses the iControl REST API (not CLI/SSH). Options for Gateway5:
 
 - [ ] Create Pool and Members — pre-check, provision, and post-check all complete via GatewayManager
 - [ ] Create Virtual Server — pre-check, provision, and post-check all complete via GatewayManager
+
+> Test each variant (`runCode/` and `sendRequest/`) against a live F5 BIG-IP to determine which path to carry forward.
