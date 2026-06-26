@@ -1,0 +1,1741 @@
+{
+  "_id": "66d0c63521161b4df27174b8",
+  "name": "GitHub",
+  "description": "GitHub asset including creating pull request, committing file, creating branch and getting file.",
+  "components": [
+    {
+      "iid": 0,
+      "reference": "ede1bfa7-45ab-429b-9d82-0ecadbdf6a14",
+      "type": "workflow",
+      "folder": "/Commit File",
+      "document": {
+        "name": "Commit File",
+        "tasks": {
+          "1425": {
+            "name": "evaluation",
+            "canvasName": "evaluation",
+            "summary": "Verify File Not Found",
+            "description": "Verify if the file is not found",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "all_true_flag": false,
+                "evaluation_groups": [
+                  {
+                    "all_true_flag": false,
+                    "evaluations": [
+                      {
+                        "query": "IAPerror.code",
+                        "operand_1": {
+                          "variable": "githubError",
+                          "task": "job"
+                        },
+                        "operator": "==",
+                        "operand_2": {
+                          "variable": 404,
+                          "task": "static"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "outgoing": {
+                "return_value": null
+              }
+            },
+            "groups": [],
+            "nodeLocation": {
+              "x": -3192,
+              "y": -48
+            }
+          },
+          "6102": {
+            "name": "putReposOwnerRepoContentsPath",
+            "canvasName": "putReposOwnerRepoContentsPath",
+            "summary": "Commit File",
+            "description": "Create a new file or replaces an existing file in a repository",
+            "location": "Adapter",
+            "locationType": "GitHub",
+            "app": "GitHub",
+            "type": "automatic",
+            "displayName": "GitHub",
+            "variables": {
+              "incoming": {
+                "owner": "$var.job.repoOwner",
+                "repo": "$var.job.repoName",
+                "pathParam": "$var.job.filePath",
+                "body": "$var.5ec.commitPayload",
+                "adapter_id": "$var.job.adapterId"
+              },
+              "outgoing": {
+                "result": "$var.job.commitResult"
+              },
+              "error": "$var.job.githubError",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": -3480,
+              "y": 132
+            }
+          },
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": -3480,
+              "y": -144
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": -3480,
+              "y": 240
+            }
+          },
+          "4e68": {
+            "name": "ViewData",
+            "canvasName": "ViewData",
+            "summary": "GitHub Error",
+            "description": "Show provision error and decision options",
+            "location": "Application",
+            "app": "WorkFlowEngine",
+            "displayName": "Tools",
+            "type": "manual",
+            "variables": {
+              "incoming": {
+                "header": "GitHub Error",
+                "message": "",
+                "body": "$var.job.githubError",
+                "variables": "",
+                "btn_success": "OK",
+                "btn_failure": ""
+              },
+              "outgoing": {},
+              "error": "",
+              "decorators": []
+            },
+            "view": "/workflow_engine/task/ViewData",
+            "groups": [],
+            "scheduled": false,
+            "nodeLocation": {
+              "x": -3192,
+              "y": 48
+            }
+          },
+          "915f": {
+            "name": "getReposOwnerRepoContentsPath",
+            "canvasName": "getReposOwnerRepoContentsPath",
+            "summary": "Get File",
+            "description": "Get the contents of a file",
+            "location": "Adapter",
+            "locationType": "GitHub",
+            "app": "GitHub",
+            "type": "automatic",
+            "displayName": "GitHub",
+            "variables": {
+              "incoming": {
+                "owner": "$var.job.repoOwner",
+                "repo": "$var.job.repoName",
+                "pathParam": "$var.job.filePath",
+                "pathParamQuery": "",
+                "ref": "$var.job.branchName",
+                "adapter_id": "$var.job.adapterId"
+              },
+              "outgoing": {
+                "result": "$var.job.fileResult"
+              },
+              "error": "$var.job.githubError",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": -3480,
+              "y": -48
+            }
+          },
+          "5ec": {
+            "name": "transformation",
+            "canvasName": "transformation",
+            "summary": "Build Commit Payload",
+            "description": "Build Commit Payload",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "tr_id": "622a021e7858d601db6606fb",
+                "variableMap": {
+                  "commitMessage": "$var.job.commitMessage",
+                  "fileContent": "$var.job.fileContent",
+                  "branchName": "$var.job.branchName",
+                  "encoding": "base64",
+                  "fileResult": "$var.job.fileResult"
+                },
+                "options": {
+                  "extractOutput": true,
+                  "validateIncoming": true,
+                  "revertToDefaultValue": true
+                }
+              },
+              "outgoing": {
+                "commitPayload": null
+              },
+              "decorators": []
+            },
+            "groups": [],
+            "task_name": "Build Commit Payload - GitHub - REST",
+            "retrySettings": null,
+            "nodeLocation": {
+              "x": -3480,
+              "y": 48
+            }
+          },
+          "61eb": {
+            "name": "newVariable",
+            "canvasName": "newVariable",
+            "summary": "Create File Response Variable",
+            "description": "Create file response variable",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "name": "fileResult",
+                "value": "$var.915f.error"
+              },
+              "outgoing": {
+                "value": null
+              }
+            },
+            "groups": [],
+            "nodeLocation": {
+              "x": -2904,
+              "y": -48
+            }
+          }
+        },
+        "transitions": {
+          "1425": {
+            "4e68": {
+              "type": "standard",
+              "state": "failure"
+            },
+            "61eb": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "5464": {},
+          "6102": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            },
+            "4e68": {
+              "type": "standard",
+              "state": "error"
+            }
+          },
+          "workflow_start": {
+            "915f": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {},
+          "4e68": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "915f": {
+            "1425": {
+              "type": "standard",
+              "state": "error"
+            },
+            "5ec": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "5ec": {
+            "6102": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "61eb": {
+            "5ec": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "702a": {},
+          "f797": {},
+          "332f": {},
+          "a85b": {},
+          "130d": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "repoOwner": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "repoName": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "filePath": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "adapterId": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "branchName": {
+              "type": "string"
+            },
+            "commitMessage": {
+              "type": "string"
+            },
+            "fileContent": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "repoOwner",
+            "repoName",
+            "filePath",
+            "adapterId",
+            "branchName",
+            "commitMessage",
+            "fileContent"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "repoOwner": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "repoName": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "filePath": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "adapterId": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "branchName": {
+              "type": "string"
+            },
+            "commitMessage": {
+              "type": "string"
+            },
+            "fileContent": {
+              "type": "string"
+            },
+            "_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{24}$"
+            },
+            "initiator": {
+              "type": "string"
+            },
+            "githubError": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "commitResult": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "fileResult": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            }
+          }
+        },
+        "createdVersion": "5.40.5-2021.1.52.0",
+        "font_size": 12,
+        "lastUpdatedVersion": "5.55.2-2023.2.13",
+        "last_updated": "2025-01-23T16:55:03.061Z",
+        "preAutomationTime": 0,
+        "sla": 0,
+        "type": "automation",
+        "last_updated_by": {
+          "provenance": "Okta",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false,
+          "sso": true,
+          "nameID": "admin@itential"
+        },
+        "created": "1970-01-01T00:00:00.000Z",
+        "canvasVersion": 3,
+        "created_by": {
+          "provenance": "Okta",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false,
+          "sso": true,
+          "nameID": "admin@itential"
+        },
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 3
+      }
+    },
+    {
+      "iid": 1,
+      "reference": "13db282a-7fc1-425d-94d2-6eab664672f9",
+      "type": "workflow",
+      "folder": "/",
+      "document": {
+        "name": "Create Pull Request",
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": -4452,
+              "y": 408
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": -4452,
+              "y": 672
+            }
+          },
+          "4e68": {
+            "name": "ViewData",
+            "canvasName": "ViewData",
+            "summary": "GitHub Error",
+            "description": "Show provision error and decision options",
+            "location": "Application",
+            "app": "WorkFlowEngine",
+            "displayName": "Tools",
+            "type": "manual",
+            "variables": {
+              "incoming": {
+                "header": "GitHub Error",
+                "message": "",
+                "body": "$var.job.githubError",
+                "variables": "",
+                "btn_success": "OK",
+                "btn_failure": ""
+              },
+              "outgoing": {},
+              "error": "",
+              "decorators": []
+            },
+            "view": "/workflow_engine/task/ViewData",
+            "groups": [],
+            "scheduled": false,
+            "nodeLocation": {
+              "x": -4152,
+              "y": 576
+            }
+          },
+          "820e": {
+            "name": "postReposOwnerRepoPulls",
+            "canvasName": "postReposOwnerRepoPulls",
+            "summary": "Create Pull Request",
+            "description": "Create a pull request",
+            "location": "Adapter",
+            "locationType": "GitHub",
+            "app": "GitHub",
+            "type": "automatic",
+            "displayName": "GitHub",
+            "variables": {
+              "incoming": {
+                "owner": "$var.job.repoOwner",
+                "repo": "$var.job.repoName",
+                "body": "$var.16cc.merged_object",
+                "adapter_id": "$var.job.adapterId"
+              },
+              "outgoing": {
+                "result": "$var.job.pullRequestResult"
+              },
+              "error": "$var.job.githubError",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": -4452,
+              "y": 576
+            }
+          },
+          "16cc": {
+            "name": "merge",
+            "canvasName": "merge",
+            "summary": "Build Pull Request Payload",
+            "description": "Build Pull Request Payload",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "data_to_merge": [
+                  {
+                    "key": "title",
+                    "value": {
+                      "task": "job",
+                      "variable": "prTitle",
+                      "editable": true
+                    }
+                  },
+                  {
+                    "key": "owner",
+                    "value": {
+                      "task": "job",
+                      "variable": "repoOwner",
+                      "editable": true
+                    }
+                  },
+                  {
+                    "key": "repo",
+                    "value": {
+                      "task": "job",
+                      "variable": "repoName",
+                      "editable": true
+                    }
+                  },
+                  {
+                    "key": "head",
+                    "value": {
+                      "task": "job",
+                      "variable": "sourceBranch",
+                      "editable": true
+                    }
+                  },
+                  {
+                    "key": "base",
+                    "value": {
+                      "task": "job",
+                      "variable": "targetBranch",
+                      "editable": true
+                    }
+                  }
+                ]
+              },
+              "outgoing": {
+                "merged_object": null
+              }
+            },
+            "groups": [],
+            "nodeLocation": {
+              "x": -4452,
+              "y": 492
+            }
+          }
+        },
+        "transitions": {
+          "5464": {},
+          "workflow_start": {
+            "16cc": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {},
+          "4e68": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "820e": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            },
+            "4e68": {
+              "type": "standard",
+              "state": "error"
+            }
+          },
+          "16cc": {
+            "820e": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "702a": {},
+          "f797": {},
+          "332f": {},
+          "a85b": {},
+          "130d": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "repoOwner": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "repoName": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "adapterId": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "prTitle": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "sourceBranch": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "targetBranch": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            }
+          },
+          "required": [
+            "repoOwner",
+            "repoName",
+            "adapterId",
+            "prTitle",
+            "sourceBranch",
+            "targetBranch"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "repoOwner": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "repoName": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "adapterId": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "prTitle": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "sourceBranch": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "targetBranch": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{24}$"
+            },
+            "initiator": {
+              "type": "string"
+            },
+            "githubError": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "pullRequestResult": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            }
+          }
+        },
+        "createdVersion": "5.40.5-2021.1.52.0",
+        "font_size": 12,
+        "lastUpdatedVersion": "5.55.2-2023.2.13",
+        "last_updated": "2025-01-23T16:55:03.064Z",
+        "preAutomationTime": 0,
+        "sla": 0,
+        "type": "automation",
+        "last_updated_by": {
+          "provenance": "Okta",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false,
+          "sso": true,
+          "nameID": "admin@itential"
+        },
+        "created": "1970-01-01T00:00:00.000Z",
+        "canvasVersion": 3,
+        "created_by": {
+          "provenance": "Okta",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false,
+          "sso": true,
+          "nameID": "admin@itential"
+        },
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 3
+      }
+    },
+    {
+      "iid": 2,
+      "reference": "4ba8563f-a255-4ec4-af2a-be6f4c43af4f",
+      "type": "workflow",
+      "folder": "/",
+      "document": {
+        "name": "Get File",
+        "tasks": {
+          "1425": {
+            "name": "evaluation",
+            "canvasName": "evaluation",
+            "summary": "Verify File Not Found",
+            "description": "Verify if the file is not found",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "all_true_flag": false,
+                "evaluation_groups": [
+                  {
+                    "all_true_flag": false,
+                    "evaluations": [
+                      {
+                        "query": "IAPerror.code",
+                        "operand_1": {
+                          "variable": "githubError",
+                          "task": "job"
+                        },
+                        "operator": "==",
+                        "operand_2": {
+                          "variable": 404,
+                          "task": "static"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "outgoing": {
+                "return_value": null
+              }
+            },
+            "groups": [],
+            "nodeLocation": {
+              "x": -3300,
+              "y": 420
+            }
+          },
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": -3588,
+              "y": 336
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": -3588,
+              "y": 528
+            }
+          },
+          "4e68": {
+            "name": "ViewData",
+            "canvasName": "ViewData",
+            "summary": "GitHub Error",
+            "description": "Show provision error and decision options",
+            "location": "Application",
+            "app": "WorkFlowEngine",
+            "displayName": "Tools",
+            "type": "manual",
+            "variables": {
+              "incoming": {
+                "header": "GitHub Error",
+                "message": "",
+                "body": "$var.job.githubError",
+                "variables": "",
+                "btn_success": "OK",
+                "btn_failure": ""
+              },
+              "outgoing": {},
+              "error": "",
+              "decorators": []
+            },
+            "view": "/workflow_engine/task/ViewData",
+            "groups": [],
+            "scheduled": false,
+            "nodeLocation": {
+              "x": -3300,
+              "y": 516
+            }
+          },
+          "915f": {
+            "name": "getReposOwnerRepoContentsPath",
+            "canvasName": "getReposOwnerRepoContentsPath",
+            "summary": "Get File",
+            "description": "Get the contents of a file",
+            "location": "Adapter",
+            "locationType": "GitHub",
+            "app": "GitHub",
+            "type": "automatic",
+            "displayName": "GitHub",
+            "variables": {
+              "incoming": {
+                "owner": "$var.job.repoOwner",
+                "repo": "$var.job.repoName",
+                "pathParam": "$var.job.filePath",
+                "pathParamQuery": "",
+                "ref": "$var.job.branchName",
+                "adapter_id": "$var.job.adapterId"
+              },
+              "outgoing": {
+                "result": "$var.job.fileResult"
+              },
+              "error": "$var.job.githubError",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": -3588,
+              "y": 420
+            }
+          }
+        },
+        "transitions": {
+          "1425": {
+            "4e68": {
+              "type": "standard",
+              "state": "failure"
+            },
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "5464": {},
+          "workflow_start": {
+            "915f": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {},
+          "4e68": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "915f": {
+            "1425": {
+              "type": "standard",
+              "state": "error"
+            },
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "702a": {},
+          "f797": {},
+          "332f": {},
+          "a85b": {},
+          "130d": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "repoOwner": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "repoName": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "filePath": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "branchName": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "adapterId": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            }
+          },
+          "required": [
+            "repoOwner",
+            "repoName",
+            "filePath",
+            "branchName",
+            "adapterId"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "repoOwner": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "repoName": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "filePath": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "branchName": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "adapterId": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{24}$"
+            },
+            "initiator": {
+              "type": "string"
+            },
+            "githubError": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "fileResult": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            }
+          }
+        },
+        "createdVersion": "5.40.5-2021.1.52.0",
+        "font_size": 12,
+        "lastUpdatedVersion": "5.55.2-2023.2.13",
+        "last_updated": "2025-01-23T16:55:03.063Z",
+        "preAutomationTime": 0,
+        "sla": 0,
+        "type": "automation",
+        "last_updated_by": {
+          "provenance": "Okta",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false,
+          "sso": true,
+          "nameID": "admin@itential"
+        },
+        "created": "1970-01-01T00:00:00.000Z",
+        "canvasVersion": 3,
+        "created_by": {
+          "provenance": "Okta",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false,
+          "sso": true,
+          "nameID": "admin@itential"
+        },
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 3
+      }
+    },
+    {
+      "iid": 3,
+      "reference": "b80a2a25-d3e6-4d27-bf81-cc00ab590ac7",
+      "type": "workflow",
+      "folder": "/Create Branch",
+      "document": {
+        "name": "Create Branch",
+        "tasks": {
+          "1425": {
+            "name": "evaluation",
+            "canvasName": "evaluation",
+            "summary": "Verify Branch Not Found",
+            "description": "Verify if the branch is not found",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "all_true_flag": false,
+                "evaluation_groups": [
+                  {
+                    "all_true_flag": false,
+                    "evaluations": [
+                      {
+                        "query": "IAPerror.code",
+                        "operand_1": {
+                          "variable": "githubError",
+                          "task": "job"
+                        },
+                        "operator": "==",
+                        "operand_2": {
+                          "variable": 404,
+                          "task": "static"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "outgoing": {
+                "return_value": null
+              }
+            },
+            "groups": [],
+            "nodeLocation": {
+              "x": -2532,
+              "y": 252
+            }
+          },
+          "3509": {
+            "name": "transformation",
+            "canvasName": "transformation",
+            "summary": "Build Branch Creation Payload",
+            "description": "Build branch creation payload",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "tr_id": "622929b67858d601db6606fa",
+                "variableMap": {
+                  "branchName": "$var.job.branchName",
+                  "refBranchResponse": "$var.5d43.result"
+                },
+                "options": {
+                  "extractOutput": true,
+                  "validateIncoming": true,
+                  "revertToDefaultValue": true
+                }
+              },
+              "outgoing": {
+                "branchCreationPayload": null
+              }
+            },
+            "groups": [],
+            "task_name": "Build Branch Creation Payload - GitHub - REST",
+            "retrySettings": null,
+            "nodeLocation": {
+              "x": -2532,
+              "y": 432
+            }
+          },
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": -2832,
+              "y": 156
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": -2832,
+              "y": 564
+            }
+          },
+          "4e68": {
+            "name": "ViewData",
+            "canvasName": "ViewData",
+            "summary": "GitHub Error",
+            "description": "Show provision error and decision options",
+            "location": "Application",
+            "app": "WorkFlowEngine",
+            "displayName": "Tools",
+            "type": "manual",
+            "variables": {
+              "incoming": {
+                "header": "GitHub Error",
+                "message": "",
+                "body": "$var.job.githubError",
+                "variables": {},
+                "btn_success": "OK",
+                "btn_failure": ""
+              },
+              "outgoing": {},
+              "error": "",
+              "decorators": []
+            },
+            "view": "/workflow_engine/task/ViewData",
+            "groups": [],
+            "scheduled": false,
+            "nodeLocation": {
+              "x": -2220,
+              "y": 516
+            }
+          },
+          "5fc7": {
+            "name": "getReposOwnerRepoBranchesBranch",
+            "canvasName": "getReposOwnerRepoBranchesBranch",
+            "summary": "Get Branch",
+            "description": "Get a branch",
+            "location": "Adapter",
+            "locationType": "GitHub",
+            "app": "GitHub",
+            "type": "automatic",
+            "displayName": "GitHub",
+            "variables": {
+              "incoming": {
+                "owner": "$var.job.owner",
+                "repo": "$var.job.repoName",
+                "branch": "$var.job.branchName",
+                "adapter_id": "$var.job.adapterId"
+              },
+              "outgoing": {
+                "result": "$var.job.branchResult"
+              },
+              "error": "$var.job.githubError",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": -2832,
+              "y": 252
+            }
+          },
+          "5d43": {
+            "name": "getReposOwnerRepoBranchesBranch",
+            "canvasName": "getReposOwnerRepoBranchesBranch",
+            "summary": "Get Ref Branch",
+            "description": "Get the ref branch that the new branch is based on",
+            "location": "Adapter",
+            "locationType": "GitHub",
+            "app": "GitHub",
+            "type": "automatic",
+            "displayName": "GitHub",
+            "variables": {
+              "incoming": {
+                "owner": "$var.job.owner",
+                "repo": "$var.job.repoName",
+                "branch": "$var.job.refBranchName",
+                "adapter_id": "$var.job.adapterId"
+              },
+              "outgoing": {
+                "result": null
+              },
+              "error": "$var.job.githubError",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": -2532,
+              "y": 336
+            }
+          },
+          "22b8": {
+            "name": "postReposOwnerRepoGitRefs",
+            "canvasName": "postReposOwnerRepoGitRefs",
+            "summary": "Create A Reference",
+            "description": "Create a reference in a repository",
+            "location": "Adapter",
+            "locationType": "GitHub",
+            "app": "GitHub",
+            "type": "automatic",
+            "displayName": "GitHub",
+            "variables": {
+              "incoming": {
+                "owner": "$var.job.owner",
+                "repo": "$var.job.repoName",
+                "body": "$var.3509.branchCreationPayload",
+                "adapter_id": "$var.job.adapterId"
+              },
+              "outgoing": {
+                "result": "$var.job.branchResult"
+              },
+              "error": "$var.job.githubError",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": -2532,
+              "y": 516
+            }
+          }
+        },
+        "transitions": {
+          "1425": {
+            "5d43": {
+              "type": "standard",
+              "state": "success"
+            },
+            "4e68": {
+              "type": "standard",
+              "state": "failure"
+            }
+          },
+          "3509": {
+            "22b8": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "5464": {},
+          "workflow_start": {
+            "5fc7": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {},
+          "4e68": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "5fc7": {
+            "1425": {
+              "type": "standard",
+              "state": "error"
+            },
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "5d43": {
+            "3509": {
+              "type": "standard",
+              "state": "success"
+            },
+            "4e68": {
+              "type": "standard",
+              "state": "error"
+            }
+          },
+          "22b8": {
+            "4e68": {
+              "type": "standard",
+              "state": "error"
+            },
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "702a": {},
+          "f797": {},
+          "332f": {},
+          "a85b": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "branchName": {
+              "type": "string"
+            },
+            "owner": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "repoName": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "adapterId": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "refBranchName": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            }
+          },
+          "required": [
+            "branchName",
+            "owner",
+            "repoName",
+            "adapterId",
+            "refBranchName"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "branchName": {
+              "type": "string"
+            },
+            "owner": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "repoName": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "adapterId": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "refBranchName": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{24}$"
+            },
+            "initiator": {
+              "type": "string"
+            },
+            "githubError": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "branchResult": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            }
+          }
+        },
+        "createdVersion": "5.40.5-2021.1.52.0",
+        "font_size": 12,
+        "lastUpdatedVersion": "5.55.2-2023.2.13",
+        "last_updated": "2025-01-23T16:55:03.067Z",
+        "preAutomationTime": 0,
+        "sla": 0,
+        "type": "automation",
+        "last_updated_by": {
+          "provenance": "Okta",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false,
+          "sso": true,
+          "nameID": "admin@itential"
+        },
+        "created": "1970-01-01T00:00:00.000Z",
+        "canvasVersion": 3,
+        "created_by": {
+          "provenance": "Okta",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false,
+          "sso": true,
+          "nameID": "admin@itential"
+        },
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 3
+      }
+    },
+    {
+      "iid": 5,
+      "reference": "622a021e7858d601db6606fb",
+      "type": "transformation",
+      "folder": "/Commit File",
+      "document": {
+        "_id": "622a021e7858d601db6606fb",
+        "name": "Build Commit Payload",
+        "description": "",
+        "incoming": [
+          {
+            "$id": "commitMessage",
+            "type": "string"
+          },
+          {
+            "$id": "fileContent",
+            "type": "string"
+          },
+          {
+            "$id": "branchName",
+            "type": "string"
+          },
+          {
+            "$id": "encoding",
+            "type": "string"
+          },
+          {
+            "$id": "fileResult",
+            "type": "object",
+            "properties": {},
+            "required": []
+          }
+        ],
+        "outgoing": [
+          {
+            "$id": "commitPayload",
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "content": {
+                "type": "string"
+              },
+              "branch": {
+                "type": "string"
+              },
+              "encoding": {
+                "type": "string"
+              },
+              "sha": {
+                "type": "string"
+              }
+            },
+            "required": []
+          }
+        ],
+        "steps": [
+          {
+            "id": 2,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "branchName",
+              "ptr": ""
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "commitPayload",
+              "ptr": "/branch"
+            }
+          },
+          {
+            "id": 3,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "commitMessage",
+              "ptr": ""
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "commitPayload",
+              "ptr": "/message"
+            }
+          },
+          {
+            "id": 4,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "fileContent",
+              "ptr": ""
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "commitPayload",
+              "ptr": "/content"
+            }
+          },
+          {
+            "id": 5,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "encoding",
+              "ptr": ""
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "commitPayload",
+              "ptr": "/encoding"
+            }
+          },
+          {
+            "id": 6,
+            "type": "method",
+            "library": "Logical",
+            "method": "nullish",
+            "args": [null, null],
+            "view": {
+              "row": 3,
+              "col": 2
+            }
+          },
+          {
+            "id": 7,
+            "type": "declaration",
+            "library": "String",
+            "method": "new String",
+            "args": [null],
+            "view": {
+              "row": 4,
+              "col": 1
+            }
+          },
+          {
+            "id": 9,
+            "type": "assign",
+            "from": {
+              "location": "declaration",
+              "name": 7,
+              "ptr": "/return"
+            },
+            "to": {
+              "location": "method",
+              "name": 6,
+              "ptr": "/args/1/value"
+            }
+          },
+          {
+            "id": 10,
+            "type": "assign",
+            "from": {
+              "location": "method",
+              "name": 6,
+              "ptr": "/return"
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "commitPayload",
+              "ptr": "/sha"
+            }
+          },
+          {
+            "id": 11,
+            "type": "method",
+            "library": "Object",
+            "method": "optional chaining",
+            "args": [null, "response", "sha"],
+            "view": {
+              "row": 3,
+              "col": 1
+            }
+          },
+          {
+            "id": 12,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "fileResult",
+              "ptr": ""
+            },
+            "to": {
+              "location": "method",
+              "name": 11,
+              "ptr": "/args/0/value"
+            }
+          },
+          {
+            "id": 13,
+            "type": "assign",
+            "from": {
+              "location": "method",
+              "name": 11,
+              "ptr": "/return"
+            },
+            "to": {
+              "location": "method",
+              "name": 6,
+              "ptr": "/args/0/value"
+            }
+          }
+        ],
+        "functions": [],
+        "comments": [],
+        "view": {
+          "col": 2,
+          "row": 5
+        },
+        "created": "2025-01-23T16:43:12.535Z",
+        "createdBy": {
+          "_id": "67531c63592f8c45f4eabe88",
+          "provenance": "Okta",
+          "username": "admin@itential"
+        },
+        "lastUpdated": "2025-01-23T16:55:03.067Z",
+        "lastUpdatedBy": {
+          "_id": "67531c63592f8c45f4eabe88",
+          "provenance": "Okta",
+          "username": "admin@itential"
+        },
+        "version": "4.3.6-2023.2.5",
+        "tags": []
+      }
+    },
+    {
+      "iid": 6,
+      "reference": "622929b67858d601db6606fa",
+      "type": "transformation",
+      "folder": "/Create Branch",
+      "document": {
+        "_id": "622929b67858d601db6606fa",
+        "name": "Build Branch Creation Payload",
+        "description": "",
+        "incoming": [
+          {
+            "$id": "branchName",
+            "type": "string"
+          },
+          {
+            "$id": "refBranchResponse",
+            "type": "object",
+            "properties": {
+              "response": {
+                "type": "object",
+                "properties": {
+                  "commit": {
+                    "type": "object",
+                    "properties": {
+                      "sha": {
+                        "type": "string"
+                      }
+                    },
+                    "required": []
+                  }
+                },
+                "required": []
+              }
+            },
+            "required": []
+          }
+        ],
+        "outgoing": [
+          {
+            "$id": "branchCreationPayload",
+            "type": "object",
+            "properties": {
+              "ref": {
+                "type": "string"
+              },
+              "sha": {
+                "type": "string"
+              }
+            },
+            "required": []
+          }
+        ],
+        "steps": [
+          {
+            "id": 1,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "refBranchResponse",
+              "ptr": "/response/commit/sha"
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "branchCreationPayload",
+              "ptr": "/sha"
+            }
+          },
+          {
+            "id": 2,
+            "type": "method",
+            "library": "String",
+            "method": "concat",
+            "args": ["refs/heads/", null],
+            "view": {
+              "row": 1,
+              "col": 1
+            }
+          },
+          {
+            "id": 3,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "branchName",
+              "ptr": ""
+            },
+            "to": {
+              "location": "method",
+              "name": 2,
+              "ptr": "/args/1/value"
+            }
+          },
+          {
+            "id": 4,
+            "type": "assign",
+            "from": {
+              "location": "method",
+              "name": 2,
+              "ptr": "/return"
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "branchCreationPayload",
+              "ptr": "/ref"
+            }
+          }
+        ],
+        "functions": [],
+        "comments": [],
+        "view": {
+          "col": 2,
+          "row": 5
+        },
+        "created": "2025-01-23T16:43:12.575Z",
+        "createdBy": {
+          "_id": "67531c63592f8c45f4eabe88",
+          "provenance": "Okta",
+          "username": "admin@itential"
+        },
+        "lastUpdated": "2025-01-23T16:55:03.068Z",
+        "lastUpdatedBy": {
+          "_id": "67531c63592f8c45f4eabe88",
+          "provenance": "Okta",
+          "username": "admin@itential"
+        },
+        "version": "4.3.6-2023.2.5",
+        "tags": []
+      }
+    }
+  ],
+  "folders": [
+    {
+      "iid": 1,
+      "nodeType": "component"
+    },
+    {
+      "nodeType": "folder",
+      "name": "Commit File",
+      "children": [
+        {
+          "iid": 0,
+          "nodeType": "component"
+        },
+        {
+          "iid": 5,
+          "nodeType": "component"
+        }
+      ]
+    },
+    {
+      "nodeType": "folder",
+      "name": "Create Branch",
+      "children": [
+        {
+          "iid": 3,
+          "nodeType": "component"
+        },
+        {
+          "iid": 6,
+          "nodeType": "component"
+        }
+      ]
+    },
+    {
+      "iid": 2,
+      "nodeType": "component"
+    }
+  ],
+  "created": "2024-08-29T19:04:21.834Z",
+  "createdBy": {
+    "_id": "6786b32af921f091fd105007",
+    "provenance": "Local AAA",
+    "username": "admin@itential"
+  },
+  "lastUpdated": "2025-01-23T16:55:03.054Z",
+  "lastUpdatedBy": {
+    "_id": "67531c63592f8c45f4eabe88",
+    "provenance": "Okta",
+    "username": "admin@itential"
+  },
+  "iid": 55,
+  "thumbnail": "data:image/png;base64,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",
+  "backgroundColor": "#FFFFFF"
+}
