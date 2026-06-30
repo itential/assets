@@ -8,7 +8,7 @@ Palo Alto Panorama is a centralized network security management platform that pr
 
 This project provides a complete set of IAP workflows backed by the **Palo Alto Panorama 11.1 REST API** via an Integration Model. No Automation Gateway or SSH/NETCONF connectivity is required. All operations are REST calls authenticated with an API key in the `X-PAN-KEY` header.
 
-The 46 workflows span 12 operational categories and cover the full policy automation lifecycle: object management, rule CRUD, rule positioning, and commit.
+The 47 workflows span 12 operational categories and cover the full policy automation lifecycle: object management, rule CRUD, rule positioning, commit, and commit-all (push to managed devices).
 
 ## Contents
 
@@ -74,7 +74,7 @@ The workflows in this project are wired to the integration instance named **`Pan
 
 ### Palo Alto Panorama
 
-The project contains **46 workflows** organized into **12 folders**. All workflows follow the naming convention `<Operation> <Resource>` (e.g. `List Security Pre-Rules`, `Create Address`).
+The project contains **47 workflows** organized into **12 folders**. All workflows follow the naming convention `<Operation> <Resource>` (e.g. `List Security Pre-Rules`, `Create Address`).
 
 #### Folder Structure
 
@@ -91,7 +91,7 @@ The project contains **46 workflows** organized into **12 folders**. All workflo
 | Tags | List, Create, Update, Delete | Object tags |
 | Device Groups | List, Create, Update, Delete | Panorama device group containers |
 | Zones | List | Template-scoped network zones |
-| Commit | Commit Configuration | Panorama candidate config commit |
+| Commit | Commit Configuration, Commit All Configuration | Panorama candidate config commit and push to managed devices |
 
 ---
 
@@ -296,7 +296,17 @@ Zones in Panorama are template-scoped — they are not tied to a device group bu
 {}
 ```
 
-No inputs required. The commit payload (`type=commit&cmd=<commit></commit>`) is pre-configured in the workflow. Commits the current Panorama candidate configuration to all managed devices.
+No inputs required. The commit payload (`type=commit&cmd=<commit></commit>`) is pre-configured in the workflow. Commits the current Panorama candidate configuration.
+
+---
+
+### Commit All Configuration
+
+```json
+{}
+```
+
+No inputs required. The commit-all payload (`type=commit-all&cmd=<commit-all><shared-policy></shared-policy></commit-all>`) is pre-configured in the workflow. Pushes the last committed Panorama configuration to all managed firewalls. Run this after **Commit Configuration** to fully deploy changes to devices.
 
 ---
 
