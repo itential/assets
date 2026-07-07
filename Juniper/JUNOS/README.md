@@ -1,5 +1,5 @@
 ## Studio Projects
-- [Juniper JUNOS](https://github.com/nathaniel-itential/assets/blob/develop/Juniper/JUNOS/Projects/Juniper%20JUNOS.project.json)
+- [Juniper JUNOS](https://github.com/nathaniel-itential/assets/blob/develop/Juniper/JUNOS/Studio%20Projects/Juniper%20JUNOS.project.json)
 
 ## Golden Configs
 - [Juniper JUNOS set](https://github.com/nathaniel-itential/assets/blob/develop/Juniper/JUNOS/Golden%20Configs/Juniper%20JUNOS%20set.json)
