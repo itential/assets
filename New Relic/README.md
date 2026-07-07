@@ -1,2 +1,2 @@
 ## OpenAPIs
-- [New Relic v2](https://github.com/nathaniel-itential/assets/blob/develop/New%20Relic/OpenAPIs/new_relic-v2.json)
+- [New Relic latest](https://github.com/nathaniel-itential/assets/blob/develop/New%20Relic/OpenAPIs/new_relic-latest.json)

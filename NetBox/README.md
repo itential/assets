@@ -1,7 +1,7 @@
 ## OpenAPIs
 - [NetBox 3.7.8](https://github.com/nathaniel-itential/assets/blob/develop/NetBox/OpenAPIs/netbox-3.7.8.json)
 - [NetBox 4.1](https://github.com/nathaniel-itential/assets/blob/develop/NetBox/OpenAPIs/netbox-4.1.json)
-- [NetBox 4.6.1](https://github.com/nathaniel-itential/assets/blob/develop/NetBox/OpenAPIs/netbox-4.6.1.json)
+- [NetBox latest](https://github.com/nathaniel-itential/assets/blob/develop/NetBox/OpenAPIs/netbox-latest.json)
 
 ## Studio Projects
 - [NetBox](https://github.com/nathaniel-itential/assets/blob/develop/NetBox/Studio%20Projects/NetBox.project.json)

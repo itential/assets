@@ -1,2 +1,2 @@
 ## OpenAPIs
-- [Paessler PRTG 2.0](https://github.com/nathaniel-itential/assets/blob/develop/Paessler/OpenAPIs/paessler_prtg-2.0.json)
+- [Paessler PRTG latest](https://github.com/nathaniel-itential/assets/blob/develop/Paessler/OpenAPIs/paessler_prtg-latest.json)

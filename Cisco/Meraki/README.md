@@ -1,6 +1,6 @@
 ## OpenAPIs
-- [Cisco Meraki Dashboard 1.48.0](https://github.com/nathaniel-itential/assets/blob/develop/Cisco/Meraki/OpenAPIs/cisco_meraki_dashboard-1.48.0.json)
-- [Cisco Meraki Dashboard — Bearer Variant 1.48.0](https://github.com/nathaniel-itential/assets/blob/develop/Cisco/Meraki/OpenAPIs/cisco_meraki_dashboard_bearer_variant-1.48.0.json)
+- [Cisco Meraki Dashboard latest](https://github.com/nathaniel-itential/assets/blob/develop/Cisco/Meraki/OpenAPIs/cisco_meraki_dashboard-latest.json)
+- [Cisco Meraki Dashboard — Bearer Variant latest](https://github.com/nathaniel-itential/assets/blob/develop/Cisco/Meraki/OpenAPIs/cisco_meraki_dashboard_bearer_variant-latest.json)
 
 ## Studio Projects
 - [Cisco Meraki](https://github.com/nathaniel-itential/assets/blob/develop/Cisco/Meraki/Studio%20Projects/Cisco%20Meraki.project.json)

@@ -1,5 +1,5 @@
 ## OpenAPIs
-- [Amazon EC2 2016-11-15](https://github.com/nathaniel-itential/assets/blob/develop/AWS/EC2/OpenAPIs/amazon_ec2-2016-11-15.json)
+- [Amazon EC2 latest](https://github.com/nathaniel-itential/assets/blob/develop/AWS/EC2/OpenAPIs/amazon_ec2-latest.json)
 
 ## Studio Projects
 - [AWS EC2](https://github.com/nathaniel-itential/assets/blob/develop/AWS/EC2/Studio%20Projects/AWS%20EC2.project.json)

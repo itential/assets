@@ -1,5 +1,5 @@
 ## OpenAPIs
-- [Palo Alto Panorama 11.1](https://github.com/nathaniel-itential/assets/blob/develop/Palo%20Alto/Panorama/OpenAPIs/panorama-v11.1-slim.json)
+- [Palo Alto Panorama latest](https://github.com/nathaniel-itential/assets/blob/develop/Palo%20Alto/Panorama/OpenAPIs/panorama-latest.json)
 - [Panorama REST API 11.1](https://github.com/nathaniel-itential/assets/blob/develop/Palo%20Alto/Panorama/OpenAPIs/panorama-v11.1.json)
 
 ## Studio Projects
