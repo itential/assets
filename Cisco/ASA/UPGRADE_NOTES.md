@@ -55,6 +55,8 @@ Three `AGManager` tasks across three workflows. All follow the same CLI config-p
 
 All three tasks also have `clusterId: "cluster-itential"` and `outgoing.result: ""`.
 
+Also fixed a stale downstream reference: the "View Error" task (`7a4c`) in the Push Configuration workflow referenced `$var.ca47.stdout` (the old AGManager output field), which no longer exists now that `ca47` outputs `result`. Updated to `$var.ca47.result`.
+
 ---
 
 ## Other Workflows (No Changes)

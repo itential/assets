@@ -34,6 +34,8 @@ One `AGManager` task in one workflow within a large, multi-adapter project (13 w
 - `inventory`: `$var.4a43.deviceArray`
 - `clusterId`: `cluster-itential`
 
+Also fixed a stale downstream reference: the "View Error" task referenced `$var.ca47.stdout` (the old AGManager output field), which no longer exists now that `ca47` outputs `result`. Updated to `$var.ca47.result`.
+
 All other 12 workflows left untouched.
 
 ---

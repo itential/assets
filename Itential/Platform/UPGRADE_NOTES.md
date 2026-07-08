@@ -1,8 +1,8 @@
 # Itential Platform Configuration Management — Gateway5 Upgrade Notes
 
 **Branch:** `feature/gw5-upgrade/itential-config-mgmt`  
-**Status:** Planning  
-**Files to modify:** `Itential/Platform/Projects/Itential Platform Configuration Management.project.json`
+**Status:** Complete  
+**Files modified:** `Itential/Platform/Projects/Itential Platform Configuration Management.project.json`
 
 ---
 
@@ -29,27 +29,12 @@ One `AGManager` task in one workflow. Minimal scope — same CLI → `GatewayMan
 }
 ```
 
-**Change:** Replace with `GatewayManager` `sendConfig`:
-```json
-{
-  "app": "GatewayManager",
-  "displayName": "GatewayManager",
-  "name": "sendConfig",
-  "description": "Send configuration to inventory nodes through a Gateway5 service",
-  "variables": {
-    "incoming": {
-      "clusterId": "cluster-itential",
-      "config": "<rendered config template var>",
-      "inventory": "<rendered inventory template var>"
-    },
-    "outgoing": {
-      "result": ""
-    }
-  }
-}
-```
+**Implemented:** Task `ca47` replaced with `GatewayManager sendConfig`:
+- `config`: `$var.582e.configurationList`
+- `inventory`: `$var.582e.deviceList`
+- `clusterId`: `cluster-itential`
 
-> **Note:** Trace the `$var.xxx` references from the Push Configuration workflow to identify the correct rendered template var IDs.
+Also fixed a stale downstream reference: the "View Error" task (`7a4c`) referenced `$var.ca47.stdout` (the old AGManager output field), which no longer exists now that `ca47` outputs `result`. Updated to `$var.ca47.result`.
 
 ---
 

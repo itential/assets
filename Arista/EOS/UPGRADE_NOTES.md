@@ -51,6 +51,8 @@ One `AGManager` task in one workflow. Straightforward CLI → `GatewayManager se
 
 Both `config` and `inventory` come from the `582e` transformation task, which processes the rendered Jinja template (`b9ed`) and device input (`$var.job.device`) into CLI-ready `configurationList` and `deviceList` outputs.
 
+Also fixed a stale downstream reference: the "View Error" task (`7a4c`) referenced `$var.ca47.stdout` (the old AGManager output field), which no longer exists now that `ca47` outputs `result`. Updated to `$var.ca47.result`.
+
 ---
 
 ## Other Workflows (No Changes)
