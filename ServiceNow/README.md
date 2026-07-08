@@ -2,8 +2,11 @@
 Assets for the Itential Platform.
 
 ## OpenAPIs
-- [ServiceNow Change](./OpenAPIs/sn_chg_rest_change_management_latest.json)
-- [Table](./OpenAPIs/table_latest.json)
+- [ServiceNow Change Management latest](./OpenAPIs/servicenow_change_management-latest.json)
+- [ServiceNow Change Management v1](./OpenAPIs/servicenow_change_management-v1.json)
+- [ServiceNow Table API latest](./OpenAPIs/servicenow_table_api-latest.json)
+- [ServiceNow Table API v2](./OpenAPIs/servicenow_table_api-v2.json)
+- [ServiceNow Itential Services App latest](./OpenAPIs/servicenow_itential_services_app-latest.json)
 
 ## Projects
 ### ServiceNow Project

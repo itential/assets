@@ -2,4 +2,4 @@
 Assets for the Itential Platform.
 
 ## OpenAPIs
-- [Sonatype Nexus 3.69.0](./OpenAPIs/nexus_3.69.0-02.json)
+- [Sonatype Nexus Repository latest](./OpenAPIs/sonatype_nexus_repository-latest.json)

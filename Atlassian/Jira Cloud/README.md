@@ -1,6 +1,15 @@
+# Atlassian Jira
+Assets for the Itential Platform.
+
 ## OpenAPIs
-- [Atlassian Jira Cloud 2.0.0](https://github.com/nathaniel-itential/assets/blob/develop/Atlassian/Jira%20Cloud/OpenAPIs/atlassian_jira_cloud-2.0.0.json)
-- [Atlassian Jira Cloud latest](https://github.com/nathaniel-itential/assets/blob/develop/Atlassian/Jira%20Cloud/OpenAPIs/atlassian_jira_cloud-latest.json)
+- [Jira Cloud 2.0.0](./OpenAPIs/atlassian_jira_cloud-2.0.0.json)
+- [Jira Cloud latest](./OpenAPIs/atlassian_jira_cloud-latest.json)
 
 ## Studio Projects
-- [Atlassian Jira](https://github.com/nathaniel-itential/assets/blob/develop/Atlassian/Jira%20Cloud/Studio%20Projects/Atlassian%20Jira.project.json)
+### Atlassian Jira Project
+- Create a Project
+- Create an Issue
+- Transition an Issue
+
+#### Dependencies
+- [Atlassian Jira Adapter](https://gitlab.com/itentialopensource/adapters/adapter-jira)

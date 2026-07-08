@@ -1,5 +1,15 @@
-## Studio Projects
-- [Apache Kafka 2.x](https://github.com/nathaniel-itential/assets/blob/develop/Apache/Kafka/Studio%20Projects/Apache%20Kafka%202.x.project.json)
+# Apache Kafka 2.x Assets
+Assets for the Itential Platform.
+
+## Projects
+### Apache Kafka 2.x Project
+- Produce Message
 
 ## Automations
-- [Consume Message - Kafkav2](https://github.com/nathaniel-itential/assets/blob/develop/Apache/Kafka/Automations/Consume%20Message%20-%20Kafkav2%20-%20Library%20-%20Example.json)
+### Apache Kafka 2.x Sample Usecase
+- Consume Message
+
+#### Dependencies
+- [Apache Kafka 2.x Adapter](https://gitlab.com/itentialopensource/adapters/adapter-kafkav2)
+- [Operations Manager Automations](./Automations/)
+
