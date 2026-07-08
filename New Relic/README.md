@@ -1,5 +1,2 @@
-# New Relic Confluence
-Assets for the New Relic platform.
-
 ## OpenAPIs
-- [New Relic v2](./OpenAPIs/new_relic_v2.json)
+- [New Relic latest](https://github.com/nathaniel-itential/assets/blob/develop/New%20Relic/OpenAPIs/new_relic-latest.json)

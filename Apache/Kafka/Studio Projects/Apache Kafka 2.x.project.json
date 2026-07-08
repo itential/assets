@@ -1,0 +1,746 @@
+{
+  "_id": "66cf5d3521161b4df2717475",
+  "name": "Apache Kafka 2.x",
+  "description": "Usecase to produce message in Apache Kafka with inputs: topic (string), messages (array of string)",
+  "components": [
+    {
+      "iid": 1,
+      "reference": "134f50fc-408a-4028-a511-ee7ba6b67cd0",
+      "type": "workflow",
+      "folder": "/Produce Message",
+      "document": {
+        "name": "Produce Message",
+        "tasks": {
+          "359": {
+            "name": "newVariable",
+            "canvasName": "newVariable",
+            "summary": "Send Message Status",
+            "description": "Send message status",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "name": "status",
+                "value": "Failed"
+              },
+              "outgoing": {
+                "value": null
+              }
+            },
+            "groups": [],
+            "nodeLocation": {
+              "x": 1212,
+              "y": 984
+            }
+          },
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 876,
+              "y": 732
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 876,
+              "y": 1308
+            }
+          },
+          "276b": {
+            "name": "sendMessage",
+            "canvasName": "sendMessage",
+            "summary": "Send Message",
+            "description": "Send messages on a topic",
+            "location": "Adapter",
+            "locationType": "Kafkav2",
+            "app": "Kafkav2",
+            "type": "automatic",
+            "displayName": "Kafkav2",
+            "variables": {
+              "incoming": {
+                "payloads": "$var.965c.produceMessageRequest",
+                "adapter_id": "$var.job.adapterId"
+              },
+              "outgoing": {
+                "result": "$var.job.response"
+              },
+              "error": "$var.job.response",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 876,
+              "y": 984
+            }
+          },
+          "edf0": {
+            "name": "newVariable",
+            "canvasName": "newVariable",
+            "summary": "Send Message Status",
+            "description": "Send message status",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "name": "status",
+                "value": "Success"
+              },
+              "outgoing": {
+                "value": null
+              }
+            },
+            "groups": [],
+            "nodeLocation": {
+              "x": 876,
+              "y": 1116
+            }
+          },
+          "965c": {
+            "name": "transformation",
+            "canvasName": "transformation",
+            "summary": "Build Produce Message Request - Kafkav2",
+            "description": "Build produce message request",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "tr_id": "65d3da1dda9691018dd3ec46",
+                "variableMap": {
+                  "topic": "$var.job.topic",
+                  "messages": "$var.job.messages"
+                },
+                "options": {
+                  "extractOutput": true,
+                  "validateIncoming": true,
+                  "revertToDefaultValue": true
+                }
+              },
+              "outgoing": {
+                "produceMessageRequest": null
+              },
+              "decorators": []
+            },
+            "actor": "Pronghorn",
+            "groups": [],
+            "nodeLocation": {
+              "x": 876,
+              "y": 852
+            }
+          }
+        },
+        "transitions": {
+          "359": {
+            "workflow_end": {
+              "state": "success",
+              "type": "standard"
+            }
+          },
+          "workflow_start": {
+            "965c": {
+              "state": "success",
+              "type": "standard"
+            }
+          },
+          "workflow_end": {},
+          "276b": {
+            "359": {
+              "state": "error",
+              "type": "standard"
+            },
+            "edf0": {
+              "state": "success",
+              "type": "standard"
+            }
+          },
+          "edf0": {
+            "workflow_end": {
+              "state": "success",
+              "type": "standard"
+            }
+          },
+          "965c": {
+            "276b": {
+              "state": "success",
+              "type": "standard"
+            }
+          }
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "adapterId": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "topic": {
+              "type": "string",
+              "examples": ["example-topic"]
+            },
+            "messages": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": ["adapterId", "topic", "messages"]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "adapterId": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "topic": {
+              "type": "string",
+              "examples": ["example-topic"]
+            },
+            "messages": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{24}$"
+            },
+            "initiator": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "response": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            }
+          }
+        },
+        "createdVersion": "5.44.64-2022.1.27.0",
+        "font_size": 12,
+        "lastUpdatedVersion": "5.55.2-2023.2.13",
+        "last_updated": "2025-01-17T14:54:04.206Z",
+        "preAutomationTime": 0,
+        "sla": 0,
+        "type": "automation",
+        "last_updated_by": {
+          "provenance": "Okta",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false,
+          "sso": true,
+          "nameID": "admin@itential"
+        },
+        "created": "1970-01-01T00:00:00.000Z",
+        "canvasVersion": 3,
+        "created_by": {
+          "provenance": "Okta",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false,
+          "sso": true,
+          "nameID": "admin@itential"
+        },
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 3
+      }
+    },
+    {
+      "iid": 2,
+      "reference": "65d3da1dda9691018dd3ec46",
+      "type": "transformation",
+      "folder": "/Produce Message",
+      "document": {
+        "_id": "65d3da1dda9691018dd3ec46",
+        "name": "Build Produce Message Request",
+        "description": "Creates request object to produce a list of messages with Kafkav2",
+        "incoming": [
+          {
+            "$id": "topic",
+            "type": "string",
+            "examples": ["example-topic"]
+          },
+          {
+            "$id": "messages",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "outgoing": [
+          {
+            "$id": "produceMessageRequest",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "topic": {
+                  "type": "string",
+                  "examples": ["example-topic"]
+                },
+                "messages": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "examples": ["This is a test 1"]
+                      }
+                    },
+                    "required": []
+                  }
+                }
+              },
+              "required": []
+            }
+          }
+        ],
+        "steps": [
+          {
+            "id": 2,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "messages",
+              "ptr": ""
+            },
+            "to": {
+              "location": "method",
+              "name": 1,
+              "ptr": "/args/0/value"
+            },
+            "context": "#"
+          },
+          {
+            "id": 4,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "topic",
+              "ptr": ""
+            },
+            "to": {
+              "location": "function",
+              "name": 3,
+              "ptr": "/args/0/value"
+            },
+            "context": "#"
+          },
+          {
+            "id": 1,
+            "type": "method",
+            "library": "Array",
+            "method": "map",
+            "args": [null, "mapMessageForKafkav2"],
+            "view": {
+              "row": 2,
+              "col": 1
+            },
+            "context": "#"
+          },
+          {
+            "id": 5,
+            "type": "assign",
+            "from": {
+              "location": "method",
+              "name": 1,
+              "ptr": "/return"
+            },
+            "to": {
+              "location": "function",
+              "name": 3,
+              "ptr": "/args/1/value"
+            },
+            "context": "#"
+          },
+          {
+            "id": 3,
+            "type": "function",
+            "function": "buildRequestBody",
+            "args": [null, null],
+            "view": {
+              "row": 1,
+              "col": 2
+            },
+            "context": "#"
+          },
+          {
+            "id": 7,
+            "type": "assign",
+            "from": {
+              "location": "function",
+              "name": 3,
+              "ptr": "/return/buildRequestObject"
+            },
+            "to": {
+              "location": "declaration",
+              "name": 6,
+              "ptr": "/args/0/value"
+            },
+            "context": "#"
+          },
+          {
+            "id": 6,
+            "type": "declaration",
+            "library": "Array",
+            "method": "new Array",
+            "args": [null],
+            "view": {
+              "row": 1,
+              "col": 3
+            },
+            "context": "#",
+            "polymorphIndex": 0
+          },
+          {
+            "id": 8,
+            "type": "assign",
+            "from": {
+              "location": "declaration",
+              "name": 6,
+              "ptr": "/return"
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "produceMessageRequest",
+              "ptr": ""
+            },
+            "context": "#"
+          }
+        ],
+        "functions": [
+          {
+            "incoming": [
+              {
+                "type": "string",
+                "$id": "currentValue"
+              },
+              {
+                "title": "index",
+                "type": "number",
+                "optional": true,
+                "$id": "index"
+              },
+              {
+                "$id": "array",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "optional": true
+              }
+            ],
+            "outgoing": [
+              {
+                "$id": "newValue",
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "required": []
+              }
+            ],
+            "steps": [
+              {
+                "id": 1,
+                "type": "assign",
+                "from": {
+                  "location": "incoming",
+                  "name": "currentValue",
+                  "ptr": ""
+                },
+                "to": {
+                  "location": "outgoing",
+                  "name": "newValue",
+                  "ptr": "/value"
+                },
+                "context": "#"
+              }
+            ],
+            "functions": [],
+            "name": "mapMessageForKafkav2",
+            "view": {
+              "col": 2,
+              "row": 4
+            },
+            "id": "mapMessageForKafkav2",
+            "comments": []
+          },
+          {
+            "incoming": [
+              {
+                "$id": "topic",
+                "type": "string"
+              },
+              {
+                "$id": "messages",
+                "type": "array"
+              }
+            ],
+            "outgoing": [
+              {
+                "$id": "buildRequestObject",
+                "type": "object",
+                "properties": {
+                  "topic": {
+                    "type": "string"
+                  },
+                  "messages": {
+                    "type": "array"
+                  }
+                },
+                "required": []
+              }
+            ],
+            "steps": [
+              {
+                "id": 1,
+                "type": "assign",
+                "from": {
+                  "location": "incoming",
+                  "name": "topic",
+                  "ptr": ""
+                },
+                "to": {
+                  "location": "outgoing",
+                  "name": "buildRequestObject",
+                  "ptr": "/topic"
+                },
+                "context": "#"
+              },
+              {
+                "id": 2,
+                "type": "assign",
+                "from": {
+                  "location": "incoming",
+                  "name": "messages",
+                  "ptr": ""
+                },
+                "to": {
+                  "location": "outgoing",
+                  "name": "buildRequestObject",
+                  "ptr": "/messages"
+                },
+                "context": "#"
+              }
+            ],
+            "functions": [],
+            "name": "buildRequestBody",
+            "view": {
+              "col": 2,
+              "row": 4
+            },
+            "id": "buildRequestBody",
+            "comments": []
+          }
+        ],
+        "comments": [],
+        "view": {
+          "col": 3,
+          "row": 5
+        },
+        "created": "2025-01-15T19:59:47.240Z",
+        "createdBy": {
+          "_id": "67531c63592f8c45f4eabe88",
+          "provenance": "Okta",
+          "username": "admin@itential"
+        },
+        "lastUpdated": "2025-01-17T14:54:04.207Z",
+        "lastUpdatedBy": {
+          "_id": "67531c63592f8c45f4eabe88",
+          "provenance": "Okta",
+          "username": "admin@itential"
+        },
+        "version": "4.3.6-2023.2.5",
+        "tags": []
+      }
+    },
+    {
+      "iid": 4,
+      "type": "workflow",
+      "reference": "d13e3419-4528-4c53-854a-c082b6e89fb1",
+      "folder": "/Consume Message",
+      "document": {
+        "tags": [],
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 0,
+              "y": -500
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 0,
+              "y": 500
+            }
+          },
+          "aa1f": {
+            "name": "query",
+            "canvasName": "query",
+            "summary": "Query Kafka Payload",
+            "description": "Query kafka message payload",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "pass_on_null": false,
+                "query": "",
+                "obj": "$var.job.payload"
+              },
+              "outgoing": {
+                "return_data": ""
+              }
+            },
+            "actor": "Pronghorn",
+            "groups": [],
+            "nodeLocation": {
+              "x": 0,
+              "y": -72
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "aa1f": {
+              "state": "success",
+              "type": "standard"
+            }
+          },
+          "workflow_end": {},
+          "aa1f": {
+            "workflow_end": {
+              "state": "success",
+              "type": "standard"
+            }
+          }
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "payload": {
+              "title": "obj",
+              "type": "object",
+              "properties": {},
+              "examples": [
+                {
+                  "name": "value"
+                }
+              ]
+            }
+          },
+          "required": ["payload"]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "payload": {
+              "title": "obj",
+              "type": "object",
+              "properties": {},
+              "examples": [
+                {
+                  "name": "value"
+                }
+              ]
+            },
+            "_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{24}$"
+            },
+            "initiator": {
+              "type": "string"
+            }
+          }
+        },
+        "type": "automation",
+        "font_size": 12,
+        "errorHandler": null,
+        "preAutomationTime": 0,
+        "sla": 0,
+        "last_updated": "2025-01-17T14:57:58.720Z",
+        "lastUpdatedVersion": "5.55.2-2023.2.13",
+        "createdVersion": "5.46.0-2023.1.41.0",
+        "canvasVersion": 3,
+        "name": "Consume Message",
+        "last_updated_by": {
+          "provenance": "Okta",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false,
+          "sso": true,
+          "nameID": "admin@itential"
+        },
+        "created": "1970-01-01T00:00:00.000Z",
+        "groups": [],
+        "migrationVersion": 3
+      }
+    }
+  ],
+  "folders": [
+    {
+      "nodeType": "folder",
+      "name": "Produce Message",
+      "children": [
+        {
+          "iid": 1,
+          "nodeType": "component"
+        },
+        {
+          "iid": 2,
+          "nodeType": "component"
+        }
+      ]
+    },
+    {
+      "nodeType": "folder",
+      "name": "Consume Message",
+      "children": [
+        {
+          "iid": 4,
+          "nodeType": "component"
+        }
+      ]
+    }
+  ],
+  "created": "2024-08-28T17:24:05.402Z",
+  "createdBy": {
+    "_id": "6786b32af921f091fd105007",
+    "provenance": "Local AAA",
+    "username": "admin@itential"
+  },
+  "lastUpdated": "2025-01-17T14:57:58.728Z",
+  "lastUpdatedBy": {
+    "_id": "67531c63592f8c45f4eabe88",
+    "provenance": "Okta",
+    "username": "admin@itential"
+  },
+  "iid": 43,
+  "thumbnail": "data:image/png;base64,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",
+  "backgroundColor": "#FFFFFF"
+}

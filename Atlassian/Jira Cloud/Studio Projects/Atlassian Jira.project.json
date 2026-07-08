@@ -1,0 +1,1835 @@
+{
+  "_id": "67925b79f921f091fd10501f",
+  "name": "Atlassian Jira",
+  "description": "Atlassian Jira for creating projects, creating issue and transiting issue.",
+  "components": [
+    {
+      "iid": 0,
+      "reference": "419a4c5c-9ab2-47ce-bc7e-2c1e5338f596",
+      "type": "workflow",
+      "folder": "/Transition Issue",
+      "document": {
+        "name": "Transition Issue",
+        "tasks": {
+          "7147": {
+            "name": "getRestapi2issueissueIdOrKeytransitions",
+            "canvasName": "getRestapi2issueissueIdOrKeytransitions",
+            "summary": "Get Transitions",
+            "description": "Get all available transitions for the specified Jira issue",
+            "location": "Adapter",
+            "locationType": "Jira",
+            "app": "Jira",
+            "type": "automatic",
+            "displayName": "Jira",
+            "variables": {
+              "incoming": {
+                "issueIdOrKey": "$var.job.issueIdOrKey",
+                "expand": "",
+                "transitionId": "",
+                "skipRemoteOnlyCondition": false,
+                "adapter_id": "$var.job.adapterId"
+              },
+              "outgoing": {
+                "result": null
+              },
+              "error": "$var.job.jiraError",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": -2028,
+              "y": 432
+            }
+          },
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": -2028,
+              "y": 312
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": -2028,
+              "y": 768
+            }
+          },
+          "b92c": {
+            "name": "postRestapi2issueissueIdOrKeytransitions",
+            "canvasName": "postRestapi2issueissueIdOrKeytransitions",
+            "summary": "Transition Issue",
+            "description": "Performs the transition of the Jira issue",
+            "location": "Adapter",
+            "locationType": "Jira",
+            "app": "Jira",
+            "type": "automatic",
+            "displayName": "Jira",
+            "variables": {
+              "incoming": {
+                "issueIdOrKey": "$var.job.issueIdOrKey",
+                "body": "$var.e93.transitionPayload",
+                "adapter_id": "$var.job.adapterId"
+              },
+              "outgoing": {
+                "result": null
+              },
+              "error": "$var.job.jiraError",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": -2028,
+              "y": 636
+            }
+          },
+          "e93": {
+            "name": "transformation",
+            "canvasName": "transformation",
+            "summary": "Build Jira Issue Transition Payload",
+            "description": "Finds the ID of of the transition for the desired status and builds the payload to perform the transition",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "tr_id": "621106287393d9019373d127",
+                "variableMap": {
+                  "jiraTransitions": "$var.7147.result",
+                  "status": "$var.job.transitionStatus"
+                },
+                "options": {
+                  "extractOutput": true,
+                  "validateIncoming": true,
+                  "revertToDefaultValue": true
+                }
+              },
+              "outgoing": {
+                "transitionPayload": null
+              }
+            },
+            "groups": [],
+            "task_name": "Build Jira Issue Transition Payload",
+            "retrySettings": null,
+            "nodeLocation": {
+              "x": -2028,
+              "y": 540
+            }
+          },
+          "d709": {
+            "name": "ViewData",
+            "canvasName": "ViewData",
+            "summary": "Jira Error",
+            "description": "Show transition error and decision options",
+            "location": "Application",
+            "app": "WorkFlowEngine",
+            "displayName": "Tools",
+            "type": "manual",
+            "variables": {
+              "incoming": {
+                "header": "Jira Error",
+                "message": "",
+                "body": "$var.job.jiraError",
+                "variables": {},
+                "btn_success": "OK",
+                "btn_failure": ""
+              },
+              "outgoing": {},
+              "error": "",
+              "decorators": []
+            },
+            "view": "/workflow_engine/task/ViewData",
+            "groups": [],
+            "scheduled": false,
+            "nodeLocation": {
+              "x": -1728,
+              "y": 432
+            }
+          }
+        },
+        "transitions": {
+          "7147": {
+            "e93": {
+              "type": "standard",
+              "state": "success"
+            },
+            "d709": {
+              "type": "standard",
+              "state": "error"
+            }
+          },
+          "workflow_start": {
+            "7147": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {},
+          "b92c": {
+            "d709": {
+              "type": "standard",
+              "state": "error"
+            },
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "e93": {
+            "b92c": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "d709": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          }
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "issueIdOrKey": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "adapterId": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "transitionStatus": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            }
+          },
+          "required": ["issueIdOrKey", "adapterId", "transitionStatus"]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "issueIdOrKey": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "adapterId": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "transitionStatus": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{24}$"
+            },
+            "initiator": {
+              "type": "string"
+            },
+            "jiraError": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            }
+          }
+        },
+        "createdVersion": "5.40.5-2021.1.52.0",
+        "font_size": 12,
+        "lastUpdatedVersion": "5.55.2-2023.2.13",
+        "last_updated": "2025-01-23T15:15:45.208Z",
+        "type": "automation",
+        "preAutomationTime": 0,
+        "sla": 0,
+        "last_updated_by": {
+          "provenance": "Okta",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false,
+          "sso": true,
+          "nameID": "admin@itential"
+        },
+        "created": "1970-01-01T00:00:00.000Z",
+        "canvasVersion": 3,
+        "created_by": {
+          "provenance": "Okta",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false,
+          "sso": true,
+          "nameID": "admin@itential"
+        },
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 3
+      }
+    },
+    {
+      "iid": 1,
+      "reference": "2d870c94-e0b1-4ab5-9003-4d4c9bbc4c0b",
+      "type": "workflow",
+      "folder": "/Create Issue",
+      "document": {
+        "name": "Create Issue",
+        "tasks": {
+          "370": {
+            "name": "postRestapi2issue",
+            "canvasName": "postRestapi2issue",
+            "summary": "Create Jira Issue",
+            "description": "Create a new Jira issue using the supplied POST body.",
+            "location": "Adapter",
+            "locationType": "Jira",
+            "app": "Jira",
+            "type": "automatic",
+            "displayName": "Jira",
+            "variables": {
+              "incoming": {
+                "updateHistory": false,
+                "body": "$var.3fe0.jiraPayload",
+                "adapter_id": "$var.job.adapterId"
+              },
+              "outgoing": {
+                "result": "$var.job.createdIssue"
+              },
+              "error": "$var.job.jiraError",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": -1812,
+              "y": 996
+            }
+          },
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": -1812,
+              "y": 816
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": -1812,
+              "y": 1128
+            }
+          },
+          "3fe0": {
+            "name": "transformation",
+            "canvasName": "transformation",
+            "summary": "Build Jira Issue Creation Payload",
+            "description": "Builds the payload to create a new Jira issue using the supplied values.",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "tr_id": "6210f5647393d9019373d125",
+                "variableMap": {
+                  "projectKey": "$var.job.projectKey",
+                  "summary": "$var.job.summary",
+                  "description": "$var.job.description",
+                  "issueType": "$var.job.issueType",
+                  "label": "$var.job.label",
+                  "priority": "$var.job.priority"
+                },
+                "options": {
+                  "extractOutput": true,
+                  "validateIncoming": false,
+                  "revertToDefaultValue": false
+                }
+              },
+              "outgoing": {
+                "jiraPayload": null
+              }
+            },
+            "groups": [],
+            "task_name": "Build Jira Issue Creation Payload",
+            "retrySettings": null,
+            "nodeLocation": {
+              "x": -1812,
+              "y": 912
+            }
+          },
+          "e229": {
+            "name": "ViewData",
+            "canvasName": "ViewData",
+            "summary": "Jira Error",
+            "description": "Show issue creation error",
+            "location": "Application",
+            "app": "WorkFlowEngine",
+            "displayName": "Tools",
+            "type": "manual",
+            "variables": {
+              "incoming": {
+                "header": "Jira Error",
+                "message": "",
+                "body": "$var.370.error",
+                "variables": {},
+                "btn_success": "OK",
+                "btn_failure": ""
+              },
+              "outgoing": {},
+              "error": "",
+              "decorators": []
+            },
+            "view": "/workflow_engine/task/ViewData",
+            "groups": [],
+            "scheduled": false,
+            "nodeLocation": {
+              "x": -1488,
+              "y": 996
+            }
+          }
+        },
+        "transitions": {
+          "370": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            },
+            "e229": {
+              "type": "standard",
+              "state": "error"
+            }
+          },
+          "4971": {},
+          "workflow_start": {
+            "3fe0": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {},
+          "3fe0": {
+            "370": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "e229": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "d30a": {},
+          "e169": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "adapterId": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "projectKey": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "summary": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "description": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "issueType": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "label": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "priority": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            }
+          },
+          "required": [
+            "adapterId",
+            "projectKey",
+            "summary",
+            "description",
+            "issueType",
+            "label",
+            "priority"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "adapterId": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "projectKey": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "summary": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "description": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "issueType": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "label": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "priority": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{24}$"
+            },
+            "initiator": {
+              "type": "string"
+            },
+            "createdIssue": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "jiraError": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            }
+          }
+        },
+        "createdVersion": "5.40.5-2021.1.52.0",
+        "font_size": 12,
+        "lastUpdatedVersion": "5.55.2-2023.2.13",
+        "last_updated": "2025-01-23T15:15:45.209Z",
+        "type": "automation",
+        "preAutomationTime": 0,
+        "sla": 0,
+        "last_updated_by": {
+          "provenance": "Okta",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false,
+          "sso": true,
+          "nameID": "admin@itential"
+        },
+        "created": "1970-01-01T00:00:00.000Z",
+        "canvasVersion": 3,
+        "created_by": {
+          "provenance": "Okta",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false,
+          "sso": true,
+          "nameID": "admin@itential"
+        },
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 3
+      }
+    },
+    {
+      "iid": 2,
+      "reference": "e81e7453-266e-4e53-a120-82704596e823",
+      "type": "workflow",
+      "folder": "/Create Project",
+      "document": {
+        "name": "Create Project",
+        "tasks": {
+          "7823": {
+            "name": "ViewData",
+            "canvasName": "ViewData",
+            "summary": "Jira Error",
+            "description": "Display Jira error with options",
+            "location": "Application",
+            "app": "WorkFlowEngine",
+            "displayName": "Tools",
+            "type": "manual",
+            "variables": {
+              "incoming": {
+                "header": "Jira Error",
+                "message": "",
+                "body": "$var.be11.error",
+                "variables": {},
+                "btn_success": "OK",
+                "btn_failure": ""
+              },
+              "outgoing": {}
+            },
+            "view": "/workflow_engine/task/ViewData",
+            "groups": [],
+            "nodeLocation": {
+              "x": -636,
+              "y": 1164
+            }
+          },
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": -936,
+              "y": 972
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": -936,
+              "y": 1284
+            }
+          },
+          "be11": {
+            "name": "postRestapi2project",
+            "canvasName": "postRestapi2project",
+            "summary": "Create Project",
+            "description": "Creates a project based on a project type template.",
+            "location": "Adapter",
+            "locationType": "Jira",
+            "app": "Jira",
+            "type": "automatic",
+            "displayName": "Jira",
+            "variables": {
+              "incoming": {
+                "body": "$var.1b74.createProject",
+                "adapter_id": "$var.job.adapterId"
+              },
+              "outgoing": {
+                "result": null
+              },
+              "error": "$var.job.errorMessage"
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": -936,
+              "y": 1164
+            }
+          },
+          "1b74": {
+            "name": "transformation",
+            "canvasName": "transformation",
+            "summary": "Build Jira Project Creation Payload",
+            "description": "Builds the payload to create a new Jira project using the supplied values.",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "tr_id": "5fd3d9dd255fc96a1dd6c4d4",
+                "variableMap": {
+                  "name": "$var.job.name",
+                  "projectType": "$var.job.projectType",
+                  "projectTemplateKey": "$var.job.projectTemplateKey",
+                  "abbreviatedName": "$var.job.abbreviatedName",
+                  "description": "$var.job.description",
+                  "leadAccountId": "$var.job.leadAccountId",
+                  "assigneeType": "$var.job.assigneeType"
+                },
+                "options": {
+                  "extractOutput": true
+                }
+              },
+              "outgoing": {
+                "createProject": null
+              },
+              "decorators": []
+            },
+            "groups": [],
+            "nodeLocation": {
+              "x": -936,
+              "y": 1068
+            }
+          }
+        },
+        "transitions": {
+          "4971": {},
+          "7823": {
+            "workflow_end": {
+              "state": "success",
+              "type": "standard"
+            }
+          },
+          "workflow_start": {
+            "1b74": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {},
+          "be11": {
+            "7823": {
+              "state": "error",
+              "type": "standard"
+            },
+            "workflow_end": {
+              "state": "success",
+              "type": "standard"
+            }
+          },
+          "1b74": {
+            "be11": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "d30a": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "adapterId": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "name": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "projectType": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "projectTemplateKey": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "abbreviatedName": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "description": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "leadAccountId": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "assigneeType": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            }
+          },
+          "required": [
+            "adapterId",
+            "name",
+            "projectType",
+            "projectTemplateKey",
+            "abbreviatedName",
+            "description",
+            "leadAccountId",
+            "assigneeType"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "adapterId": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "name": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "projectType": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "projectTemplateKey": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "abbreviatedName": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "description": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "leadAccountId": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "assigneeType": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            },
+            "_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{24}$"
+            },
+            "initiator": {
+              "type": "string"
+            },
+            "errorMessage": {
+              "type": ["array", "boolean", "null", "number", "object", "string"]
+            }
+          }
+        },
+        "font_size": 12,
+        "createdVersion": "5.10.4-2020.1.22.0",
+        "last_updated": "2025-01-23T15:15:45.210Z",
+        "lastUpdatedVersion": "5.55.2-2023.2.13",
+        "type": "automation",
+        "preAutomationTime": 0,
+        "sla": 0,
+        "last_updated_by": {
+          "provenance": "Okta",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false,
+          "sso": true,
+          "nameID": "admin@itential"
+        },
+        "created": "1970-01-01T00:00:00.000Z",
+        "canvasVersion": 3,
+        "created_by": {
+          "provenance": "Okta",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false,
+          "sso": true,
+          "nameID": "admin@itential"
+        },
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 3
+      }
+    },
+    {
+      "iid": 3,
+      "reference": "67925b79b320bf2f072b34f4",
+      "type": "transformation",
+      "folder": "/Transition Issue",
+      "document": {
+        "_id": "67925b79b320bf2f072b34f4",
+        "name": "Build Issue Transition Payload",
+        "description": "",
+        "incoming": [
+          {
+            "$id": "jiraTransitions",
+            "type": "object",
+            "properties": {
+              "icode": {
+                "type": "string",
+                "examples": ["AD%2E200"]
+              },
+              "response": {
+                "type": "object",
+                "properties": {
+                  "expand": {
+                    "type": "string",
+                    "examples": ["transitions"]
+                  },
+                  "transitions": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "examples": ["11"]
+                        },
+                        "name": {
+                          "type": "string",
+                          "examples": ["Backlog"]
+                        },
+                        "to": {
+                          "type": "object",
+                          "properties": {
+                            "self": {
+                              "type": "string",
+                              "examples": [
+                                "https://itentialadapter%2Eatlassian%2Enet/rest/api/2/status/10003"
+                              ]
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "iconUrl": {
+                              "type": "string",
+                              "examples": [
+                                "https://itentialadapter%2Eatlassian%2Enet/"
+                              ]
+                            },
+                            "name": {
+                              "type": "string",
+                              "examples": ["Backlog"]
+                            },
+                            "id": {
+                              "type": "string",
+                              "examples": ["10003"]
+                            },
+                            "statusCategory": {
+                              "type": "object",
+                              "properties": {
+                                "self": {
+                                  "type": "string",
+                                  "examples": [
+                                    "https://itentialadapter%2Eatlassian%2Enet/rest/api/2/statuscategory/2"
+                                  ]
+                                },
+                                "id": {
+                                  "type": "integer",
+                                  "examples": [2]
+                                },
+                                "key": {
+                                  "type": "string",
+                                  "examples": ["new"]
+                                },
+                                "colorName": {
+                                  "type": "string",
+                                  "examples": ["blue-gray"]
+                                },
+                                "name": {
+                                  "type": "string",
+                                  "examples": ["To Do"]
+                                }
+                              },
+                              "required": []
+                            }
+                          },
+                          "required": []
+                        },
+                        "hasScreen": {
+                          "type": "boolean",
+                          "examples": [true, false]
+                        },
+                        "isGlobal": {
+                          "type": "boolean",
+                          "examples": [true, false]
+                        },
+                        "isInitial": {
+                          "type": "boolean",
+                          "examples": [true, false]
+                        },
+                        "isAvailable": {
+                          "type": "boolean",
+                          "examples": [true, false]
+                        },
+                        "isConditional": {
+                          "type": "boolean",
+                          "examples": [true, false]
+                        },
+                        "isLooped": {
+                          "type": "boolean",
+                          "examples": [true, false]
+                        }
+                      },
+                      "required": []
+                    }
+                  }
+                },
+                "required": []
+              }
+            },
+            "required": []
+          },
+          {
+            "$id": "status",
+            "type": "string"
+          }
+        ],
+        "outgoing": [
+          {
+            "$id": "transitionPayload",
+            "type": "object",
+            "properties": {
+              "transition": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  }
+                },
+                "required": []
+              }
+            },
+            "required": []
+          }
+        ],
+        "steps": [
+          {
+            "id": 1,
+            "type": "method",
+            "library": "Array",
+            "method": "find",
+            "args": [null, "findSpecifiedTransition", null],
+            "view": {
+              "row": 1,
+              "col": 1
+            }
+          },
+          {
+            "id": 2,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "jiraTransitions",
+              "ptr": "/response/transitions"
+            },
+            "to": {
+              "location": "method",
+              "name": 1,
+              "ptr": "/args/0/value"
+            }
+          },
+          {
+            "id": 3,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "status",
+              "ptr": ""
+            },
+            "to": {
+              "location": "method",
+              "name": 1,
+              "ptr": "/args/2/value"
+            }
+          },
+          {
+            "id": 7,
+            "type": "method",
+            "library": "Object",
+            "method": "optional chaining",
+            "args": [null, "id"],
+            "view": {
+              "row": 1,
+              "col": 2
+            }
+          },
+          {
+            "id": 8,
+            "type": "assign",
+            "from": {
+              "location": "method",
+              "name": 1,
+              "ptr": "/return"
+            },
+            "to": {
+              "location": "method",
+              "name": 7,
+              "ptr": "/args/0/value"
+            }
+          },
+          {
+            "id": 9,
+            "type": "assign",
+            "from": {
+              "location": "method",
+              "name": 7,
+              "ptr": "/return"
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "transitionPayload",
+              "ptr": "/transition/id"
+            }
+          }
+        ],
+        "functions": [
+          {
+            "incoming": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "examples": ["11"]
+                  },
+                  "name": {
+                    "type": "string",
+                    "examples": ["Backlog"]
+                  },
+                  "to": {
+                    "type": "object",
+                    "properties": {
+                      "self": {
+                        "type": "string",
+                        "examples": [
+                          "https://itentialadapter%2Eatlassian%2Enet/rest/api/2/status/10003"
+                        ]
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "iconUrl": {
+                        "type": "string",
+                        "examples": [
+                          "https://itentialadapter%2Eatlassian%2Enet/"
+                        ]
+                      },
+                      "name": {
+                        "type": "string",
+                        "examples": ["Backlog"]
+                      },
+                      "id": {
+                        "type": "string",
+                        "examples": ["10003"]
+                      },
+                      "statusCategory": {
+                        "type": "object",
+                        "properties": {
+                          "self": {
+                            "type": "string",
+                            "examples": [
+                              "https://itentialadapter%2Eatlassian%2Enet/rest/api/2/statuscategory/2"
+                            ]
+                          },
+                          "id": {
+                            "type": "integer",
+                            "examples": [2]
+                          },
+                          "key": {
+                            "type": "string",
+                            "examples": ["new"]
+                          },
+                          "colorName": {
+                            "type": "string",
+                            "examples": ["blue-gray"]
+                          },
+                          "name": {
+                            "type": "string",
+                            "examples": ["To Do"]
+                          }
+                        },
+                        "required": []
+                      }
+                    },
+                    "required": []
+                  },
+                  "hasScreen": {
+                    "type": "boolean",
+                    "examples": [true, false]
+                  },
+                  "isGlobal": {
+                    "type": "boolean",
+                    "examples": [true, false]
+                  },
+                  "isInitial": {
+                    "type": "boolean",
+                    "examples": [true, false]
+                  },
+                  "isAvailable": {
+                    "type": "boolean",
+                    "examples": [true, false]
+                  },
+                  "isConditional": {
+                    "type": "boolean",
+                    "examples": [true, false]
+                  },
+                  "isLooped": {
+                    "type": "boolean",
+                    "examples": [true, false]
+                  }
+                },
+                "required": [],
+                "$id": "element"
+              },
+              {
+                "title": "index",
+                "type": "number",
+                "optional": true,
+                "$id": "index"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "examples": ["11"]
+                    },
+                    "name": {
+                      "type": "string",
+                      "examples": ["Backlog"]
+                    },
+                    "to": {
+                      "type": "object",
+                      "properties": {
+                        "self": {
+                          "type": "string",
+                          "examples": [
+                            "https://itentialadapter%2Eatlassian%2Enet/rest/api/2/status/10003"
+                          ]
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "iconUrl": {
+                          "type": "string",
+                          "examples": [
+                            "https://itentialadapter%2Eatlassian%2Enet/"
+                          ]
+                        },
+                        "name": {
+                          "type": "string",
+                          "examples": ["Backlog"]
+                        },
+                        "id": {
+                          "type": "string",
+                          "examples": ["10003"]
+                        },
+                        "statusCategory": {
+                          "type": "object",
+                          "properties": {
+                            "self": {
+                              "type": "string",
+                              "examples": [
+                                "https://itentialadapter%2Eatlassian%2Enet/rest/api/2/statuscategory/2"
+                              ]
+                            },
+                            "id": {
+                              "type": "integer",
+                              "examples": [2]
+                            },
+                            "key": {
+                              "type": "string",
+                              "examples": ["new"]
+                            },
+                            "colorName": {
+                              "type": "string",
+                              "examples": ["blue-gray"]
+                            },
+                            "name": {
+                              "type": "string",
+                              "examples": ["To Do"]
+                            }
+                          },
+                          "required": []
+                        }
+                      },
+                      "required": []
+                    },
+                    "hasScreen": {
+                      "type": "boolean",
+                      "examples": [true, false]
+                    },
+                    "isGlobal": {
+                      "type": "boolean",
+                      "examples": [true, false]
+                    },
+                    "isInitial": {
+                      "type": "boolean",
+                      "examples": [true, false]
+                    },
+                    "isAvailable": {
+                      "type": "boolean",
+                      "examples": [true, false]
+                    },
+                    "isConditional": {
+                      "type": "boolean",
+                      "examples": [true, false]
+                    },
+                    "isLooped": {
+                      "type": "boolean",
+                      "examples": [true, false]
+                    }
+                  },
+                  "required": []
+                },
+                "$id": "array",
+                "optional": true
+              },
+              {
+                "$id": "constantValue1",
+                "type": "string",
+                "isConstValue": true
+              }
+            ],
+            "outgoing": [
+              {
+                "title": "return",
+                "type": "boolean",
+                "$id": "return"
+              }
+            ],
+            "steps": [
+              {
+                "id": 1,
+                "type": "method",
+                "library": "Equality",
+                "method": "equality",
+                "args": [null, null],
+                "view": {
+                  "row": 1,
+                  "col": 1
+                }
+              },
+              {
+                "id": 2,
+                "type": "assign",
+                "from": {
+                  "location": "incoming",
+                  "name": "element",
+                  "ptr": "/name"
+                },
+                "to": {
+                  "location": "method",
+                  "name": 1,
+                  "ptr": "/args/0/value"
+                }
+              },
+              {
+                "id": 3,
+                "type": "assign",
+                "from": {
+                  "location": "incoming",
+                  "name": "constantValue1",
+                  "ptr": ""
+                },
+                "to": {
+                  "location": "method",
+                  "name": 1,
+                  "ptr": "/args/1/value"
+                }
+              },
+              {
+                "id": 4,
+                "type": "assign",
+                "from": {
+                  "location": "method",
+                  "name": 1,
+                  "ptr": "/return"
+                },
+                "to": {
+                  "location": "outgoing",
+                  "name": "return",
+                  "ptr": ""
+                }
+              }
+            ],
+            "functions": [],
+            "name": "findSpecifiedTransition",
+            "view": {
+              "col": 1,
+              "row": 4
+            },
+            "id": "findSpecifiedTransition",
+            "comments": []
+          }
+        ],
+        "comments": [],
+        "view": {
+          "col": 2,
+          "row": 5
+        },
+        "created": "2025-01-23T15:08:41.241Z",
+        "createdBy": {
+          "_id": "67531c63592f8c45f4eabe88",
+          "provenance": "Okta",
+          "username": "admin@itential"
+        },
+        "lastUpdated": "2025-01-23T15:15:45.211Z",
+        "lastUpdatedBy": {
+          "_id": "67531c63592f8c45f4eabe88",
+          "provenance": "Okta",
+          "username": "admin@itential"
+        },
+        "version": "4.3.6-2023.2.5",
+        "tags": []
+      }
+    },
+    {
+      "iid": 4,
+      "reference": "67925b79b320bf2f072b34f2",
+      "type": "transformation",
+      "folder": "/Create Issue",
+      "document": {
+        "_id": "67925b79b320bf2f072b34f2",
+        "name": "Build Issue Creation Payload",
+        "description": "",
+        "incoming": [
+          {
+            "$id": "projectKey",
+            "type": "string"
+          },
+          {
+            "$id": "summary",
+            "type": "string"
+          },
+          {
+            "$id": "description",
+            "type": "string"
+          },
+          {
+            "$id": "issueType",
+            "type": "string"
+          },
+          {
+            "$id": "label",
+            "type": "string"
+          },
+          {
+            "$id": "priority",
+            "type": "string"
+          }
+        ],
+        "outgoing": [
+          {
+            "$id": "jiraPayload",
+            "type": "object",
+            "properties": {
+              "fields": {
+                "type": "object",
+                "properties": {
+                  "project": {
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string",
+                        "examples": ["SEDEMO"]
+                      }
+                    },
+                    "required": []
+                  },
+                  "summary": {
+                    "type": "string",
+                    "examples": ["Network Deployment for branch network"]
+                  },
+                  "description": {
+                    "type": "string",
+                    "examples": [
+                      "Device Onboarding request from IAP\nhttps://demo-iap.itential.io/workflow_engine/job?job_id=2e3b21275fa04c569bbb2069\nhttps://dev102605.service-now.com/nav_to.do?uri=change_request.do?sysparm_query=number=CHG0030297"
+                    ]
+                  },
+                  "issuetype": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "examples": ["Task"]
+                      }
+                    },
+                    "required": []
+                  },
+                  "labels": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "examples": ["POC"]
+                    }
+                  },
+                  "priority": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "examples": ["Low"]
+                      }
+                    },
+                    "required": []
+                  }
+                },
+                "required": []
+              }
+            },
+            "required": []
+          }
+        ],
+        "steps": [
+          {
+            "id": 6,
+            "type": "declaration",
+            "library": "Array",
+            "method": "new Array",
+            "args": [null],
+            "view": {
+              "row": 3,
+              "col": 1
+            },
+            "polymorphIndex": 0
+          },
+          {
+            "id": 8,
+            "type": "assign",
+            "from": {
+              "location": "declaration",
+              "name": 6,
+              "ptr": "/return"
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "jiraPayload",
+              "ptr": "/fields/labels"
+            }
+          },
+          {
+            "id": 9,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "label",
+              "ptr": ""
+            },
+            "to": {
+              "location": "declaration",
+              "name": 6,
+              "ptr": "/args/0/value"
+            }
+          },
+          {
+            "id": 10,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "projectKey",
+              "ptr": ""
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "jiraPayload",
+              "ptr": "/fields/project/key"
+            }
+          },
+          {
+            "id": 11,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "summary",
+              "ptr": ""
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "jiraPayload",
+              "ptr": "/fields/summary"
+            }
+          },
+          {
+            "id": 12,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "description",
+              "ptr": ""
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "jiraPayload",
+              "ptr": "/fields/description"
+            }
+          },
+          {
+            "id": 13,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "issueType",
+              "ptr": ""
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "jiraPayload",
+              "ptr": "/fields/issuetype/name"
+            }
+          },
+          {
+            "id": 14,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "priority",
+              "ptr": ""
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "jiraPayload",
+              "ptr": "/fields/priority/name"
+            }
+          }
+        ],
+        "functions": [],
+        "comments": [],
+        "view": {
+          "col": 2,
+          "row": 5
+        },
+        "created": "2025-01-23T15:08:41.234Z",
+        "createdBy": {
+          "_id": "67531c63592f8c45f4eabe88",
+          "provenance": "Okta",
+          "username": "admin@itential"
+        },
+        "lastUpdated": "2025-01-23T15:15:45.210Z",
+        "lastUpdatedBy": {
+          "_id": "67531c63592f8c45f4eabe88",
+          "provenance": "Okta",
+          "username": "admin@itential"
+        },
+        "version": "4.3.6-2023.2.5",
+        "tags": []
+      }
+    },
+    {
+      "iid": 5,
+      "reference": "67925b79b320bf2f072b34f3",
+      "type": "transformation",
+      "folder": "/Create Project",
+      "document": {
+        "_id": "67925b79b320bf2f072b34f3",
+        "name": "Build Project Creation Payload",
+        "description": "",
+        "incoming": [
+          {
+            "$id": "name",
+            "type": "string",
+            "examples": ["abc"]
+          },
+          {
+            "$id": "projectType",
+            "type": "string",
+            "examples": ["software"]
+          },
+          {
+            "$id": "projectTemplateKey",
+            "type": "string",
+            "examples": [
+              "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic"
+            ]
+          },
+          {
+            "$id": "abbreviatedName",
+            "type": "string",
+            "examples": ["rewrwer"]
+          },
+          {
+            "$id": "description",
+            "type": "string",
+            "examples": ["Sample description"]
+          },
+          {
+            "$id": "leadAccountId",
+            "type": "string",
+            "examples": ["123"]
+          },
+          {
+            "$id": "assigneeType",
+            "type": "string",
+            "examples": ["PROJECT_LEAD"]
+          }
+        ],
+        "outgoing": [
+          {
+            "$id": "createProject",
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "examples": ["SEDEMO"]
+              },
+              "name": {
+                "type": "string",
+                "examples": ["SE Demo Project"]
+              },
+              "projectTemplateKey": {
+                "type": "string",
+                "examples": [
+                  "com%2Epyxis%2Egreenhopper%2Ejira:gh-simplified-scrum-classic"
+                ]
+              },
+              "description": {
+                "type": "string",
+                "examples": ["Creating a project for se-demo team"]
+              },
+              "assigneeType": {
+                "type": "string",
+                "examples": ["PROJECT_LEAD"]
+              },
+              "leadAccountId": {
+                "type": "string",
+                "examples": ["557058:72772352-f918-47ed-8604-7c6653a2840f"]
+              },
+              "avatarId": {
+                "type": "integer",
+                "examples": [10200]
+              },
+              "projectTypeKey": {
+                "type": "string",
+                "examples": ["software"]
+              }
+            },
+            "required": []
+          }
+        ],
+        "steps": [
+          {
+            "id": 1,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "name",
+              "ptr": ""
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "createProject",
+              "ptr": "/name"
+            },
+            "context": "#"
+          },
+          {
+            "id": 2,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "projectType",
+              "ptr": ""
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "createProject",
+              "ptr": "/projectTypeKey"
+            },
+            "context": "#"
+          },
+          {
+            "id": 3,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "projectTemplateKey",
+              "ptr": ""
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "createProject",
+              "ptr": "/projectTemplateKey"
+            },
+            "context": "#"
+          },
+          {
+            "id": 4,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "abbreviatedName",
+              "ptr": ""
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "createProject",
+              "ptr": "/key"
+            },
+            "context": "#"
+          },
+          {
+            "id": 5,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "description",
+              "ptr": ""
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "createProject",
+              "ptr": "/description"
+            },
+            "context": "#"
+          },
+          {
+            "id": 6,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "assigneeType",
+              "ptr": ""
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "createProject",
+              "ptr": "/assigneeType"
+            },
+            "context": "#"
+          },
+          {
+            "id": 7,
+            "type": "assign",
+            "from": {
+              "location": "incoming",
+              "name": "leadAccountId",
+              "ptr": ""
+            },
+            "to": {
+              "location": "outgoing",
+              "name": "createProject",
+              "ptr": "/leadAccountId"
+            },
+            "context": "#"
+          }
+        ],
+        "functions": [],
+        "comments": [],
+        "view": {
+          "col": 4,
+          "row": 5
+        },
+        "created": "2025-01-23T15:08:41.236Z",
+        "createdBy": {
+          "_id": "67531c63592f8c45f4eabe88",
+          "provenance": "Okta",
+          "username": "admin@itential"
+        },
+        "lastUpdated": "2025-01-23T15:15:45.216Z",
+        "lastUpdatedBy": {
+          "_id": "67531c63592f8c45f4eabe88",
+          "provenance": "Okta",
+          "username": "admin@itential"
+        },
+        "version": "4.3.6-2023.2.5",
+        "tags": []
+      }
+    }
+  ],
+  "folders": [
+    {
+      "nodeType": "folder",
+      "name": "Create Project",
+      "children": [
+        {
+          "iid": 2,
+          "nodeType": "component"
+        },
+        {
+          "iid": 5,
+          "nodeType": "component"
+        }
+      ]
+    },
+    {
+      "nodeType": "folder",
+      "name": "Create Issue",
+      "children": [
+        {
+          "iid": 1,
+          "nodeType": "component"
+        },
+        {
+          "iid": 4,
+          "nodeType": "component"
+        }
+      ]
+    },
+    {
+      "nodeType": "folder",
+      "name": "Transition Issue",
+      "children": [
+        {
+          "iid": 0,
+          "nodeType": "component"
+        },
+        {
+          "iid": 3,
+          "nodeType": "component"
+        }
+      ]
+    }
+  ],
+  "created": "2024-08-28T17:33:50.622Z",
+  "createdBy": {
+    "_id": "6786b32af921f091fd105007",
+    "provenance": "Local AAA",
+    "username": "admin@itential"
+  },
+  "lastUpdated": "2025-01-23T15:15:45.198Z",
+  "lastUpdatedBy": {
+    "_id": "67531c63592f8c45f4eabe88",
+    "provenance": "Okta",
+    "username": "admin@itential"
+  },
+  "iid": 54,
+  "thumbnail": "data:image/png;base64,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",
+  "backgroundColor": "#FFFFFF"
+}

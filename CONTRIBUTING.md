@@ -4,14 +4,26 @@ We welcome and appreciate contributions to our project! To ensure high-quality a
 
 ## What We Look For
 
-- Workflows:
+- Workflows (`{Vendor}/studio/`):
     - Examples - Examples of how to perform reusable generic tasks.
     - Sample Use Cases - An example of an orchestrated workflow that utilizes your contribution example.
     - When submitting a Sample Use Case, include a corresponding Operations Manager Automation and Trigger (_when applicable_).
-- Golden Configuration:
+    - Files are exported IAP Studio projects in `.project.json` format.
+- Operations Manager Automations (`{Vendor}/operations_manager/`):
+    - Exported automation definitions that correspond to a workflow submission.
+    - Should be paired with a Trigger where applicable.
+- Golden Configuration (`{Vendor}/golden_config/`):
     - Template examples that illustrate an OS or the consumption of an API (in the case of API Compliance).
-- OpenAPIs:
-    - Version 2.x or 3.x of OpenAPI.
+- Integration Models (`{Vendor}/integration_models/`):
+    - Version 2.x or 3.x OpenAPI specifications in `.json` format.
+    - Filename must follow the convention `{title}-{version}.json` (e.g., `cisco_meraki_dashboard-1.48.0.json`).
+    - `info.title` must contain only the integration name — no version numbers (e.g., `Cisco Meraki Dashboard`, not `Cisco Meraki Dashboard v1.48`).
+    - `info.version` must reflect the actual API version.
+    - **File size**: The spec must be under 15MB.
+    - **One auth method defined**: Only one `securityScheme` should be defined. Itential Platform supports a single authentication method per integration instance, so additional schemes will not be usable.
+    - **Global security block encouraged**: Define security at the top level of the spec rather than on individual operations. Per-operation overrides are supported but the global block is preferred for consistency.
+    - **Supported auth method**: The `securityScheme` must use an auth type supported by Itential Platform. See the [Itential Platform Security Schemes documentation](https://docs.itential.com/itential-platform/admin-essentials/integrations/auth/security-schemes) for the full list of supported methods.
+    - **OperationId required on every operation**: Every path operation must have a unique `operationId` in camelCase (e.g., `getDevice`, `createNetworkDevice`).
 - LCM Resource Models:
     - Examples of Use Cases resource models.
 
