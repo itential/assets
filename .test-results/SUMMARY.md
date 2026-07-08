@@ -40,7 +40,17 @@ Implemented as generic `wrap_key`/`wrap_as_list`/`lookup_path` metadata in `live
 
 `openapi` (51 assets) and `automation` (7 assets) remain `SKIP` — their guessed endpoints are still 404 on this build, no self-describing API (`/swagger.json`, `/api-docs`, `/openapi.json` all 404) is exposed to discover the real routes automatically, and `builder-agent/SKILL.md` indicates `automation` likely needs a two-step `POST /operations-manager/automations` + `POST /operations-manager/triggers` flow rather than a single bulk import — out of scope for this pass (not asked for, and a materially bigger lift than the project/golden_config fix). `SKIP` per TEST_PLAN §4's explicit `live_endpoint_unknown` fallback, not `FAIL`.
 
-## 4. Verdict
+## 4. Device-conformance spot-check — 4 openapi specs validated against real hardware
+
+The IAP6 `import_path` 404 blocks *importing* these specs as HTTP integrations, but doesn't say anything about whether the specs themselves accurately describe their target systems' real APIs. Using real device endpoints/credentials from the Itential PS ATL Lab (Confluence page 4582408239), validated the 4 Infoblox/NetBox specs directly against live hardware — a check independent of, and unblocked by, the IAP6 import gap. Recorded as an additional `device-conformance` check on each asset in `results_live.json`; their `SKIP` status (IAP6-import-unresolved) is unchanged since that's still an accurate, separate fact.
+
+- **NetBox** (`netbox_4.1.json`) — `PASS`. NetBox v4.0.11 (172.20.102.5) serves its own live OpenAPI schema at `/api/schema/`; diffed directly against it. 249/249 shared paths match exactly on HTTP methods. The 24 repo-only paths are NetBox 4.1 features this 4.0.11 appliance doesn't have yet (circuit-groups, rack-types, notifications, branching); the 16 live-only paths belong to a lab-installed `upgrade-catalog` plugin. Functional spot-check: provisioned a real API token, `GET /api/dcim/devices/` returned real paginated device data matching the spec's declared shape, then revoked the token.
+- **Infoblox NIOS DDI / WAPI** (`infoblox_wapi_1.0.1.json`) — `PASS`. Spot-checked 6 WAPI object types (`network`, `networkcontainer`, `ipv4address`, `zone_auth`, `zone_forward`, `zone_delegated`) against the real NIOS 9.0.3 grid master (172.20.100.25) with the spec's paths appended to `/wapi/v2.12/`. All 6 return correct data (`ipv4address` needs a `network`/`network_view` filter per WAPI's own search rules — confirmed as expected behavior, not a spec defect, by retrying with the filter and getting a real result).
+- **Infoblox Threat Defense** / **Universal DDI** — stay `SKIP`, not validated. Both describe Infoblox's cloud/BloxOne product line, a different API surface from the on-prem NIOS grid master this lab provides. Confirmed rather than assumed: Threat Defense's sample path (`access_codes`) returns `"Unknown object type (access_codes)"` from the real on-prem WAPI — it genuinely isn't part of this appliance's API at all. Validating these two would need separate BloxOne cloud credentials, not available on the PS ATL Lab page.
+
+No lab devices were left in a modified state: the NetBox API token created for the functional spot-check was deleted immediately after use; nothing was created against the Infoblox grid master (read-only GETs only).
+
+## 5. Verdict
 
 No FAIL or EXHAUSTED assets remain anywhere.
 
