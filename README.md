@@ -12,7 +12,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 
 | Asset Type | Description |
 |---|---|
-| **Projects** | Bundles of related automation assets (workflows, forms, templates, and transformations) for a specific use case |
+| **Studio Projects** | Bundles of related automation assets (workflows, forms, templates, and transformations) for a specific use case |
 | **OpenAPIs** | JSON-based definitions imported as Integration Models that specify how Itential Platform connects to external APIs, databases, and systems |
 | **Golden Configurations** | Config Manager compliance trees for auditing device configuration drift |
 | **device-drivers** | Netmiko-based drivers for connecting IAG to physical and virtual devices |
@@ -26,31 +26,50 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 
 | Vendor | Products |
 |---|---|
+| **1Password** | Connect (secrets access) |
 | **6connect** | IP address management |
-| **AWS** | EC2 |
+| **Akamai** | CDN & edge platform APIs |
 | **Alkira** | SD-WAN |
-| **Apache** | Kafka 2.x |
+| **Ansible** | AWX / Tower |
+| **Apache** | Airflow · Kafka |
 | **Arista** | EOS |
-| **Atlassian** | Jira / Confluence |
-| **Cisco** | ASA · IOS · ISE · Meraki · NSO · NX-OS · PSIRT Open Vulnerability |
-| **F5** | BIG-IP |
+| **Atlassian** | Bitbucket Cloud · Confluence Cloud · Confluence Server & Data Center · Jira Cloud · Jira Server & Data Center · Opsgenie |
+| **AWS** | API Gateway · CloudFormation · Cognito · Connect · Direct Connect · EC2 · EKS · Lambda · Network Firewall · Organizations · Route 53 · S3 · Secrets Manager |
+| **Cisco** | ASA · Crosswork Network Controller · IOS · ISE · Meraki · NSO · NX-OS · PSIRT Open Vulnerability · Umbrella · Webex |
+| **CyberArk** | Conjur (secrets management) |
+| **Datadog** | Observability |
+| **Docker** | Docker Engine · Docker Hub |
+| **F5** | BIG-IP · BIG-IQ |
 | **GitHub** | GitHub |
 | **GitLab** | GitLab |
-| **Infoblox** | NIOS DDI · Threat Defense · Universal DDI |
+| **GoDaddy** | Domain management |
+| **Google** | Cloud Compute Engine · Drive |
+| **HashiCorp** | Vault (secrets management) |
+| **Infoblox** | NIOS WAPI · Threat Defense BloxOne · Universal DDI BloxOne |
 | **IP Fabric** | Network intelligence |
 | **Itential** | Platform utilities (data manipulation, config management, regex, email, workflow utilities) |
-| **Juniper** | JUNOS |
+| **Juniper** | JUNOS · Mist |
 | **Kentik** | Network observability |
-| **Microsoft** | Teams |
+| **Kubernetes** | Container orchestration |
+| **LogicMonitor** | Observability |
+| **Microsoft** | Graph Mail · Teams |
 | **Nautobot** | Nautobot 2.4 |
 | **NetBox** | IPAM / DCIM |
 | **New Relic** | Observability |
-| **Palo Alto** | Panorama |
+| **Okta** | Identity management |
+| **OpenAI** | AI / LLM APIs |
+| **Paessler** | PRTG monitoring |
+| **PagerDuty** | Incident management |
+| **Palo Alto** | Panorama · Prisma Cloud CSPM |
+| **RingCentral** | Unified communications |
 | **Ruckus** | Fastiron |
 | **Selector** | AIOps |
 | **ServiceNow** | Change management · Incident management · RITM |
+| **Slack** | Messaging |
 | **Sonatype** | Nexus |
+| **Twilio** | Communications APIs |
 | **Versa** | Director |
+| **Zoom** | Meetings / collaboration |
 
 ---
 
@@ -68,6 +87,8 @@ Vendor/
     ├── Studio Projects/
     └── README.md
 ```
+
+The `Product/` level only appears for vendors with more than one product (e.g., `AWS/EC2/`, `Cisco/IOS/`). Single-product vendors are flattened, with asset folders directly under the vendor (e.g., `Kentik/OpenAPIs/`).
 
 Each product folder includes a `README.md` with import instructions, dependencies, and configuration details.
 
@@ -101,7 +122,7 @@ See [Manage Lifecycle Manager resources](https://docs.itential.com/itential-plat
 2. Click **Create Resource +** and enter a name.
 3. On the **Model** tab, paste the JSON Schema from the file and click **Save**.
 
-### Install a Device Driver (IAG)
+### Install a Device Driver (Gateway)
 Follow the instructions in the driver's `README.md`. Drivers typically require copying files to your IAG host and restarting the IAG service.
 
 ---

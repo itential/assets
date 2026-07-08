@@ -4,40 +4,52 @@ We welcome and appreciate contributions to our project! To ensure high-quality a
 
 ## What We Look For
 
-- Workflows (`{Vendor}/studio/`):
-    - Examples - Examples of how to perform reusable generic tasks.
-    - Sample Use Cases - An example of an orchestrated workflow that utilizes your contribution example.
-    - When submitting a Sample Use Case, include a corresponding Operations Manager Automation and Trigger (_when applicable_).
-    - Files are exported IAP Studio projects in `.project.json` format.
-- Operations Manager Automations (`{Vendor}/operations_manager/`):
-    - Exported automation definitions that correspond to a workflow submission.
-    - Should be paired with a Trigger where applicable.
-- Golden Configuration (`{Vendor}/golden_config/`):
-    - Template examples that illustrate an OS or the consumption of an API (in the case of API Compliance).
-- Integration Models (`{Vendor}/integration_models/`):
-    - Version 2.x or 3.x OpenAPI specifications in `.json` format.
-    - Filename must follow the convention `{title}-{version}.json` (e.g., `cisco_meraki_dashboard-1.48.0.json`).
-    - `info.title` must contain only the integration name — no version numbers (e.g., `Cisco Meraki Dashboard`, not `Cisco Meraki Dashboard v1.48`).
-    - `info.version` must reflect the actual API version.
-    - **File size**: The spec must be under 15MB.
-    - **One auth method defined**: Only one `securityScheme` should be defined. Itential Platform supports a single authentication method per integration instance, so additional schemes will not be usable.
-    - **Global security block encouraged**: Define security at the top level of the spec rather than on individual operations. Per-operation overrides are supported but the global block is preferred for consistency.
-    - **Supported auth method**: The `securityScheme` must use an auth type supported by Itential Platform. See the [Itential Platform Security Schemes documentation](https://docs.itential.com/itential-platform/admin-essentials/integrations/auth/security-schemes) for the full list of supported methods.
-    - **OperationId required on every operation**: Every path operation must have a unique `operationId` in camelCase (e.g., `getDevice`, `createNetworkDevice`).
-- LCM Resource Models:
-    - Examples of Use Cases resource models.
+All asset types below live at `{Vendor}/[{Product}/]{AssetType}/`. The `{Product}` segment only applies to vendors with more than one product (e.g., `AWS/EC2/OpenAPIs/`) — single-product vendors omit it (e.g., `Kentik/OpenAPIs/`).
 
+### Studio Projects (`{Vendor}/[{Product}/]Studio Projects/`)
+- Examples - Examples of how to perform reusable generic tasks.
+- Sample Use Cases - An example of an orchestrated workflow that utilizes your contribution example.
+- When submitting a Sample Use Case, include a corresponding Automation and Trigger (_when applicable_).
+- Files are exported Studio projects in `.project.json` format.
 
-When submitting your contribution, please make sure it includes the following:
+### Automations (`{Vendor}/[{Product}/]Automations/`)
+- Exported automation definitions that correspond to a Studio Project submission.
+- Should be paired with a Trigger where applicable.
 
-### 1. Cleanly Organized
+### Golden Configurations (`{Vendor}/[{Product}/]Golden Configurations/`)
+- Template examples that illustrate an OS or the consumption of an API (in the case of API Compliance).
+
+### OpenAPIs (`{Vendor}/[{Product}/]OpenAPIs/`)
+Imported into Itential Platform as Integration Models.
+
+- Version 2.x or 3.x OpenAPI specifications in `.json` format.
+- **Filename convention**: `{snake_case_title}-{version}.json`, with exactly one hyphen separating the title from the version (e.g., `cisco_meraki_dashboard-1.48.0.json`). The title portion must use lowercase `snake_case` only — no spaces, camelCase, or PascalCase.
+- **Version labeling**:
+    - The version segment must be exactly the value in that spec's `info.version` field (e.g., `info.version: "3.7.8"` → `netbox-3.7.8.json`; `info.version: "v2"` → `servicenow_table_api-v2.json`).
+    - To mark a spec as the actively-maintained, most current one, overwrite `info.version` to `"latest"` and rename the file to match (e.g., `cisco_meraki_dashboard-latest.json`). Since this overwrites the vendor's real version number, preserve it in an `x-vendor-api-version` field (e.g., `"x-vendor-api-version": "1.48.0"`) so it isn't lost — see any existing `-latest.json` spec for an example.
+    - Never use an underscore in place of the separating hyphen (e.g., `meraki_1.48.0.json` is incorrect; `meraki-1.48.0.json` is correct).
+- `info.title` must contain only the integration name — no version numbers (e.g., `Cisco Meraki Dashboard`, not `Cisco Meraki Dashboard v1.48`).
+- `info.version` must reflect the actual API version (use `"latest"` to match a `-latest.json` filename).
+- **File size**: The spec must be under 15MB.
+- **One auth method defined**: Only one `securityScheme` should be defined. Itential Platform supports a single authentication method per integration instance, so additional schemes will not be usable. If a vendor's API supports multiple incompatible auth methods (e.g., an API key header vs. a Bearer token), publish separate specs with distinct filenames (e.g., `cisco_meraki_dashboard-latest.json` vs. `cisco_meraki_dashboard_bearer_variant-latest.json`) rather than combining schemes in one spec.
+- **Global security block encouraged**: Define security at the top level of the spec rather than on individual operations. Per-operation overrides are supported but the global block is preferred for consistency.
+- **Supported auth method**: The `securityScheme` must use an auth type supported by Itential Platform. See the [Itential Platform Security Schemes documentation](https://docs.itential.com/itential-platform/admin-essentials/integrations/auth/security-schemes) for the full list of supported methods.
+- **OperationId required on every operation**: Every path operation must have a unique `operationId` in camelCase (e.g., `getDevice`, `createNetworkDevice`).
+- **No duplicate specs**: Don't leave an old, differently-named spec in the same folder once a renamed/enriched replacement exists — update the product's `README.md` links and remove the superseded file in the same contribution.
+
+### LCM Resource Models (`{Vendor}/[{Product}/]LCM Resource Models/`)
+- Examples of Use Cases resource models.
+
+## Before You Submit
+
+### Cleanly Organized
 - The Assets should be modular (_where possible_) and well-structured.
 - Follow best practices for readability, maintainability, and scalability.
 - Use clear, descriptive variable and Asset names.
 - Aim for automation workflows that can be reused in different contexts.
 - Ensure workflows are documented and easy to understand.
 
-### 2. Housekeeping Items
+### Housekeeping Items
 - Tested against the current GA release of Itential Platform.
 - Free from Errors
 - Include enough detail so that others can easily replicate the setup.
@@ -57,4 +69,3 @@ When submitting your contribution, please make sure it includes the following:
 - Address any review comments promptly to ensure a smooth review process.
 
 We value your efforts and look forward to your contributions!
-
