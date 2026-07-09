@@ -1,2 +1,2 @@
 ## OpenAPIs
-- [AWS CloudFormation latest](https://github.com/nathaniel-itential/assets/blob/develop/AWS/CloudFormation/OpenAPIs/aws_cloudformation-latest.json)
+- [AWS CloudFormation latest](./OpenAPIs/aws_cloudformation-latest.json)
