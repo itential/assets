@@ -17,7 +17,7 @@ All asset types below live at `{Vendor}/[{Product}/]{AssetType}/`. The `{Product
 - Should be paired with a Trigger where applicable.
 
 ### Golden Configurations (`{Vendor}/[{Product}/]Golden Configurations/`)
-- Template examples that illustrate an OS or the consumption of an API (in the case of API Compliance).
+- Template examples that illustrate an OS or the consumption of JSON returned from an API call (in the case of JSON Compliance).
 
 ### OpenAPIs (`{Vendor}/[{Product}/]OpenAPIs/`)
 Imported into Itential Platform as Integration Models.
@@ -34,7 +34,6 @@ Imported into Itential Platform as Integration Models.
 - **One auth method defined**: Only one `securityScheme` should be defined. Itential Platform supports a single authentication method per integration instance, so additional schemes will not be usable. If a vendor's API supports multiple incompatible auth methods (e.g., an API key header vs. a Bearer token), publish separate specs with distinct filenames (e.g., `cisco_meraki_dashboard-latest.json` vs. `cisco_meraki_dashboard_bearer_variant-latest.json`) rather than combining schemes in one spec.
 - **Global security block encouraged**: Define security at the top level of the spec rather than on individual operations. Per-operation overrides are supported but the global block is preferred for consistency.
 - **Supported auth method**: The `securityScheme` must use an auth type supported by Itential Platform. See the [Itential Platform Security Schemes documentation](https://docs.itential.com/itential-platform/admin-essentials/integrations/auth/security-schemes) for the full list of supported methods.
-- **OperationId required on every operation**: Every path operation must have a unique `operationId` in camelCase (e.g., `getDevice`, `createNetworkDevice`).
 - **No duplicate specs**: Don't leave an old, differently-named spec in the same folder once a renamed/enriched replacement exists — update the product's `README.md` links and remove the superseded file in the same contribution.
 
 ### LCM Resource Models (`{Vendor}/[{Product}/]LCM Resource Models/`)
@@ -55,6 +54,7 @@ Imported into Itential Platform as Integration Models.
 - Include enough detail so that others can easily replicate the setup.
 - Clearly explain what your contribution does.
 - Describe why it is valuable and how it improves or complements existing functionality.
+- **Keep the root `README.md` in sync**: If your contribution adds a new vendor, a new product under an existing vendor, or a new asset type, update the corresponding table in the repo's root [`README.md`](./README.md) (the Vendor Index and/or Asset Type table) in the same contribution.
 
 ## Additional Requirements
 
