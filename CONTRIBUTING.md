@@ -62,6 +62,28 @@ Imported into Itential Platform as Integration Models.
 - **Proper Spelling and Grammar**: Proofread your contribution to make sure it is free of spelling and grammar errors.
 - **Title Case**: Use Title Case for headings, function names, and any other key titles.
 
+## Naming Your Pull Request
+
+Title your PR (and its commits) as `<type>(<scope>): <summary>`.
+
+- **`type`** — what kind of change it is:
+
+  | Type | Use for |
+  |---|---|
+  | `feat` | A new asset: a new vendor, product, or asset (OpenAPI spec, Studio Project, Automation, Golden Configuration) |
+  | `fix` | A correction to an existing asset (bad workflow task, wrong variable reference, invalid operationId, broken spec field, etc.) |
+  | `chore` | Non-functional maintenance (renaming, removing duplicates, reorganizing folders, metadata-only edits) |
+  | `docs` | Changes to `README.md`, `CONTRIBUTING.md`, or a product's own `README.md` only |
+
+- **`scope`** — the lowercase, hyphenated vendor or vendor-product the change applies to, matching the folder it lives in (e.g. `junos`, `panorama`, `servicenow`, `servicenow-change-management`). Omit the product part for single-product vendors. If a PR spans multiple vendors, drop the scope.
+- **`summary`** — imperative mood, lowercase, no trailing period, describing what changed (e.g. `add commit-all operation`, not `added` or `this PR adds`).
+
+Examples:
+- `feat(junos): add port turn up use case to project`
+- `fix(junos-netconf): remap port turn up template refs to repo project ID`
+- `chore(panorama): remove outdated v10.1 integration model spec`
+- `docs: update README vendor index`
+
 ## How to Submit
 
 - Submit a pull request with a detailed description of your contribution.
