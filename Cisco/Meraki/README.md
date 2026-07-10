@@ -2,7 +2,7 @@
 Assets for the Itential Platform.
 
 ## OpenAPIs
-- [Meraki 1.48.0](./OpenAPIs/meraki_1.48.0.json)
+- [Cisco Meraki Dashboard latest](./OpenAPIs/cisco_meraki_dashboard-latest.json)
 
 ## Projects
 ### Meraki Project

@@ -1,21 +1,147 @@
 # Itential Assets
 
-Welcome to the Itential Assets repository. Here you will find content that can be imported into your Itential Platform and Itential Automation Gateway. The content is meant to be used as examples for your use cases.
+Community-contributed content for the **Itential Platform** and **Itential Gateway**. Import these assets directly into your environment to accelerate automation for common network, cloud, and ITSM use cases.
 
-Have something that we don't? Feel free to sanitize and contribute back following our [contribution guide](./contributing.md).
+> All assets are provided as examples. Review and adapt them to your environment before using in production.
 
-## Structure
+---
 
-As applicable, the directories in this repository will be structured as follows:
+## What's in This Repo
 
-    Vendor
-    ├── Product
-    │   ├── Automations/
-    │   ├── Configuration Parsers/
-    │   ├── device-drivers/
-    │   ├── Golden Configurations/
-    │   ├── LCM Resource Models/
-    │   ├── OpenAPIs/
-    │   ├── Projects/
-    │   └── README.md
+Assets are organized by vendor and product. Each folder may contain one or more of the following asset types:
 
+| Asset Type | Description |
+|---|---|
+| **Studio Projects** | Bundles of related automation assets (workflows, forms, templates, and transformations) for a specific use case |
+| **OpenAPIs** | JSON-based definitions imported as Integration Models that specify how Itential Platform connects to external APIs, databases, and systems |
+| **Golden Configurations** | Config Manager compliance trees for auditing device configuration drift |
+| **device-drivers** | Netmiko-based drivers for connecting IAG to physical and virtual devices |
+| **Configuration Parsers** | Scripts for parsing structured output from device CLI commands |
+| **Automations** | Standalone automation scripts |
+| **LCM Resource Models** | JSON Schema definitions that specify which properties Lifecycle Manager tracks for an infrastructure entity over time |
+
+---
+
+## Vendor Index
+
+| Vendor | Products |
+|---|---|
+| **1Password** | Connect (secrets access) |
+| **6connect** | IP address management |
+| **Akamai** | CDN & edge platform APIs |
+| **Alkira** | SD-WAN |
+| **Ansible** | AWX / Tower |
+| **Apache** | Airflow · Kafka |
+| **Arista** | EOS |
+| **Atlassian** | Bitbucket Cloud · Confluence Cloud · Confluence Server & Data Center · Jira Cloud · Jira Server & Data Center · Opsgenie |
+| **AWS** | API Gateway · CloudFormation · Cognito · Connect · Direct Connect · EC2 · EKS · Lambda · Network Firewall · Organizations · Route 53 · S3 · Secrets Manager |
+| **Cisco** | ASA · Crosswork Network Controller · IOS · ISE · Meraki · NSO · NX-OS · PSIRT Open Vulnerability · Umbrella · Webex |
+| **CyberArk** | Conjur (secrets management) |
+| **Datadog** | Observability |
+| **Docker** | Docker Engine · Docker Hub |
+| **F5** | BIG-IP · BIG-IQ |
+| **GitHub** | GitHub |
+| **GitLab** | GitLab |
+| **GoDaddy** | Domain management |
+| **Google** | Cloud Compute Engine · Drive |
+| **HashiCorp** | Vault (secrets management) |
+| **Infoblox** | NIOS WAPI · Threat Defense BloxOne · Universal DDI BloxOne |
+| **IP Fabric** | Network intelligence |
+| **Itential** | Platform utilities (data manipulation, config management, regex, email, workflow utilities) |
+| **Juniper** | JUNOS · Mist |
+| **Kentik** | Network observability |
+| **Kubernetes** | Container orchestration |
+| **LogicMonitor** | Observability |
+| **Microsoft** | Graph Mail · Teams |
+| **Nautobot** | Nautobot 2.4 |
+| **NetBox** | IPAM / DCIM |
+| **New Relic** | Observability |
+| **Okta** | Identity management |
+| **OpenAI** | AI / LLM APIs |
+| **Paessler** | PRTG monitoring |
+| **PagerDuty** | Incident management |
+| **Palo Alto** | Panorama · Prisma Cloud CSPM |
+| **RingCentral** | Unified communications |
+| **Ruckus** | Fastiron |
+| **Selector** | AIOps |
+| **ServiceNow** | Change management · Incident management · RITM |
+| **Slack** | Messaging |
+| **Sonatype** | Nexus |
+| **Twilio** | Communications APIs |
+| **Versa** | Director |
+| **Zoom** | Meetings / collaboration |
+
+---
+
+## Repository Structure
+
+```
+Vendor/
+└── Product/
+    ├── Automations/
+    ├── Configuration Parsers/
+    ├── device-drivers/
+    ├── Golden Configurations/
+    ├── OpenAPIs/
+    ├── LCM Resource Models/
+    ├── Studio Projects/
+    └── README.md
+```
+
+The `Product/` level only appears for vendors with more than one product (e.g., `AWS/EC2/`, `Cisco/IOS/`). Single-product vendors are flattened, with asset folders directly under the vendor (e.g., `Kentik/OpenAPIs/`).
+
+Each product folder includes a `README.md` with import instructions, dependencies, and configuration details.
+
+---
+
+## Getting Started
+
+### Import a Project
+See [Create and manage projects](https://docs.itential.com/itential-platform/studio/projects/create-manage) for full details.
+1. In Itential Platform, go to **Studio → Projects**.
+2. Click the **Import** button on the Projects homepage.
+3. Upload the `.json` file by drag-and-drop or browse the file system.
+
+### Import an OpenAPI spec/Integration Model
+See [Integration models](https://docs.itential.com/itential-platform/6/admin-essentials/integration-models) for full details.
+1. In Itential Platform, go to **Admin Essentials**.
+2. Click the **Import** icon in the top toolbar.
+3. Select **Integration Model** from the dropdown.
+4. Upload the `.json` OpenAPI/Swagger file.
+
+### Import a Golden Configuration
+See [Golden Configuration overview](https://docs.itential.com/itential-platform/configuration-manager/golden-configurations/overview) for full details.
+1. In Itential Platform, go to **Configuration Manager**.
+2. Click the **Search** (🔍) button to open the Collection modal.
+3. Click the **Golden Configurations** tab, then click **Import** in the toolbar.
+4. After importing, bind the tree to your devices.
+
+### Import an LCM Resource Model
+See [Manage Lifecycle Manager resources](https://docs.itential.com/itential-platform/6/lifecycle-manager/manage-resources) for full details.
+1. In Itential Platform, go to **Lifecycle Manager**.
+2. Click **Create Resource +** and enter a name.
+3. On the **Model** tab, paste the JSON Schema from the file and click **Save**.
+
+### Install a Device Driver (Gateway)
+Follow the instructions in the driver's `README.md`. Drivers typically require copying files to your IAG host and restarting the IAG service.
+
+---
+
+## Requirements
+
+Minimum versions vary by asset - check each product's `README.md` for specifics. In general:
+
+- **Itential Platform** ≥ 6.4
+- **Itential Automation Gateway** ≥ 5.0 (for device-driver assets)
+
+---
+
+## Contributing
+
+Have an asset to share? Sanitize it and follow the guidelines in [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+---
+
+## License
+
+[Apache 2.0](./LICENSE)
