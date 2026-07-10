@@ -8,7 +8,7 @@ This is a working example: a Python plugin for Delinea Secret Server Cloud, the 
 
 ```
 Itential Platform (Inventory Manager / device sync)
-        │  device attribute: "itential_password": "$GATEWAYSECRET_(IOSXE-PASSWORD)"
+        │  device attribute: "itential_password": "$GATEWAYSECRET_(DELINEA-IOSXE-PASSWORD)"
         ▼
 IAG Gateway  ──(resolves alias)──▶  delinea-plugin.py  ──(OAuth2 password grant)──▶  Delinea Secret Server Cloud
         │
@@ -101,7 +101,7 @@ iagctl create secret-provider delinea-plugin \
   --description "Delinea Secret Server Cloud via OAuth2 password grant"
 
 # Alias: maps a friendly name to a specific secret + field on that provider
-iagctl create secret IOSXE-PASSWORD \
+iagctl create secret DELINEA-IOSXE-PASSWORD \
   --provider delinea-plugin \
   --secret 382 \
   --key password
@@ -110,7 +110,7 @@ iagctl create secret IOSXE-PASSWORD \
 Verify:
 ```bash
 iagctl get secret-providers
-iagctl describe secret IOSXE-PASSWORD
+iagctl describe secret DELINEA-IOSXE-PASSWORD
 ```
 
 `describe secret` only shows the alias's metadata (provider/secret/key) — it never displays the resolved value.
@@ -128,7 +128,7 @@ Use `$GATEWAYSECRET_(alias-name)` anywhere IAG resolves secrets at execution tim
     "itential_driver": "netmiko",
     "itential_platform": "cisco_xe",
     "itential_user": "itential",
-    "itential_password": "$GATEWAYSECRET_(IOSXE-PASSWORD)",
+    "itential_password": "$GATEWAYSECRET_(DELINEA-IOSXE-PASSWORD)",
     "itential_driver_options": {
       "netmiko": {
         "banner_timeout": 60,
