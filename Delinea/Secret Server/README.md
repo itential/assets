@@ -76,6 +76,15 @@ sudo chown itential:itential /etc/gateway/delinea_password
 sudo chmod 400 /etc/gateway/delinea_password
 ```
 
+The file should contain just the raw password as a single line of plain text — no quotes, no `KEY=value` formatting:
+
+```
+$ cat /etc/gateway/delinea_password
+the-service-account-password
+```
+
+The plugin reads the file's contents directly and strips any surrounding whitespace/newline, so a trailing newline (which `tee`/most editors add automatically) is fine.
+
 ## Registering the Provider and Alias
 
 Full CLI reference: [configuring a custom secret provider plugin](https://docs.itential.com/itential-gateway/secrets/external-secrets/configure-custom-plugin-provider) and [managing secret aliases](https://docs.itential.com/itential-gateway/secrets/external-secrets/manage-secret-aliases).
