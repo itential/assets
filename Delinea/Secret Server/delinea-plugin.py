@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+"""IAG custom secret-provider plugin for Delinea Secret Server Cloud.
+
+IAG invokes this as `delinea-plugin.py get`, writing a JSON request to
+stdin (`{"path": "<secret id>", "key": "<field slug>", "config": {"env": {...}}}`)
+and reading a JSON response from stdout (`{"value": "..."}`) on success.
+On failure, write a message to stderr and exit non-zero.
+"""
 import sys
 import json
 import os
@@ -54,9 +61,12 @@ def main():
         "username": username,
         "password": password,
     }
+    # "Local" is Secret Server's built-in (non-AD-integrated) domain and is
+    # the implicit default — only send `domain` for actual AD/LDAP domains.
     if domain and domain != "Local":
         form["domain"] = domain
 
+    # Step 1: OAuth2 password grant to get a bearer token.
     data = urllib.parse.urlencode(form).encode()
     try:
         resp = urllib.request.urlopen(f"{base_url}/oauth2/token", data=data, timeout=15)
@@ -73,6 +83,7 @@ def main():
     if not token:
         fail("failed to parse oauth token response")
 
+    # Step 2: use the token to fetch the specific field value off the secret.
     field_url = f"{base_url}/api/v1/secrets/{path}/fields/{key}"
     req = urllib.request.Request(field_url, headers={"Authorization": f"Bearer {token}"})
     try:
