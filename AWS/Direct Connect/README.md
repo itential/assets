@@ -30,9 +30,23 @@ Sign requests with an AWS access key ID and secret access key that has IAM permi
 
 ## OpenAPIs
 
-### `aws_direct_connect-latest.json`
+### `aws_direct_connect-latest.json` (full spec, untouched)
 
-Actively-maintained spec (`x-vendor-api-version: 2012-10-25`). Left as the full, untrimmed spec — the AWS Direct Connect API is already a single, cohesive product surface (63 operations covering connections, virtual interfaces, gateways, LAGs, interconnects, and tagging), with no admin/reporting/bulk-import tail to remove.
+Actively-maintained spec (`x-vendor-api-version: 2012-10-25`, 63 operations). Every operation was checked individually against the upstream spec; all 63 are genuine CRUD/provisioning actions on Direct Connect's own resources (connections, virtual interfaces, gateways, LAGs, interconnects, BGP peers, tags) or the lookups needed to drive those actions (locations, router config, LOAs, customer agreements) — there is no health/heartbeat/metrics/version-info/self-introspection surface to exclude, so nothing was removed. The `security` block is already global (`hmac`), with no redundant per-operation overrides.
+
+Operations included, by category:
+
+- **Connections**: Create, delete, update, describe connections; confirm a connection; allocate a connection on an interconnect; allocate/associate/describe hosted connections; describe connections on an interconnect; get a connection's LOA-CFA
+- **Link Aggregation Groups (LAGs)**: Create, delete, update, describe LAGs; associate/disassociate a connection with/from a LAG
+- **Interconnects**: Create, delete, describe interconnects; get an interconnect's LOA-CFA
+- **Virtual Interfaces**: Create/allocate private, public, and transit virtual interfaces; confirm private/public/transit virtual interfaces; delete, describe, associate virtual interfaces; update virtual interface attributes; describe virtual gateways
+- **Direct Connect Gateways & Associations**: Create/delete/update/describe gateways; create/delete/update/describe gateway associations; create/delete/accept/describe gateway association proposals; describe gateway attachments
+- **BGP Peering & Failover Testing**: Create/delete BGP peers; start/stop a BGP failover test; list virtual interface failover test history
+- **MAC Security (MACsec)**: Associate/disassociate a MACsec key with a connection or interconnect
+- **Letters of Authorization**: Get the LOA-CFA for a connection, interconnect, or LAG (generic lookup, in addition to the connection- and interconnect-specific variants above)
+- **Locations & Router Configuration**: List the Direct Connect locations available for provisioning; describe a virtual interface's router configuration
+- **Customer Agreements**: Describe customer metadata/agreements; confirm a customer agreement when creating a connection/LAG
+- **Tagging**: Tag/untag resources; describe tags on a resource
 
 ### Full, unmodified spec
 

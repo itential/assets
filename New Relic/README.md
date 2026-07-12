@@ -30,9 +30,28 @@ Generate a user or ingest API key in New Relic under **Account Settings > API Ke
 
 ## OpenAPIs
 
-### `new_relic-latest.json`
+### `new_relic-latest.json` (full spec, untouched)
 
-Actively-maintained spec (`x-vendor-api-version: v2`). This is the full, untrimmed New Relic REST API v2 spec — it already covers a single cohesive product surface (application performance monitoring and alerting: applications, deployments, hosts, instances, metrics, key transactions, mobile applications, and alert channels/conditions/policies/incidents/violations) with no admin/internal-tooling long tail to cut, so no operations were removed.
+Actively-maintained spec (`x-vendor-api-version: v2`, 59 operations). Every operation in the upstream spec is CRUD, a query, or a provisioning action on New Relic's actual APM/alerting resources — there is no separate health/heartbeat, self-introspection/version-info, or license-lookup surface to exclude, so nothing was removed.
+
+Operations included, by category:
+
+- **GraphQL**: Execute a GraphQL (NerdGraph) query
+- **Applications**: List, show, update, delete
+- **Application Deployments**: List, create, delete a deployment record for an application
+- **Application Hosts**: List, show a host; metric names and metric data for a host
+- **Application Instances**: List, show an instance; metric names and metric data for an instance
+- **Application Metrics**: Metric names and metric data for an application
+- **Key Transactions**: List, show
+- **Mobile Applications**: List, show; metric names and metric data
+- **Alerts Channels**: List, create, delete notification channels
+- **Alerts Policies**: List, create, update, delete
+- **Alerts Policy Channels**: Link (update) and unlink (delete) a channel from a policy
+- **Alerts Conditions** (APM/Key Transaction, External Service, NRQL, Synthetics, Location Failure): List/create/update/delete conditions per condition type and policy
+- **Alerts Entity Conditions**: List conditions on an entity; add/remove a condition to/from an entity
+- **Alerts Events, Incidents, Violations**: List events, incidents, and policy violations raised by alerting
+
+Several of the Alerts endpoints above carry vendor deprecation notices pointing users toward NerdGraph, but they remain live, callable REST operations in the current spec, so they are kept rather than excluded.
 
 ### Full, unmodified spec
 

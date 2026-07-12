@@ -1,6 +1,6 @@
 CyberArk Conjur is an open-source secrets management platform for storing, controlling, and auditing access to secrets used by applications, containers, and automation tools. It provides authentication, policy-based authorization, and secure secrets retrieval across a range of authenticator types (API key, LDAP, OIDC, Kubernetes, Azure, GCP, IAM, JWT).
 
-This project provides OpenAPI specs for automating against Conjur's REST API via an Integration Model. The `-latest` spec is the vendor's own narrow, purpose-built API surface — see **OpenAPIs** below.
+This project provides OpenAPI specs for automating against Conjur's REST API via an Integration Model. Conjur's own API is already a narrow, single-purpose secrets-management surface; the `-latest` spec additionally trims a handful of generic diagnostic/introspection endpoints — see **OpenAPIs** below.
 
 ## Contents
 
@@ -30,9 +30,24 @@ Conjur also exposes dedicated authenticator endpoints (`/authn`, `/authn-ldap`, 
 
 ## OpenAPIs
 
-### `conjur-latest.json`
+### `conjur-latest.json` (curated)
 
-Full spec, untouched — Conjur's API is already a narrow, single-purpose secrets-management surface (authentication, secrets, policies, resources, roles) with no admin/reporting tail to trim.
+Trimmed to 34 of 38 upstream operations (`x-vendor-api-version: 5.3.2`). Conjur's API is already a narrow, single-purpose secrets-management surface, but the upstream spec mixes in a small "status" group of generic diagnostic/introspection endpoints alongside the real authentication/secrets/policy/role automation surface. Excludes:
+
+- `GET /authenticators` — lists which authenticator types are installed/configured/enabled on the server (a static server-capability listing, not a resource you create/read/update/delete)
+- `GET /authn-gcp/{account}/status` and `GET /{authenticator}/{service_id}/{account}/status` — "is this authenticator service configured properly" diagnostic/health checks, not status of an action you triggered via this API
+- `GET /whoami` — self-introspection endpoint that reports the calling client's identity/IP/user-agent, not a business resource
+
+Operations included, by category:
+
+- **Authentication / token issuance**: Get a short-lived access token via basic auth, LDAP, OIDC, Azure, GCP, AWS IAM, JWT (with and without optional ID), or Kubernetes; get a user's API key via basic auth or LDAP; rotate a role's API key; change a user's password; inject a Kubernetes client certificate; enable/disable an authenticator (with or without a `service_id`)
+- **Certificate authority**: Get a signed certificate from a configured CA service
+- **Host factory**: Create a host; create host identity token(s); revoke a token
+- **Policies**: Load (add to), update, or replace a policy document
+- **Public keys**: Get all public keys for a resource
+- **Resources**: List resources (across all accounts, by account, or by kind); get a single resource
+- **Roles**: Get role info; add or remove a role membership
+- **Secrets**: Fetch one or many secret values; create a secret value
 
 ### Full, unmodified spec
 

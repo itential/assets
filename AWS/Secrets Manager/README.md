@@ -32,7 +32,17 @@ Generate an access key ID and secret access key in the AWS IAM console under **U
 
 ### `aws_secrets_manager-latest.json` (full spec, untrimmed)
 
-Actively-maintained spec (`x-vendor-api-version: 2017-10-17`). AWS Secrets Manager's entire API is 22 operations, all of which are core to secret lifecycle management, so the full upstream operation set is kept as-is — nothing was removed.
+Actively-maintained spec (`x-vendor-api-version: 2017-10-17`). AWS Secrets Manager's entire API is 22 operations, all of which are core to secret lifecycle management, so the full upstream operation set is kept as-is — nothing was removed. There is no separate health-check, heartbeat, metrics, or self-introspection/version-info surface in this API to exclude.
+
+Operations included, by category:
+
+- **Secrets**: Create, delete (scheduled or immediate), restore a pending-deletion secret, describe, list, update
+- **Secret values/versions**: Get secret value, put (set) secret value, list version IDs, move/update a version's staging label
+- **Rotation**: Start rotation, cancel an in-progress rotation
+- **Resource policies**: Get, put, delete, validate (dry-run check of a policy document before applying it)
+- **Cross-region replication**: Replicate a secret to regions, remove regions from replication, stop replication to a replica
+- **Tagging**: Tag resource, untag resource
+- **Utilities**: Generate a random password (used when creating secrets that need a generated value)
 
 ### Full, unmodified spec
 

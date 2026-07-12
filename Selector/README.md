@@ -41,9 +41,13 @@ Resources included, by category:
 
 Excluded: legacy v1 schema endpoints (superseded by v2), bulk/CSV import-export utilities, and admin/diagnostic endpoints (health, logs, config, version, opstats). Pull the full spec from the dated file below if you need something not covered here.
 
-### `selector_ai_query-latest.json` (full spec, untouched)
+### `selector_ai_query-latest.json` (full spec, verified minimal)
 
-Single-purpose API exposing one operation (`POST /command`) to execute Selector Query Language (S2QL) queries against network telemetry and observability data. Already narrowly scoped, so no operations were trimmed. A pre-existing vendor spec issue — a stray top-level `security` block referencing an undefined `apikey` scheme — was removed since the operation itself already correctly declares `bearerAuth`.
+Single-purpose API exposing exactly one operation upstream (`x-vendor-api-version: 1.0.0`, 1 of 1 operations kept). Audited operation-by-operation and confirmed there is no separate admin/health/telemetry surface to exclude — the sole endpoint is the product's entire business function, so nothing was removed:
+
+- **Query**: `POST /command` — execute a Selector Query Language (S2QL) query and return results plus rendering metadata, for querying network telemetry/observability data (e.g. latency, jitter, packet loss) and violation events.
+
+Two pre-existing vendor spec issues were also cleaned up: a stray top-level `security` block referencing an undefined `apikey` scheme was previously removed (the operation itself already correctly declared `bearerAuth`), and now that redundant per-operation `bearerAuth` override has been consolidated into a single global `security` block at the spec level, since it was the same requirement repeated on every operation.
 
 ### Full, unmodified specs
 

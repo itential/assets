@@ -32,7 +32,17 @@ Configure API access in 6connect under **Administration → Users**.
 
 ### `6connect_provision-latest.json` (full spec, untouched)
 
-Full, unmodified vendor spec (`x-vendor-api-version: 2.0.0`). This is already a narrow, single-purpose API covering resource provisioning (create/read/update/delete, attributes, links, attachments, and tree/backup operations for provisioned resources) — no operations were removed.
+Full, unmodified vendor spec (`x-vendor-api-version: 2.0.0`, 39 operations). Every operation in the upstream spec is CRUD or a provisioning action on the single `resources` model — there is no separate admin, webhook, or reporting surface to exclude, so nothing was removed.
+
+Operations included, by category:
+
+- **Resources**: List, create, bulk update, query/search, top-of-tree lookup, unassign all IPs
+- **Resource (by ID)**: Get, update, delete, clone, get children, get section, get top-of-tree
+- **Attributes**: Get, add, update, delete; bulk lookup by section/category
+- **Links** (relationships between resources): Get/create/replace/update all links; get/replace/update links by relation; update/delete a specific link
+- **Attachments**: List, attach, preview, download, delete
+- **Backup**: List backups, trigger a backup
+- **Provisioning actions**: Push a resource + poll push status; execute a named action + poll action status
 
 ### Full, unmodified spec
 

@@ -30,9 +30,21 @@ Generate an access key ID and secret access key for an IAM principal with the ap
 
 ## OpenAPIs
 
-### `aws_organizations-latest.json`
+### `aws_organizations-latest.json` (full spec, untouched)
 
-Actively-maintained spec (`x-vendor-api-version: 2016-11-28`). This is the full, untouched upstream spec (55 operations) — AWS Organizations is already a single, narrow product surface covering account, organizational unit, policy, handshake (invitation), delegated administrator, service access, resource policy, and tagging management, so no trimming was applied.
+Actively-maintained spec (`x-vendor-api-version: 2016-11-28`, 55 operations, all `POST` against the single AWS Query-protocol endpoint with an `X-Amz-Target` action header). Every operation is a genuine CRUD or provisioning action on an Organizations business resource (account, OU, policy, handshake, delegated administrator, service access, resource policy, or tag) — there is no separate health/heartbeat/metrics, self-introspection/version-info, or "about" surface to exclude, so nothing was removed.
+
+Operations included, by category:
+
+- **Accounts**: Create, create GovCloud account, close, describe, list, list for parent, move between OUs, remove from organization; describe/list account-creation status (poll the async `CreateAccount`/`CreateGovCloudAccount` job)
+- **Organization**: Create, delete, describe, enable all features, leave organization
+- **Organizational units**: Create, update, delete, describe; list OUs for parent, list children, list parents, list roots
+- **Policies**: Create, update, delete, describe, list, list for target; attach/detach to a target; list targets for a policy; enable/disable a policy type on a root; describe the effective policy for a target
+- **Handshakes (invitations)**: Invite an account to the organization, accept, cancel, decline, describe; list handshakes for account/for organization
+- **Delegated administrators**: Register, deregister, list delegated administrators, list delegated services for an account
+- **AWS service access**: Enable, disable, list enabled service access for the organization
+- **Resource policies**: Put (create/update), delete, describe
+- **Tags**: Tag a resource, untag a resource, list tags for a resource
 
 ### Full, unmodified spec
 

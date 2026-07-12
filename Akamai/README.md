@@ -30,9 +30,20 @@ Generate EdgeGrid credentials in Akamai Control Center (Identity and Access Mana
 
 ## OpenAPIs
 
-### `akamai_apis-latest.json`
+### `akamai_apis-latest.json` (full spec, untouched)
 
-Actively-maintained spec (`x-vendor-api-version: v2`). This spec covers a single cohesive surface — Akamai Edge DNS zone management — so it is left untrimmed: all 60 upstream operations are included, spanning zones, change lists, record sets, TSIG keys, and DNS reference data.
+Full, unmodified vendor spec (`x-vendor-api-version: v2`, 60 operations). Every operation is CRUD or a provisioning action on the Edge DNS domain model (zones, versions, record sets, change lists, TSIG keys) or reference data those actions require (contracts, groups, nameservers, algorithms) — there is no separate admin, telemetry, or self-introspection surface to exclude, so nothing was removed.
+
+Operations included, by category:
+
+- **Zones**: Create, list, get settings, update settings; get aliases; get contract
+- **Zone versions**: List versions, get a version, get a version's record sets, show differences between versions, reactivate a version; get/post the zone's master zone file, get a version's master zone file
+- **Record sets**: Create, get, replace, delete a record set; create multiple record sets; get/replace a zone's record sets; get record set names/types for a zone
+- **Change lists** (staged edits prior to activation): Create, list, search, get, delete; show diff against the base zone; get record set names/types for a change list; get/add a record set change; upload a master zone file to a change list; get/update change list settings; submit (activate) a change list
+- **TSIG keys**: List keys; bulk-update a key across multiple zones; list zones using a key; get/update/delete a zone's key; list zones sharing a zone's key
+- **Bulk zone requests** (async provisioning): Submit bulk-create request + check status + get result; submit bulk-delete request + check status + get result
+- **Zone status checks**: Get DNSSEC status for zones; get secondary-zone transfer status
+- **DNS reference data** (inputs required by the operations above, e.g. contract/group IDs for zone creation): Authoritative nameservers, contracts, groups, edge hostnames, record set types, DNSSEC algorithms, TSIG algorithms
 
 ### Full, unmodified spec
 

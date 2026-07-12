@@ -1,4 +1,4 @@
-Cisco Webex is a cloud collaboration platform providing team messaging, meetings, and calling. This folder covers the Webex REST APIs: administrative resources (audit events, room/space memberships, licenses) and the core messaging surface (rooms, messages, people, teams).
+Cisco Webex is a cloud collaboration platform providing team messaging, meetings, and calling. This folder covers the Webex REST APIs: administrative resources (audit events, room/space memberships) and the core messaging surface (rooms, messages, people, teams).
 
 This project provides OpenAPI specs for automating against the Webex REST API via an Integration Model. See **OpenAPIs** below for what each spec covers.
 
@@ -30,9 +30,17 @@ Generate a bot token or personal access token at [developer.webex.com](https://d
 
 ## OpenAPIs
 
-### `cisco_webex-latest.json`
+### `cisco_webex-latest.json` (curated)
 
-Actively-maintained spec (`x-vendor-api-version: 1.0`). This is the vendor's full published spec for this API surface — it is already narrow and cohesive (admin audit events, room/space memberships, and licenses), so it is included as-is with no trimming.
+Actively-maintained spec (`x-vendor-api-version: 1.0`). Trimmed to 8 of 10 upstream operations.
+
+Resources included, by category:
+
+- **Admin Audit Events**: List admin audit events for the organization (`GET /adminAudit/events`) — the Control Hub compliance/security audit trail of admin actions, not server/API telemetry
+- **Events**: List organization events and get event details (`GET /events`, `GET /events/{eventId}`) — the compliance-officer feed of user actions (messages/calls created, deleted, etc.) within the org
+- **Memberships**: List, create, get, update, and remove room/space memberships (`GET/POST /memberships`, `GET/PUT/DELETE /memberships/{membershipId}`)
+
+Dropped as a non-automatable reference lookup: `GET /licenses` and `GET /licenses/{licenseId}` — a read-only license-tier catalog (this API surface has no write/assign operation for licenses) rather than something to create/update/delete via automation.
 
 ### `cisco_webex_messaging-latest.json` (curated)
 

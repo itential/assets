@@ -30,7 +30,18 @@ Generate an AWS access key ID and secret access key for an IAM principal with `e
 
 ### `amazon_eks-latest.json` (full, unmodified)
 
-Actively-maintained spec (`x-vendor-api-version: 2017-11-01`). This spec already covers a single cohesive product surface — every operation manages an EKS cluster or one of its direct sub-resources (add-ons, managed node groups, Fargate profiles, identity provider configs, updates, tags). There is no vendor-internal tooling, analytics/reporting, or bulk import/export tail to trim, so the full 35-operation spec is kept as-is.
+Actively-maintained spec (`x-vendor-api-version: 2017-11-01`, 35 operations). Audited operation-by-operation: every operation manages an EKS cluster or one of its direct sub-resources (add-ons, managed node groups, Fargate profiles, identity provider configs, updates, tags, connected-cluster registrations). There is no health/heartbeat/metrics endpoint, no API self-introspection or version-info endpoint, and no vendor-internal admin tooling to trim, so the full spec is kept as-is.
+
+Operations included, by category:
+
+- **Clusters**: Create, list, describe, delete; update config; list/describe/trigger cluster version updates
+- **Encryption Config**: Associate an encryption configuration to a cluster
+- **Identity Provider Configs** (Kubernetes RBAC integration): Associate, disassociate, describe, list
+- **Add-ons**: Create, list, describe, delete, update; look up supported add-on versions and an add-on's configuration schema
+- **Fargate Profiles**: Create, list, describe, delete
+- **Managed Node Groups**: Create, list, describe, delete; update config; update Kubernetes/AMI version
+- **Connected Cluster Registrations** (EKS Connector for external/on-prem clusters): Register, deregister
+- **Tags**: List, add, remove tags on an EKS resource
 
 ### Full, unmodified spec
 

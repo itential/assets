@@ -28,9 +28,13 @@ Obtain a token via the OAuth2 client credentials grant: `POST https://login.micr
 
 ## OpenAPIs
 
-### `microsoft_graph_mail-latest.json`
+### `microsoft_graph_mail-latest.json` (full spec, untouched)
 
-Full, unmodified spec (`x-vendor-api-version: 1.0`). This is already a narrow, single-purpose spec covering only the Send Mail endpoint, so no trimming was needed.
+Full, unmodified vendor spec (`x-vendor-api-version: 1.0`, 1 operation). This spec was hand-scoped to a single Microsoft Graph action — there is no separate admin, health-check, or introspection surface bundled in to exclude, so nothing was removed.
+
+Operations included, by category:
+
+- **Mail sending**: `POST /users/{user-id}/sendMail` — send a message on behalf of a user (optionally saving a copy to Sent Items)
 
 ### Full, unmodified spec
 

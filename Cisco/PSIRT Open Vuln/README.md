@@ -28,9 +28,20 @@ Register an app at https://apiconsole.cisco.com with openVuln API access, then o
 
 ## OpenAPIs
 
-### `cisco_psirt_openvuln-latest.json`
+### `cisco_psirt_openvuln-latest.json` (full spec, untouched)
 
-Full spec, left untouched — the API is already a narrow, single-purpose read-only vulnerability lookup service (advisories, CVEs, bug IDs, severity, affected products/platforms), so no trimming was needed.
+Full, unmodified vendor spec (`x-vendor-api-version: 2.0.1`, 30 operations). Every operation is a read-only lookup against Cisco security advisory/CVE/vulnerability data — the product's only business resource — so there is no separate admin, health, or self-introspection surface to exclude. Nothing was removed.
+
+Operations included, by category:
+
+- **All advisories (JSON)**: List all advisories; filter by first-published date range; filter by last-published date range
+- **Advisory lookup (JSON)**: Get by advisory ID; get by CVE ID; get by bug ID; get the latest N advisories; get all advisories published in a given year
+- **Advisories by severity (JSON)**: Get by severity rating (critical/high/medium/low); filtered by first-published date range; filtered by last-published date range
+- **Advisories by product/platform (JSON)**: Get by product name; get by affected network OS type; get by IOS version; get by IOS-XE version; get by ACI version; get by NX-OS version
+- **Reference data (network OS/platform versions)**: OS version reference data; platform type reference data; NOS version reference data
+- **All advisories (CVRF format)**: List all advisories; filter by first-published date range; filter by last-published date range
+- **Advisory lookup (CVRF format)**: Get by advisory ID; get by CVE ID; get by product name; get all advisories published in a given year
+- **Advisories by severity (CVRF format)**: Get by severity rating; filtered by first-published date range; filtered by last-published date range
 
 ### Full, unmodified spec
 

@@ -32,7 +32,17 @@ Obtain a JWT by calling `POST /login` with your Prisma Cloud access key ID and s
 
 ### `palo_alto_prisma_cloud_cspm_alerts-latest.json` (untouched)
 
-Actively-maintained spec (`x-vendor-api-version: v1`). Left as the full upstream spec (25 operations) — it already covers a single, cohesive surface (alert listing, filtering, dismissal, reopening, remediation, and CSV/job-based export) with no admin/internal tooling to trim.
+Actively-maintained spec (`x-vendor-api-version: v1`). Left as the full upstream spec (25 operations) — every operation is a genuine read, write, or provisioning action against the `alert` resource itself; there's no health/heartbeat/metrics, version-info, or other server-housekeeping surface to trim.
+
+Operations included, by category:
+
+- **Alert listing/query**: List Alerts (GET/POST), List Alerts V2 (GET/POST), Get Alert Info by ID, Get Alerts Count By Status
+- **Alert filtering**: List Alert Filters, List Alert Filter Autocomplete Suggestions
+- **Alert counts by policy**: Get Alert Counts By Policy (GET/POST)
+- **Alert status actions**: Dismiss Alerts, Reopen Alerts
+- **Dismissal note setting**: Get/Update whether a dismissal note is required
+- **Remediation**: List Alert Remediation Commands, Remediate Alert by ID
+- **Async export jobs**: Submit/poll/download alerts-list job (JSON), submit/poll/download alert CSV job, submit/poll/download policy-alerts job (JSON)
 
 ### `palo_alto_prisma_cloud_cspm_cloud_account_onboarding-latest.json` (curated)
 
