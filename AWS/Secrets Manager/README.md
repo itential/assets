@@ -30,7 +30,7 @@ Generate an access key ID and secret access key in the AWS IAM console under **U
 
 ## OpenAPIs
 
-### `aws_secrets_manager-latest.json` (full spec, untrimmed)
+### `aws_secrets_manager-latest.json` (curated)
 
 Actively-maintained spec (`x-vendor-api-version: 2017-10-17`). AWS Secrets Manager's entire API is 22 operations, all of which are core to secret lifecycle management, so the full upstream operation set is kept as-is — nothing was removed. There is no separate health-check, heartbeat, metrics, or self-introspection/version-info surface in this API to exclude.
 

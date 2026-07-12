@@ -31,17 +31,17 @@ Paste the JWT as the bearer token. JWTs expire and must be refreshed manually un
 
 ## OpenAPIs
 
-### `cisco_crosswork_network_controller_device_management-latest.json` (full spec, untouched)
+### `cisco_crosswork_network_controller_device_management-latest.json` (curated)
 
-Full, unmodified vendor spec (1 operation). The upstream API exposes exactly one endpoint and it is a genuine inventory query with no separate health/metrics/version-info surface to exclude, so nothing was removed.
+Reviewed and confirmed already scoped to common CRUD for automation (1 operation). The upstream API exposes exactly one endpoint and it is a genuine inventory query with no separate health/metrics/version-info surface to exclude, so nothing was removed.
 
 Operations included, by category:
 
 - **Device inventory**: Get all devices (deep inventory query, including device detail attributes)
 
-### `cisco_crosswork_network_controller_l3vpn-latest.json` (full spec, untouched)
+### `cisco_crosswork_network_controller_l3vpn-latest.json` (curated)
 
-Full, unmodified vendor spec (4 operations). The upstream API implements the IETF L3VPN NTW model as a single RESTCONF resource with full CRUD; there is no admin, health, or introspection surface to exclude, so nothing was removed.
+Reviewed and confirmed already scoped to common CRUD for automation (4 operations). The upstream API implements the IETF L3VPN NTW model as a single RESTCONF resource with full CRUD; there is no admin, health, or introspection surface to exclude, so nothing was removed.
 
 Operations included, by category:
 

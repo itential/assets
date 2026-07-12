@@ -30,7 +30,7 @@ Sign requests with an AWS access key ID and secret access key that has IAM permi
 
 ## OpenAPIs
 
-### `aws_direct_connect-latest.json` (full spec, untouched)
+### `aws_direct_connect-latest.json` (curated)
 
 Actively-maintained spec (`x-vendor-api-version: 2012-10-25`, 63 operations). Every operation was checked individually against the upstream spec; all 63 are genuine CRUD/provisioning actions on Direct Connect's own resources (connections, virtual interfaces, gateways, LAGs, interconnects, BGP peers, tags) or the lookups needed to drive those actions (locations, router config, LOAs, customer agreements) — there is no health/heartbeat/metrics/version-info/self-introspection surface to exclude, so nothing was removed. The `security` block is already global (`hmac`), with no redundant per-operation overrides.
 

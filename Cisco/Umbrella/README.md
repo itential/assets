@@ -30,9 +30,9 @@ Obtain a client key and secret from Cisco Umbrella under **Admin > API Keys > Um
 
 ## OpenAPIs
 
-### `cisco_umbrella_destination_lists-latest.json` (full spec, untouched)
+### `cisco_umbrella_destination_lists-latest.json` (curated)
 
-Full, unmodified upstream spec (`x-vendor-api-version: 2.0.0`, 8 operations). Every operation is CRUD on the single Destination Lists resource domain — there is no separate health/status, self-introspection, or admin surface to exclude, so nothing was removed.
+Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: 2.0.0`, 8 operations). Every operation is CRUD on the single Destination Lists resource domain — there is no separate health/status, self-introspection, or admin surface to exclude, so nothing was removed.
 
 Operations included, by category:
 

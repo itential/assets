@@ -30,7 +30,7 @@ Generate a user or ingest API key in New Relic under **Account Settings > API Ke
 
 ## OpenAPIs
 
-### `new_relic-latest.json` (full spec, untouched)
+### `new_relic-latest.json` (curated)
 
 Actively-maintained spec (`x-vendor-api-version: v2`, 59 operations). Every operation in the upstream spec is CRUD, a query, or a provisioning action on New Relic's actual APM/alerting resources — there is no separate health/heartbeat, self-introspection/version-info, or license-lookup surface to exclude, so nothing was removed.
 

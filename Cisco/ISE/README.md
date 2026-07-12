@@ -1,6 +1,6 @@
 Cisco Identity Services Engine (ISE) is a network access control and policy platform that authenticates and authorizes endpoints and users, enforces network access policy, and manages the network devices, certificates, and nodes that make up an ISE deployment.
 
-This product folder provides OpenAPI specs for automating against ISE's REST APIs via Integration Models. Each spec covers one ISE API module (policy, network devices, certificates, deployment, etc.) — import only the ones your automation needs. The `-latest` spec in each module is either the full vendor surface or a curated CRUD subset — see **OpenAPIs** below for which.
+This product folder provides OpenAPI specs for automating against ISE's REST APIs via Integration Models. Each spec covers one ISE API module (policy, network devices, certificates, deployment, etc.) — import only the ones your automation needs. Every module's `-latest` spec is reviewed and curated for common CRUD for automation — some needed operations trimmed, others were already in scope as-is — see **OpenAPIs** below.
 
 ## Contents
 
@@ -32,18 +32,18 @@ Enable API access on the ISE node under **Administration > System > Settings > A
 
 Every module below shares the same authentication (HTTP Basic) and vendor API version (`1.0.0`). Each has its own `-latest.json` (actively-maintained) and dated `-1.0.0.json` (full, unmodified vendor spec) pair in `OpenAPIs/`.
 
-### `cisco_ise_5g-latest.json`
+### `cisco_ise_5g-latest.json` (curated)
 
-Full spec, already narrow (16 operations). Every operation is CRUD on the 5G module's two business resources — there is no separate admin/reporting surface to exclude.
+Reviewed and confirmed already scoped to common CRUD for automation (16 operations). Every operation is CRUD on the 5G module's two business resources — there is no separate admin/reporting surface to exclude.
 
 Operations included, by category:
 
 - **Subscribers**: List, create, bulk create/update/delete, get by ID, get by IMSI, update, delete
 - **User Equipment**: List, create, bulk create/update/delete, create from CSV, get by ID, get by IMEI, get all for a subscriber, update, delete
 
-### `cisco_ise_backup_and_restore-latest.json`
+### `cisco_ise_backup_and_restore-latest.json` (curated)
 
-Full spec, already narrow (6 operations). Every operation is a genuine backup/restore action or the status check for a job the same API triggers — no generic health/telemetry surface to exclude.
+Reviewed and confirmed already scoped to common CRUD for automation (6 operations). Every operation is a genuine backup/restore action or the status check for a job the same API triggers — no generic health/telemetry surface to exclude.
 
 Operations included, by category:
 
@@ -51,9 +51,9 @@ Operations included, by category:
 - **Restore actions**: Trigger a restore from a named backup
 - **Scheduled backup**: Create/update the recurring backup schedule
 
-### `cisco_ise_certificates-latest.json`
+### `cisco_ise_certificates-latest.json` (curated)
 
-Full spec, already narrow (22 operations). Every operation is CRUD or a provisioning action on certificates/CSRs — no self-introspection or housekeeping surface to exclude.
+Reviewed and confirmed already scoped to common CRUD for automation (22 operations). Every operation is CRUD or a provisioning action on certificates/CSRs — no self-introspection or housekeeping surface to exclude.
 
 Operations included, by category:
 
@@ -62,26 +62,26 @@ Operations included, by category:
 - **Trusted Certificates**: List, get by ID, import, update, delete, export
 - **Certificate lifecycle actions**: Regenerate the internal root CA chain, renew OCSP/messaging-service certificates, bind a CA-signed certificate
 
-### `cisco_ise_custom_attributes-latest.json`
+### `cisco_ise_custom_attributes-latest.json` (curated)
 
-Full spec, already narrow (5 operations). Covers endpoint custom attribute definition CRUD.
+Reviewed and confirmed already scoped to common CRUD for automation (5 operations). Covers endpoint custom attribute definition CRUD.
 
 Operations included, by category:
 
 - **Custom attribute CRUD**: List, create, get by name, rename, delete by name
 
-### `cisco_ise_data_connect-latest.json`
+### `cisco_ise_data_connect-latest.json` (curated)
 
-Full spec, already narrow (5 operations). Covers Data Connect configuration, not runtime health/telemetry — the "settings" endpoints read/write the feature's enabled state, not a health check.
+Reviewed and confirmed already scoped to common CRUD for automation (5 operations). Covers Data Connect configuration, not runtime health/telemetry — the "settings" endpoints read/write the feature's enabled state, not a health check.
 
 Operations included, by category:
 
 - **Connection details**: Get ODBC connection details
 - **Feature settings**: Get/update whether the Data Connect feature is enabled, update the Data Connect user password, update password expiry (in days)
 
-### `cisco_ise_deployment-latest.json`
+### `cisco_ise_deployment-latest.json` (curated)
 
-Full spec, already narrow (24 operations). Every operation is CRUD or a provisioning action on deployment nodes/node-groups — no self-introspection or reporting-only surface to exclude.
+Reviewed and confirmed already scoped to common CRUD for automation (24 operations). Every operation is CRUD or a provisioning action on deployment nodes/node-groups — no self-introspection or reporting-only surface to exclude.
 
 Operations included, by category:
 
@@ -92,9 +92,9 @@ Operations included, by category:
 - **Node interfaces**: List interfaces on a node, get/configure the SXP interface
 - **Profiler**: Get/update the profiler probe configuration of a PSN
 
-### `cisco_ise_duo_identity_sync-latest.json`
+### `cisco_ise_duo_identity_sync-latest.json` (curated)
 
-Full spec, already narrow (8 operations). Covers Duo identity sync connections and Active Directory source lookups.
+Reviewed and confirmed already scoped to common CRUD for automation (8 operations). Covers Duo identity sync connections and Active Directory source lookups.
 
 Operations included, by category:
 
@@ -102,17 +102,17 @@ Operations included, by category:
 - **Identity sync configs**: List, create, get by name, update, delete
 - **Sync action**: Trigger a sync between an Active Directory and its MFA provider
 
-### `cisco_ise_endpoint_replication-latest.json`
+### `cisco_ise_endpoint_replication-latest.json` (curated)
 
-Full spec, already narrow (2 operations). This is a control switch (get/set whether endpoint replication is stopped), not a health check — kept as-is.
+Reviewed and confirmed already scoped to common CRUD for automation (2 operations). This is a control switch (get/set whether endpoint replication is stopped), not a health check — kept as-is.
 
 Operations included, by category:
 
 - **Replication control**: Get/update the stop-replication status
 
-### `cisco_ise_endpoints-latest.json`
+### `cisco_ise_endpoints-latest.json` (curated)
 
-Full spec, already narrow (10 operations). Covers endpoint CRUD, bulk operations, and device-type summaries.
+Reviewed and confirmed already scoped to common CRUD for automation (10 operations). Covers endpoint CRUD, bulk operations, and device-type summaries.
 
 Operations included, by category:
 
@@ -120,9 +120,9 @@ Operations included, by category:
 - **Bulk operations**: Bulk create, bulk update, bulk delete, create an endpoint task
 - **Reporting**: Aggregate summary by device type
 
-### `cisco_ise_ipsec-latest.json`
+### `cisco_ise_ipsec-latest.json` (curated)
 
-Full spec, already narrow (9 operations). Covers IPsec connection CRUD, bulk create, and enable/disable per network device.
+Reviewed and confirmed already scoped to common CRUD for automation (9 operations). Covers IPsec connection CRUD, bulk create, and enable/disable per network device.
 
 Operations included, by category:
 
@@ -144,17 +144,17 @@ Operations included, by category:
 
 Excludes the static feature-to-tier reference mapping lookup (`GET /api/v1/license/system/feature-to-tier-mapping`) — a read-only catalog of which ISE features are gated behind which license tier, with no corresponding write operation in this API. Pull the full spec (`cisco_ise_licensing-1.0.0.json`) if you need it.
 
-### `cisco_ise_lsd_settings-latest.json`
+### `cisco_ise_lsd_settings-latest.json` (curated)
 
-Full spec, already narrow (2 operations). Covers Local Session Directory (LSD) settings.
+Reviewed and confirmed already scoped to common CRUD for automation (2 operations). Covers Local Session Directory (LSD) settings.
 
 Operations included, by category:
 
 - **LSD settings**: Get/update the endpoint-ownership and random-changing-MAC (RCM) settings
 
-### `cisco_ise_mfa-latest.json`
+### `cisco_ise_mfa-latest.json` (curated)
 
-Full spec, already narrow (6 operations). Covers Duo MFA connection CRUD and connection testing.
+Reviewed and confirmed already scoped to common CRUD for automation (6 operations). Covers Duo MFA connection CRUD and connection testing.
 
 Operations included, by category:
 
@@ -173,9 +173,9 @@ Trimmed to 12 of 13 operations. Covers network device CRUD and bulk submission v
 
 Trimmed to 3 of 4 operations. Covers read-only node lookups via the ERS API. Excludes the ERS API self-introspection `versioninfo` endpoint.
 
-### `cisco_ise_patches-latest.json`
+### `cisco_ise_patches-latest.json` (curated)
 
-Full spec, already narrow (6 operations). Covers hot patch and patch install/rollback/listing.
+Reviewed and confirmed already scoped to common CRUD for automation (6 operations). Covers hot patch and patch install/rollback/listing.
 
 Operations included, by category:
 
@@ -193,9 +193,9 @@ Resources included, by category:
 
 Excluded: hit-count reset actions (analytics, not CRUD), dictionary/attribute introspection and custom-dictionary CRUD, and reference-only lookups (identity stores, service names, shell profiles, command sets, authorization profiles, security groups) that have no corresponding write operations in this API. Pull the full spec (`cisco_ise_policy-1.0.0.json`) if you need those.
 
-### `cisco_ise_pxgrid_direct-latest.json`
+### `cisco_ise_pxgrid_direct-latest.json` (curated)
 
-Full spec, already narrow (7 operations). The dictionary-references lookup reflects live per-connector state (which dictionaries a configured connector references), not a static vendor catalog, so it was kept alongside the connector CRUD and connection test.
+Reviewed and confirmed already scoped to common CRUD for automation (7 operations). The dictionary-references lookup reflects live per-connector state (which dictionaries a configured connector references), not a static vendor catalog, so it was kept alongside the connector CRUD and connection test.
 
 Operations included, by category:
 
@@ -203,44 +203,44 @@ Operations included, by category:
 - **Dictionary references**: Get the map of dictionaries referenced by configured connectors
 - **Connection test**: Test a connector's connection
 
-### `cisco_ise_repository-latest.json`
+### `cisco_ise_repository-latest.json` (curated)
 
-Full spec, already narrow (6 operations). Covers repository CRUD and file listing.
+Reviewed and confirmed already scoped to common CRUD for automation (6 operations). Covers repository CRUD and file listing.
 
 Operations included, by category:
 
 - **Repository CRUD**: List, create, get by name, update, delete
 - **Files**: List files in a repository
 
-### `cisco_ise_sgt_reservation-latest.json`
+### `cisco_ise_sgt_reservation-latest.json` (curated)
 
-Full spec, already narrow (5 operations). Covers Security Group Tag (SGT) reservation CRUD and range reservation.
+Reviewed and confirmed already scoped to common CRUD for automation (5 operations). Covers Security Group Tag (SGT) reservation CRUD and range reservation.
 
 Operations included, by category:
 
 - **SGT reservation CRUD**: List, get by client ID, update, delete
 - **Range reservation**: Reserve a contiguous range of SGTs for a client
 
-### `cisco_ise_system_settings-latest.json`
+### `cisco_ise_system_settings-latest.json` (curated)
 
-Full spec, already narrow (4 operations). Covers proxy and telemetry transport gateway settings.
+Reviewed and confirmed already scoped to common CRUD for automation (4 operations). Covers proxy and telemetry transport gateway settings.
 
 Operations included, by category:
 
 - **Proxy settings**: Get/update ISE's outbound proxy connection settings
 - **Transport gateway settings**: Get/update the telemetry transport gateway settings
 
-### `cisco_ise_task_service-latest.json`
+### `cisco_ise_task_service-latest.json` (curated)
 
-Full spec, already narrow (2 operations). Read-only, but it's the shared status-polling surface that backup/restore, upgrade, patch, and certificate-regeneration operations across the other ISE modules point to for tracking the async job they just triggered — normal automation, not generic housekeeping, so nothing was removed.
+Reviewed and confirmed already scoped to common CRUD for automation (2 operations). Read-only, but it's the shared status-polling surface that backup/restore, upgrade, patch, and certificate-regeneration operations across the other ISE modules point to for tracking the async job they just triggered — normal automation, not generic housekeeping, so nothing was removed.
 
 Operations included, by category:
 
 - **Task status lookups**: List all task statuses, get a task's status by ID
 
-### `cisco_ise_trustsec-latest.json`
+### `cisco_ise_trustsec-latest.json` (curated)
 
-Full spec, already narrow (13 operations). Covers SGACL NBAR application CRUD and TrustSec virtual network CRUD with bulk create/update/delete.
+Reviewed and confirmed already scoped to common CRUD for automation (13 operations). Covers SGACL NBAR application CRUD and TrustSec virtual network CRUD with bulk create/update/delete.
 
 Operations included, by category:
 
@@ -248,9 +248,9 @@ Operations included, by category:
 - **Virtual networks**: List, create, get by ID, update, delete
 - **Virtual network bulk operations**: Bulk create, bulk update, bulk delete
 
-### `cisco_ise_upgrade-latest.json`
+### `cisco_ise_upgrade-latest.json` (curated)
 
-Full spec, already narrow (8 operations). Covers the upgrade prepare/stage/proceed workflow and status checks.
+Reviewed and confirmed already scoped to common CRUD for automation (8 operations). Covers the upgrade prepare/stage/proceed workflow and status checks.
 
 Operations included, by category:
 

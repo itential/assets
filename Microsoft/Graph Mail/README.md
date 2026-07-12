@@ -28,9 +28,9 @@ Obtain a token via the OAuth2 client credentials grant: `POST https://login.micr
 
 ## OpenAPIs
 
-### `microsoft_graph_mail-latest.json` (full spec, untouched)
+### `microsoft_graph_mail-latest.json` (curated)
 
-Full, unmodified vendor spec (`x-vendor-api-version: 1.0`, 1 operation). This spec was hand-scoped to a single Microsoft Graph action — there is no separate admin, health-check, or introspection surface bundled in to exclude, so nothing was removed.
+Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: 1.0`, 1 operation). This spec was hand-scoped to a single Microsoft Graph action — there is no separate admin, health-check, or introspection surface bundled in to exclude, so nothing was removed.
 
 Operations included, by category:
 

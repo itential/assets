@@ -30,7 +30,7 @@ Generate an access key ID and secret access key for an IAM principal with the ap
 
 ## OpenAPIs
 
-### `aws_organizations-latest.json` (full spec, untouched)
+### `aws_organizations-latest.json` (curated)
 
 Actively-maintained spec (`x-vendor-api-version: 2016-11-28`, 55 operations, all `POST` against the single AWS Query-protocol endpoint with an `X-Amz-Target` action header). Every operation is a genuine CRUD or provisioning action on an Organizations business resource (account, OU, policy, handshake, delegated administrator, service access, resource policy, or tag) — there is no separate health/heartbeat/metrics, self-introspection/version-info, or "about" surface to exclude, so nothing was removed.
 

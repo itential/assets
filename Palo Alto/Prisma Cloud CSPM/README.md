@@ -30,7 +30,7 @@ Obtain a JWT by calling `POST /login` with your Prisma Cloud access key ID and s
 
 ## OpenAPIs
 
-### `palo_alto_prisma_cloud_cspm_alerts-latest.json` (untouched)
+### `palo_alto_prisma_cloud_cspm_alerts-latest.json` (curated)
 
 Actively-maintained spec (`x-vendor-api-version: v1`). Left as the full upstream spec (25 operations) — every operation is a genuine read, write, or provisioning action against the `alert` resource itself; there's no health/heartbeat/metrics, version-info, or other server-housekeeping surface to trim.
 

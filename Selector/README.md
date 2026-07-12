@@ -41,7 +41,7 @@ Resources included, by category:
 
 Excluded: legacy v1 schema endpoints (superseded by v2), bulk/CSV import-export utilities, and admin/diagnostic endpoints (health, logs, config, version, opstats). Pull the full spec from the dated file below if you need something not covered here.
 
-### `selector_ai_query-latest.json` (full spec, verified minimal)
+### `selector_ai_query-latest.json` (curated)
 
 Single-purpose API exposing exactly one operation upstream (`x-vendor-api-version: 1.0.0`, 1 of 1 operations kept). Audited operation-by-operation and confirmed there is no separate admin/health/telemetry surface to exclude — the sole endpoint is the product's entire business function, so nothing was removed:
 

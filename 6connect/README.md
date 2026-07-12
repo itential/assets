@@ -30,9 +30,9 @@ Configure API access in 6connect under **Administration → Users**.
 
 ## OpenAPIs
 
-### `6connect_provision-latest.json` (full spec, untouched)
+### `6connect_provision-latest.json` (curated)
 
-Full, unmodified vendor spec (`x-vendor-api-version: 2.0.0`, 39 operations). Every operation in the upstream spec is CRUD or a provisioning action on the single `resources` model — there is no separate admin, webhook, or reporting surface to exclude, so nothing was removed.
+Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: 2.0.0`, 39 operations). Every operation in the upstream spec is CRUD or a provisioning action on the single `resources` model — there is no separate admin, webhook, or reporting surface to exclude, so nothing was removed.
 
 Operations included, by category:
 

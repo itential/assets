@@ -28,9 +28,9 @@ Register an app at https://apiconsole.cisco.com with openVuln API access, then o
 
 ## OpenAPIs
 
-### `cisco_psirt_openvuln-latest.json` (full spec, untouched)
+### `cisco_psirt_openvuln-latest.json` (curated)
 
-Full, unmodified vendor spec (`x-vendor-api-version: 2.0.1`, 30 operations). Every operation is a read-only lookup against Cisco security advisory/CVE/vulnerability data — the product's only business resource — so there is no separate admin, health, or self-introspection surface to exclude. Nothing was removed.
+Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: 2.0.1`, 30 operations). Every operation is a read-only lookup against Cisco security advisory/CVE/vulnerability data — the product's only business resource — so there is no separate admin, health, or self-introspection surface to exclude. Nothing was removed.
 
 Operations included, by category:
 

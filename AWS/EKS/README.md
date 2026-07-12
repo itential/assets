@@ -28,7 +28,7 @@ Generate an AWS access key ID and secret access key for an IAM principal with `e
 
 ## OpenAPIs
 
-### `amazon_eks-latest.json` (full, unmodified)
+### `amazon_eks-latest.json` (curated)
 
 Actively-maintained spec (`x-vendor-api-version: 2017-11-01`, 35 operations). Audited operation-by-operation: every operation manages an EKS cluster or one of its direct sub-resources (add-ons, managed node groups, Fargate profiles, identity provider configs, updates, tags, connected-cluster registrations). There is no health/heartbeat/metrics endpoint, no API self-introspection or version-info endpoint, and no vendor-internal admin tooling to trim, so the full spec is kept as-is.
 

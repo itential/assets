@@ -60,9 +60,9 @@ Use a ServiceNow user/service account with appropriate ACL permissions on the ta
 
 ## OpenAPIs
 
-### `servicenow_change_management-latest.json` (full spec, untouched)
+### `servicenow_change_management-latest.json` (curated)
 
-Full, unmodified vendor spec (`x-vendor-api-version: v2`, 42 operations). Already a narrow, single-purpose API covering the Change Management module only. Every operation reads or writes an actual change-management business object (change requests, tasks, CIs, conflicts, schedule, risk, approvals) — there is no separate health/metrics/self-introspection surface to exclude, so nothing was removed.
+Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: v2`, 42 operations). Already a narrow, single-purpose API covering the Change Management module only. Every operation reads or writes an actual change-management business object (change requests, tasks, CIs, conflicts, schedule, risk, approvals) — there is no separate health/metrics/self-introspection surface to exclude, so nothing was removed.
 
 Operations included, by category:
 
@@ -79,17 +79,17 @@ Operations included, by category:
 - **Impacted Services**: Refresh the impacted business services list for a change
 - **Background Worker**: Get the status of a background worker process tied to a change operation
 
-### `servicenow_table_api-latest.json` (full spec, untouched)
+### `servicenow_table_api-latest.json` (curated)
 
-Full, unmodified vendor spec (`x-vendor-api-version: v3`, 6 operations). The Table API is inherently generic CRUD (list/create/read/update/delete against any table by name) — every operation is a core CRUD verb on the single generic `tableName` resource, so nothing was removed.
+Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: v3`, 6 operations). The Table API is inherently generic CRUD (list/create/read/update/delete against any table by name) — every operation is a core CRUD verb on the single generic `tableName` resource, so nothing was removed.
 
 Operations included, by category:
 
 - **Table Records**: List/query records in a table, create a record, get a record by `sys_id`, replace a record (PUT), partially update a record (PATCH), delete a record
 
-### `servicenow_itential_services_app-latest.json` (full spec, untouched)
+### `servicenow_itential_services_app-latest.json` (curated)
 
-Full, unmodified vendor spec (`x-vendor-api-version: v2`, 1 operation). A single-endpoint scoped application API used to relay REST calls between ServiceNow and Itential Platform — there is only one operation in the upstream spec, so nothing was removed.
+Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: v2`, 1 operation). A single-endpoint scoped application API used to relay REST calls between ServiceNow and Itential Platform — there is only one operation in the upstream spec, so nothing was removed.
 
 Operations included, by category:
 
