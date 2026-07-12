@@ -1,6 +1,6 @@
 1Password is a password manager and secrets management platform. 1Password Connect is its self-hosted REST API server, providing programmatic access to 1Password vaults for retrieving, creating, and managing secrets and items from automated systems.
 
-This project provides an OpenAPI spec for automating against the 1Password Connect REST API via an Integration Model. The `-latest` spec is the full vendor spec — see **OpenAPIs** below.
+This project provides an OpenAPI spec for automating against the 1Password Connect REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for secrets automation — see **OpenAPIs** below.
 
 ## Contents
 
@@ -30,9 +30,15 @@ Generate a 1Password Connect token when deploying a Connect server. See https://
 
 ## OpenAPIs
 
-### `1password_connect-latest.json` (full spec)
+### `1password_connect-latest.json` (curated)
 
-Actively-maintained spec (`x-vendor-api-version: 1.5.7`). This is 1Password Connect's complete API surface, already scoped to a single purpose — vault and secret management — so it is carried through untrimmed. It covers vaults, items, item files, and server health/activity endpoints.
+Actively-maintained spec (`x-vendor-api-version: 1.5.7`). Trimmed to 12 of 16 upstream operations covering common CRUD for secrets automation. Excludes server activity/health/heartbeat/metrics endpoints (operational monitoring, not secrets automation). Also consolidated a redundant per-operation auth override into a single global `security` block.
+
+Resources included, by category:
+
+- **Vaults**: List, get
+- **Items**: List, create, get, update, delete
+- **Item Files**: List, get, get content
 
 ### Full, unmodified spec
 

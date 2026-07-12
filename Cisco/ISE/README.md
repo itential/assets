@@ -84,17 +84,17 @@ Full spec, already narrow (2 operations). Covers Local Session Directory (LSD) s
 
 Full spec, already narrow (6 operations). Covers Duo MFA connection CRUD and connection testing.
 
-### `cisco_ise_network_device_groups-latest.json`
+### `cisco_ise_network_device_groups-latest.json` (curated)
 
-Full spec, already narrow (8 operations). Covers network device group CRUD via the ERS API.
+Trimmed to 7 of 8 operations. Covers network device group CRUD via the ERS API. Excludes the ERS API self-introspection `versioninfo` endpoint.
 
-### `cisco_ise_network_devices-latest.json`
+### `cisco_ise_network_devices-latest.json` (curated)
 
-Full spec, already narrow (13 operations). Covers network device CRUD and bulk submission via the ERS API.
+Trimmed to 12 of 13 operations. Covers network device CRUD and bulk submission via the ERS API. Excludes the ERS API self-introspection `versioninfo` endpoint.
 
-### `cisco_ise_nodes-latest.json`
+### `cisco_ise_nodes-latest.json` (curated)
 
-Full spec, already narrow (4 operations). Covers read-only node lookups via the ERS API.
+Trimmed to 3 of 4 operations. Covers read-only node lookups via the ERS API. Excludes the ERS API self-introspection `versioninfo` endpoint.
 
 ### `cisco_ise_patches-latest.json`
 
