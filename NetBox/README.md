@@ -32,7 +32,13 @@ Generate a token in NetBox under your user profile → **API Tokens**.
 
 ## OpenAPIs
 
-### `netbox-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`netbox-latest.json`](./OpenAPIs/netbox-latest.json) | latest (curated) | Trimmed to 329 of 1194 upstream operations covering common CRUD for network automation — see breakdown below |
+| [`netbox-4.1.json`](./OpenAPIs/netbox-4.1.json) | 4.1 | Full spec for NetBox 4.1. |
+| [`netbox-3.7.8.json`](./OpenAPIs/netbox-3.7.8.json) | 3.7.8 | Full spec for NetBox 3.7.8. |
+
+### `netbox-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 4.6.1`). Trimmed to 329 of 1194 upstream operations covering common CRUD for network automation. Pull the full spec from a running NetBox instance's `/api/schema/` endpoint if you need something not covered here.
 
@@ -44,13 +50,6 @@ Resources included, by category:
 - **Tenancy**: Tenant Groups, Tenants
 - **Circuits**: Circuit Types, Providers, Circuits, Circuit Terminations
 - **Extras**: Tags, Custom Fields
-
-### Full, unmodified specs
-
-| Spec | Description |
-|---|---|
-| [`netbox-4.1.json`](./OpenAPIs/netbox-4.1.json) | Full spec for NetBox 4.1. |
-| [`netbox-3.7.8.json`](./OpenAPIs/netbox-3.7.8.json) | Full spec for NetBox 3.7.8. |
 
 ## Dependencies
 

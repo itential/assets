@@ -30,7 +30,12 @@ Generate an API key from the Infoblox Cloud Services Portal under **Administrati
 
 ## OpenAPIs
 
-### `infoblox_universal_ddi_bloxone-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`infoblox_universal_ddi_bloxone-latest.json`](./OpenAPIs/infoblox_universal_ddi_bloxone-latest.json) | latest (curated) | Actively-maintained spec, trimmed to 105 of 119 upstream operations covering common CRUD for automation — see breakdown below |
+| [`infoblox_universal_ddi_bloxone-1.json`](./OpenAPIs/infoblox_universal_ddi_bloxone-1.json) | 1 | Full spec for Infoblox Universal DDI (BloxOne) API version 1, including Automated Scope Management, DNS usage reporting, config-profile linking, and bulk import/copy operations not carried into the curated spec. |
+
+### `infoblox_universal_ddi_bloxone-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 1`). Trimmed to 105 of 119 upstream operations covering common CRUD for automation.
 
@@ -38,12 +43,6 @@ Resources included, by category:
 
 - **DHCP**: Global DHCP config, DHCP Servers, DHCP Hosts (with associations), HA Groups, Fixed Addresses, Hardware Filters, Option Filters, Option Codes, Option Spaces, Option Groups, MAC Address Items, DHCP Filters, DHCP Service instances, Universal Service associations, lease actions (clear leases)
 - **IPAM**: IP Spaces, Address Blocks (with ancestor/copy/next-available lookups), Subnets (with ancestor/copy/next-available lookups), Ranges (with next-available-IP), Addresses, Hosts
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`infoblox_universal_ddi_bloxone-1.json`](./OpenAPIs/infoblox_universal_ddi_bloxone-1.json) | Full spec for Infoblox Universal DDI (BloxOne) API version 1, including Automated Scope Management, DNS usage reporting, config-profile linking, and bulk import/copy operations not carried into the curated spec. |
 
 ## Dependencies
 

@@ -30,7 +30,12 @@ Generate an access key ID and secret access key in the AWS IAM console under you
 
 ## OpenAPIs
 
-### `amazon_s3-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`amazon_s3-latest.json`](./OpenAPIs/amazon_s3-latest.json) | latest (curated) | Trimmed to 54 of 97 upstream operations covering common CRUD for automation — see breakdown below |
+| [`amazon_s3-2006-03-01.json`](./OpenAPIs/amazon_s3-2006-03-01.json) | 2006-03-01 | Full spec for the Amazon S3 API (2006-03-01). |
+
+### `amazon_s3-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2006-03-01`). Trimmed to 54 of 97 upstream operations covering common CRUD for automation.
 
@@ -44,12 +49,6 @@ Resources included, by category:
 - **Multipart upload**: Create, Upload Part, Upload Part (Copy), Complete, Abort, List Parts, List Multipart Uploads
 
 Not included: bucket analytics/inventory/metrics/intelligent-tiering configurations, transfer acceleration, request payer, notification configuration, replication, static website hosting, object lock/legal-hold/retention, S3 Select, object attributes, torrent, and S3 Object Lambda's WriteGetObjectResponse. Pull the full spec below if you need one of these.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`amazon_s3-2006-03-01.json`](./OpenAPIs/amazon_s3-2006-03-01.json) | Full spec for the Amazon S3 API (2006-03-01). |
 
 ## Dependencies
 

@@ -30,7 +30,12 @@ Generate a token in PRTG under **Setup > Account Settings > My Account > API Tok
 
 ## OpenAPIs
 
-### `paessler_prtg-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`paessler_prtg-latest.json`](./OpenAPIs/paessler_prtg-latest.json) | latest (curated) | Actively-maintained spec, trimmed to 77 of 115 upstream operations — see breakdown below |
+| [`paessler_prtg-2.0.json`](./OpenAPIs/paessler_prtg-2.0.json) | 2.0 | Full spec for PRTG REST API v2.0. |
+
+### `paessler_prtg-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2.0`). Trimmed to 77 of 115 upstream operations covering common CRUD for automation.
 
@@ -46,12 +51,6 @@ Resources included, by category:
 - **Autodiscoveries**: List autodiscovery jobs
 
 Not included: user/usergroup/API-key administration, session-based login (the API key header is used instead), schema-discovery endpoints, PRTG libraries (custom dashboards), lookup definitions, system settings/feature toggles/license info, and the sensor status summary/reporting endpoint. Pull the full spec below if you need one of those areas.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`paessler_prtg-2.0.json`](./OpenAPIs/paessler_prtg-2.0.json) | Full spec for PRTG REST API v2.0. |
 
 ## Dependencies
 

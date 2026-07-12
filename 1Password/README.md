@@ -30,7 +30,12 @@ Generate a 1Password Connect token when deploying a Connect server. See https://
 
 ## OpenAPIs
 
-### `1password_connect-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`1password_connect-latest.json`](./OpenAPIs/1password_connect-latest.json) | latest (curated) | Actively-maintained spec, trimmed to 12 of 16 upstream operations — see breakdown below |
+| [`1password_connect-1.5.7.json`](./OpenAPIs/1password_connect-1.5.7.json) | 1.5.7 | Full, unmodified vendor spec |
+
+### `1password_connect-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 1.5.7`). Trimmed to 12 of 16 upstream operations covering common CRUD for secrets automation. Excludes server activity/health/heartbeat/metrics endpoints (operational monitoring, not secrets automation). Also consolidated a redundant per-operation auth override into a single global `security` block.
 
@@ -39,12 +44,6 @@ Resources included, by category:
 - **Vaults**: List, get
 - **Items**: List, create, get, update, delete
 - **Item Files**: List, get, get content
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`1password_connect-1.5.7.json`](./OpenAPIs/1password_connect-1.5.7.json) | Full spec for 1Password Connect 1.5.7. |
 
 ## Dependencies
 

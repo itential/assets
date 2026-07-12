@@ -30,7 +30,12 @@ Both values are available in the Twilio Console at https://console.twilio.com.
 
 ## OpenAPIs
 
-### `twilio-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`twilio-latest.json`](./OpenAPIs/twilio-latest.json) | latest (curated) | Actively-maintained spec, trimmed to 67 of 197 upstream operations covering common CRUD for automation — see breakdown below |
+| [`twilio-1.0.0.json`](./OpenAPIs/twilio-1.0.0.json) | 1.0.0 | Full spec for the Twilio REST API `2010-04-01`, version `1.0.0` (197 operations) |
+
+### `twilio-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 1.0.0`). Trimmed to 67 of 197 upstream operations covering common CRUD for automation. Pull the full spec from Twilio's published API reference at https://www.twilio.com/docs/usage/api if you need something not covered here.
 
@@ -48,12 +53,6 @@ Resources included, by category:
 - **Outgoing Caller IDs**: Verified caller IDs (list, create, get, update, delete)
 - **Queues**: Call Queues (list, create, get, update, delete), Queue Members (list, get, update/dequeue)
 - **Recordings**: Account-level Recordings (list, get, delete)
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`twilio-1.0.0.json`](./OpenAPIs/twilio-1.0.0.json) | Full spec for the Twilio REST API `2010-04-01`, version `1.0.0` (197 operations). |
 
 ## Dependencies
 

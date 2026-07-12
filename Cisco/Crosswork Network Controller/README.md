@@ -31,7 +31,14 @@ Paste the JWT as the bearer token. JWTs expire and must be refreshed manually un
 
 ## OpenAPIs
 
-### `cisco_crosswork_network_controller_device_management-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`cisco_crosswork_network_controller_device_management-latest.json`](./OpenAPIs/cisco_crosswork_network_controller_device_management-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_crosswork_network_controller_l3vpn-latest.json`](./OpenAPIs/cisco_crosswork_network_controller_l3vpn-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_crosswork_network_controller_device_management-7.2.0.json`](./OpenAPIs/cisco_crosswork_network_controller_device_management-7.2.0.json) | 7.2.0 | Full Device Management spec for CNC 7.2.0. |
+| [`cisco_crosswork_network_controller_l3vpn-7.2.0.json`](./OpenAPIs/cisco_crosswork_network_controller_l3vpn-7.2.0.json) | 7.2.0 | Full L3VPN spec for CNC 7.2.0. |
+
+### `cisco_crosswork_network_controller_device_management-latest.json`
 
 Reviewed and confirmed already scoped to common CRUD for automation (1 operation). The upstream API exposes exactly one endpoint and it is a genuine inventory query with no separate health/metrics/version-info surface to exclude, so nothing was removed.
 
@@ -39,20 +46,13 @@ Operations included, by category:
 
 - **Device inventory**: Get all devices (deep inventory query, including device detail attributes)
 
-### `cisco_crosswork_network_controller_l3vpn-latest.json` (curated)
+### `cisco_crosswork_network_controller_l3vpn-latest.json`
 
 Reviewed and confirmed already scoped to common CRUD for automation (4 operations). The upstream API implements the IETF L3VPN NTW model as a single RESTCONF resource with full CRUD; there is no admin, health, or introspection surface to exclude, so nothing was removed.
 
 Operations included, by category:
 
 - **L3VPN service intent**: Get, create/replace (PUT), partially update (PATCH), delete a VPN service by `vpn-service-vpn-id`
-
-### Full, unmodified specs
-
-| Spec | Description |
-|---|---|
-| [`cisco_crosswork_network_controller_device_management-7.2.0.json`](./OpenAPIs/cisco_crosswork_network_controller_device_management-7.2.0.json) | Full Device Management spec for CNC 7.2.0. |
-| [`cisco_crosswork_network_controller_l3vpn-7.2.0.json`](./OpenAPIs/cisco_crosswork_network_controller_l3vpn-7.2.0.json) | Full L3VPN spec for CNC 7.2.0. |
 
 ## Dependencies
 

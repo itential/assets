@@ -146,7 +146,12 @@ All workflows accept a JSON object when run manually or called as a child workfl
 
 ## OpenAPIs
 
-### `github_rest_api-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`github_rest_api-latest.json`](./OpenAPIs/github_rest_api-latest.json) | latest (curated) | Trimmed to 320 of 987 upstream operations — see breakdown below |
+| [`github_rest_api-1.1.4.json`](./OpenAPIs/github_rest_api-1.1.4.json) | 1.1.4 | Full, unmodified vendor spec |
+
+### `github_rest_api-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 3.1.3`). Trimmed to 320 of 987 upstream operations covering common CRUD for repository automation. Excludes GitHub Enterprise admin, security scanning (Dependabot/code/secret scanning), Packages, Pages, and CI status-check APIs. Pull the full spec from [GitHub's official OpenAPI description](https://github.com/github/rest-api-description) if you need one of the excluded areas.
 
@@ -160,12 +165,6 @@ Resources included, by category:
 - **Webhooks**: Repository Hooks
 - **Organizations**: Org Teams, Members, Public Members, Outside Collaborators, Org Repos
 - **User**: Authenticated user profile
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`github_rest_api-1.1.4.json`](./OpenAPIs/github_rest_api-1.1.4.json) | Full spec for GitHub REST API 1.1.4. |
 
 ## Dependencies
 

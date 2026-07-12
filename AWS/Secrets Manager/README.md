@@ -1,6 +1,6 @@
 AWS Secrets Manager protects access to applications, services, and IT resources by enabling rotation, management, and retrieval of database credentials, API keys, and other secrets.
 
-This project provides an OpenAPI spec for automating against the AWS Secrets Manager API via an Integration Model. AWS Secrets Manager's API surface is narrow and single-purpose, so the `-latest` spec is the full upstream operation set — no trimming was needed.
+This project provides an OpenAPI spec for automating against the AWS Secrets Manager API via an Integration Model. AWS Secrets Manager's API surface is narrow and single-purpose, so the `-latest` spec was reviewed and curated for common CRUD automation.
 
 ## Contents
 
@@ -30,7 +30,12 @@ Generate an access key ID and secret access key in the AWS IAM console under **U
 
 ## OpenAPIs
 
-### `aws_secrets_manager-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`aws_secrets_manager-latest.json`](./OpenAPIs/aws_secrets_manager-latest.json) | latest (curated) | Actively-maintained, reviewed and confirmed already scoped to core secret lifecycle management — see breakdown below |
+| [`aws_secrets_manager-2017-10-17.json`](./OpenAPIs/aws_secrets_manager-2017-10-17.json) | 2017-10-17 | Full spec for AWS Secrets Manager API version 2017-10-17. |
+
+### `aws_secrets_manager-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2017-10-17`). AWS Secrets Manager's entire API is 22 operations, all of which are core to secret lifecycle management, so the full upstream operation set is kept as-is — nothing was removed. There is no separate health-check, heartbeat, metrics, or self-introspection/version-info surface in this API to exclude.
 
@@ -43,12 +48,6 @@ Operations included, by category:
 - **Cross-region replication**: Replicate a secret to regions, remove regions from replication, stop replication to a replica
 - **Tagging**: Tag resource, untag resource
 - **Utilities**: Generate a random password (used when creating secrets that need a generated value)
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`aws_secrets_manager-2017-10-17.json`](./OpenAPIs/aws_secrets_manager-2017-10-17.json) | Full spec for AWS Secrets Manager API version 2017-10-17. |
 
 ## Dependencies
 

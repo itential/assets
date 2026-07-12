@@ -73,7 +73,12 @@ The workflows in this project are wired to the integration instance named **`Pan
 
 ## OpenAPIs
 
-### `panorama-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`panorama-latest.json`](./OpenAPIs/panorama-latest.json) | latest (curated) | Trimmed from the full 541-operation upstream spec down to 92 operations — see breakdown below |
+| [`panorama-11.1.json`](./OpenAPIs/panorama-11.1.json) | 11.1 | Full spec for Panorama 11.1 (223 operations) |
+
+### `panorama-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 11.1`). Trimmed from the full 541-operation upstream spec down to 92 operations covering core security policy automation and device onboarding.
 
@@ -84,12 +89,6 @@ Resources included, by category:
 - **Network**: Zones
 - **Panorama**: Device Groups, Templates, Template Stacks
 - **Commit**: Commit Configuration, Commit All Configuration (via the Panorama XML API)
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`panorama-11.1.json`](./OpenAPIs/panorama-11.1.json) | Full spec for Panorama 11.1 (223 operations). |
 
 ---
 

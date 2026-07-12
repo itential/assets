@@ -30,7 +30,12 @@ Generate a token by issuing `POST /api/v2/tokens/` with your AWX username and pa
 
 ## OpenAPIs
 
-### `ansible_awx_tower-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`ansible_awx_tower-latest.json`](./OpenAPIs/ansible_awx_tower-latest.json) | latest (curated) | Trimmed to 277 of 631 upstream operations — see breakdown below |
+| [`ansible_awx_tower-v2.json`](./OpenAPIs/ansible_awx_tower-v2.json) | v2 | Full, unmodified vendor spec |
+
+### `ansible_awx_tower-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: v2`). Trimmed to 277 of 631 upstream operations covering common CRUD for automation. Pull the full spec from a running AWX instance's `/api/v2/` OpenAPI schema endpoint if you need something not covered here.
 
@@ -49,12 +54,6 @@ Resources included, by category:
 - **Labels, Schedules, Notification Templates & Notifications**: CRUD/read
 
 Excluded as long-tail/admin surface: activity streams, analytics/reporting, bulk operations, instance/instance-group and mesh/receptor infrastructure administration, RBAC role management (`roles`, `role_definitions`, `role_*_assignments`), the `service-index` federation API, system jobs/settings/config administration, workflow approvals, and webhook receiver endpoints (GitHub/GitLab/Bitbucket callback hooks).
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`ansible_awx_tower-v2.json`](./OpenAPIs/ansible_awx_tower-v2.json) | Full spec for AWX (Tower) API v2. |
 
 ## Dependencies
 

@@ -30,7 +30,12 @@ Configure accounts under **Security → Users** in the Nexus admin UI.
 
 ## OpenAPIs
 
-### `sonatype_nexus_repository-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`sonatype_nexus_repository-latest.json`](./OpenAPIs/sonatype_nexus_repository-latest.json) | latest (curated) | Actively-maintained, trimmed to 146 of 241 upstream operations covering common CRUD for automation — see breakdown below |
+| [`sonatype_nexus_repository-3.69.0-02.json`](./OpenAPIs/sonatype_nexus_repository-3.69.0-02.json) | 3.69.0-02 | Full spec for Nexus Repository 3.69.0-02 (241 operations), including blob store, security (users/roles/privileges/LDAP/realms/certificates), email, licensing, scripting, tasks, routing rules, content selectors, Repository Firewall, and lifecycle/read-only administration. |
+
+### `sonatype_nexus_repository-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 3.69.0-02`). Trimmed to 146 of 241 upstream operations covering common CRUD for automation.
 
@@ -42,12 +47,6 @@ Resources included, by category:
 - **Search**: Search components and assets, and search-and-download an asset
 - **Formats**: List supported formats and their component upload field requirements
 - **Status**: Health-check endpoints for read/write availability
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`sonatype_nexus_repository-3.69.0-02.json`](./OpenAPIs/sonatype_nexus_repository-3.69.0-02.json) | Full spec for Nexus Repository 3.69.0-02 (241 operations), including blob store, security (users/roles/privileges/LDAP/realms/certificates), email, licensing, scripting, tasks, routing rules, content selectors, Repository Firewall, and lifecycle/read-only administration. |
 
 ## Dependencies
 

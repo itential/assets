@@ -56,7 +56,12 @@ Generate a Personal Access Token (or group/project access token) at GitLab → U
 
 ## OpenAPIs
 
-### `gitlab_rest_api-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`gitlab_rest_api-latest.json`](./OpenAPIs/gitlab_rest_api-latest.json) | latest (curated) | Trimmed to 133 of 1008 upstream operations covering common CRUD for automation — see breakdown below |
+| [`gitlab_rest_api-v4.json`](./OpenAPIs/gitlab_rest_api-v4.json) | v4 | Full spec for GitLab REST API v4 (1008 operations) |
+
+### `gitlab_rest_api-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: v4`). Trimmed to 133 of 1008 upstream operations covering common CRUD for automation. The full upstream spec models the entire GitLab REST API surface, including package registries (npm, Maven, PyPI, NuGet, Conan, Composer, Debian, RPM, Helm, Go proxy, generic packages, Terraform module registry), container registry, third-party service integrations, webhooks, instance/user/permission administration, Kubernetes cluster agents, feature flags, error tracking, wikis, snippets, badges, and bulk import/export — none of those are included here. Pull the full spec from [GitLab's official REST API docs](https://docs.gitlab.com/ee/api/rest/) if you need one of the excluded areas.
 
@@ -83,12 +88,6 @@ Resources included, by category:
 - **Deploy Tokens**: Group and Project level (List, Create, Get, Delete)
 - **Runners**: Project-level List, Register, Delete
 - **Users**: List, Get (read-only reference lookup)
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`gitlab_rest_api-v4.json`](./OpenAPIs/gitlab_rest_api-v4.json) | Full spec for GitLab REST API v4 (1008 operations). |
 
 ## Dependencies
 

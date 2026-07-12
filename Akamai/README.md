@@ -30,7 +30,12 @@ Generate EdgeGrid credentials in Akamai Control Center (Identity and Access Mana
 
 ## OpenAPIs
 
-### `akamai_apis-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`akamai_apis-latest.json`](./OpenAPIs/akamai_apis-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`akamai_apis-v2.json`](./OpenAPIs/akamai_apis-v2.json) | v2 | Full spec for the Akamai Edge DNS API, version v2. |
+
+### `akamai_apis-latest.json`
 
 Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: v2`, 60 operations). Every operation is CRUD or a provisioning action on the Edge DNS domain model (zones, versions, record sets, change lists, TSIG keys) or reference data those actions require (contracts, groups, nameservers, algorithms) — there is no separate admin, telemetry, or self-introspection surface to exclude, so nothing was removed.
 
@@ -44,12 +49,6 @@ Operations included, by category:
 - **Bulk zone requests** (async provisioning): Submit bulk-create request + check status + get result; submit bulk-delete request + check status + get result
 - **Zone status checks**: Get DNSSEC status for zones; get secondary-zone transfer status
 - **DNS reference data** (inputs required by the operations above, e.g. contract/group IDs for zone creation): Authoritative nameservers, contracts, groups, edge hostnames, record set types, DNSSEC algorithms, TSIG algorithms
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`akamai_apis-v2.json`](./OpenAPIs/akamai_apis-v2.json) | Full spec for the Akamai Edge DNS API, version v2. |
 
 ## Dependencies
 

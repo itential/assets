@@ -30,7 +30,12 @@ Sign requests with an AWS access key ID and secret access key belonging to an IA
 
 ## OpenAPIs
 
-### `amazon_api_gateway-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`amazon_api_gateway-latest.json`](./OpenAPIs/amazon_api_gateway-latest.json) | latest (curated) | Trimmed to 104 of 120 upstream operations covering common CRUD for automation — see breakdown below |
+| [`amazon_api_gateway-2015-07-09.json`](./OpenAPIs/amazon_api_gateway-2015-07-09.json) | 2015-07-09 | Full spec for the Amazon API Gateway `2015-07-09` management API (120 operations). |
+
+### `amazon_api_gateway-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2015-07-09`). Trimmed to 104 of 120 upstream operations covering common CRUD for automation.
 
@@ -44,12 +49,6 @@ Resources included, by category:
 - **Account & Tags**: Account settings, Resource Tags
 
 Excluded as niche developer-tooling/reporting add-ons not core to REST API lifecycle automation: API documentation generation (Documentation Parts/Versions), SDK generation (SDK Types, SDK export), API definition export, and usage plan analytics (usage-by-date reporting).
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`amazon_api_gateway-2015-07-09.json`](./OpenAPIs/amazon_api_gateway-2015-07-09.json) | Full spec for the Amazon API Gateway `2015-07-09` management API (120 operations). |
 
 ## Dependencies
 

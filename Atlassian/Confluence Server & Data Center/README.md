@@ -28,7 +28,12 @@ Authorization: Basic <base64(username:password_or_token)>
 
 ## OpenAPIs
 
-### `atlassian_confluence_server_data_center-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`atlassian_confluence_server_data_center-latest.json`](./OpenAPIs/atlassian_confluence_server_data_center-latest.json) | latest (curated) | Trimmed to 74 of 111 upstream operations — see breakdown below |
+| [`atlassian_confluence_server_data_center-9.0.0.json`](./OpenAPIs/atlassian_confluence_server_data_center-9.0.0.json) | 9.0.0 | Full spec for Confluence Server & Data Center 9.0.0. |
+
+### `atlassian_confluence_server_data_center-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 9.0.0`). Trimmed to 74 of 111 upstream operations covering common CRUD for automation.
 
@@ -44,12 +49,6 @@ Resources included, by category:
 - **Search**: Global entity search
 
 Excluded (not part of this curated spec): Confluence administration (user/group create-delete-enable-disable), backup and restore jobs, webhook management, long-running task queue, access mode, and content blueprint publishing. Pull the full spec below if you need one of those areas.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`atlassian_confluence_server_data_center-9.0.0.json`](./OpenAPIs/atlassian_confluence_server_data_center-9.0.0.json) | Full spec for Confluence Server & Data Center 9.0.0. |
 
 ## Dependencies
 

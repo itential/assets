@@ -30,7 +30,12 @@ Conjur also exposes dedicated authenticator endpoints (`/authn`, `/authn-ldap`, 
 
 ## OpenAPIs
 
-### `conjur-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`conjur-latest.json`](./OpenAPIs/conjur-latest.json) | latest (curated) | Trimmed to 34 of 38 upstream operations — see breakdown below |
+| [`conjur-5.3.2.json`](./OpenAPIs/conjur-5.3.2.json) | 5.3.2 | Full spec for Conjur Open Source 5.3.2. |
+
+### `conjur-latest.json`
 
 Trimmed to 34 of 38 upstream operations (`x-vendor-api-version: 5.3.2`). Conjur's API is already a narrow, single-purpose secrets-management surface, but the upstream spec mixes in a small "status" group of generic diagnostic/introspection endpoints alongside the real authentication/secrets/policy/role automation surface. Excludes:
 
@@ -48,12 +53,6 @@ Operations included, by category:
 - **Resources**: List resources (across all accounts, by account, or by kind); get a single resource
 - **Roles**: Get role info; add or remove a role membership
 - **Secrets**: Fetch one or many secret values; create a secret value
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`conjur-5.3.2.json`](./OpenAPIs/conjur-5.3.2.json) | Full spec for Conjur Open Source 5.3.2. |
 
 ## Dependencies
 

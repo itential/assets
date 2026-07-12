@@ -30,7 +30,12 @@ Generate an access key ID and secret access key for an IAM user or role with `ne
 
 ## OpenAPIs
 
-### `aws_network_firewall-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`aws_network_firewall-latest.json`](./OpenAPIs/aws_network_firewall-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`aws_network_firewall-2020-11-12.json`](./OpenAPIs/aws_network_firewall-2020-11-12.json) | 2020-11-12 | Full, unmodified vendor spec |
+
+### `aws_network_firewall-latest.json`
 
 Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: 2020-11-12`, 36 operations). Every operation is CRUD or a provisioning action on the firewall/policy/rule-group resource model — there is no health, heartbeat, metrics, version-info, or other self-introspection surface to exclude, so nothing was removed.
 
@@ -43,12 +48,6 @@ Operations included, by category:
 - **Logging Configuration**: Describe, update
 - **Resource Policies** (cross-account sharing of rule groups/firewall policies): Put, describe, delete
 - **Tags**: List tags for a resource; add/remove tags
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`aws_network_firewall-2020-11-12.json`](./OpenAPIs/aws_network_firewall-2020-11-12.json) | Full spec for AWS Network Firewall API version 2020-11-12 (36 operations). |
 
 ## Dependencies
 

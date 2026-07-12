@@ -30,7 +30,12 @@ Generate an API token at https://id.atlassian.com/manage-profile/security/api-to
 
 ## OpenAPIs
 
-### `atlassian_confluence_cloud-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`atlassian_confluence_cloud-latest.json`](./OpenAPIs/atlassian_confluence_cloud-latest.json) | latest (curated) | Actively-maintained spec, trimmed to 104 of 172 upstream operations covering common CRUD for automation — see breakdown below |
+| [`atlassian_confluence_cloud-1.0.0.json`](./OpenAPIs/atlassian_confluence_cloud-1.0.0.json) | 1.0.0 | Full spec for Confluence Cloud REST API v1 |
+
+### `atlassian_confluence_cloud-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2.0.0`). Trimmed to 104 of 172 upstream operations covering common CRUD for automation. Pull the full v2 spec from Atlassian's [Confluence Cloud REST API v2 docs](https://developer.atlassian.com/cloud/confluence/rest/v2/intro/) if you need something not covered here.
 
@@ -45,12 +50,6 @@ Resources included, by category:
 - **Tasks**: List, get, update
 
 Also removed 104 redundant per-operation `security` overrides that all duplicated the single `basicAuth` scheme, and promoted that scheme to a single top-level `security` block.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`atlassian_confluence_cloud-1.0.0.json`](./OpenAPIs/atlassian_confluence_cloud-1.0.0.json) | Full spec for Confluence Cloud REST API v1 (`1.0.0`). |
 
 ## Dependencies
 

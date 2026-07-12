@@ -30,7 +30,14 @@ Obtain a JWT by calling `POST /login` with your Prisma Cloud access key ID and s
 
 ## OpenAPIs
 
-### `palo_alto_prisma_cloud_cspm_alerts-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`palo_alto_prisma_cloud_cspm_alerts-latest.json`](./OpenAPIs/palo_alto_prisma_cloud_cspm_alerts-latest.json) | latest (curated) | Actively-maintained spec, left as the full upstream spec — see breakdown below |
+| [`palo_alto_prisma_cloud_cspm_cloud_account_onboarding-latest.json`](./OpenAPIs/palo_alto_prisma_cloud_cspm_cloud_account_onboarding-latest.json) | latest (curated) | Actively-maintained spec, trimmed to 50 of 52 upstream operations — see breakdown below |
+| [`palo_alto_prisma_cloud_cspm_alerts-v1.json`](./OpenAPIs/palo_alto_prisma_cloud_cspm_alerts-v1.json) | v1 | Full spec for the Prisma Cloud CSPM Alerts API v1. |
+| [`palo_alto_prisma_cloud_cspm_cloud_account_onboarding-v1.json`](./OpenAPIs/palo_alto_prisma_cloud_cspm_cloud_account_onboarding-v1.json) | v1 | Full spec for the Prisma Cloud CSPM Cloud Account Onboarding API v1. |
+
+### `palo_alto_prisma_cloud_cspm_alerts-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: v1`). Left as the full upstream spec (25 operations) — every operation is a genuine read, write, or provisioning action against the `alert` resource itself; there's no health/heartbeat/metrics, version-info, or other server-housekeeping surface to trim.
 
@@ -44,7 +51,7 @@ Operations included, by category:
 - **Remediation**: List Alert Remediation Commands, Remediate Alert by ID
 - **Async export jobs**: Submit/poll/download alerts-list job (JSON), submit/poll/download alert CSV job, submit/poll/download policy-alerts job (JSON)
 
-### `palo_alto_prisma_cloud_cspm_cloud_account_onboarding-latest.json` (curated)
+### `palo_alto_prisma_cloud_cspm_cloud_account_onboarding-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: v1`). Trimmed to 50 of 52 upstream operations covering common CRUD for automation.
 
@@ -56,13 +63,6 @@ Resources included, by category:
 - **Terraform**: Generate Zipped Terraform Script (OCI)
 
 Removed the two vendor-marked "Legacy" AWS ancestor/children endpoints (`/cloud-accounts-manager/v1/cloudAccounts/awsAccounts/.../ancestors` and `.../children`), which are superseded by their `/cas/v1/aws_account/...` equivalents already in the spec.
-
-### Full, unmodified specs
-
-| Spec | Description |
-|---|---|
-| [`palo_alto_prisma_cloud_cspm_alerts-v1.json`](./OpenAPIs/palo_alto_prisma_cloud_cspm_alerts-v1.json) | Full spec for the Prisma Cloud CSPM Alerts API v1. |
-| [`palo_alto_prisma_cloud_cspm_cloud_account_onboarding-v1.json`](./OpenAPIs/palo_alto_prisma_cloud_cspm_cloud_account_onboarding-v1.json) | Full spec for the Prisma Cloud CSPM Cloud Account Onboarding API v1. |
 
 ## Dependencies
 

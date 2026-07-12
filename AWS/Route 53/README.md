@@ -31,7 +31,12 @@ Generate an access key ID and secret access key for an IAM user or role with Rou
 
 ## OpenAPIs
 
-### `amazon_route_53-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`amazon_route_53-latest.json`](./OpenAPIs/amazon_route_53-latest.json) | latest (curated) | Actively-maintained, trimmed to common CRUD for automation — see breakdown below |
+| [`amazon_route_53-2013-04-01.json`](./OpenAPIs/amazon_route_53-2013-04-01.json) | 2013-04-01 | Full spec for the Route 53 2013-04-01 API (70 operations). |
+
+### `amazon_route_53-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2013-04-01`). Trimmed to 23 of 70 upstream operations covering common CRUD for automation.
 
@@ -44,13 +49,7 @@ Resources included, by category:
 - **Health Checks**: List, Create, Get, Update, Delete, Get Status, Get Last Failure Reason
 - **Tags**: List Tags for a Resource, List Tags for Multiple Resources, Change Tags for a Resource
 
-Not included: CIDR collections, DNSSEC/key-signing key management, traffic policies and traffic policy instances, query logging configuration, reusable delegation sets, account/resource limit and count lookups, checker IP ranges, geolocation lookups, and the DNS answer test tool. Pull the full spec below if you need one of those areas.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`amazon_route_53-2013-04-01.json`](./OpenAPIs/amazon_route_53-2013-04-01.json) | Full spec for the Route 53 2013-04-01 API (70 operations). |
+Not included: CIDR collections, DNSSEC/key-signing key management, traffic policies and traffic policy instances, query logging configuration, reusable delegation sets, account/resource limit and count lookups, checker IP ranges, geolocation lookups, and the DNS answer test tool. Pull the full spec above if you need one of those areas.
 
 ## Dependencies
 

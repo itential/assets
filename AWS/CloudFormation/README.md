@@ -30,7 +30,12 @@ Generate an access key ID and secret access key in the AWS Console under **IAM >
 
 ## OpenAPIs
 
-### `aws_cloudformation-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`aws_cloudformation-latest.json`](./OpenAPIs/aws_cloudformation-latest.json) | latest (curated) | Trimmed to 74 of 132 upstream operations — see breakdown below |
+| [`aws_cloudformation-2010-05-15.json`](./OpenAPIs/aws_cloudformation-2010-05-15.json) | 2010-05-15 | Full spec for the CloudFormation 2010-05-15 API (132 operations). |
+
+### `aws_cloudformation-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2010-05-15`). Trimmed to 74 of 132 upstream operations covering common CRUD for automation.
 
@@ -41,12 +46,6 @@ Resources included, by category:
 - **StackSets**: Create, Update, Delete, Describe, List, Create/Update/Delete Stack Instances, Describe/List Stack Instances, List/Describe/Stop Stack Set Operations
 
 Not included: type/extension registry management (`RegisterType`, `PublishType`, `ActivateType`, etc.), stack and resource drift detection, template cost estimation, export/import listing, and account limits — these are vendor tooling, reporting, or niche verticals rather than core stack automation. Pull the full spec below if you need something not covered here.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`aws_cloudformation-2010-05-15.json`](./OpenAPIs/aws_cloudformation-2010-05-15.json) | Full spec for the CloudFormation 2010-05-15 API (132 operations). |
 
 ## Dependencies
 

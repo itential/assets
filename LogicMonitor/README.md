@@ -30,7 +30,12 @@ Generate an API token in LogicMonitor under **Settings → Users and Roles → A
 
 ## OpenAPIs
 
-### `logicmonitor-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`logicmonitor-latest.json`](./OpenAPIs/logicmonitor-latest.json) | latest (curated) | Actively-maintained spec, trimmed to 62 of 353 upstream operations — see breakdown below |
+| [`logicmonitor-3.0.0.json`](./OpenAPIs/logicmonitor-3.0.0.json) | 3.0.0 | Full spec for LogicMonitor REST API v3.0.0 (353 operations) |
+
+### `logicmonitor-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 3.0.0`). Trimmed to 62 of 353 upstream operations covering common CRUD for automation. Also removed per-operation `security` overrides that only duplicated the spec's global security block.
 
@@ -42,12 +47,6 @@ Resources included, by category:
 - **Alerts**: List/get alerts, acknowledge, escalate, add note
 - **Scheduled Downtime (SDT)**: Scheduled downtime windows
 - **Collectors**: Collectors, Collector Groups
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`logicmonitor-3.0.0.json`](./OpenAPIs/logicmonitor-3.0.0.json) | Full spec for LogicMonitor REST API v3.0.0 (353 operations). |
 
 ## Dependencies
 

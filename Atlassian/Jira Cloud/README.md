@@ -54,7 +54,12 @@ Generate an API token at [id.atlassian.com/manage-profile/security/api-tokens](h
 
 ## OpenAPIs
 
-### `atlassian_jira_cloud-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`atlassian_jira_cloud-latest.json`](./OpenAPIs/atlassian_jira_cloud-latest.json) | latest (curated) | Actively-maintained spec, trimmed to common CRUD for automation — see breakdown below |
+| [`atlassian_jira_cloud-2.0.0.json`](./OpenAPIs/atlassian_jira_cloud-2.0.0.json) | 2.0.0 | Full spec for the Jira Cloud REST API v2 surface (359 operations) |
+
+### `atlassian_jira_cloud-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 3.0.0`). Trimmed to 125 of 545 upstream operations covering common CRUD for automation. Excludes Jira administration areas such as dashboards, filters, workflow/screen/permission/notification scheme configuration, custom field configuration, webhooks, groups, avatars, and Forge/Connect app-extension endpoints. Pull the full spec from [Atlassian's official Jira Cloud REST API v3 reference](https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/) if you need one of the excluded areas.
 
@@ -75,12 +80,6 @@ Resources included, by category:
 - **Project Versions**: List, Create, Get, Update, Delete
 - **Reference data**: Issue Types, Priorities, Resolutions, Fields, Statuses, Labels
 - **Users**: Get, Bulk Get, Email Lookup, current-user (`myself`), full User Search suite (assignable search, picker, by-query, permission search)
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`atlassian_jira_cloud-2.0.0.json`](./OpenAPIs/atlassian_jira_cloud-2.0.0.json) | Full spec for the Jira Cloud REST API v2 surface (359 operations). |
 
 ## Dependencies
 

@@ -30,7 +30,12 @@ Generate an access key ID and secret access key for an IAM principal with the ap
 
 ## OpenAPIs
 
-### `aws_organizations-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`aws_organizations-latest.json`](./OpenAPIs/aws_organizations-latest.json) | latest (curated) | Actively-maintained spec, all operations are genuine CRUD/provisioning actions — see breakdown below |
+| [`aws_organizations-2016-11-28.json`](./OpenAPIs/aws_organizations-2016-11-28.json) | 2016-11-28 | Full, unmodified vendor spec |
+
+### `aws_organizations-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2016-11-28`, 55 operations, all `POST` against the single AWS Query-protocol endpoint with an `X-Amz-Target` action header). Every operation is a genuine CRUD or provisioning action on an Organizations business resource (account, OU, policy, handshake, delegated administrator, service access, resource policy, or tag) — there is no separate health/heartbeat/metrics, self-introspection/version-info, or "about" surface to exclude, so nothing was removed.
 
@@ -45,12 +50,6 @@ Operations included, by category:
 - **AWS service access**: Enable, disable, list enabled service access for the organization
 - **Resource policies**: Put (create/update), delete, describe
 - **Tags**: Tag a resource, untag a resource, list tags for a resource
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`aws_organizations-2016-11-28.json`](./OpenAPIs/aws_organizations-2016-11-28.json) | Full spec for the AWS Organizations 2016-11-28 API. |
 
 ## Dependencies
 

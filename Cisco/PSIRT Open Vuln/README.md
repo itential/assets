@@ -28,7 +28,12 @@ Register an app at https://apiconsole.cisco.com with openVuln API access, then o
 
 ## OpenAPIs
 
-### `cisco_psirt_openvuln-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`cisco_psirt_openvuln-latest.json`](./OpenAPIs/cisco_psirt_openvuln-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_psirt_openvuln-2.0.1.json`](./OpenAPIs/cisco_psirt_openvuln-2.0.1.json) | 2.0.1 | Full, unmodified vendor spec |
+
+### `cisco_psirt_openvuln-latest.json`
 
 Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: 2.0.1`, 30 operations). Every operation is a read-only lookup against Cisco security advisory/CVE/vulnerability data — the product's only business resource — so there is no separate admin, health, or self-introspection surface to exclude. Nothing was removed.
 
@@ -42,12 +47,6 @@ Operations included, by category:
 - **All advisories (CVRF format)**: List all advisories; filter by first-published date range; filter by last-published date range
 - **Advisory lookup (CVRF format)**: Get by advisory ID; get by CVE ID; get by product name; get all advisories published in a given year
 - **Advisories by severity (CVRF format)**: Get by severity rating; filtered by first-published date range; filtered by last-published date range
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`cisco_psirt_openvuln-2.0.1.json`](./OpenAPIs/cisco_psirt_openvuln-2.0.1.json) | Full spec for Cisco PSIRT openVuln API 2.0.1. |
 
 ## Dependencies
 

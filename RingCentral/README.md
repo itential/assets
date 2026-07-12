@@ -30,7 +30,12 @@ Obtain an access token via RingCentral's OAuth2 flow (client credentials or JWT 
 
 ## OpenAPIs
 
-### `ringcentral-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`ringcentral-latest.json`](./OpenAPIs/ringcentral-latest.json) | latest (curated) | Trimmed to 153 of 312 upstream operations — see breakdown below |
+| [`ringcentral-1.0.39.json`](./OpenAPIs/ringcentral-1.0.39.json) | 1.0.39 | Full spec for RingCentral Connect Platform API 1.0.39 (312 operations). |
+
+### `ringcentral-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 1.0.39`). Trimmed to 153 of 312 upstream operations covering common CRUD for automation.
 
@@ -58,12 +63,6 @@ Resources included, by category:
 - **API Info**: Service status/health check
 
 Dropped as long tails: OAuth2 endpoints (handled by the integration's security scheme, not called as workflow tasks), SCIM user provisioning (overlaps with Extension CRUD), Automatic Location Updates / E911 device-address management, Paging Only Groups, Glip compliance data exports and message-store export reports, Glip webhooks and interactive cards, regional-settings reference/lookup dictionaries (country, language, state, timezone), profile images, custom greetings, deprecated duplicate endpoints (`/ringout`, `/glip/groups`), and various bulk-assign administrative endpoints. See the full spec for anything not covered here.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`ringcentral-1.0.39.json`](./OpenAPIs/ringcentral-1.0.39.json) | Full spec for RingCentral Connect Platform API 1.0.39 (312 operations). |
 
 ## Dependencies
 

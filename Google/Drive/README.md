@@ -30,7 +30,12 @@ Obtain an access token via the Google Cloud Console → **Service Accounts**, gr
 
 ## OpenAPIs
 
-### `google_drive-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`google_drive-latest.json`](./OpenAPIs/google_drive-latest.json) | latest (curated) | Actively-maintained spec, trimmed to 35 of 48 upstream operations — see breakdown below |
+| [`google_drive-v3.json`](./OpenAPIs/google_drive-v3.json) | v3 | Full spec for the Google Drive v3 API (48 operations) |
+
+### `google_drive-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: v3`). Trimmed to 35 of 48 upstream operations covering common CRUD for automation.
 
@@ -45,12 +50,6 @@ Resources included, by category:
 - **Revisions**: List, Get, Update, Delete
 
 Not included: change/activity polling and push-notification channels (`changes`, `channels` — sync-client tooling), the legacy `teamdrives` resource (superseded by `drives`), file ID pre-generation (`files.generateIds`), file watch/push notifications (`files.watch`), and the Drive Labels endpoints (`files.listLabels`, `files.modifyLabels` — a separate, optional Google Workspace add-on).
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`google_drive-v3.json`](./OpenAPIs/google_drive-v3.json) | Full spec for the Google Drive v3 API (48 operations). |
 
 ## Dependencies
 

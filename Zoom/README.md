@@ -30,7 +30,12 @@ Generate an access token by creating a Server-to-Server OAuth app at [marketplac
 
 ## OpenAPIs
 
-### `zoom-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`zoom-latest.json`](./OpenAPIs/zoom-latest.json) | latest (curated) | Actively-maintained, trimmed to 49 of 155 upstream operations — see breakdown below |
+| [`zoom-2.0.0.json`](./OpenAPIs/zoom-2.0.0.json) | 2.0.0 | Full, unmodified vendor spec |
+
+### `zoom-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2.0.0`). Trimmed to 49 of 155 upstream operations covering common CRUD for automation.
 
@@ -41,12 +46,6 @@ Resources included, by category:
 - **Users**: List/create/retrieve/update/delete a user; check a user's email; update a user's email, password, and status; user settings (retrieve/update); create/list a user's meetings and webinars; list a user's recordings
 
 Excluded: sub-account administration and billing, groups and IM groups/chat, H.323/SIP device management, dashboard metrics, usage/report endpoints, past meeting/webinar instance history, TSP telephony provider configuration, webhook management, tracking fields, and long-tail user administration (assistants, schedulers, PAC accounts, profile pictures, SSO tokens, permissions). See the full spec below for these.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`zoom-2.0.0.json`](./OpenAPIs/zoom-2.0.0.json) | Full spec for Zoom API 2.0.0 (155 operations). |
 
 ## Dependencies
 

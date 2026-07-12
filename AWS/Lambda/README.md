@@ -30,7 +30,12 @@ Generate an access key ID and secret access key for an IAM user or role with the
 
 ## OpenAPIs
 
-### `aws_lambda-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`aws_lambda-latest.json`](./OpenAPIs/aws_lambda-latest.json) | latest (curated) | Actively-maintained, curated for common CRUD automation — see breakdown below |
+| [`aws_lambda-2015-03-31.json`](./OpenAPIs/aws_lambda-2015-03-31.json) | 2015-03-31 | Full spec for the AWS Lambda API (2015-03-31). |
+
+### `aws_lambda-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2015-03-31`). Trimmed to 54 of 66 upstream operations covering common CRUD for automation.
 
@@ -49,12 +54,6 @@ Resources included, by category:
 - **Account**: Get Account Settings, Get Function Concurrency
 
 Not included: code signing configs (create/describe/update/delete config plus function code-signing-config associations), runtime management config (get/put), and the deprecated legacy `InvokeAsync` operation superseded by `Invoke`. Pull the full spec below if you need one of these.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`aws_lambda-2015-03-31.json`](./OpenAPIs/aws_lambda-2015-03-31.json) | Full spec for the AWS Lambda API (2015-03-31). |
 
 ## Dependencies
 

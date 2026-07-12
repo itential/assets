@@ -1,6 +1,6 @@
 6connect Provision is an IP address management (IPAM) and network provisioning platform providing resource allocation, DNS management, and automation workflows.
 
-This project provides the OpenAPI spec for automating against the 6connect Provision REST API via an Integration Model. The `-latest` spec is the full, unmodified vendor spec — it is already scoped to a single resource domain, so no trimming was needed.
+This project provides the OpenAPI spec for automating against the 6connect Provision REST API via an Integration Model. The `-latest` spec is reviewed and curated for common CRUD automation — see **OpenAPIs** below.
 
 ## Contents
 
@@ -30,7 +30,12 @@ Configure API access in 6connect under **Administration → Users**.
 
 ## OpenAPIs
 
-### `6connect_provision-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`6connect_provision-latest.json`](./OpenAPIs/6connect_provision-latest.json) | latest (curated) | Actively-maintained, curated for common CRUD automation — see breakdown below |
+| [`6connect_provision-2.0.0.json`](./OpenAPIs/6connect_provision-2.0.0.json) | 2.0.0 | Full, unmodified vendor spec |
+
+### `6connect_provision-latest.json`
 
 Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: 2.0.0`, 39 operations). Every operation in the upstream spec is CRUD or a provisioning action on the single `resources` model — there is no separate admin, webhook, or reporting surface to exclude, so nothing was removed.
 
@@ -43,12 +48,6 @@ Operations included, by category:
 - **Attachments**: List, attach, preview, download, delete
 - **Backup**: List backups, trigger a backup
 - **Provisioning actions**: Push a resource + poll push status; execute a named action + poll action status
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`6connect_provision-2.0.0.json`](./OpenAPIs/6connect_provision-2.0.0.json) | Full spec for 6connect Provision 2.0.0. |
 
 ## Dependencies
 

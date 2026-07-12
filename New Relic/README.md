@@ -30,7 +30,12 @@ Generate a user or ingest API key in New Relic under **Account Settings > API Ke
 
 ## OpenAPIs
 
-### `new_relic-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`new_relic-latest.json`](./OpenAPIs/new_relic-latest.json) | latest (curated) | Actively-maintained spec, reviewed and confirmed already scoped to CRUD, query, and provisioning actions — see breakdown below |
+| [`new_relic-v2.json`](./OpenAPIs/new_relic-v2.json) | v2 | Full, unmodified vendor spec |
+
+### `new_relic-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: v2`, 59 operations). Every operation in the upstream spec is CRUD, a query, or a provisioning action on New Relic's actual APM/alerting resources — there is no separate health/heartbeat, self-introspection/version-info, or license-lookup surface to exclude, so nothing was removed.
 
@@ -52,12 +57,6 @@ Operations included, by category:
 - **Alerts Events, Incidents, Violations**: List events, incidents, and policy violations raised by alerting
 
 Several of the Alerts endpoints above carry vendor deprecation notices pointing users toward NerdGraph, but they remain live, callable REST operations in the current spec, so they are kept rather than excluded.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`new_relic-v2.json`](./OpenAPIs/new_relic-v2.json) | Full spec for New Relic REST API v2. |
 
 ## Dependencies
 

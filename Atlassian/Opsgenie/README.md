@@ -30,7 +30,12 @@ Generate an API key in OpsGenie under **Settings > API key management**.
 
 ## OpenAPIs
 
-### `atlassian_opsgenie-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`atlassian_opsgenie-latest.json`](./OpenAPIs/atlassian_opsgenie-latest.json) | latest (curated) | Trimmed to 108 of 170 upstream operations — see breakdown below |
+| [`atlassian_opsgenie-2.0.0.json`](./OpenAPIs/atlassian_opsgenie-2.0.0.json) | 2.0.0 | Full, unmodified vendor spec |
+
+### `atlassian_opsgenie-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2.0.0`). Trimmed to 108 of 170 upstream operations covering common CRUD for automation.
 
@@ -50,12 +55,6 @@ Resources included, by category:
 - **Account**: Get account info
 
 Dropped as long-tail/admin: legacy v1 alert/notification policy endpoints (superseded by v2), saved searches, alert attachments, custom RBAC roles, per-team audit logs, calendar (`.ics`) exports, integration action/authenticate endpoints, and per-user personal admin (contact methods, personal notification rules and their steps, and per-user read-only lookups of teams/schedules/escalations/forwarding rules).
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`atlassian_opsgenie-2.0.0.json`](./OpenAPIs/atlassian_opsgenie-2.0.0.json) | Full spec for OpsGenie API 2.0.0 (170 operations). |
 
 ## Dependencies
 

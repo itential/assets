@@ -60,7 +60,16 @@ Use a ServiceNow user/service account with appropriate ACL permissions on the ta
 
 ## OpenAPIs
 
-### `servicenow_change_management-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`servicenow_change_management-latest.json`](./OpenAPIs/servicenow_change_management-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`servicenow_table_api-latest.json`](./OpenAPIs/servicenow_table_api-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`servicenow_itential_services_app-latest.json`](./OpenAPIs/servicenow_itential_services_app-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`servicenow_change_management-v1.json`](./OpenAPIs/servicenow_change_management-v1.json) | v1 | Full spec for ServiceNow Change Management v1. |
+| [`servicenow_table_api-v2.json`](./OpenAPIs/servicenow_table_api-v2.json) | v2 | Full spec for ServiceNow Table API v2. |
+| [`servicenow_itential_services_app-v2.json`](./OpenAPIs/servicenow_itential_services_app-v2.json) | v2 | Full spec for ServiceNow Itential Services App v2. |
+
+### `servicenow_change_management-latest.json`
 
 Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: v2`, 42 operations). Already a narrow, single-purpose API covering the Change Management module only. Every operation reads or writes an actual change-management business object (change requests, tasks, CIs, conflicts, schedule, risk, approvals) — there is no separate health/metrics/self-introspection surface to exclude, so nothing was removed.
 
@@ -79,7 +88,7 @@ Operations included, by category:
 - **Impacted Services**: Refresh the impacted business services list for a change
 - **Background Worker**: Get the status of a background worker process tied to a change operation
 
-### `servicenow_table_api-latest.json` (curated)
+### `servicenow_table_api-latest.json`
 
 Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: v3`, 6 operations). The Table API is inherently generic CRUD (list/create/read/update/delete against any table by name) — every operation is a core CRUD verb on the single generic `tableName` resource, so nothing was removed.
 
@@ -87,21 +96,13 @@ Operations included, by category:
 
 - **Table Records**: List/query records in a table, create a record, get a record by `sys_id`, replace a record (PUT), partially update a record (PATCH), delete a record
 
-### `servicenow_itential_services_app-latest.json` (curated)
+### `servicenow_itential_services_app-latest.json`
 
 Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: v2`, 1 operation). A single-endpoint scoped application API used to relay REST calls between ServiceNow and Itential Platform — there is only one operation in the upstream spec, so nothing was removed.
 
 Operations included, by category:
 
 - **REST Relay**: Make a REST call from ServiceNow to Itential Platform via the scoped app
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`servicenow_change_management-v1.json`](./OpenAPIs/servicenow_change_management-v1.json) | Full spec for ServiceNow Change Management v1. |
-| [`servicenow_table_api-v2.json`](./OpenAPIs/servicenow_table_api-v2.json) | Full spec for ServiceNow Table API v2. |
-| [`servicenow_itential_services_app-v2.json`](./OpenAPIs/servicenow_itential_services_app-v2.json) | Full spec for ServiceNow Itential Services App v2. |
 
 ## Dependencies
 

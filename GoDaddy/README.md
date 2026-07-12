@@ -28,7 +28,12 @@ Generate an API key pair at https://developer.godaddy.com/keys.
 
 ## OpenAPIs
 
-### `godaddy_domains-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`godaddy_domains-latest.json`](./OpenAPIs/godaddy_domains-latest.json) | latest (curated) | Trimmed to 31 of 42 upstream operations covering common CRUD for domain automation — see breakdown below |
+| [`godaddy_domains-1.0.0.json`](./OpenAPIs/godaddy_domains-1.0.0.json) | 1.0.0 | Full spec for the GoDaddy Domains API, version 1.0.0. |
+
+### `godaddy_domains-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 1.0.0`). Trimmed to 31 of 42 upstream operations covering common CRUD for domain automation.
 
@@ -42,12 +47,6 @@ Resources included, by category:
 - **Privacy**: Purchase Privacy, Cancel Privacy
 
 Notification opt-in/acknowledgement management, domain action/job history, scheduled-maintenance reporting, and domain redemption recovery are not included. Pull the full spec below if you need one of those areas.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`godaddy_domains-1.0.0.json`](./OpenAPIs/godaddy_domains-1.0.0.json) | Full spec for the GoDaddy Domains API, version 1.0.0. |
 
 ## Dependencies
 

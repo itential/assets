@@ -30,7 +30,12 @@ Generate an access key ID and secret access key for an IAM user or role with the
 
 ## OpenAPIs
 
-### `amazon_connect-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`amazon_connect-latest.json`](./OpenAPIs/amazon_connect-latest.json) | latest (curated) | Actively-maintained, trimmed to 96 of 171 upstream operations covering common CRUD for automation — see breakdown below |
+| [`amazon_connect-2017-08-08.json`](./OpenAPIs/amazon_connect-2017-08-08.json) | 2017-08-08 | Full spec for Amazon Connect API version 2017-08-08 (171 operations). |
+
+### `amazon_connect-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2017-08-08`). Trimmed to 96 of 171 upstream operations covering common CRUD for automation.
 
@@ -52,12 +57,6 @@ Resources included, by category:
 - **Tags**: List, Tag, Untag Resource
 
 Not included: real-time and historical metrics/reporting, custom vocabularies (Contact Lens transcription), traffic distribution groups (multi-region resiliency), contact automation rules, Lex/Amazon Lex V2 bot and Lambda function associations, instance storage/security-key/approved-origin/integration-association configuration, task templates, chat participant and contact-monitoring/recording/streaming controls, federation tokens, and the `Search*` filtering variants of the list operations above. Pull the full spec below if you need one of these.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`amazon_connect-2017-08-08.json`](./OpenAPIs/amazon_connect-2017-08-08.json) | Full spec for Amazon Connect API version 2017-08-08 (171 operations). |
 
 ## Dependencies
 

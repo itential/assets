@@ -30,7 +30,13 @@ Generate both from Datadog under **Organization Settings → API Keys** and **Ap
 
 ## OpenAPIs
 
-### `datadog-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`datadog-latest.json`](./OpenAPIs/datadog-latest.json) | latest (curated) | Actively-maintained, curated for common CRUD for observability automation — see breakdown below |
+| [`datadog-2.0.json`](./OpenAPIs/datadog-2.0.json) | 2.0 | Full spec for Datadog API v2.0. |
+| [`datadog_legacy-1.0.json`](./OpenAPIs/datadog_legacy-1.0.json) | 1.0 | Legacy Datadog API v1.0 spec. |
+
+### `datadog-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2.0`). Trimmed to 39 of 1198 upstream operations. Datadog's full API surface spans dozens of specialized products (Security Monitoring, Synthetics, RUM, CI Visibility, APM, Cost Management, and more) that are out of scope for general-purpose automation; this spec keeps only the cross-cutting operational primitives. Note that this spec snapshot has no bare Monitor, Dashboard, or SLO CRUD endpoints upstream (only narrow sub-resources like notification rules and report status), so those resources are excluded here rather than partially represented. Pull the full spec from [Datadog's official OpenAPI description](https://github.com/DataDog/datadog-api-client-python/blob/master/.generator/schemas/v2/openapi.yaml) if you need one of the excluded product areas.
 
@@ -41,13 +47,6 @@ Resources included, by category:
 - **Metrics**: Active metric listing, Scalar and timeseries queries
 - **Tagging**: Tag enrichment rules
 - **Access management**: Users, Roles
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`datadog-2.0.json`](./OpenAPIs/datadog-2.0.json) | Full spec for Datadog API v2.0. |
-| [`datadog_legacy-1.0.json`](./OpenAPIs/datadog_legacy-1.0.json) | Legacy Datadog API v1.0 spec. |
 
 ## Dependencies
 

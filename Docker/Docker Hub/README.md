@@ -30,7 +30,12 @@ Obtain a token via `POST /v2/users/login` with your Docker Hub username and pass
 
 ## OpenAPIs
 
-### `docker_hub-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`docker_hub-latest.json`](./OpenAPIs/docker_hub-latest.json) | latest (curated) | Trimmed to 16 of 28 upstream operations covering common CRUD for automation — see breakdown below |
+| [`docker_hub-beta.json`](./OpenAPIs/docker_hub-beta.json) | beta | Full spec for Docker Hub API (beta). |
+
+### `docker_hub-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: beta`). Trimmed to 16 of 28 upstream operations covering common CRUD for automation.
 
@@ -41,12 +46,6 @@ Resources included, by category:
 - **Namespaces**: Bulk delete images within a namespace/repository
 - **Organization Settings**: Retrieve and update organization settings
 - **Authentication**: User login to obtain a bearer token
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`docker_hub-beta.json`](./OpenAPIs/docker_hub-beta.json) | Full spec for Docker Hub API (beta). |
 
 ## Dependencies
 

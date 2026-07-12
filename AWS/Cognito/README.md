@@ -30,7 +30,12 @@ Generate an access key ID and secret access key in the AWS IAM console under you
 
 ## OpenAPIs
 
-### `amazon_cognito_user_pools-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`amazon_cognito_user_pools-latest.json`](./OpenAPIs/amazon_cognito_user_pools-latest.json) | latest (curated) | Trimmed to 87 of 101 upstream operations covering common CRUD for automation — see breakdown below |
+| [`amazon_cognito_user_pools-2016-04-18.json`](./OpenAPIs/amazon_cognito_user_pools-2016-04-18.json) | 2016-04-18 | Full spec for the Amazon Cognito User Pools API (2016-04-18). |
+
+### `amazon_cognito_user_pools-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2016-04-18`). Trimmed to 87 of 101 upstream operations covering common CRUD for automation.
 
@@ -50,12 +55,6 @@ Resources included, by category:
 - **Tags**: Tag Resource, Untag Resource, List Tags for Resource
 
 Not included: user import jobs (bulk CSV import via S3), advanced security/risk configuration, hosted UI customization, auth event feedback/analytics, and signing certificate retrieval. Pull the full spec below if you need one of these.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`amazon_cognito_user_pools-2016-04-18.json`](./OpenAPIs/amazon_cognito_user_pools-2016-04-18.json) | Full spec for the Amazon Cognito User Pools API (2016-04-18). |
 
 ## Dependencies
 

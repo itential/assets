@@ -30,7 +30,12 @@ Create or manage the account under the Airflow UI's **Admin > Users**.
 
 ## OpenAPIs
 
-### `apache_airflow-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`apache_airflow-latest.json`](./OpenAPIs/apache_airflow-latest.json) | latest (curated) | Trimmed to 50 of 73 upstream operations — see breakdown below |
+| [`apache_airflow-2.5.1.json`](./OpenAPIs/apache_airflow-2.5.1.json) | 2.5.1 | Full spec for Apache Airflow 2.5.1 (73 operations) |
+
+### `apache_airflow-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2.5.1`). Trimmed to 50 of 73 upstream operations covering common CRUD for automation.
 
@@ -45,12 +50,6 @@ Resources included, by category:
 - **Monitoring**: Health, Version
 
 Excluded as internal vendor tooling or reporting-only tails: Config, DAG Warnings, Datasets (data-aware scheduling), Event Logs, Import Errors, Permissions, Plugins, Providers, Roles, and Users (RBAC administration).
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`apache_airflow-2.5.1.json`](./OpenAPIs/apache_airflow-2.5.1.json) | Full spec for Apache Airflow 2.5.1 (73 operations). |
 
 ## Dependencies
 

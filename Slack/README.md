@@ -30,7 +30,12 @@ Use a Slack bot token (`xoxb-*`) for bot operations, or a user token (`xoxp-*`) 
 
 ## OpenAPIs
 
-### `slack_web_api-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`slack_web_api-latest.json`](./OpenAPIs/slack_web_api-latest.json) | latest (curated) | Trimmed to 61 of 174 upstream operations — see breakdown below |
+| [`slack_web_api-1.7.0.json`](./OpenAPIs/slack_web_api-1.7.0.json) | 1.7.0 | Full spec for the Slack Web API, version 1.7.0. |
+
+### `slack_web_api-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 1.7.0`). Trimmed to 61 of 174 upstream operations covering common CRUD for automation. The full upstream spec includes workspace admin tooling (`admin.*`, `apps.*`), app-development/UI features (`views.*`, `dialog.open`), the legacy Calls, Do Not Disturb, Stars, and Workflow Steps modules, OAuth flows, and other niche or internal-tooling endpoints — none of those are included here. Pull the full spec below if you need one of the excluded areas.
 
@@ -47,12 +52,6 @@ Resources included, by category:
 - **Team & Auth**: Basic team info (`team.info`) and token validation (`auth.test`)
 
 This pass also removed 61 per-operation `security` overrides that were exact duplicates of the spec's global `security` block (`botToken`), so `securitySchemes` now has a single, unambiguous global auth definition.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`slack_web_api-1.7.0.json`](./OpenAPIs/slack_web_api-1.7.0.json) | Full spec for the Slack Web API, version 1.7.0. |
 
 ## Dependencies
 

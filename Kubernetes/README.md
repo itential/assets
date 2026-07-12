@@ -30,7 +30,12 @@ Use a Kubernetes service account token, a kubeconfig user credential, or a clust
 
 ## OpenAPIs
 
-### `kubernetes-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`kubernetes-latest.json`](./OpenAPIs/kubernetes-latest.json) | latest (curated) | Actively-maintained, trimmed to 257 of 933 upstream operations — see breakdown below |
+| [`kubernetes-v1.10.0.json`](./OpenAPIs/kubernetes-v1.10.0.json) | v1.10.0 | Full, unmodified vendor spec (933 operations) |
+
+### `kubernetes-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: v1.10.0`). Trimmed to 257 of 933 upstream operations covering common CRUD for automation.
 
@@ -45,12 +50,6 @@ Resources included, by category:
 - **RBAC**: Roles, RoleBindings, ClusterRoles, ClusterRoleBindings
 
 Excludes watch/streaming endpoints, exec/attach/portforward/proxy debug endpoints, deprecated and duplicate API group versions (e.g. `extensions/v1beta1` workloads superseded by `apps/v1`, `apps/v1beta1`/`v1beta2`), webhook and aggregation-layer admin APIs (`admissionregistration.k8s.io`, `apiregistration.k8s.io`, `apiextensions.k8s.io`), and specialized/internal endpoints (TokenReviews, SubjectAccessReviews, CertificateSigningRequests, PodSecurityPolicies, PodPresets, PriorityClasses, ComponentStatuses, raw `/logs/{logpath}`). Pull the full spec if you need one of the excluded areas.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`kubernetes-v1.10.0.json`](./OpenAPIs/kubernetes-v1.10.0.json) | Full spec for Kubernetes v1.10.0 (933 operations). |
 
 ## Dependencies
 

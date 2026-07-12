@@ -32,7 +32,12 @@ Generate an App Password in Bitbucket under **Personal Settings > App passwords*
 
 ## OpenAPIs
 
-### `atlassian_bitbucket_cloud-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`atlassian_bitbucket_cloud-latest.json`](./OpenAPIs/atlassian_bitbucket_cloud-latest.json) | latest (curated) | Trimmed to 91 of 318 upstream operations — see breakdown below |
+| [`atlassian_bitbucket_cloud-2.0.json`](./OpenAPIs/atlassian_bitbucket_cloud-2.0.json) | 2.0 | Full spec for Bitbucket Cloud REST API 2.0 (Swagger 2.0, as published by the vendor) |
+
+### `atlassian_bitbucket_cloud-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2.0`). Trimmed to 91 of 318 upstream operations covering common CRUD for automation.
 
@@ -49,13 +54,7 @@ Resources included, by category:
 - **Pull Requests**: Create, Read, Update, List/Activity, Approve/Unapprove, Request/Remove Changes, Comments (list, create, get, update, delete, resolve), List Commits, Decline, Diff, Diffstat, Merge, Merge Task Status, Statuses, Tasks (list, create, get, update, delete)
 - **User**: Get Current User
 
-Not included: the legacy Issue Tracker, Snippets, Pipelines/CI-CD (config, variables, caches, schedules, SSH keys, deployments, environments), webhooks, add-ons, code search, SSH keys, properties, and permissions/administration endpoints. Pull the full spec below if you need one of these.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`atlassian_bitbucket_cloud-2.0.json`](./OpenAPIs/atlassian_bitbucket_cloud-2.0.json) | Full spec for Bitbucket Cloud REST API 2.0 (Swagger 2.0, as published by the vendor). |
+Not included: the legacy Issue Tracker, Snippets, Pipelines/CI-CD (config, variables, caches, schedules, SSH keys, deployments, environments), webhooks, add-ons, code search, SSH keys, properties, and permissions/administration endpoints. Pull the full spec above if you need one of these.
 
 ## Dependencies
 

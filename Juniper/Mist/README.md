@@ -30,7 +30,12 @@ Generate an API token in the Mist dashboard under **Organization → Settings �
 
 ## OpenAPIs
 
-### `juniper_mist-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`juniper_mist-latest.json`](./OpenAPIs/juniper_mist-latest.json) | latest (curated) | Trimmed to 137 of 1011 upstream operations — see breakdown below |
+| [`juniper_mist-2509.1.1.json`](./OpenAPIs/juniper_mist-2509.1.1.json) | 2509.1.1 | Full spec for Juniper Mist Cloud API 2509.1.1 (1011 operations) |
+
+### `juniper_mist-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2509.1.1`). Trimmed to 137 of 1011 upstream operations covering common CRUD for automation.
 
@@ -45,12 +50,6 @@ Resources included, by category:
 - **Settings**: Org Settings, Site Settings
 
 The full upstream spec also covers MSPs, admin/SSO/API-token administration, webhooks, alarms, analytics/insights/SLEs, Marvis AI, NAC (network access control), guest portals, PSK/guest portals, asset tracking (BLE beacons, RTLS zones), RF planning (maps, spectrum analysis, RRM, rogues), device diagnostics/troubleshooting commands, EVPN topologies, Mist Edge (mxedge/mxtunnel), Session Smart Router (SSR/128T), and third-party security integrations (SkyATP, Zscaler, Cradlepoint) — none of those are included here. Pull the full spec from [Mist's official OpenAPI documentation](https://www.mist.com/documentation/mist-api/) if you need one of the excluded areas.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`juniper_mist-2509.1.1.json`](./OpenAPIs/juniper_mist-2509.1.1.json) | Full spec for Juniper Mist Cloud API 2509.1.1 (1011 operations). |
 
 ## Dependencies
 

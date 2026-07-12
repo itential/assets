@@ -30,7 +30,12 @@ Generate a Personal Access Token in Jira under your user profile → **Personal 
 
 ## OpenAPIs
 
-### `atlassian_jira_server_data_center-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`atlassian_jira_server_data_center-latest.json`](./OpenAPIs/atlassian_jira_server_data_center-latest.json) | latest (curated) | Trimmed to 105 of 430 upstream operations — see breakdown below |
+| [`atlassian_jira_server_data_center-10.0.0.json`](./OpenAPIs/atlassian_jira_server_data_center-10.0.0.json) | 10.0.0 | Full spec for Jira Server & Data Center 10.0.0 (430 operations) |
+
+### `atlassian_jira_server_data_center-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 10.0.0`). Trimmed to 105 of 430 upstream operations covering common CRUD for automation.
 
@@ -45,12 +50,6 @@ Resources included, by category:
 - **Session/Info**: Current user (myself), My Permissions, Permissions, Server Info
 
 Excluded: Jira Software Agile boards/sprints/epics (a separate add-on module), Jira administration (workflows, workflow schemes, permission/notification/security schemes, screens, role administration, application properties, clustering, monitoring, reindexing, license management, email templates), dashboards, avatars, custom field administration, terminology customization, and bulk worklog sync endpoints. Pull the full spec below if you need one of these.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`atlassian_jira_server_data_center-10.0.0.json`](./OpenAPIs/atlassian_jira_server_data_center-10.0.0.json) | Full spec for Jira Server & Data Center 10.0.0 (430 operations). |
 
 ## Dependencies
 

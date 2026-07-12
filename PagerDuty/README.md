@@ -30,7 +30,12 @@ Generate a REST API key in PagerDuty under **My Profile > User Settings > API Ac
 
 ## OpenAPIs
 
-### `pagerduty-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`pagerduty-latest.json`](./OpenAPIs/pagerduty-latest.json) | latest (curated) | Actively-maintained spec, trimmed to 88 of 425 upstream operations — see breakdown below |
+| [`pagerduty-2.0.0.json`](./OpenAPIs/pagerduty-2.0.0.json) | 2.0.0 | Full spec for PagerDuty REST API 2.0.0 (425 operations) |
+
+### `pagerduty-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2.0.0`). Trimmed to 88 of 425 upstream operations covering common CRUD for automation.
 
@@ -48,12 +53,6 @@ Resources included, by category:
 - **Change Events**: List, Create, Get, Update
 - **Priorities**: List
 - **Tags**: List, Create, Get, Delete, Entity Assignment
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`pagerduty-2.0.0.json`](./OpenAPIs/pagerduty-2.0.0.json) | Full spec for PagerDuty REST API 2.0.0 (425 operations). |
 
 ## Dependencies
 

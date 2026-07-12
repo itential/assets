@@ -30,7 +30,14 @@ Generate a bot token or personal access token at [developer.webex.com](https://d
 
 ## OpenAPIs
 
-### `cisco_webex-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`cisco_webex-latest.json`](./OpenAPIs/cisco_webex-latest.json) | latest (curated) | Actively-maintained spec — see breakdown below |
+| [`cisco_webex_messaging-latest.json`](./OpenAPIs/cisco_webex_messaging-latest.json) | latest (curated) | Actively-maintained spec — see breakdown below |
+| [`cisco_webex-1.0.json`](./OpenAPIs/cisco_webex-1.0.json) | 1.0 | Full spec for the Cisco Webex core API, version 1.0. |
+| [`cisco_webex_messaging-1.0.0.json`](./OpenAPIs/cisco_webex_messaging-1.0.0.json) | 1.0.0 | Full spec for the Cisco Webex Messaging API, version 1.0.0. |
+
+### `cisco_webex-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 1.0`). Trimmed to 8 of 10 upstream operations.
 
@@ -42,7 +49,7 @@ Resources included, by category:
 
 Dropped as a non-automatable reference lookup: `GET /licenses` and `GET /licenses/{licenseId}` — a read-only license-tier catalog (this API surface has no write/assign operation for licenses) rather than something to create/update/delete via automation.
 
-### `cisco_webex_messaging-latest.json` (curated)
+### `cisco_webex_messaging-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 1.0.0`). Trimmed to 33 of 63 upstream operations covering common CRUD for automation.
 
@@ -55,13 +62,6 @@ Resources included, by category:
 - **Teams**: List, create, get, update, and delete teams and team memberships
 
 Dropped as long tails not core to messaging automation: card/attachment actions, room linked folders, the audit event feed (already covered by `cisco_webex-latest.json`), the Hybrid Data Security module (a specialized enterprise deployment feature), room tabs, and webhook management.
-
-### Full, unmodified specs
-
-| Spec | Description |
-|---|---|
-| [`cisco_webex-1.0.json`](./OpenAPIs/cisco_webex-1.0.json) | Full spec for the Cisco Webex core API, version 1.0. |
-| [`cisco_webex_messaging-1.0.0.json`](./OpenAPIs/cisco_webex_messaging-1.0.0.json) | Full spec for the Cisco Webex Messaging API, version 1.0.0. |
 
 ## Dependencies
 

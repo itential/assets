@@ -30,7 +30,12 @@ Generate an API key at [platform.openai.com/api-keys](https://platform.openai.co
 
 ## OpenAPIs
 
-### `openai-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`openai-latest.json`](./OpenAPIs/openai-latest.json) | latest (curated) | Trimmed to 84 of 242 upstream operations — see breakdown below |
+| [`openai-2.3.0.json`](./OpenAPIs/openai-2.3.0.json) | 2.3.0 | Full, unmodified vendor spec |
+
+### `openai-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2.3.0`). Trimmed to 84 of 242 upstream operations covering common CRUD for automation.
 
@@ -51,12 +56,6 @@ Resources included, by category:
 - **Videos**: Video generation create/get/delete/content
 
 Excluded: administration/org-management (API keys, users, roles, groups, invites, projects, audit logs, usage/cost reporting), Realtime voice API, ChatKit, Containers (code interpreter sandboxes), Evals, Skills, Uploads (large multipart upload flow), voice cloning/consents, webhooks, and niche video sub-features (characters, remix, extensions, edits). See the repo README for the full scope, or pull the full spec below if you need one of the excluded areas.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`openai-2.3.0.json`](./OpenAPIs/openai-2.3.0.json) | Full spec for the OpenAI API, version 2.3.0. |
 
 ## Dependencies
 

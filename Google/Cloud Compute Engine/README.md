@@ -30,7 +30,12 @@ Use a Google service account access token with Compute Engine permissions (`http
 
 ## OpenAPIs
 
-### `google_cloud_compute_engine-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`google_cloud_compute_engine-latest.json`](./OpenAPIs/google_cloud_compute_engine-latest.json) | latest (curated) | Actively-maintained, curated for common CRUD automation — see breakdown below |
+| [`google_cloud_compute_engine-v1.json`](./OpenAPIs/google_cloud_compute_engine-v1.json) | v1 | Full spec for Compute Engine API v1 (694 operations) |
+
+### `google_cloud_compute_engine-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: v1`). Trimmed to 149 of 694 upstream operations covering common CRUD for automation.
 
@@ -44,12 +49,6 @@ Resources included, by category:
 - **Reference lookups & operations**: zones, regions, machine types, project info (get/list), and zone/region/global operation status polling (get, list, wait)
 
 See the repo README for the full scope and the full spec.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`google_cloud_compute_engine-v1.json`](./OpenAPIs/google_cloud_compute_engine-v1.json) | Full spec for Compute Engine API v1 (694 operations). |
 
 ## Dependencies
 

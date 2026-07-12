@@ -58,7 +58,12 @@ Generate an API key in the Meraki Dashboard under your user profile → **My Pro
 
 ## OpenAPIs
 
-### `cisco_meraki_dashboard-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`cisco_meraki_dashboard-latest.json`](./OpenAPIs/cisco_meraki_dashboard-latest.json) | latest (curated) | Actively-maintained, trimmed to 357 of 729 upstream operations covering common CRUD for network automation — see breakdown below |
+| [`cisco_meraki_dashboard-1.48.0.json`](./OpenAPIs/cisco_meraki_dashboard-1.48.0.json) | 1.48.0 | Full, unmodified vendor spec |
+
+### `cisco_meraki_dashboard-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 1.48.0`). Trimmed to 357 of 729 upstream operations covering common CRUD for network automation. The full upstream spec also covers Systems Manager (MDM), cameras, sensors, cellular gateways, Insight, adaptive policy, licensing, branding, and SAML — none of those are included here. Pull the full spec from [Meraki's official OpenAPI spec](https://developer.cisco.com/meraki/api-v1/) if you need one of the excluded areas.
 
@@ -72,12 +77,6 @@ Resources included, by category:
 - **VLAN Profiles & Group Policies**: Network-wide VLAN profiles and group policies
 - **Firmware**: Firmware upgrade scheduling
 - **Devices**: Claim/inventory, management interface, reboot, blink LEDs, clients
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`cisco_meraki_dashboard-1.48.0.json`](./OpenAPIs/cisco_meraki_dashboard-1.48.0.json) | Full spec for Meraki Dashboard API 1.48.0. |
 
 ## Dependencies
 

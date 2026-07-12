@@ -30,7 +30,14 @@ Obtain a token from your Selector AI instance credentials. See https://docs.sele
 
 ## OpenAPIs
 
-### `selector_ai_metastore_inventory-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`selector_ai_metastore_inventory-latest.json`](./OpenAPIs/selector_ai_metastore_inventory-latest.json) | latest (curated) | Trimmed to 15 of 33 upstream operations — see breakdown below |
+| [`selector_ai_query-latest.json`](./OpenAPIs/selector_ai_query-latest.json) | latest (curated) | Single-purpose, reviewed and confirmed already scoped — see breakdown below |
+| [`selector_ai_metastore_inventory-1.0.0.json`](./OpenAPIs/selector_ai_metastore_inventory-1.0.0.json) | 1.0.0 | Full, unmodified vendor spec |
+| [`selector_ai_query-1.0.0.json`](./OpenAPIs/selector_ai_query-1.0.0.json) | 1.0.0 | Full, unmodified vendor spec |
+
+### `selector_ai_metastore_inventory-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 1.0.0`). Trimmed to 15 of 33 upstream operations covering common CRUD for automation.
 
@@ -39,22 +46,15 @@ Resources included, by category:
 - **Inventory**: create, list, get, update, and delete inventory items and item collections
 - **Inventory Schema (v2)**: create, list, update, and delete inventory schema definitions
 
-Excluded: legacy v1 schema endpoints (superseded by v2), bulk/CSV import-export utilities, and admin/diagnostic endpoints (health, logs, config, version, opstats). Pull the full spec from the dated file below if you need something not covered here.
+Excluded: legacy v1 schema endpoints (superseded by v2), bulk/CSV import-export utilities, and admin/diagnostic endpoints (health, logs, config, version, opstats). Pull the full spec from the dated file above if you need something not covered here.
 
-### `selector_ai_query-latest.json` (curated)
+### `selector_ai_query-latest.json`
 
 Single-purpose API exposing exactly one operation upstream (`x-vendor-api-version: 1.0.0`, 1 of 1 operations kept). Audited operation-by-operation and confirmed there is no separate admin/health/telemetry surface to exclude — the sole endpoint is the product's entire business function, so nothing was removed:
 
 - **Query**: `POST /command` — execute a Selector Query Language (S2QL) query and return results plus rendering metadata, for querying network telemetry/observability data (e.g. latency, jitter, packet loss) and violation events.
 
 Two pre-existing vendor spec issues were also cleaned up: a stray top-level `security` block referencing an undefined `apikey` scheme was previously removed (the operation itself already correctly declared `bearerAuth`), and now that redundant per-operation `bearerAuth` override has been consolidated into a single global `security` block at the spec level, since it was the same requirement repeated on every operation.
-
-### Full, unmodified specs
-
-| Spec | Description |
-|---|---|
-| [`selector_ai_metastore_inventory-1.0.0.json`](./OpenAPIs/selector_ai_metastore_inventory-1.0.0.json) | Full spec for Selector AI Metastore Inventory 1.0.0. |
-| [`selector_ai_query-1.0.0.json`](./OpenAPIs/selector_ai_query-1.0.0.json) | Full spec for Selector AI Query 1.0.0. |
 
 ## Dependencies
 

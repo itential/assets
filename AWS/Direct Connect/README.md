@@ -30,7 +30,12 @@ Sign requests with an AWS access key ID and secret access key that has IAM permi
 
 ## OpenAPIs
 
-### `aws_direct_connect-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`aws_direct_connect-latest.json`](./OpenAPIs/aws_direct_connect-latest.json) | latest (curated) | Actively-maintained, curated for common CRUD automation — see breakdown below |
+| [`aws_direct_connect-2012-10-25.json`](./OpenAPIs/aws_direct_connect-2012-10-25.json) | 2012-10-25 | Full, unmodified vendor spec (63 operations) |
+
+### `aws_direct_connect-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2012-10-25`, 63 operations). Every operation was checked individually against the upstream spec; all 63 are genuine CRUD/provisioning actions on Direct Connect's own resources (connections, virtual interfaces, gateways, LAGs, interconnects, BGP peers, tags) or the lookups needed to drive those actions (locations, router config, LOAs, customer agreements) — there is no health/heartbeat/metrics/version-info/self-introspection surface to exclude, so nothing was removed. The `security` block is already global (`hmac`), with no redundant per-operation overrides.
 
@@ -47,12 +52,6 @@ Operations included, by category:
 - **Locations & Router Configuration**: List the Direct Connect locations available for provisioning; describe a virtual interface's router configuration
 - **Customer Agreements**: Describe customer metadata/agreements; confirm a customer agreement when creating a connection/LAG
 - **Tagging**: Tag/untag resources; describe tags on a resource
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`aws_direct_connect-2012-10-25.json`](./OpenAPIs/aws_direct_connect-2012-10-25.json) | Full spec for AWS Direct Connect API version 2012-10-25 (63 operations). |
 
 ## Dependencies
 

@@ -32,7 +32,12 @@ Generate a token in Nautobot under your user profile → **API Tokens**.
 
 ## OpenAPIs
 
-### `nautobot-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`nautobot-latest.json`](./OpenAPIs/nautobot-latest.json) | latest (curated) | Trimmed to 363 of 2141 upstream operations — see breakdown below |
+| [`nautobot-2.4.14.json`](./OpenAPIs/nautobot-2.4.14.json) | 2.4.14 | Full spec for Nautobot 2.4.14, including all optional plugin APIs. |
+
+### `nautobot-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2.4.14`). Trimmed to 363 of 2141 upstream operations covering common CRUD for network automation. The full upstream spec includes 221 operations from optional Nautobot plugin apps (Golden Config, BGP, Firewall, Chatops, Design Builder, and others) that vary by deployment — none of those are included here. Pull the full spec from a running Nautobot instance's `/api/swagger.json` endpoint if you need one of the excluded areas or a specific plugin's API.
 
@@ -44,12 +49,6 @@ Resources included, by category:
 - **Tenancy**: Tenant Groups, Tenants
 - **Circuits**: Circuit Types, Providers, Circuits, Circuit Terminations
 - **Extras**: Tags, Statuses, Roles, Custom Fields
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`nautobot-2.4.14.json`](./OpenAPIs/nautobot-2.4.14.json) | Full spec for Nautobot 2.4.14, including all optional plugin APIs. |
 
 ## Dependencies
 

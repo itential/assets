@@ -30,7 +30,12 @@ Obtain a client token by authenticating against your configured auth method (use
 
 ## OpenAPIs
 
-### `hashicorp_vault-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`hashicorp_vault-latest.json`](./OpenAPIs/hashicorp_vault-latest.json) | latest (curated) | Trimmed to 193 of 1049 upstream operations — see breakdown below |
+| [`hashicorp_vault-1.15.0.json`](./OpenAPIs/hashicorp_vault-1.15.0.json) | 1.15.0 | Full spec for HashiCorp Vault 1.15.0 (1049 operations). |
+
+### `hashicorp_vault-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 1.15.0`). Trimmed to 193 of 1049 upstream operations covering common CRUD for automation.
 
@@ -45,12 +50,6 @@ Resources included, by category:
 - **System (core admin)**: secrets engine mounts, auth method mounts, ACL policies, lease lifecycle (lookup/renew/revoke), response wrapping, health check
 
 Pull the full spec from a running Vault instance's `sys/internal/specs/openapi` endpoint if you need something not covered here.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`hashicorp_vault-1.15.0.json`](./OpenAPIs/hashicorp_vault-1.15.0.json) | Full spec for HashiCorp Vault 1.15.0 (1049 operations). |
 
 ## Dependencies
 

@@ -30,7 +30,12 @@ Local socket access typically requires no authentication. For remote/production 
 
 ## OpenAPIs
 
-### `docker_engine-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`docker_engine-latest.json`](./OpenAPIs/docker_engine-latest.json) | latest (curated) | Actively-maintained spec, trimmed to 52 of 105 upstream operations covering common CRUD for automation — see breakdown below |
+| [`docker_engine-1.33.json`](./OpenAPIs/docker_engine-1.33.json) | 1.33 | Full spec for Docker Engine API 1.33 (105 operations) |
+
+### `docker_engine-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 1.33`). Trimmed to 52 of 105 upstream operations covering common CRUD for automation.
 
@@ -44,12 +49,6 @@ Resources included, by category:
 - **System**: Ping, Version, Info
 
 Excluded as out of scope for this curated spec: Swarm mode and its orchestration objects (Swarm, Service, Task, Node, Secret, Config), plugin management, the experimental BuildKit session endpoint, Dockerfile-based image builds (`/build`, `/commit`), tar-based bulk image import/export, interactive container attach (stdin/stdout hijack), and admin/reporting-only endpoints (`/auth`, `/events`, `/system/df`). See the full spec below for these.
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`docker_engine-1.33.json`](./OpenAPIs/docker_engine-1.33.json) | Full spec for Docker Engine API 1.33 (105 operations). |
 
 ## Dependencies
 

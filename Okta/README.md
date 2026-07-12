@@ -30,7 +30,12 @@ Generate a token in the Okta Admin Console under **Security → API → Tokens**
 
 ## OpenAPIs
 
-### `okta_management-latest.json` (curated)
+| Spec | Version | Description |
+|---|---|---|
+| [`okta_management-latest.json`](./OpenAPIs/okta_management-latest.json) | latest (curated) | Trimmed to 65 of 162 upstream operations — see breakdown below |
+| [`okta_management-3.2.0.json`](./OpenAPIs/okta_management-3.2.0.json) | 3.2.0 | Full spec for Okta Identity Governance 3.2.0 (162 operations). |
+
+### `okta_management-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 3.2.0`). Trimmed to 65 of 162 upstream operations covering common CRUD for automation. The full upstream spec is Okta's Identity Governance API in its entirety; excluded areas are admin-configuration surfaces (request types, request conditions/sequences/settings, entitlement settings, org and certification settings, resource owners), risk scoring (risk rules and risk-rule assessments), job/task-queue polling, and personal ("my") self-service endpoints that duplicate an equivalent admin-level operation already covered.
 
@@ -44,12 +49,6 @@ Resources included, by category:
 - **Access Requests**: browse the default access request catalog, create/list/retrieve requests, and add request messages
 - **Security Access Reviews**: create, list, retrieve, update, execute review actions (approve/deny), and add comments
 - **Access Revocation**: revoke a principal's access
-
-### Full, unmodified spec
-
-| Spec | Description |
-|---|---|
-| [`okta_management-3.2.0.json`](./OpenAPIs/okta_management-3.2.0.json) | Full spec for Okta Identity Governance 3.2.0 (162 operations). |
 
 ## Dependencies
 
