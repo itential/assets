@@ -14,8 +14,9 @@ The 47 workflows span 12 operational categories and cover the full policy automa
 
 | Asset | Description |
 |---|---|
-| [OpenAPIs/](./OpenAPIs/) | Panorama 11.1 REST API OpenAPI spec used by the Integration Model |
-| [Projects/](./Projects/) | IAP project containing all 46 workflows in 12 folders |
+| [OpenAPIs/](./OpenAPIs/) | Panorama REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/](./Studio%20Projects/) | IAP project containing all 46 workflows in 12 folders |
+| [Automations/](./Automations/) | Automation pairing for the Create Security Rule workflow |
 
 ## Requirements
 
@@ -70,7 +71,29 @@ The workflows in this project are wired to the integration instance named **`Pan
 
 ---
 
-## Projects
+## OpenAPIs
+
+### `panorama-latest.json` (curated)
+
+Actively-maintained spec (`x-vendor-api-version: 11.1`). Trimmed from the full 541-operation upstream spec down to 92 operations covering core security policy automation and device onboarding.
+
+Resources included, by category:
+
+- **Objects**: Addresses, Address Groups, Application Groups, Custom URL Categories, External Dynamic Lists, Log Forwarding Profiles, Security Profile Groups, Services, Service Groups, Tags
+- **Policies**: Security Pre-Rules, Security Post-Rules (with move), NAT Pre-Rules, NAT Post-Rules (with move)
+- **Network**: Zones
+- **Panorama**: Device Groups, Templates, Template Stacks
+- **Commit**: Commit Configuration, Commit All Configuration (via the Panorama XML API)
+
+### Full, unmodified spec
+
+| Spec | Description |
+|---|---|
+| [`panorama-11.1.json`](./OpenAPIs/panorama-11.1.json) | Full spec for Panorama 11.1 (223 operations). |
+
+---
+
+## Studio Projects
 
 ### Palo Alto Panorama
 

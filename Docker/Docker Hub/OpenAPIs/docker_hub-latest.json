@@ -14,7 +14,7 @@
     }
   ],
   "info": {
-    "description": "Docker Hub API provides access to Docker Hub repository management, image tags, automated builds, webhooks, and organization/team administration.\n\nAuthentication: Bearer JWT — obtain via POST https://hub.docker.com/v2/users/login with Docker Hub username and password. Pass as Authorization: Bearer <token>.\n\nSource: https://docs.docker.com/docker-hub/api/latest/",
+    "description": "Docker Hub API provides access to Docker Hub repository management, image tags, automated builds, webhooks, and organization/team administration.\n\nAuthentication: Bearer JWT \u2014 obtain via POST https://hub.docker.com/v2/users/login with Docker Hub username and password. Pass as Authorization: Bearer <token>.\n\nSource: https://docs.docker.com/docker-hub/api/latest/",
     "title": "Docker Hub",
     "version": "latest",
     "x-vendor-api-version": "beta",
@@ -34,7 +34,8 @@
       }
     ],
     "x-providerName": "docker.com",
-    "x-serviceName": "hub"
+    "x-serviceName": "hub",
+    "x-itential-curated": "Trimmed to 16 of 28 upstream operations covering common CRUD for automation: personal access token management, repository/image/tag browsing, organization settings, and user login for token retrieval. See the repo README for the full scope and the full spec."
   },
   "tags": [
     {
@@ -264,307 +265,6 @@
         "summary": "Update a personal access token",
         "tags": [
           "access-tokens"
-        ]
-      }
-    },
-    "/v2/auditlogs/{account}": {
-      "get": {
-        "description": "Get audit log events for a given namespace.",
-        "operationId": "AuditLogs_GetAuditLogs",
-        "parameters": [
-          {
-            "description": "Namespace to query audit logs for.",
-            "in": "path",
-            "name": "account",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "action name one of [\"repo.tag.push\", ...]. Optional parameter to filter specific audit log actions.",
-            "in": "query",
-            "name": "action",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "name. Optional parameter to filter audit log events to a specific name. For repository events, this is the name of the repository. For organization events, this is the name of the organization. For team member events, this is the username of the team member.",
-            "in": "query",
-            "name": "name",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "actor name. Optional parameter to filter audit log events to the specific user who triggered the event.",
-            "in": "query",
-            "name": "actor",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "Start of the time window you wish to query audit events for.",
-            "in": "query",
-            "name": "from",
-            "required": false,
-            "schema": {
-              "format": "date-time",
-              "type": "string"
-            }
-          },
-          {
-            "description": "End of the time window you wish to query audit events for.",
-            "in": "query",
-            "name": "to",
-            "required": false,
-            "schema": {
-              "format": "date-time",
-              "type": "string"
-            }
-          },
-          {
-            "description": "page - specify page number. Page number to get.",
-            "in": "query",
-            "name": "page",
-            "required": false,
-            "schema": {
-              "default": 1,
-              "format": "int32",
-              "type": "integer"
-            }
-          },
-          {
-            "description": "page_size - specify page size. Number of events to return per page.",
-            "in": "query",
-            "name": "page_size",
-            "required": false,
-            "schema": {
-              "default": 25,
-              "format": "int32",
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "response": {
-                    "value": {
-                      "logs": [
-                        {
-                          "account": "docker",
-                          "action": "repo.tag.push",
-                          "action_description": "pushed the tag latest with the digest sha256:c1ae9c435032a to the repository docker/example",
-                          "actor": "docker",
-                          "data": {
-                            "digest": "sha256:c1ae9c435032a276f80220c7d9b40f76266bbe79243d34f9cda30b76fe114dfa",
-                            "tag": "latest"
-                          },
-                          "name": "docker/example",
-                          "timestamp": "2021-02-19T01:34:35Z"
-                        }
-                      ]
-                    }
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/GetAuditLogsResponse"
-                }
-              }
-            },
-            "description": "A successful response."
-          },
-          "429": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "response": {
-                    "value": {
-                      "detail": "Rate limit exceeded",
-                      "error": false
-                    }
-                  }
-                },
-                "schema": {}
-              }
-            },
-            "description": ""
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": ""
-          },
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/rpcStatus"
-                }
-              }
-            },
-            "description": "An unexpected error response."
-          }
-        },
-        "summary": "Returns list of audit log  events.",
-        "tags": [
-          "audit-logs"
-        ]
-      }
-    },
-    "/v2/auditlogs/{account}/actions": {
-      "get": {
-        "description": "Get audit log actions for a namespace to be used as a filter for querying audit events.",
-        "operationId": "AuditLogs_GetAuditActions",
-        "parameters": [
-          {
-            "description": "Namespace to query audit log actions for.",
-            "in": "path",
-            "name": "account",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "response": {
-                    "value": {
-                      "actions": {
-                        "org": {
-                          "actions": [
-                            {
-                              "description": "contains team create events",
-                              "label": "Team Created",
-                              "name": "team.create"
-                            },
-                            {
-                              "description": "contains team delete events",
-                              "label": "Team Deleted",
-                              "name": "team.delete"
-                            },
-                            {
-                              "description": "contains team member add events",
-                              "label": "Team Member Added",
-                              "name": "team.member.add"
-                            },
-                            {
-                              "description": "contains team member remove events",
-                              "label": "Team Member Removed",
-                              "name": "team.member.remove"
-                            },
-                            {
-                              "description": "contains team member invite events",
-                              "label": "Team Member Invited",
-                              "name": "team.member.invite"
-                            },
-                            {
-                              "description": "contains org member remove events",
-                              "label": "Organization Member Removed",
-                              "name": "member.removed"
-                            },
-                            {
-                              "description": "contains organization create events",
-                              "label": "Organization Created",
-                              "name": "create"
-                            }
-                          ],
-                          "label": "Organization"
-                        },
-                        "repo": {
-                          "actions": [
-                            {
-                              "description": "contains repository create events",
-                              "label": "Repository Created",
-                              "name": "create"
-                            },
-                            {
-                              "description": "contains repository delete events",
-                              "label": "Repository Deleted",
-                              "name": "delete"
-                            },
-                            {
-                              "description": "contains repository privacy change events",
-                              "label": "Privacy Changed",
-                              "name": "change_privacy"
-                            },
-                            {
-                              "description": "contains image tag push events",
-                              "label": "Tag Pushed",
-                              "name": "tag.push"
-                            },
-                            {
-                              "description": "contains image tag delete events",
-                              "label": "Tag Deleted",
-                              "name": "tag.delete"
-                            }
-                          ],
-                          "label": "Repository"
-                        }
-                      }
-                    }
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/GetAuditActionsResponse"
-                }
-              }
-            },
-            "description": "A successful response."
-          },
-          "429": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "response": {
-                    "value": {
-                      "detail": "Rate limit exceeded",
-                      "error": false
-                    }
-                  }
-                },
-                "schema": {}
-              }
-            },
-            "description": ""
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": ""
-          },
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/rpcStatus"
-                }
-              }
-            },
-            "description": "An unexpected error response."
-          }
-        },
-        "summary": "Returns list of audit log actions.",
-        "tags": [
-          "audit-logs"
         ]
       }
     },
@@ -1105,388 +805,6 @@
         ]
       }
     },
-    "/v2/scim/2.0/ResourceTypes": {
-      "get": {
-        "description": "Returns all resource types supported for the SCIM configuration.\n",
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/scim_get_resource_types_resp"
-          },
-          "401": {
-            "$ref": "#/components/responses/scim_unauthorized"
-          },
-          "500": {
-            "$ref": "#/components/responses/scim_error"
-          }
-        },
-        "security": [
-          {}
-        ],
-        "summary": "List resource types",
-        "tags": [
-          "scim"
-        ]
-      }
-    },
-    "/v2/scim/2.0/ResourceTypes/{name}": {
-      "get": {
-        "description": "Returns a resource type by name.\n",
-        "parameters": [
-          {
-            "example": "User",
-            "in": "path",
-            "name": "name",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/scim_get_resource_type_resp"
-          },
-          "401": {
-            "$ref": "#/components/responses/scim_unauthorized"
-          },
-          "404": {
-            "$ref": "#/components/responses/scim_not_found"
-          },
-          "500": {
-            "$ref": "#/components/responses/scim_error"
-          }
-        },
-        "security": [
-          {}
-        ],
-        "summary": "Get a resource type",
-        "tags": [
-          "scim"
-        ]
-      }
-    },
-    "/v2/scim/2.0/Schemas": {
-      "get": {
-        "description": "Returns all schemas supported for the SCIM configuration.\n",
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/scim_get_schemas_resp"
-          },
-          "401": {
-            "$ref": "#/components/responses/scim_unauthorized"
-          },
-          "500": {
-            "$ref": "#/components/responses/scim_error"
-          }
-        },
-        "security": [
-          {}
-        ],
-        "summary": "List schemas",
-        "tags": [
-          "scim"
-        ]
-      }
-    },
-    "/v2/scim/2.0/Schemas/{id}": {
-      "get": {
-        "description": "Returns a schema by ID.\n",
-        "parameters": [
-          {
-            "example": "urn:ietf:params:scim:schemas:core:2.0:User",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/scim_get_schema_resp"
-          },
-          "401": {
-            "$ref": "#/components/responses/scim_unauthorized"
-          },
-          "404": {
-            "$ref": "#/components/responses/scim_not_found"
-          },
-          "500": {
-            "$ref": "#/components/responses/scim_error"
-          }
-        },
-        "security": [
-          {}
-        ],
-        "summary": "Get a schema",
-        "tags": [
-          "scim"
-        ]
-      }
-    },
-    "/v2/scim/2.0/ServiceProviderConfig": {
-      "get": {
-        "description": "Returns a service provider config for Docker's configuration.\n",
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/scim_get_service_provider_config_resp"
-          },
-          "401": {
-            "$ref": "#/components/responses/scim_unauthorized"
-          },
-          "500": {
-            "$ref": "#/components/responses/scim_error"
-          }
-        },
-        "security": [
-          {}
-        ],
-        "summary": "Get service provider config",
-        "tags": [
-          "scim"
-        ]
-      }
-    },
-    "/v2/scim/2.0/Users": {
-      "get": {
-        "description": "List users, returns paginated users for an organization. Use `startIndex`\nand `count` query parameters to receive paginated results.\n\n**Sorting:**<br>\nSorting lets you to specify the order of returned resources by specifying\na combination of `sortBy` and `sortOrder` query parameters.\n\nThe `sortBy` parameter specifies the attribute whose value will be used\nto order the returned responses. The `sortOrder` parameter defines the\norder in which the `sortBy` parameter is applied. Allowed values are\n\"ascending\" and \"descending\".\n\n**Filtering:**<br>\nYou can request a subset of resources by specifying the `filter` query\nparameter containing a filter expression. Attribute names and attribute\noperators used in filters are case insensitive. The filter parameter\nmust contain at least one valid expression. Each expression must contain\nan attribute name followed by an attribute operator and an optional\nvalue.\n\nSupported operators are listed below.\n\n- `eq` equal\n- `ne` not equal\n- `co` contains\n- `sw` starts with\n- `and` Logical \"and\"\n- `or` Logical \"or\"\n- `not` \"Not\" function\n- `()` Precedence grouping\n",
-        "parameters": [
-          {
-            "description": "",
-            "example": 1,
-            "in": "query",
-            "name": "startIndex",
-            "schema": {
-              "minimum": 1,
-              "type": "integer"
-            }
-          },
-          {
-            "description": "",
-            "example": 10,
-            "in": "query",
-            "name": "count",
-            "schema": {
-              "maximum": 200,
-              "minimum": 1,
-              "type": "integer"
-            }
-          },
-          {
-            "description": "",
-            "example": "userName eq \"jon.snow@docker.com\"",
-            "in": "query",
-            "name": "filter",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "$ref": "#/components/parameters/scim_attributes"
-          },
-          {
-            "in": "query",
-            "name": "sortOrder",
-            "schema": {
-              "enum": [
-                "ascending",
-                "descending"
-              ],
-              "type": "string"
-            }
-          },
-          {
-            "description": "User attribute to sort by.",
-            "example": "userName",
-            "in": "query",
-            "name": "sortBy",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/scim_get_users_resp"
-          },
-          "400": {
-            "$ref": "#/components/responses/scim_bad_request"
-          },
-          "401": {
-            "$ref": "#/components/responses/scim_unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/scim_forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/scim_not_found"
-          },
-          "500": {
-            "$ref": "#/components/responses/scim_error"
-          }
-        },
-        "security": [
-          {}
-        ],
-        "summary": "List users",
-        "tags": [
-          "scim"
-        ]
-      },
-      "post": {
-        "description": "Creates a user. If the user already exists by email, they are assigned\nto the organization on the \"company\" team.\n",
-        "requestBody": {
-          "$ref": "#/components/requestBodies/scim_create_user_request"
-        },
-        "responses": {
-          "201": {
-            "$ref": "#/components/responses/scim_create_user_resp"
-          },
-          "400": {
-            "$ref": "#/components/responses/scim_bad_request"
-          },
-          "401": {
-            "$ref": "#/components/responses/scim_unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/scim_forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/scim_not_found"
-          },
-          "409": {
-            "$ref": "#/components/responses/scim_conflict"
-          },
-          "500": {
-            "$ref": "#/components/responses/scim_error"
-          }
-        },
-        "security": [
-          {}
-        ],
-        "summary": "Create user",
-        "tags": [
-          "scim"
-        ]
-      }
-    },
-    "/v2/scim/2.0/Users/{id}": {
-      "get": {
-        "description": "Returns a user by ID.\n",
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/scim_get_user_resp"
-          },
-          "400": {
-            "$ref": "#/components/responses/scim_bad_request"
-          },
-          "401": {
-            "$ref": "#/components/responses/scim_unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/scim_forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/scim_not_found"
-          },
-          "500": {
-            "$ref": "#/components/responses/scim_error"
-          }
-        },
-        "security": [
-          {}
-        ],
-        "summary": "Get a user",
-        "tags": [
-          "scim"
-        ]
-      },
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/scim_user_id"
-        }
-      ],
-      "put": {
-        "description": "Updates a user. Use this route to change the user's name, activate,\nand deactivate the user.\n",
-        "requestBody": {
-          "$ref": "#/components/requestBodies/scim_update_user_request"
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/scim_update_user_resp"
-          },
-          "400": {
-            "$ref": "#/components/responses/scim_bad_request"
-          },
-          "401": {
-            "$ref": "#/components/responses/scim_unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/scim_forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/scim_not_found"
-          },
-          "409": {
-            "$ref": "#/components/responses/scim_conflict"
-          },
-          "500": {
-            "$ref": "#/components/responses/scim_error"
-          }
-        },
-        "security": [
-          {}
-        ],
-        "summary": "Update a user",
-        "tags": [
-          "scim"
-        ]
-      }
-    },
-    "/v2/users/2fa-login": {
-      "post": {
-        "description": "When user has 2FA enabled, this is the second call to perform after\n`/v2/users/login` call.\n\nCreates and returns a bearer token in JWT format that you can use to authenticate with Docker Hub APIs.\n\nThe returned token is used in the HTTP Authorization header like `Authorization: Bearer {TOKEN}`.\n\nMost Docker Hub APIs require this token either to consume or to get detailed information. For example, to list images in a private repository.\n",
-        "operationId": "PostUsers2FALogin",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Users2FALoginRequest"
-              }
-            }
-          },
-          "description": "Login details.",
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostUsersLoginSuccessResponse"
-                }
-              }
-            },
-            "description": "Authentication successful"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostUsers2FALoginErrorResponse"
-                }
-              }
-            },
-            "description": "Authentication failed or second factor required"
-          }
-        },
-        "summary": "Second factor authentication.",
-        "tags": [
-          "authentication"
-        ]
-      }
-    },
     "/v2/users/login": {
       "post": {
         "description": "Creates and returns a bearer token in JWT format that you can use to\nauthenticate with Docker Hub APIs.\n\nThe returned token is used in the HTTP Authorization header like `Authorization: Bearer {TOKEN}`.\n\nMost Docker Hub APIs require this token either to consume or to get detailed information. For example, to list images in a private repository.\n",
@@ -1532,564 +850,13 @@
     }
   },
   "components": {
-    "parameters": {
-      "namespace": {
-        "in": "path",
-        "name": "namespace",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "page": {
-        "description": "Page number to get. Defaults to 1.",
-        "in": "query",
-        "name": "page",
-        "required": false,
-        "schema": {
-          "type": "integer"
-        }
-      },
-      "page_size": {
-        "description": "Number of items to get per page. Defaults to 10. Max of 100.",
-        "in": "query",
-        "name": "page_size",
-        "required": false,
-        "schema": {
-          "type": "integer"
-        }
-      },
-      "repository": {
-        "in": "path",
-        "name": "repository",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "scim_attributes": {
-        "description": "Comma delimited list of attributes to limit to in the response.",
-        "example": "userName,displayName",
-        "in": "query",
-        "name": "attributes",
-        "schema": {
-          "type": "string"
-        }
-      },
-      "scim_user_id": {
-        "description": "The user ID.",
-        "example": "d80f7c79-7730-49d8-9a41-7c42fb622d9c",
-        "in": "path",
-        "name": "id",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "tag": {
-        "in": "path",
-        "name": "tag",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      }
-    },
-    "requestBodies": {
-      "scim_create_user_request": {
-        "content": {
-          "application/scim+json": {
-            "schema": {
-              "properties": {
-                "name": {
-                  "$ref": "#/components/schemas/scim_user_name"
-                },
-                "schemas": {
-                  "$ref": "#/components/schemas/scim_user_schemas"
-                },
-                "userName": {
-                  "$ref": "#/components/schemas/scim_user_username"
-                }
-              },
-              "required": [
-                "schemas",
-                "userName"
-              ],
-              "type": "object"
-            }
-          }
-        },
-        "required": true
-      },
-      "scim_update_user_request": {
-        "content": {
-          "application/scim+json": {
-            "schema": {
-              "properties": {
-                "enabled": {
-                  "default": false,
-                  "description": "If this is omitted from the request, it will default to false resulting in a deactivated user.",
-                  "type": "boolean"
-                },
-                "name": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/scim_user_name"
-                    },
-                    {
-                      "description": "If this is omitted from the request, the update will skip the update on it. We will only ever change the name, but not clear it."
-                    }
-                  ]
-                },
-                "schemas": {
-                  "$ref": "#/components/schemas/scim_user_schemas"
-                }
-              },
-              "required": [
-                "schemas"
-              ],
-              "type": "object"
-            }
-          }
-        },
-        "required": true
-      }
-    },
-    "responses": {
-      "BadRequest": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ValueError"
-            }
-          }
-        },
-        "description": "Bad Request"
-      },
-      "Forbidden": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        },
-        "description": "Forbidden"
-      },
-      "NotFound": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        },
-        "description": "Not Found"
-      },
-      "Unauthorized": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        },
-        "description": "Unauthorized"
-      },
-      "get_tag": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/tag"
-            }
-          }
-        },
-        "description": "repository tag"
-      },
-      "list_tags": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/paginated_tags"
-            }
-          }
-        },
-        "description": "list repository tags"
-      },
-      "scim_bad_request": {
-        "content": {
-          "application/scim+json": {
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/scim_error"
-                },
-                {
-                  "properties": {
-                    "scimType": {
-                      "description": "Some types of errors will return this per the specification.",
-                      "type": "string"
-                    },
-                    "status": {
-                      "example": "400"
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        },
-        "description": "Bad Request"
-      },
-      "scim_conflict": {
-        "content": {
-          "application/scim+json": {
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/scim_error"
-                },
-                {
-                  "properties": {
-                    "status": {
-                      "example": "409"
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        },
-        "description": "Conflict"
-      },
-      "scim_create_user_resp": {
-        "content": {
-          "application/scim+json": {
-            "schema": {
-              "$ref": "#/components/schemas/scim_user"
-            }
-          }
-        },
-        "description": ""
-      },
-      "scim_error": {
-        "content": {
-          "application/scim+json": {
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/scim_error"
-                },
-                {
-                  "properties": {
-                    "status": {
-                      "example": "500"
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        },
-        "description": "Internal Error"
-      },
-      "scim_forbidden": {
-        "content": {
-          "application/scim+json": {
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/scim_error"
-                },
-                {
-                  "properties": {
-                    "status": {
-                      "example": "403"
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        },
-        "description": "Forbidden"
-      },
-      "scim_get_resource_type_resp": {
-        "content": {
-          "application/scim+json": {
-            "schema": {
-              "$ref": "#/components/schemas/scim_resource_type"
-            }
-          }
-        },
-        "description": ""
-      },
-      "scim_get_resource_types_resp": {
-        "content": {
-          "application/scim+json": {
-            "schema": {
-              "properties": {
-                "resources": {
-                  "items": {
-                    "$ref": "#/components/schemas/scim_resource_type"
-                  },
-                  "type": "array"
-                },
-                "schemas": {
-                  "example": [
-                    "urn:ietf:params:scim:api:messages:2.0:ListResponse"
-                  ],
-                  "items": {
-                    "type": "string"
-                  },
-                  "type": "array"
-                },
-                "totalResults": {
-                  "example": 1,
-                  "type": "integer"
-                }
-              },
-              "type": "object"
-            }
-          }
-        },
-        "description": ""
-      },
-      "scim_get_schema_resp": {
-        "content": {
-          "application/scim+json": {
-            "schema": {
-              "$ref": "#/components/schemas/scim_schema"
-            }
-          }
-        },
-        "description": ""
-      },
-      "scim_get_schemas_resp": {
-        "content": {
-          "application/scim+json": {
-            "schema": {
-              "properties": {
-                "resources": {
-                  "items": {
-                    "$ref": "#/components/schemas/scim_schema"
-                  },
-                  "type": "array"
-                },
-                "schemas": {
-                  "example": [
-                    "urn:ietf:params:scim:api:messages:2.0:ListResponse"
-                  ],
-                  "items": {
-                    "type": "string"
-                  },
-                  "type": "array"
-                },
-                "totalResults": {
-                  "example": 1,
-                  "type": "integer"
-                }
-              },
-              "type": "object"
-            }
-          }
-        },
-        "description": ""
-      },
-      "scim_get_service_provider_config_resp": {
-        "content": {
-          "application/scim+json": {
-            "schema": {
-              "$ref": "#/components/schemas/scim_service_provider_config"
-            }
-          }
-        },
-        "description": ""
-      },
-      "scim_get_user_resp": {
-        "content": {
-          "application/scim+json": {
-            "schema": {
-              "$ref": "#/components/schemas/scim_user"
-            }
-          }
-        },
-        "description": ""
-      },
-      "scim_get_users_resp": {
-        "content": {
-          "application/scim+json": {
-            "schema": {
-              "properties": {
-                "itemsPerPage": {
-                  "example": 10,
-                  "type": "integer"
-                },
-                "resources": {
-                  "items": {
-                    "$ref": "#/components/schemas/scim_user"
-                  },
-                  "type": "array"
-                },
-                "schemas": {
-                  "example": [
-                    "urn:ietf:params:scim:api:messages:2.0:ListResponse"
-                  ],
-                  "items": {
-                    "type": "string"
-                  },
-                  "type": "array"
-                },
-                "startIndex": {
-                  "example": 1,
-                  "type": "integer"
-                },
-                "totalResults": {
-                  "example": 1,
-                  "type": "integer"
-                }
-              },
-              "type": "object"
-            }
-          }
-        },
-        "description": ""
-      },
-      "scim_not_found": {
-        "content": {
-          "application/scim+json": {
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/scim_error"
-                },
-                {
-                  "properties": {
-                    "status": {
-                      "example": "404"
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        },
-        "description": "Not Found"
-      },
-      "scim_unauthorized": {
-        "content": {
-          "application/scim+json": {
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/scim_error"
-                },
-                {
-                  "properties": {
-                    "status": {
-                      "example": "401"
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        },
-        "description": "Unauthorized"
-      },
-      "scim_update_user_resp": {
-        "content": {
-          "application/scim+json": {
-            "schema": {
-              "$ref": "#/components/schemas/scim_user"
-            }
-          }
-        },
-        "description": ""
-      }
-    },
     "schemas": {
-      "AuditLog": {
-        "description": "Audit log event.",
-        "properties": {
-          "account": {
-            "type": "string"
-          },
-          "action": {
-            "type": "string"
-          },
-          "action_description": {
-            "type": "string"
-          },
-          "actor": {
-            "type": "string"
-          },
-          "data": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "type": "object"
-          },
-          "name": {
-            "type": "string"
-          },
-          "timestamp": {
-            "format": "date-time",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "AuditLogAction": {
-        "description": "Audit Log action",
-        "properties": {
-          "description": {
-            "description": "Description of audit log action.",
-            "type": "string"
-          },
-          "label": {
-            "description": "Label for audit log action.",
-            "type": "string"
-          },
-          "name": {
-            "description": "Name of audit log action.",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "AuditLogActions": {
-        "properties": {
-          "actions": {
-            "description": "List of audit log actions.",
-            "items": {
-              "$ref": "#/components/schemas/AuditLogAction"
-            },
-            "type": "array"
-          },
-          "label": {
-            "description": "Grouping label for a particular set of audit log actions.",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "Error": {
         "properties": {
           "detail": {
             "type": "string"
           },
           "message": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "ErrorDetail": {
-        "description": "Error with a detail field.",
-        "properties": {
-          "detail": {
-            "description": "The error message.",
             "type": "string"
           }
         },
@@ -2130,32 +897,6 @@
           "txnid": {
             "description": "Unique ID for this call.",
             "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "GetAuditActionsResponse": {
-        "description": "GetAuditActions response.",
-        "properties": {
-          "actions": {
-            "additionalProperties": {
-              "$ref": "#/components/schemas/AuditLogActions"
-            },
-            "description": "Map of audit log actions.",
-            "type": "object"
-          }
-        },
-        "type": "object"
-      },
-      "GetAuditLogsResponse": {
-        "description": "GetAuditLogs response.",
-        "properties": {
-          "logs": {
-            "description": "List of audit log events.",
-            "items": {
-              "$ref": "#/components/schemas/AuditLog"
-            },
-            "type": "array"
           }
         },
         "type": "object"
@@ -2537,18 +1278,6 @@
         },
         "type": "object"
       },
-      "PostUsers2FALoginErrorResponse": {
-        "description": "failed second factor login response.",
-        "properties": {
-          "detail": {
-            "description": "Description of the error.",
-            "example": "Incorrect authentication credentials",
-            "nullable": false,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "PostUsersLoginErrorResponse": {
         "description": "failed user login response or second factor required",
         "properties": {
@@ -2580,26 +1309,6 @@
             "type": "string"
           }
         },
-        "type": "object"
-      },
-      "Users2FALoginRequest": {
-        "description": "Second factor user login details",
-        "properties": {
-          "code": {
-            "description": "The Time-based One-Time Password of the Docker Hub account to authenticate with.",
-            "example": 123456,
-            "type": "string"
-          },
-          "login_2fa_token": {
-            "description": "The intermediate 2FA token returned from `/v2/users/login` API.",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
-            "type": "string"
-          }
-        },
-        "required": [
-          "login_2fa_token",
-          "code"
-        ],
         "type": "object"
       },
       "UsersLoginRequest": {
@@ -2902,18 +1611,6 @@
       "patchAccessTokenResponse": {
         "$ref": "#/components/schemas/accessToken"
       },
-      "protobufAny": {
-        "properties": {
-          "type_url": {
-            "type": "string"
-          },
-          "value": {
-            "format": "byte",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "restricted_images": {
         "properties": {
           "allow_official_images": {
@@ -2933,400 +1630,6 @@
           }
         },
         "type": "object"
-      },
-      "rpcStatus": {
-        "properties": {
-          "code": {
-            "format": "int32",
-            "type": "integer"
-          },
-          "details": {
-            "items": {
-              "$ref": "#/components/schemas/protobufAny"
-            },
-            "type": "array"
-          },
-          "message": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "scim_email": {
-        "properties": {
-          "display": {
-            "example": "jon.snow@docker.com",
-            "type": "string"
-          },
-          "primary": {
-            "example": true,
-            "type": "boolean"
-          },
-          "value": {
-            "example": "jon.snow@docker.com",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "scim_error": {
-        "properties": {
-          "detail": {
-            "description": "Details about why the request failed.",
-            "type": "string"
-          },
-          "schemas": {
-            "items": {
-              "default": "urn:ietf:params:scim:api:messages:2.0:Error",
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "status": {
-            "description": "The status code for the response in string format.",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "scim_group": {
-        "properties": {
-          "display": {
-            "example": "nightswatch",
-            "type": "string"
-          },
-          "value": {
-            "example": "nightswatch",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "scim_resource_type": {
-        "properties": {
-          "description": {
-            "example": "User",
-            "type": "string"
-          },
-          "endpoint": {
-            "example": "/Users",
-            "type": "string"
-          },
-          "id": {
-            "example": "User",
-            "type": "string"
-          },
-          "name": {
-            "example": "User",
-            "type": "string"
-          },
-          "schema": {
-            "example": "urn:ietf:params:scim:schemas:core:2.0:User",
-            "type": "string"
-          },
-          "schemas": {
-            "example": "urn:ietf:params:scim:schemas:core:2.0:ResourceType",
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "scim_schema": {
-        "properties": {
-          "attributes": {
-            "example": [],
-            "items": {
-              "$ref": "#/components/schemas/scim_schema_parent_attribute"
-            },
-            "type": "array"
-          },
-          "description": {
-            "example": "User Account",
-            "type": "string"
-          },
-          "id": {
-            "example": "urn:ietf:params:scim:schemas:core:2.0:User",
-            "type": "string"
-          },
-          "name": {
-            "example": "User",
-            "type": "string"
-          },
-          "schemas": {
-            "example": [
-              "urn:ietf:params:scim:schemas:core:2.0:Schema"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "scim_schema_attribute": {
-        "properties": {
-          "caseExact": {
-            "example": false,
-            "type": "boolean"
-          },
-          "description": {
-            "example": "Unique identifier for the User, typically used by the user to directly authenticate to the service provider. Each User MUST include a non-empty userName value. This identifier MUST be unique across the service provider's entire set of Users.",
-            "type": "string"
-          },
-          "multiValued": {
-            "example": false,
-            "type": "boolean"
-          },
-          "mutability": {
-            "example": "readWrite",
-            "type": "string"
-          },
-          "name": {
-            "example": "userName",
-            "type": "string"
-          },
-          "required": {
-            "example": true,
-            "type": "boolean"
-          },
-          "returned": {
-            "example": "default",
-            "type": "string"
-          },
-          "type": {
-            "enum": [
-              "string",
-              "boolean",
-              "complex"
-            ],
-            "example": "string",
-            "type": "string"
-          },
-          "uniqueness": {
-            "example": "server",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "scim_schema_parent_attribute": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/scim_schema_attribute"
-          },
-          {
-            "properties": {
-              "subAttributes": {
-                "items": {
-                  "$ref": "#/components/schemas/scim_schema_attribute"
-                },
-                "type": "array"
-              }
-            },
-            "type": "object"
-          }
-        ]
-      },
-      "scim_service_provider_config": {
-        "properties": {
-          "authenticationSchemes": {
-            "properties": {
-              "description": {
-                "example": "The OAuth 2.0 Bearer Token Authentication scheme. OAuth enables clients to access protected resources by obtaining an access token, which is defined in RFC 6750 as \"a string representing an access authorization issued to the client\", rather than using the resource owner's credentials directly.",
-                "type": "string"
-              },
-              "name": {
-                "example": "OAuth 2.0 Bearer Token",
-                "type": "string"
-              },
-              "specUri": {
-                "example": "http://tools.ietf.org/html/rfc6750",
-                "type": "string"
-              },
-              "type": {
-                "example": "oauthbearertoken",
-                "type": "string"
-              }
-            },
-            "type": "object"
-          },
-          "bulk": {
-            "properties": {
-              "maxOperations": {
-                "type": "integer"
-              },
-              "maxPayloadSize": {
-                "type": "integer"
-              },
-              "supported": {
-                "example": false,
-                "type": "boolean"
-              }
-            },
-            "type": "object"
-          },
-          "changePassword": {
-            "properties": {
-              "supported": {
-                "example": false,
-                "type": "boolean"
-              }
-            },
-            "type": "object"
-          },
-          "documentationUri": {
-            "example": "",
-            "type": "string"
-          },
-          "etag": {
-            "properties": {
-              "supported": {
-                "example": false,
-                "type": "boolean"
-              }
-            },
-            "type": "object"
-          },
-          "filter": {
-            "properties": {
-              "maxResults": {
-                "example": 99999,
-                "type": "integer"
-              },
-              "supported": {
-                "example": true,
-                "type": "boolean"
-              }
-            },
-            "type": "object"
-          },
-          "patch": {
-            "properties": {
-              "supported": {
-                "example": false,
-                "type": "boolean"
-              }
-            }
-          },
-          "schemas": {
-            "example": [
-              "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "sort": {
-            "properties": {
-              "supported": {
-                "example": true,
-                "type": "boolean"
-              }
-            },
-            "type": "object"
-          }
-        },
-        "type": "object"
-      },
-      "scim_user": {
-        "properties": {
-          "active": {
-            "example": true,
-            "type": "boolean"
-          },
-          "displayName": {
-            "$ref": "#/components/schemas/scim_user_display_name"
-          },
-          "emails": {
-            "items": {
-              "$ref": "#/components/schemas/scim_email"
-            },
-            "type": "array"
-          },
-          "groups": {
-            "items": {
-              "$ref": "#/components/schemas/scim_group"
-            },
-            "type": "array"
-          },
-          "id": {
-            "$ref": "#/components/schemas/scim_user_id"
-          },
-          "meta": {
-            "properties": {
-              "created": {
-                "description": "The creation date for the user as a RFC3339 formatted string.",
-                "example": "2022-05-20T00:54:18Z",
-                "type": "string"
-              },
-              "lastModified": {
-                "description": "The date the user was last modified as a RFC3339 formatted string.",
-                "example": "2022-05-20T00:54:18Z",
-                "type": "string"
-              },
-              "location": {
-                "example": "https://hub.docker.com/v2/scim/2.0/Users/d80f7c79-7730-49d8-9a41-7c42fb622d9c",
-                "type": "string"
-              },
-              "resourceType": {
-                "example": "User",
-                "type": "string"
-              }
-            },
-            "type": "object"
-          },
-          "name": {
-            "$ref": "#/components/schemas/scim_user_name"
-          },
-          "schemas": {
-            "$ref": "#/components/schemas/scim_user_schemas"
-          },
-          "userName": {
-            "$ref": "#/components/schemas/scim_user_username"
-          }
-        },
-        "type": "object"
-      },
-      "scim_user_display_name": {
-        "description": "The username in Docker. Also known as the \"Docker ID\".",
-        "example": "jonsnow",
-        "type": "string"
-      },
-      "scim_user_id": {
-        "description": "The unique identifier for the user. A v4 UUID.",
-        "example": "d80f7c79-7730-49d8-9a41-7c42fb622d9c",
-        "type": "string"
-      },
-      "scim_user_name": {
-        "properties": {
-          "familyName": {
-            "example": "Snow",
-            "type": "string"
-          },
-          "givenName": {
-            "example": "Jon",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "scim_user_schemas": {
-        "items": {
-          "example": "urn:ietf:params:scim:schemas:core:2.0:User",
-          "minItems": 1,
-          "type": "string"
-        },
-        "type": "array"
-      },
-      "scim_user_username": {
-        "description": "The user's email address. This must be reachable via email.",
-        "example": "jon.snow@docker.com",
-        "type": "string"
       },
       "tag": {
         "properties": {
@@ -3394,6 +1697,112 @@
           }
         },
         "type": "object"
+      }
+    },
+    "parameters": {
+      "namespace": {
+        "in": "path",
+        "name": "namespace",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "page": {
+        "description": "Page number to get. Defaults to 1.",
+        "in": "query",
+        "name": "page",
+        "required": false,
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "page_size": {
+        "description": "Number of items to get per page. Defaults to 10. Max of 100.",
+        "in": "query",
+        "name": "page_size",
+        "required": false,
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "repository": {
+        "in": "path",
+        "name": "repository",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "tag": {
+        "in": "path",
+        "name": "tag",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ValueError"
+            }
+          }
+        },
+        "description": "Bad Request"
+      },
+      "Forbidden": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Forbidden"
+      },
+      "NotFound": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Not Found"
+      },
+      "Unauthorized": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Unauthorized"
+      },
+      "get_tag": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/tag"
+            }
+          }
+        },
+        "description": "repository tag"
+      },
+      "list_tags": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/paginated_tags"
+            }
+          }
+        },
+        "description": "list repository tags"
       }
     },
     "securitySchemes": {

@@ -4,7 +4,8 @@
     "title": "Paessler PRTG",
     "description": "Paessler PRTG Network Monitor API provides programmatic access to sensors, devices, groups, monitoring data, and alert management in PRTG.\n\nAuthentication: API key in Authorization header \u2014 generate a PRTG API token from Setup \u2192 Account Settings \u2192 My Account \u2192 API Token. Pass as Authorization: PrtgSharedSecret <api_token>.\n\nSource: https://www.paessler.com/manuals/prtg/api_overview",
     "version": "latest",
-    "x-vendor-api-version": "2.0"
+    "x-vendor-api-version": "2.0",
+    "x-itential-curated": "Trimmed to 77 of 115 upstream operations covering common CRUD for automation: Devices, Groups, Probes, and Sensors (create, read, update, delete, pause/resume/scan, clone, autodiscovery), sensor Channels and Timeseries data, and generic Object management (move, count). See the repo README for the full scope and the full spec."
   },
   "servers": [
     {
@@ -12,401 +13,6 @@
     }
   ],
   "paths": {
-    "/schemas/{kind}": {
-      "get": {
-        "x-prtg-writer": true,
-        "operationId": "GetSchema",
-        "deprecated": true,
-        "description": "\u26a0 Deprecated as of PRTG 24.3.100: This endpoint still works, but is replaced with the following endpoints:\n- `/experimental/schemas/{parentid}/post` for creating objects\n- `/experimental/schemas/{id}/patch` for updating objects \n- `/experimental/schemas/{id}/get` for reading objects\n",
-        "tags": [
-          "Objects"
-        ],
-        "summary": "Returns a OAS schema to use in other endpoints.",
-        "parameters": [
-          {
-            "name": "kind",
-            "in": "path",
-            "description": "Enter the kind of schema you want. You can request a schema of a device, group, user, or a specific type of sensor, for example, ping).\n",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "purpose",
-            "in": "query",
-            "description": "Select the purpose to refine the schema for a specific use case:\n\n  * Use `read` for the schema of a `GET` endpoint.\n  * Use `create` for the schema of a `POST` endpoint.\n  * Use `update` for the schema of a `PATCH` endpoint.\n",
-            "required": true,
-            "schema": {
-              "default": "read",
-              "type": "string",
-              "enum": [
-                "create",
-                "update",
-                "read"
-              ]
-            }
-          },
-          {
-            "name": "parent",
-            "in": "query",
-            "description": "Enter the object ID of the parent object where you want to create a new object to request the correct schema for this use case.\nThis field is required if you select `create` as the purpose above.\n",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "yaml/components/Schema.yaml#/components/schemas/SchemaDefinition"
-                },
-                "examples": {
-                  "Read device": {
-                    "$ref": "yaml/examples/object.yaml#/schema-device-read"
-                  },
-                  "Create device": {
-                    "$ref": "yaml/examples/object.yaml#/schema-device-create"
-                  }
-                }
-              }
-            },
-            "description": "The request was successful."
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/experimental/schemas/{parent}": {
-      "get": {
-        "operationId": "GetKindsForParent",
-        "tags": [
-          "Schemas"
-        ],
-        "description": "This endpoint is experimental. For more information, see the [PRTG API v2 Overview: Endpoint Maturity](../overview/index.html#endpoint-maturity).\n",
-        "summary": "Returns a list of all object kinds that you can create on a given parent object.",
-        "parameters": [
-          {
-            "name": "parent",
-            "in": "path",
-            "description": "Enter the ID of the parent object.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "description": "Use an offset to define which results the request returns. The index is a zero-based array, which means that the first object has an index of 0. If you have an offset of 0 and a limit of 100, the API returns results 0 to 99. For more information, see the <a href=\"/api/v2/overview#pagination\" target=\"_blank\">PRTG API v2 Overview: Pagination</a>.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "Enter the number of objects that the request returns. If you set the limit to 0 or do not enter a value, the request returns up to 3,000 objects.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "maximum": 3000,
-              "default": 100
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "description": "List of potentially creatable schemas for the given parent.",
-                    "properties": {
-                      "creatable": {
-                        "type": "boolean",
-                        "description": "True if the schema is creatable other check the hints."
-                      },
-                      "hints": {
-                        "type": "array",
-                        "nullable": true,
-                        "description": "Hints why the specific schema is not creatable.",
-                        "items": {
-                          "type": "string",
-                          "enum": [
-                            "CredentialsMissing",
-                            "ProbeIsDisconnected",
-                            "SensorNeedsLocalProbe",
-                            "SensorNeedsLocalProbeDevice",
-                            "SensorNeedsProbeDevice",
-                            "MissingCredentialGroup"
-                          ]
-                        }
-                      },
-                      "kind": {
-                        "type": "string",
-                        "description": "The schema kind."
-                      },
-                      "name": {
-                        "type": "string",
-                        "description": "The name of the schema."
-                      },
-                      "href": {
-                        "type": "string",
-                        "description": "The URL to the schema for POST requests."
-                      },
-                      "description": {
-                        "type": "string",
-                        "nullable": true,
-                        "description": "Describes the purpose of the the monitoring object."
-                      },
-                      "help": {
-                        "type": "string",
-                        "nullable": true,
-                        "description": "Provides additional helpful information."
-                      },
-                      "Manual": {
-                        "type": "string",
-                        "nullable": true,
-                        "description": "A link to the manuals page where you can find more information."
-                      }
-                    },
-                    "additionalProperties": true
-                  }
-                },
-                "examples": {
-                  "Schemas for device": {
-                    "$ref": "yaml/examples/schemas.yaml#/schemas-list-device"
-                  },
-                  "Schemas for group": {
-                    "$ref": "yaml/examples/schemas.yaml#/schemas-list-group"
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/experimental/schemas/{id}/get": {
-      "get": {
-        "x-prtg-writer": true,
-        "operationId": "GetReadSchemaByObjectID",
-        "tags": [
-          "Schemas"
-        ],
-        "summary": "Returns OAS schema for use in `GET` endpoints for a specific object.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "The object ID for which to retrieve the schema.\n",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "include",
-            "in": "query",
-            "description": "By default, this endpoint only returns the most relevant information about the requested objects.\n\nYou can include additional parameters:\n\n|  Parameter | Description | Example |\n| ------ | ------ | ------ |\u00a0\n| `all_sections` <br><br> Individual settings sections | Explicitly request one, multiple, or all settings sections. | `include=all_sections` <br><br> `include=intervalgroup,scheduledependency`<br><br> `include=path` <br><br>|\n| `inheritance`|Returns information about whether settings are inherited or not. You can only use this parameter together with another parameter. | `include=intervalgroup,inheritance`|\n| `*` | A wildcard that includes the `all_sections`, `inheritance`, and `sensor_status_summary` parameters. | `include=*`|\n\n\nUse the `all_sections` parameter to see all available setting sections. You can then refine your request with the setting sections that you want. For more information, see the [PRTG API v2 Overview: Includes](../overview/index.html#includes).\n",
-            "schema": {
-              "type": "array",
-              "format": "csv",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "yaml/components/Schema.yaml#/components/schemas/SchemaDefinition"
-                },
-                "examples": {
-                  "Read device schema": {
-                    "$ref": "yaml/examples/schemas.yaml#/schema-device-get"
-                  }
-                }
-              }
-            },
-            "description": "The request was successful."
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/experimental/schemas/{id}/patch": {
-      "get": {
-        "x-prtg-writer": true,
-        "operationId": "GetUpdateSchemaByObjectID",
-        "tags": [
-          "Schemas"
-        ],
-        "summary": "Returns an OAS schema for use in `PATCH` endpoints for a specific object.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "The object ID for which to retrieve the schema.\n",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "include",
-            "in": "query",
-            "description": "By default, this endpoint only returns the most relevant information about the requested objects.\n\nYou can include additional parameters:\n\n|  Parameter | Description | Example |\n| ------ | ------ | ------ |\u00a0\n| `all_sections` <br><br> Individual settings sections | Explicitly request one, multiple, or all settings sections. | `include=all_sections` <br><br> `include=intervalgroup,scheduledependency`<br><br> `include=path` <br><br>|\n| `inheritance`|Returns information about whether settings are inherited or not. You can only use this parameter together with another parameter. | `include=intervalgroup,inheritance`|\n| `*` | A wildcard that includes the `all_sections`, `inheritance`, and `sensor_status_summary` parameters. | `include=*`|\n\n\nUse the `all_sections` parameter to see all available setting sections. You can then refine your request with the setting sections that you want. For more information, see the [PRTG API v2 Overview: Includes](../overview/index.html#includes).\n",
-            "schema": {
-              "type": "array",
-              "format": "csv",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "yaml/components/Schema.yaml#/components/schemas/SchemaDefinition"
-                },
-                "examples": {
-                  "Patch device schema": {
-                    "$ref": "yaml/examples/schemas.yaml#/schema-device-patch"
-                  }
-                }
-              }
-            },
-            "description": "The request was successful."
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/experimental/schemas/{parent}/post": {
-      "get": {
-        "x-prtg-writer": true,
-        "operationId": "GetCreateSchemaByParentID",
-        "tags": [
-          "Schemas"
-        ],
-        "summary": "Returns an OAS schema for use in `POST` endpoints.",
-        "parameters": [
-          {
-            "name": "parent",
-            "in": "path",
-            "required": true,
-            "description": "The object ID of the parent object where you want to create a new object.\n",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "kind",
-            "in": "query",
-            "required": true,
-            "description": "The kind of object you want to create (e.g., device, group, or in case of sensors e.g. ping).\n",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "include",
-            "in": "query",
-            "description": "By default, this endpoint only returns the most relevant information about the requested objects.\n\nYou can include additional parameters:\n\n|  Parameter | Description | Example |\n| ------ | ------ | ------ |\u00a0\n| `all_sections` <br><br> Individual settings sections | Explicitly request one, multiple, or all settings sections. | `include=all_sections` <br><br> `include=intervalgroup,scheduledependency`<br><br> `include=path` <br><br>|\n| `inheritance`|Returns information about whether settings are inherited or not. You can only use this parameter together with another parameter. | `include=intervalgroup,inheritance`|\n| `*` | A wildcard that includes the `all_sections`, `inheritance`, and `sensor_status_summary` parameters. | `include=*`|\n\n\nUse the `all_sections` parameter to see all available setting sections. You can then refine your request with the setting sections that you want. For more information, see the [PRTG API v2 Overview: Includes](../overview/index.html#includes).\n",
-            "schema": {
-              "type": "array",
-              "format": "csv",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "yaml/components/Schema.yaml#/components/schemas/SchemaDefinition"
-                },
-                "examples": {
-                  "Post device schema": {
-                    "$ref": "yaml/examples/schemas.yaml#/schema-device-post"
-                  }
-                }
-              }
-            },
-            "description": "The request was successful."
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
     "/experimental/objects": {
       "get": {
         "tags": [
@@ -466,12 +72,12 @@
                   "items": {
                     "allOf": [
                       {
-                        "$ref": "yaml/TreeNode.yaml#/components/schemas/TreeNode"
+                        "$ref": "#/components/schemas/TreeNode"
                       }
                     ],
                     "anyOf": [
                       {
-                        "$ref": "yaml/TreeNodeAdditionalProperties.yaml#/components/schemas/TreeNodeAdditionalProperties"
+                        "$ref": "#/components/schemas/TreeNodeAdditionalProperties"
                       }
                     ],
                     "additionalProperties": {
@@ -488,12 +94,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/objects/{id}/move": {
@@ -600,12 +201,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/objects/count": {
@@ -621,7 +217,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "yaml/ObjectSummary.yaml#/components/schemas/ObjectSummary"
+                  "$ref": "#/components/schemas/ObjectSummary"
                 },
                 "examples": {
                   "Object count": {
@@ -637,12 +233,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/devices/{id}": {
@@ -674,12 +265,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/timeseries/{id}/{type}": {
@@ -786,12 +372,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/timeseries/{id}": {
@@ -902,52 +483,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/experimental/feature-toggles": {
-      "get": {
-        "tags": [
-          "System"
-        ],
-        "deprecated": true,
-        "description": "\u26a0 Deprecated as of PRTG 24.3.100: This endpoint still works, but will be removed.\n",
-        "summary": "Returns a list of all enabled feature-toggles.",
-        "operationId": "PRTGFeatureToggles",
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "enum": [
-                      "EFeatureToggleSettingsV2"
-                    ]
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-Lists"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/channels": {
@@ -1006,7 +542,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ChannelInfo.yaml#/components/schemas/ChannelInfo"
+                    "$ref": "#/components/schemas/ChannelInfo"
                   }
                 },
                 "examples": {
@@ -1023,12 +559,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/channels/data": {
@@ -1086,7 +617,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ChannelMeasurement.yaml#/components/schemas/ChannelMeasurement"
+                    "$ref": "#/components/schemas/ChannelMeasurement"
                   }
                 },
                 "examples": {
@@ -1103,12 +634,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/channels/{id}/overview": {
@@ -1137,7 +663,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "yaml/ChannelInfo.yaml#/components/schemas/ChannelInfo"
+                  "$ref": "#/components/schemas/ChannelInfo"
                 },
                 "examples": {
                   "Channel overview": {
@@ -1153,12 +679,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/channels/{id}": {
@@ -1200,12 +721,12 @@
                 "schema": {
                   "allOf": [
                     {
-                      "$ref": "yaml/TreeNode.yaml#/components/schemas/TreeNode"
+                      "$ref": "#/components/schemas/TreeNode"
                     }
                   ],
                   "anyOf": [
                     {
-                      "$ref": "yaml/TreeNodeAdditionalProperties.yaml#/components/schemas/TreeNodeAdditionalProperties"
+                      "$ref": "#/components/schemas/TreeNodeAdditionalProperties"
                     }
                   ],
                   "additionalProperties": {
@@ -1226,12 +747,7 @@
           "4XX": {
             "$ref": "#/components/responses/4XX-Overviews"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/channels": {
@@ -1303,7 +819,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ChannelInfo.yaml#/components/schemas/ChannelInfo"
+                    "$ref": "#/components/schemas/ChannelInfo"
                   }
                 },
                 "examples": {
@@ -1320,12 +836,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/devices": {
@@ -1392,7 +903,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/DeviceInfo.yaml#/components/schemas/DeviceInfo"
+                    "$ref": "#/components/schemas/DeviceInfo"
                   }
                 }
               }
@@ -1404,12 +915,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/devices": {
@@ -1472,12 +978,12 @@
                   "items": {
                     "allOf": [
                       {
-                        "$ref": "yaml/TreeNode.yaml#/components/schemas/TreeNode"
+                        "$ref": "#/components/schemas/TreeNode"
                       }
                     ],
                     "anyOf": [
                       {
-                        "$ref": "yaml/TreeNodeAdditionalProperties.yaml#/components/schemas/TreeNodeAdditionalProperties"
+                        "$ref": "#/components/schemas/TreeNodeAdditionalProperties"
                       }
                     ],
                     "additionalProperties": {
@@ -1494,12 +1000,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/devices/templates": {
@@ -1516,7 +1017,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "yaml/DeviceTemplates.yaml#/components/schemas/DeviceTemplates"
+                  "$ref": "#/components/schemas/DeviceTemplates"
                 },
                 "examples": {
                   "Device templates": {
@@ -1532,12 +1033,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/devices/{id}": {
@@ -1579,12 +1075,12 @@
                 "schema": {
                   "allOf": [
                     {
-                      "$ref": "yaml/TreeNode.yaml#/components/schemas/TreeNode"
+                      "$ref": "#/components/schemas/TreeNode"
                     }
                   ],
                   "anyOf": [
                     {
-                      "$ref": "yaml/TreeNodeAdditionalProperties.yaml#/components/schemas/TreeNodeAdditionalProperties"
+                      "$ref": "#/components/schemas/TreeNodeAdditionalProperties"
                     }
                   ],
                   "additionalProperties": {
@@ -1605,12 +1101,7 @@
           "4XX": {
             "$ref": "#/components/responses/4XX-Overviews"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       },
       "patch": {
         "tags": [
@@ -1655,12 +1146,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/devices/{id}/overview": {
@@ -1689,7 +1175,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "yaml/DeviceInfo.yaml#/components/schemas/DeviceInfo"
+                  "$ref": "#/components/schemas/DeviceInfo"
                 },
                 "examples": {
                   "Device overview": {
@@ -1702,12 +1188,7 @@
           "4XX": {
             "$ref": "#/components/responses/4XX-Overviews"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/devices/{id}/pause": {
@@ -1747,11 +1228,6 @@
             "$ref": "#/components/responses/5XX"
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
         "summary": "Pauses a device.",
         "tags": [
           "Devices"
@@ -1783,11 +1259,6 @@
             "$ref": "#/components/responses/5XX"
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
         "summary": "Resumes a device.",
         "tags": [
           "Devices"
@@ -1819,11 +1290,6 @@
             "$ref": "#/components/responses/5XX"
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
         "summary": "Triggers a scan of all sensors on a device.",
         "tags": [
           "Devices"
@@ -1856,7 +1322,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ActionResult.yaml#/components/schemas/ActionResult"
+                    "$ref": "#/components/schemas/ActionResult"
                   }
                 },
                 "examples": {
@@ -1900,12 +1366,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/devices/resume": {
@@ -1934,7 +1395,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ActionResult.yaml#/components/schemas/ActionResult"
+                    "$ref": "#/components/schemas/ActionResult"
                   }
                 },
                 "examples": {
@@ -1978,12 +1439,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/devices/{id}/clone": {
@@ -2060,11 +1516,6 @@
             "$ref": "#/components/responses/5XX"
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
         "summary": "Clones a device.",
         "tags": [
           "Devices"
@@ -2097,7 +1548,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ActionResult.yaml#/components/schemas/ActionResult"
+                    "$ref": "#/components/schemas/ActionResult"
                   }
                 },
                 "examples": {
@@ -2141,12 +1592,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/devices/icons": {
@@ -2164,7 +1610,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/DeviceIcon.yaml#/components/schemas/DeviceIcon"
+                    "$ref": "#/components/schemas/DeviceIcon"
                   }
                 },
                 "examples": {
@@ -2201,12 +1647,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/groups/{id}": {
@@ -2248,12 +1689,12 @@
                 "schema": {
                   "allOf": [
                     {
-                      "$ref": "yaml/TreeNode.yaml#/components/schemas/TreeNode"
+                      "$ref": "#/components/schemas/TreeNode"
                     }
                   ],
                   "anyOf": [
                     {
-                      "$ref": "yaml/TreeNodeAdditionalProperties.yaml#/components/schemas/TreeNodeAdditionalProperties"
+                      "$ref": "#/components/schemas/TreeNodeAdditionalProperties"
                     }
                   ],
                   "additionalProperties": {
@@ -2271,12 +1712,7 @@
           "4XX": {
             "$ref": "#/components/responses/4XX-Overviews"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/groups": {
@@ -2343,7 +1779,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/GroupInfo.yaml#/components/schemas/GroupInfo"
+                    "$ref": "#/components/schemas/GroupInfo"
                   }
                 },
                 "examples": {
@@ -2363,12 +1799,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/groups/{id}": {
@@ -2415,12 +1846,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       },
       "delete": {
         "operationId": "DeleteGroup",
@@ -2450,12 +1876,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/groups": {
@@ -2516,7 +1937,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/GroupInfo.yaml#/components/schemas/GroupInfo"
+                    "$ref": "#/components/schemas/GroupInfo"
                   }
                 },
                 "examples": {
@@ -2533,12 +1954,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/groups/{id}/group": {
@@ -2585,7 +2001,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/GroupInfo.yaml#/components/schemas/GroupInfo"
+                    "$ref": "#/components/schemas/GroupInfo"
                   }
                 }
               }
@@ -2597,12 +2013,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/probes/{id}/group": {
@@ -2649,7 +2060,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/GroupInfo.yaml#/components/schemas/GroupInfo"
+                    "$ref": "#/components/schemas/GroupInfo"
                   }
                 }
               }
@@ -2661,12 +2072,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/groups/{id}/device": {
@@ -2714,7 +2120,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/DeviceInfo.yaml#/components/schemas/DeviceInfo"
+                    "$ref": "#/components/schemas/DeviceInfo"
                   }
                 }
               }
@@ -2726,12 +2132,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/groups/{id}/overview": {
@@ -2760,7 +2161,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "yaml/GroupInfo.yaml#/components/schemas/GroupInfo"
+                  "$ref": "#/components/schemas/GroupInfo"
                 },
                 "examples": {
                   "Group overview": {
@@ -2776,12 +2177,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/groups/{id}/pause": {
@@ -2821,11 +2217,6 @@
             "$ref": "#/components/responses/5XX"
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
         "summary": "Pauses a group.",
         "tags": [
           "Groups"
@@ -2857,11 +2248,6 @@
             "$ref": "#/components/responses/5XX"
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
         "summary": "Resumes a group.",
         "tags": [
           "Groups"
@@ -2893,11 +2279,6 @@
             "$ref": "#/components/responses/5XX"
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
         "summary": "Triggers a scan of all sensors in a group.",
         "tags": [
           "Groups"
@@ -2930,7 +2311,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ActionResult.yaml#/components/schemas/ActionResult"
+                    "$ref": "#/components/schemas/ActionResult"
                   }
                 },
                 "examples": {
@@ -2974,12 +2355,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/groups/resume": {
@@ -3008,7 +2384,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ActionResult.yaml#/components/schemas/ActionResult"
+                    "$ref": "#/components/schemas/ActionResult"
                   }
                 },
                 "examples": {
@@ -3052,12 +2428,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/groups/{id}/clone": {
@@ -3127,12 +2498,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/groups/scan": {
@@ -3161,7 +2527,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ActionResult.yaml#/components/schemas/ActionResult"
+                    "$ref": "#/components/schemas/ActionResult"
                   }
                 },
                 "examples": {
@@ -3205,254 +2571,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/health": {
-      "get": {
-        "tags": [
-          "System"
-        ],
-        "summary": "Returns the status of the PRTG application server.",
-        "operationId": "CheckHealth",
-        "responses": {
-          "204": {
-            "description": "The PRTG application server is up and running and connected to the PRTG core server."
-          },
-          "503": {
-            "description": "The service is unavailable or the license is inactive.",
-            "content": {
-              "application/json": {
-                "examples": {
-                  "503 Service Unavailable": {
-                    "$ref": "#/components/examples/503-SERVICE_UNAVAILABLE"
-                  },
-                  "503 Inactive License": {
-                    "$ref": "#/components/examples/503-LICENSE_INACTIVE"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
         }
-      }
-    },
-    "/libraries": {
-      "get": {
-        "tags": [
-          "Libraries"
-        ],
-        "deprecated": true,
-        "description": "\u26a0 Deprecated as of PRTG 24.3.100: This endpoint still works, but will be removed.\n",
-        "summary": "Returns a list of all libraries that match a filter.",
-        "operationId": "ListLibraries",
-        "parameters": [
-          {
-            "name": "offset",
-            "in": "query",
-            "description": "Use an offset to define which results the request returns. The index is a zero-based array, which means that the first object has an index of 0. If you have an offset of 0 and a limit of 100, the API returns results 0 to 99. For more information, see the <a href=\"/api/v2/overview#pagination\" target=\"_blank\">PRTG API v2 Overview: Pagination</a>.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "Enter the number of objects that the request returns. If you set the limit to 0 or do not enter a value, the request returns up to 3,000 objects.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 100
-            }
-          },
-          {
-            "name": "filter",
-            "in": "query",
-            "description": "Define filters to filter the results. For more information, see the <a href=\"../overview#filter\" target=\"_blank\">PRTG API v2 Overview: Filters</a>.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "sort_by",
-            "in": "query",
-            "description": "Enter a comma-separated list of settings that you want to use to sort the results. By default, the results are sorted in ascending order. You can optionally add a plus sign (+) in front of the setting to highlight the ascending order. Enter a minus sign (-) in front of the setting to sort the results in descending order.",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "yaml/LibraryInfo.yaml#/components/schemas/LibraryInfo"
-                  }
-                },
-                "examples": {
-                  "Libraries": {
-                    "$ref": "yaml/examples/library.yaml#/list"
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-Lists"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/lookup-definitions": {
-      "get": {
-        "tags": [
-          "Lookups"
-        ],
-        "summary": "Returns a list of lookups definitions.",
-        "operationId": "ListLookupDefinitions",
-        "deprecated": true,
-        "description": "\u26a0 Deprecated as of PRTG 24.3.100: This endpoint still works, but will be replaced.\n",
-        "parameters": [
-          {
-            "name": "offset",
-            "in": "query",
-            "description": "Use an offset to define which results the request returns. The index is a zero-based array, which means that the first object has an index of 0. If you have an offset of 0 and a limit of 100, the API returns results 0 to 99. For more information, see the <a href=\"/api/v2/overview#pagination\" target=\"_blank\">PRTG API v2 Overview: Pagination</a>.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "Enter the number of objects that the request returns. If you set the limit to 0 or do not enter a value, the request returns up to 3,000 objects.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 100
-            }
-          },
-          {
-            "name": "filter",
-            "in": "query",
-            "description": "Define filters to filter the results. For more information, see the <a href=\"../overview#filter\" target=\"_blank\">PRTG API v2 Overview: Filters</a>.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "sort_by",
-            "in": "query",
-            "description": "Enter a comma-separated list of settings that you want to use to sort the results. By default, the results are sorted in ascending order. You can optionally add a plus sign (+) in front of the setting to highlight the ascending order. Enter a minus sign (-) in front of the setting to sort the results in descending order.",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "yaml/LookupDefinition.yaml#/components/schemas/LookupDefinition"
-                  }
-                },
-                "examples": {
-                  "Lookup definitions": {
-                    "$ref": "yaml/examples/lookup.yaml#/list-read"
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-Lists"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/lookup-definitions/{id}": {
-      "get": {
-        "tags": [
-          "Lookups"
-        ],
-        "summary": "Returns a lookup definition.",
-        "operationId": "GetLookupDefinitionOverview",
-        "deprecated": true,
-        "description": "\u26a0 Deprecated as of PRTG 24.3.100: This endpoint still works, but will be replaced.\n",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Enter the ID of the lookup definition that you want to request.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "yaml/LookupDefinition.yaml#/components/schemas/LookupDefinition"
-                },
-                "examples": {
-                  "Lookup definition": {
-                    "$ref": "yaml/examples/lookup.yaml#/read"
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-Overviews"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
       }
     },
     "/objects": {
@@ -3511,7 +2630,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ObjectInfo.yaml#/components/schemas/ObjectInfo"
+                    "$ref": "#/components/schemas/ObjectInfo"
                   }
                 },
                 "examples": {
@@ -3528,12 +2647,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/probes/{id}": {
@@ -3575,12 +2689,12 @@
                 "schema": {
                   "allOf": [
                     {
-                      "$ref": "yaml/TreeNode.yaml#/components/schemas/TreeNode"
+                      "$ref": "#/components/schemas/TreeNode"
                     }
                   ],
                   "anyOf": [
                     {
-                      "$ref": "yaml/TreeNodeAdditionalProperties.yaml#/components/schemas/TreeNodeAdditionalProperties"
+                      "$ref": "#/components/schemas/TreeNodeAdditionalProperties"
                     }
                   ],
                   "additionalProperties": {
@@ -3598,12 +2712,7 @@
           "4XX": {
             "$ref": "#/components/responses/4XX-Overviews"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/probes/{id}/info": {
@@ -3621,18 +2730,13 @@
           }
         ],
         "summary": "Returns the network information of a probe.",
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
         "responses": {
           "200": {
             "description": "The request was successful.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "yaml/ProbeNetworkInfo.yaml#/components/schemas/ProbeNetworkInfo"
+                  "$ref": "#/components/schemas/ProbeNetworkInfo"
                 },
                 "examples": {
                   "Probe network info": {
@@ -3691,11 +2795,6 @@
             "$ref": "#/components/responses/5XX"
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
         "summary": "Pauses a probe.",
         "tags": [
           "Probes"
@@ -3727,11 +2826,6 @@
             "$ref": "#/components/responses/5XX"
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
         "summary": "Resumes a probe.",
         "tags": [
           "Probes"
@@ -3763,11 +2857,6 @@
             "$ref": "#/components/responses/5XX"
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
         "summary": "Triggers a scan of all sensors on a probe.",
         "tags": [
           "Probes"
@@ -3838,7 +2927,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ProbeInfo.yaml#/components/schemas/ProbeInfo"
+                    "$ref": "#/components/schemas/ProbeInfo"
                   }
                 },
                 "examples": {
@@ -3858,12 +2947,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/probes": {
@@ -3924,7 +3008,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ProbeInfo.yaml#/components/schemas/ProbeInfo"
+                    "$ref": "#/components/schemas/ProbeInfo"
                   }
                 },
                 "examples": {
@@ -3941,12 +3025,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/probes/{id}/device": {
@@ -3994,7 +3073,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/DeviceInfo.yaml#/components/schemas/DeviceInfo"
+                    "$ref": "#/components/schemas/DeviceInfo"
                   }
                 }
               }
@@ -4006,12 +3085,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/probes/{id}/overview": {
@@ -4040,7 +3114,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "yaml/ProbeInfo.yaml#/components/schemas/ProbeInfo"
+                  "$ref": "#/components/schemas/ProbeInfo"
                 },
                 "examples": {
                   "Probe overview": {
@@ -4056,12 +3130,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/probes/pause": {
@@ -4090,7 +3159,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ActionResult.yaml#/components/schemas/ActionResult"
+                    "$ref": "#/components/schemas/ActionResult"
                   }
                 },
                 "examples": {
@@ -4134,12 +3203,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/probes/resume": {
@@ -4168,7 +3232,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ActionResult.yaml#/components/schemas/ActionResult"
+                    "$ref": "#/components/schemas/ActionResult"
                   }
                 },
                 "examples": {
@@ -4212,12 +3276,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/probes/scan": {
@@ -4246,7 +3305,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ActionResult.yaml#/components/schemas/ActionResult"
+                    "$ref": "#/components/schemas/ActionResult"
                   }
                 },
                 "examples": {
@@ -4290,12 +3349,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/probes/{id}": {
@@ -4327,97 +3381,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/sensor-status-summary": {
-      "get": {
-        "tags": [
-          "Sensors"
-        ],
-        "summary": "Returns a summary of all sensor states.",
-        "operationId": "GlobalSensorSummary",
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "yaml/SensorStatusSummary.yaml#/components/schemas/SensorStatusSummary"
-                },
-                "examples": {
-                  "Sensor status summaries": {
-                    "$ref": "yaml/examples/sensor.yaml#/sensor-summary"
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/401"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/sensor-status-summary/{id}": {
-      "get": {
-        "tags": [
-          "Sensors"
-        ],
-        "summary": "Returns a summary of sensor states for a probe, group, or device.",
-        "operationId": "SensorSummary",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Enter the ID of the object that you you want to get a sensor status summary of.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "yaml/SensorStatusSummary.yaml#/components/schemas/SensorStatusSummary"
-                },
-                "examples": {
-                  "Sensor status summary": {
-                    "$ref": "yaml/examples/sensor.yaml#/sensor-summary-detail"
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-Overviews"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/sensors/{id}": {
@@ -4459,12 +3423,12 @@
                 "schema": {
                   "allOf": [
                     {
-                      "$ref": "yaml/TreeNode.yaml#/components/schemas/TreeNode"
+                      "$ref": "#/components/schemas/TreeNode"
                     }
                   ],
                   "anyOf": [
                     {
-                      "$ref": "yaml/TreeNodeAdditionalProperties.yaml#/components/schemas/TreeNodeAdditionalProperties"
+                      "$ref": "#/components/schemas/TreeNodeAdditionalProperties"
                     }
                   ],
                   "additionalProperties": {
@@ -4482,12 +3446,7 @@
           "4XX": {
             "$ref": "#/components/responses/4XX-Overviews"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/sensors": {
@@ -4554,7 +3513,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/SensorInfo.yaml#/components/schemas/SensorInfo"
+                    "$ref": "#/components/schemas/SensorInfo"
                   }
                 },
                 "examples": {
@@ -4574,12 +3533,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/sensors": {
@@ -4640,7 +3594,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/SensorInfo.yaml#/components/schemas/SensorInfo"
+                    "$ref": "#/components/schemas/SensorInfo"
                   }
                 },
                 "examples": {
@@ -4657,12 +3611,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/sensors/alarms": {
@@ -4729,7 +3678,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/SensorInfo.yaml#/components/schemas/SensorInfo"
+                    "$ref": "#/components/schemas/SensorInfo"
                   }
                 }
               }
@@ -4741,12 +3690,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/sensors/acknowledge": {
@@ -4775,7 +3719,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ActionResult.yaml#/components/schemas/ActionResult"
+                    "$ref": "#/components/schemas/ActionResult"
                   }
                 },
                 "examples": {
@@ -4821,12 +3765,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/sensors/{id}/pause": {
@@ -4866,11 +3805,6 @@
             "$ref": "#/components/responses/5XX"
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
         "summary": "Pauses a sensor.",
         "tags": [
           "Sensors"
@@ -4902,11 +3836,6 @@
             "$ref": "#/components/responses/5XX"
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
         "summary": "Resumes a sensor.",
         "tags": [
           "Sensors"
@@ -4938,11 +3867,6 @@
             "$ref": "#/components/responses/5XX"
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
         "summary": "Triggers a scan of a sensor.",
         "tags": [
           "Sensors"
@@ -4988,12 +3912,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/sensors/{id}/clone": {
@@ -5059,11 +3978,6 @@
             "$ref": "#/components/responses/5XX"
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
         "summary": "Clones a sensors.",
         "tags": [
           "Sensors"
@@ -5124,7 +4038,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/SensorInfo.yaml#/components/schemas/SensorInfo"
+                    "$ref": "#/components/schemas/SensorInfo"
                   }
                 }
               }
@@ -5136,12 +4050,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/devices/{id}/metascan": {
@@ -5180,7 +4089,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "yaml/Metascan.yaml#/components/schemas/Metascan"
+                  "$ref": "#/components/schemas/Metascan"
                 },
                 "examples": {
                   "meta-scan": {
@@ -5196,12 +4105,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/devices/{id}/autodiscovery": {
@@ -5249,12 +4153,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/groups/{id}/autodiscovery": {
@@ -5302,12 +4201,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/sensor/{id}": {
@@ -5356,12 +4250,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/sensors/{id}/data": {
@@ -5426,7 +4315,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ChannelMeasurement.yaml#/components/schemas/ChannelMeasurement"
+                    "$ref": "#/components/schemas/ChannelMeasurement"
                   }
                 },
                 "examples": {
@@ -5443,12 +4332,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/sensors/{id}/overview": {
@@ -5477,7 +4361,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "yaml/SensorInfo.yaml#/components/schemas/SensorInfo"
+                  "$ref": "#/components/schemas/SensorInfo"
                 },
                 "examples": {
                   "Sensor overview": {
@@ -5493,12 +4377,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/sensors/pause": {
@@ -5527,7 +4406,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ActionResult.yaml#/components/schemas/ActionResult"
+                    "$ref": "#/components/schemas/ActionResult"
                   }
                 },
                 "examples": {
@@ -5580,12 +4459,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/sensors/resume": {
@@ -5614,7 +4488,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ActionResult.yaml#/components/schemas/ActionResult"
+                    "$ref": "#/components/schemas/ActionResult"
                   }
                 },
                 "examples": {
@@ -5658,12 +4532,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/sensors/scan": {
@@ -5692,7 +4561,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/ActionResult.yaml#/components/schemas/ActionResult"
+                    "$ref": "#/components/schemas/ActionResult"
                   }
                 },
                 "examples": {
@@ -5736,12 +4605,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     },
     "/experimental/sensors/{id}": {
@@ -5773,1281 +4637,7 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/session": {
-      "get": {
-        "tags": [
-          "Authentication"
-        ],
-        "summary": "Renews an active user session.",
-        "operationId": "RenewSession",
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "yaml/RenewResult.yaml#/components/schemas/RenewResult"
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/401"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX-Renew"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      },
-      "post": {
-        "tags": [
-          "Authentication"
-        ],
-        "summary": "Creates a new user session.",
-        "operationId": "Login",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LoginRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "yaml/LoginResult.yaml#/components/schemas/LoginResult"
-                },
-                "examples": {
-                  "Login": {
-                    "$ref": "yaml/examples/auth.yaml#/login"
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-Login"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX-Public"
-          }
         }
-      },
-      "delete": {
-        "tags": [
-          "Authentication"
-        ],
-        "summary": "Ends an active user session.",
-        "operationId": "Logout",
-        "responses": {
-          "204": {
-            "description": "The user was logged out successfully."
-          },
-          "4XX": {
-            "$ref": "#/components/responses/401"
-          },
-          "400": {
-            "$ref": "#/components/responses/400-API-Key-Logout"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX-Logout"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/settings/public": {
-      "get": {
-        "tags": [
-          "System"
-        ],
-        "summary": "Returns a list of settings that are available for unauthenticated users.",
-        "operationId": "PublicSettings",
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "yaml/PublicSettings.yaml#/components/schemas/PublicSettings"
-                },
-                "examples": {
-                  "Settings": {
-                    "$ref": "yaml/examples/system.yaml#/settings"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users": {
-      "get": {
-        "tags": [
-          "Accounts"
-        ],
-        "summary": "Returns a list of all user accounts.",
-        "operationId": "ListUsers",
-        "deprecated": true,
-        "description": "\u26a0 Deprecated as of PRTG 24.3.100: This endpoint still works, but will be replaced.\n",
-        "parameters": [
-          {
-            "name": "offset",
-            "in": "query",
-            "description": "Use an offset to define which results the request returns. The index is a zero-based array, which means that the first object has an index of 0. If you have an offset of 0 and a limit of 100, the API returns results 0 to 99. For more information, see the <a href=\"/api/v2/overview#pagination\" target=\"_blank\">PRTG API v2 Overview: Pagination</a>.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "Enter the number of objects that the request returns. If you set the limit to 0 or do not enter a value, the request returns up to 3,000 objects.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 100
-            }
-          },
-          {
-            "name": "filter",
-            "in": "query",
-            "description": "Define filters to filter the results. For more information, see the <a href=\"../overview#filter\" target=\"_blank\">PRTG API v2 Overview: Filters</a>.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "sort_by",
-            "in": "query",
-            "description": "Enter a comma-separated list of settings that you want to use to sort the results. By default, the results are sorted in ascending order. You can optionally add a plus sign (+) in front of the setting to highlight the ascending order. Enter a minus sign (-) in front of the setting to sort the results in descending order.",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "yaml/UserInfo.yaml#/components/schemas/UserInfo"
-                  }
-                },
-                "examples": {
-                  "Users": {
-                    "$ref": "yaml/examples/user.yaml#/list-read"
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-Lists"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/users/{id}/pause": {
-      "post": {
-        "operationId": "PauseUser",
-        "parameters": [
-          {
-            "description": "Enter the ID of the user account that you want to pause.",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "The user account was paused."
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-Action"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
-        "summary": "Pauses a user account.",
-        "tags": [
-          "Accounts"
-        ]
-      }
-    },
-    "/users/{id}/resume": {
-      "post": {
-        "operationId": "ResumeUser",
-        "parameters": [
-          {
-            "description": "Enter the ID of the user account that you want to resume.",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "The user account was resumed."
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-Action"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
-        "summary": "Resumes a user account.",
-        "tags": [
-          "Accounts"
-        ]
-      }
-    },
-    "/users/request-password": {
-      "post": {
-        "tags": [
-          "Accounts"
-        ],
-        "summary": "Triggers the password reset process for a user account.",
-        "description": "**Note:** This route is not available when using PPHM.\n",
-        "operationId": "TriggerPasswordReset",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TriggerPasswordResetRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "204": {
-            "description": "The request to trigger the password reset process was successful."
-          },
-          "4XX": {
-            "description": "Client Errors",
-            "content": {
-              "application/json": {
-                "examples": {
-                  "400": {
-                    "$ref": "#/components/examples/400-BAD_REQUEST"
-                  }
-                }
-              }
-            }
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX-Public"
-          }
-        }
-      }
-    },
-    "/users/reset-password": {
-      "post": {
-        "tags": [
-          "Accounts"
-        ],
-        "summary": "Set a new password for a user account with the token from the password reset process.",
-        "description": "**Note:** This route is not available when using PPHM.\n",
-        "operationId": "ResetPassword",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResetPasswordRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "204": {
-            "description": "The password was changed."
-          },
-          "400": {
-            "$ref": "#/components/responses/4XX-Reset-Password"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX-Public"
-          }
-        }
-      }
-    },
-    "/users/{id}": {
-      "get": {
-        "tags": [
-          "Accounts"
-        ],
-        "summary": "Returns information about a user account.",
-        "operationId": "GetUserOverview",
-        "deprecated": true,
-        "description": "\u26a0 Deprecated as of PRTG 24.3.100: This endpoint still works, but will be replaced.\n",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Enter the ID of the user account for which you want to get information.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "yaml/UserInfo.yaml#/components/schemas/UserInfo"
-                },
-                "examples": {
-                  "User": {
-                    "$ref": "yaml/examples/user.yaml#/read"
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-Overviews"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/experimental/users/{id}": {
-      "get": {
-        "x-prtg-writer": true,
-        "tags": [
-          "Accounts"
-        ],
-        "summary": "Returns the metrics and settings of a user.",
-        "operationId": "GetUser",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Enter the ID of the user that you want to see the metrics and settings of.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "include",
-            "in": "query",
-            "description": "By default, this endpoint only returns the most relevant information about a user.\n\nYou can include additional parameters:\n\n|  Parameter | Description | Example |\n| ------ | ------ | ------ |\u00a0\n| `all_sections` <br><br> Individual settings sections | Explicitly request one, multiple, or all settings sections. | `include=all_sections` <br><br> `include=usercontrol,commentgroup`<br><br>|\n| `*` | A wildcard that includes the all_sections, usercontrol, and commentgroup parameters. | `include=*`|\n\nFor more information, see the [Overview: Includes](../overview/index.html#includes).\n",
-            "schema": {
-              "type": "array",
-              "format": "csv",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "yaml/TreeNode.yaml#/components/schemas/TreeNode"
-                    }
-                  ],
-                  "anyOf": [
-                    {
-                      "$ref": "yaml/TreeNodeAdditionalProperties.yaml#/components/schemas/TreeNodeAdditionalProperties"
-                    }
-                  ],
-                  "additionalProperties": {
-                    "$ref": "#/components/schemas/json-response-section"
-                  }
-                },
-                "examples": {
-                  "user": {
-                    "$ref": "yaml/examples/user.yaml#/read-osk"
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-Overviews"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/experimental/users": {
-      "get": {
-        "tags": [
-          "Accounts"
-        ],
-        "summary": "Returns a list of users.",
-        "description": "This endpoint is experimental. See [Overview: Maturity of endpoints](../overview/index.html#endpoint-maturity)\u00a0for more context.",
-        "operationId": "ListUsersOSK",
-        "parameters": [
-          {
-            "name": "offset",
-            "in": "query",
-            "description": "Use offset to define which results are returned. For example, if you enter 0 for offset and 100 for limit, the API returns results 0 to 99. The index is zero based. For more information, see <a href=\"../overview#pagination\" target=\"_blank\">Overview: Pagination</a>.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "Enter the number of objects that the request returns. The maximum number of objects is 3000. If you enter 0, the request returns up to 3000 objects.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 100
-            }
-          },
-          {
-            "name": "filter",
-            "in": "query",
-            "description": "Define filters to filter the results. For more information, see <a href=\"../overview#filter\" target=\"_blank\">Overview: Filter</a>.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "include",
-            "in": "query",
-            "description": "By default, this endpoint only returns the most relevant information about the requested users.\n\nYou can include additional parameters:\n\n|  Parameter | Description | Example |\n| ------ | ------ | ------ |\u00a0\n| `all_sections` <br><br> Individual settings sections | Explicitly request one, multiple, or all settings sections. | `include=all_sections` <br><br> `include=usercontrol,commentgroup`<br><br>|\n| `*` | A wildcard that includes the all_sections, usercontrol, and commentgroup parameters. | `include=*`|\n\nFor more information, see the [Overview: Includes](../overview/index.html#includes).\n",
-            "schema": {
-              "type": "array",
-              "format": "csv",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "allOf": [
-                      {
-                        "$ref": "yaml/TreeNode.yaml#/components/schemas/TreeNode"
-                      }
-                    ],
-                    "anyOf": [
-                      {
-                        "$ref": "yaml/TreeNodeAdditionalProperties.yaml#/components/schemas/TreeNodeAdditionalProperties"
-                      }
-                    ],
-                    "additionalProperties": {
-                      "$ref": "#/components/schemas/json-response-section"
-                    }
-                  }
-                },
-                "examples": {
-                  "user": {
-                    "$ref": "yaml/examples/user.yaml#/list-read-osk"
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-Lists"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/users/pause": {
-      "post": {
-        "tags": [
-          "Accounts"
-        ],
-        "summary": "Pauses all user accounts that match a filter.",
-        "operationId": "MultiUserPauseRequest",
-        "requestBody": {
-          "description": "Request Body",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MultiUserPauseRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "The request to pause all user accounts that match the filter was successful. See the response for possible error messages.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "yaml/ActionResult.yaml#/components/schemas/ActionResult"
-                  }
-                },
-                "examples": {
-                  "200: Success": {
-                    "value": [
-                      {
-                        "node": {
-                          "id": "2322",
-                          "type": "REFERENCED_USER",
-                          "name": "me",
-                          "href": "/api/v2/users/2322"
-                        },
-                        "failure": null
-                      }
-                    ]
-                  },
-                  "200: Success with one failure": {
-                    "value": [
-                      {
-                        "node": {
-                          "id": "2322",
-                          "type": "REFERENCED_USER",
-                          "name": "me",
-                          "href": "/api/v2/users/2322"
-                        },
-                        "failure": {
-                          "code": "BAD_REQUEST",
-                          "message": "The request could not be processed. Check if the format and the data types are correct.",
-                          "request_id": "amAUOX"
-                        }
-                      }
-                    ]
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-MultiAction"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/users/resume": {
-      "post": {
-        "tags": [
-          "Accounts"
-        ],
-        "summary": "Resumes all user accounts that match a filter.",
-        "operationId": "MultiResumeUser",
-        "requestBody": {
-          "description": "Request Body",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MultiResumeRequestBody"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "The request to resume all user accounts that match the filter was successful. See the response for possible error messages.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "yaml/ActionResult.yaml#/components/schemas/ActionResult"
-                  }
-                },
-                "examples": {
-                  "200: Success": {
-                    "value": [
-                      {
-                        "node": {
-                          "id": "2322",
-                          "type": "REFERENCED_USER",
-                          "name": "me",
-                          "href": "/api/v2/users/2322"
-                        },
-                        "failure": null
-                      }
-                    ]
-                  },
-                  "200: Success with one failure": {
-                    "value": [
-                      {
-                        "node": {
-                          "id": "2322",
-                          "type": "REFERENCED_USER",
-                          "name": "me",
-                          "href": "/api/v2/users/2322"
-                        },
-                        "failure": {
-                          "code": "BAD_REQUEST",
-                          "message": "The request could not be processed. Check if the format and the data types are correct.",
-                          "request_id": "amAUOX"
-                        }
-                      }
-                    ]
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-MultiAction"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/users/api-keys/find": {
-      "post": {
-        "tags": [
-          "Accounts"
-        ],
-        "operationId": "FindAPIKey",
-        "summary": "Returns details of an API key.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/FindAPIKeyRequestBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "The API key was found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "yaml/APIKeyInfo.yaml#/components/schemas/APIKeyInfo"
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/users/{id}/api-keys": {
-      "get": {
-        "tags": [
-          "Accounts"
-        ],
-        "operationId": "ListAPIKeys",
-        "summary": "Returns a list of API keys that belong to a user account.",
-        "parameters": [
-          {
-            "description": "Enter the ID of the user that you want to get a list of API keys for. Enter \"me\" if you want a list of your own API keys.",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request to list the API keys of the specified user was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "yaml/APIKeyInfo.yaml#/components/schemas/APIKeyInfo"
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-Lists"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      },
-      "post": {
-        "tags": [
-          "Accounts"
-        ],
-        "operationId": "CreateAPIKey",
-        "parameters": [
-          {
-            "description": "Enter the ID of the user that you want to create an API key for. Enter \"me\" if you want to create an API key for your own user account.",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateAPIKeyRequestBody"
-              }
-            }
-          },
-          "description": "Request Body",
-          "required": true,
-          "x-originalParamName": "body"
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "yaml/CreateAPIKeyResponse.yaml#/components/schemas/CreateAPIKeyResponse"
-                }
-              }
-            },
-            "description": "The API Key was created."
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-Action"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
-        "summary": "Creates a new API key."
-      }
-    },
-    "/users/api-keys/{id}": {
-      "delete": {
-        "operationId": "DeleteAPIKey",
-        "tags": [
-          "Accounts"
-        ],
-        "summary": "Deletes an API key.\n",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Enter the ID of the API key that you want to delete.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "The API key was deleted."
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      },
-      "patch": {
-        "operationId": "ModifyAPIKey",
-        "tags": [
-          "Accounts"
-        ],
-        "summary": "Edits an API key.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Enter the ID of the API key that you want to edit.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "The API key was edited."
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ModifyAPIKeyRequestBody"
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/usergroups": {
-      "get": {
-        "tags": [
-          "Accounts"
-        ],
-        "summary": "Get a list of all user groups that match a filter.",
-        "operationId": "ListUserGroups",
-        "deprecated": true,
-        "description": "\u26a0 Deprecated as of PRTG 24.3.100: This endpoint still works, but will be replaced.\n",
-        "parameters": [
-          {
-            "name": "offset",
-            "in": "query",
-            "description": "Use an offset to define which results the request returns. The index is a zero-based array, which means that the first object has an index of 0. If you have an offset of 0 and a limit of 100, the API returns results 0 to 99. For more information, see the <a href=\"/api/v2/overview#pagination\" target=\"_blank\">PRTG API v2 Overview: Pagination</a>.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "Enter the number of objects that the request returns. If you set the limit to 0 or do not enter a value, the request returns up to 3,000 objects.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 100
-            }
-          },
-          {
-            "name": "filter",
-            "in": "query",
-            "description": "Define filters to filter the results. For more information, see the <a href=\"../overview#filter\" target=\"_blank\">PRTG API v2 Overview: Filters</a>.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "sort_by",
-            "in": "query",
-            "description": "Enter a comma-separated list of settings that you want to use to sort the results. By default, the results are sorted in ascending order. You can optionally add a plus sign (+) in front of the setting to highlight the ascending order. Enter a minus sign (-) in front of the setting to sort the results in descending order.",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "yaml/UserGroupInfo.yaml#/components/schemas/UserGroupInfo"
-                  }
-                },
-                "examples": {
-                  "Usergroups": {
-                    "$ref": "yaml/examples/usergroup.yaml#/list-read"
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-Lists"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/usergroups/{id}": {
-      "get": {
-        "tags": [
-          "Accounts"
-        ],
-        "summary": "Return information about a user group.",
-        "operationId": "GetUserGroupOverview",
-        "deprecated": true,
-        "description": "\u26a0 Deprecated as of PRTG 24.3.100: This endpoint still works, but will be replaced.\n",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Enter the ID of the user group that you want to get information for.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "yaml/UserGroupInfo.yaml#/components/schemas/UserGroupInfo"
-                },
-                "examples": {
-                  "Usergroup": {
-                    "$ref": "yaml/examples/usergroup.yaml#/read"
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-Overviews"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/experimental/usergroups/{id}": {
-      "get": {
-        "x-prtg-writer": true,
-        "tags": [
-          "Accounts"
-        ],
-        "summary": "Returns the settings of a usergroup.",
-        "operationId": "GetUserGroup",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Enter the ID of the usergroup that you want to see the settings of.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "include",
-            "in": "query",
-            "description": "By default, this endpoint only returns the most relevant information about a usergroup.\n\nYou can include additional parameters:\n\n|  Parameter | Description | Example |\n| ------ | ------ | ------ |\n| `all_sections` <br><br> Individual settings sections | Explicitly request one, multiple, or all settings sections. | `include=all_sections` <br><br> `include=usercontrol,commentgroup`<br><br>|\n| `*` | A wildcard that includes the all_sections, usercontrol, and commentgroup parameters. | `include=*`|\n\nFor more information, see the [Overview: Includes](../overview/index.html#includes).\n",
-            "schema": {
-              "type": "array",
-              "format": "csv",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "yaml/TreeNode.yaml#/components/schemas/TreeNode"
-                    }
-                  ],
-                  "anyOf": [
-                    {
-                      "$ref": "yaml/TreeNodeAdditionalProperties.yaml#/components/schemas/TreeNodeAdditionalProperties"
-                    }
-                  ],
-                  "additionalProperties": {
-                    "$ref": "#/components/schemas/json-response-section"
-                  }
-                },
-                "examples": {
-                  "user": {
-                    "$ref": "yaml/examples/usergroup.yaml#/read-osk"
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-Overviews"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/experimental/usergroups": {
-      "get": {
-        "tags": [
-          "Accounts"
-        ],
-        "summary": "Returns a list of user groups.",
-        "description": "This endpoint is experimental. See [Overview: Maturity of endpoints](../overview/index.html#endpoint-maturity) for more context.",
-        "operationId": "ListUserGroupsOSK",
-        "parameters": [
-          {
-            "name": "offset",
-            "in": "query",
-            "description": "Use offset to define which results are returned. For example, if you enter 0 for offset and 100 for limit, the API returns results 0 to 99. The index is zero based. For more information, see <a href=\"../overview#pagination\" target=\"_blank\">Overview: Pagination</a>.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "Enter the number of objects that the request returns. The maximum number of objects is 3000. If you enter 0, the request returns up to 3000 objects.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 100
-            }
-          },
-          {
-            "name": "filter",
-            "in": "query",
-            "description": "Define filters to filter the results. For more information, see <a href=\"../overview#filter\" target=\"_blank\">Overview: Filter</a>.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "include",
-            "in": "query",
-            "description": "By default, this endpoint only returns the most relevant information about the requested users.\n\nYou can include additional parameters:\n\n|  Parameter | Description | Example |\n| ------ | ------ | ------ |\n| `all_sections` <br><br> Individual settings sections | Explicitly request one, multiple, or all settings sections. | `include=all_sections` <br><br> `include=usercontrol,commentgroup`<br><br>|\n| `*` | A wildcard that includes the all_sections, usercontrol, and commentgroup parameters. | `include=*`|\n\nFor more information, see the [Overview: Includes](../overview/index.html#includes).\n",
-            "schema": {
-              "type": "array",
-              "format": "csv",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "allOf": [
-                      {
-                        "$ref": "yaml/TreeNode.yaml#/components/schemas/TreeNode"
-                      }
-                    ],
-                    "anyOf": [
-                      {
-                        "$ref": "yaml/TreeNodeAdditionalProperties.yaml#/components/schemas/TreeNodeAdditionalProperties"
-                      }
-                    ],
-                    "additionalProperties": {
-                      "$ref": "#/components/schemas/json-response-section"
-                    }
-                  }
-                },
-                "examples": {
-                  "user": {
-                    "$ref": "yaml/examples/usergroup.yaml#/list-read-osk"
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX-Lists"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/version": {
-      "get": {
-        "tags": [
-          "System"
-        ],
-        "summary": "Returns information on the PRTG version and appserver version.",
-        "operationId": "VersionInfo",
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "yaml/Versions.yaml#/components/schemas/Versions"
-                },
-                "examples": {
-                  "Version": {
-                    "$ref": "yaml/examples/system.yaml#/version"
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/401"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX-Public"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
       }
     },
     "/autodiscoveries": {
@@ -7103,7 +4693,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "yaml/AutodiscoveryInfo.yaml#/components/schemas/AutodiscoveryInfo"
+                    "$ref": "#/components/schemas/AutodiscoveryInfo"
                   }
                 }
               }
@@ -7116,108 +4706,71 @@
           "5XX": {
             "$ref": "#/components/responses/5XX"
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/experimental/license": {
-      "get": {
-        "tags": [
-          "System"
-        ],
-        "summary": "Returns PRTG license information.",
-        "operationId": "LicenseInfo",
-        "responses": {
-          "200": {
-            "description": "The request was successful.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "yaml/LicenseInfo.yaml#/components/schemas/LicenseInfo"
-                },
-                "examples": {
-                  "Version": {
-                    "$ref": "yaml/examples/system.yaml#/license"
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/401"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX-Public"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/setting-lookups/{name}": {
-      "get": {
-        "tags": [
-          "Objects"
-        ],
-        "summary": "Returns possible setting lookup values.",
-        "operationId": "SettingsLookup",
-        "deprecated": true,
-        "description": "\u26a0 Deprecated as of PRTG 24.3.100: This endpoint still works, but will be replaced.\n",
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "description": "Name of the lookup.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "query",
-            "description": "Enter ID of corresponding object of the setting lookup.",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The setting lookup result",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "yaml/SettingsLookupResult.yaml#/components/schemas/SettingsLookupResult"
-                }
-              }
-            }
-          },
-          "4XX": {
-            "$ref": "#/components/responses/4XX"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/5XX"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       }
     }
   },
   "components": {
     "schemas": {
+      "CreateRequestBody": {
+        "title": "Create Request Body",
+        "description": "This is the body of the request to create a new object.",
+        "type": "object"
+      },
+      "AcknowledgeRequestBody": {
+        "title": "Acknowledge Request Body",
+        "description": "This is the body of the request to acknowledge the alarm of a sensor.",
+        "type": "object",
+        "properties": {
+          "duration": {
+            "description": "Enter the duration of the alarm acknowledgement. Enter zero to  acknowledge the alarm indefinitely. PRTG rounds up the value to full minutes. For example, if you enter 100, PRTG acknowledges the alarm for two minutes.",
+            "type": "number",
+            "format": "double",
+            "default": 0.0,
+            "minimum": 0.0
+          },
+          "message": {
+            "description": "Enter a message that the acknowledged sensor displays as a sensor message.",
+            "type": "string"
+          }
+        },
+        "example": {
+          "duration": 300,
+          "message": "Alarm acknowledged for five minutes. Troubleshooting in progress."
+        }
+      },
+      "Float": {
+        "type": "number"
+      },
+      "TriggerAutoDiscoveryRequestBody": {
+        "title": "Trigger Auto Discovery Request Body",
+        "description": "This is the body of the request to trigger auto discovery for a device. Add the wanted template filenames to the \"templates\" array. Template filenames for usage can be found in /experimental/devices/templates",
+        "type": "object",
+        "properties": {
+          "templates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "json-response-integer-array": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
+      },
+      "json-response-integer": {
+        "type": "integer"
+      },
+      "json-response-number": {
+        "type": "number",
+        "format": "double"
+      },
+      "json-response-boolean": {
+        "type": "boolean"
+      },
       "Error": {
         "title": "Error Response",
         "description": "This is the schema for all error responses that the API returns.",
@@ -7242,26 +4795,29 @@
           "request_id": "lJMKhk"
         }
       },
-      "AcknowledgeRequestBody": {
-        "title": "Acknowledge Request Body",
-        "description": "This is the body of the request to acknowledge the alarm of a sensor.",
+      "json-response-section": {
         "type": "object",
-        "properties": {
-          "duration": {
-            "description": "Enter the duration of the alarm acknowledgement. Enter zero to  acknowledge the alarm indefinitely. PRTG rounds up the value to full minutes. For example, if you enter 100, PRTG acknowledges the alarm for two minutes.",
-            "type": "number",
-            "format": "double",
-            "default": 0.0,
-            "minimum": 0.0
-          },
-          "message": {
-            "description": "Enter a message that the acknowledged sensor displays as a sensor message.",
-            "type": "string"
-          }
-        },
-        "example": {
-          "duration": 300,
-          "message": "Alarm acknowledged for five minutes. Troubleshooting in progress."
+        "additionalProperties": {
+          "oneOf": [
+            {
+              "$ref": "#/components/schemas/json-response-string"
+            },
+            {
+              "$ref": "#/components/schemas/json-response-number"
+            },
+            {
+              "$ref": "#/components/schemas/json-response-boolean"
+            },
+            {
+              "$ref": "#/components/schemas/json-response-integer"
+            },
+            {
+              "$ref": "#/components/schemas/json-response-string-array"
+            },
+            {
+              "$ref": "#/components/schemas/json-response-integer-array"
+            }
+          ]
         }
       },
       "MultiAcknowledgeRequestBody": {
@@ -7294,6 +4850,25 @@
           "message": "Alarms acknowledged for five minutes. Troubleshooting in progress."
         }
       },
+      "TimeseriesRow": {
+        "type": "array",
+        "items": {
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/Timestamp"
+            },
+            {
+              "$ref": "#/components/schemas/ChannelID"
+            },
+            {
+              "$ref": "#/components/schemas/Integer"
+            },
+            {
+              "$ref": "#/components/schemas/Float"
+            }
+          ]
+        }
+      },
       "MultiPauseRequestBody": {
         "title": "Multi-Pause Request Body",
         "description": "This is the body of the request to pause the alarms of multiple sensors.",
@@ -7324,6 +4899,9 @@
           "message": "Alarms acknowledged for five minutes. Troubleshooting in progress."
         }
       },
+      "json-response-string": {
+        "type": "string"
+      },
       "MultiResumeRequestBody": {
         "title": "Multi-Resume Request Body",
         "description": "This is the body of the request to resume multiple objects.",
@@ -7340,6 +4918,17 @@
         "example": {
           "filter": "name = \"object-name\""
         }
+      },
+      "ChannelID": {
+        "type": "string",
+        "format": "sensorID.channel"
+      },
+      "Timestamp": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "Integer": {
+        "type": "integer"
       },
       "MultiScanNowRequestBody": {
         "title": "Multi-Scan Now Request Body",
@@ -7380,289 +4969,96 @@
           "message": "Maintenance: Paused for 5 minutes."
         }
       },
-      "SettingsRequestBody": {
-        "title": "Edit Settings Request Body",
-        "description": "This is the body of the request to edit the settings of an object.",
-        "type": "object"
-      },
-      "CreateRequestBody": {
-        "title": "Create Request Body",
-        "description": "This is the body of the request to create a new object.",
-        "type": "object"
-      },
-      "TriggerAutoDiscoveryRequestBody": {
-        "title": "Trigger Auto Discovery Request Body",
-        "description": "This is the body of the request to trigger auto discovery for a device. Add the wanted template filenames to the \"templates\" array. Template filenames for usage can be found in /experimental/devices/templates",
-        "type": "object",
-        "properties": {
-          "templates": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "MultiUserPauseRequest": {
-        "title": "Multi Action User Pause Request Body",
-        "description": "This is the body of the request to pause multiple objects.",
-        "type": "object",
-        "properties": {
-          "filter": {
-            "description": "Define filters to limit the results that the request returns.",
-            "type": "string"
-          }
-        },
-        "required": [
-          "filter"
-        ],
-        "example": {
-          "filter": "name = \"object-name\""
-        }
-      },
-      "LoginRequest": {
-        "title": "Login Request Body",
-        "description": "This is the body of the request to create a new user session.",
-        "type": "object",
-        "properties": {
-          "username": {
-            "title": "The user name that the request uses for authentication.",
-            "type": "string"
-          },
-          "password": {
-            "title": "The password that the request uses for authentication.",
-            "type": "string"
-          }
-        },
-        "required": [
-          "username",
-          "password"
-        ],
-        "example": {
-          "username": "prtgadmin",
-          "password": "prtgadmin"
-        }
-      },
-      "FindAPIKeyRequestBody": {
-        "title": "Find API Key Request Body",
-        "description": "This is the request body to find an API key.",
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "The ID of the API key."
-          },
-          "key": {
-            "type": "string",
-            "description": "The API key itself."
-          }
-        }
-      },
-      "CreateAPIKeyRequestBody": {
-        "title": "Create API Key Request Body",
-        "description": "This is the request body to create a new API key.",
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "The name of the new API key."
-          },
-          "description": {
-            "type": "string",
-            "description": "A textual description of the new API key."
-          },
-          "access_level": {
-            "type": "string",
-            "description": "The access level of the new API key.",
-            "enum": [
-              "NOT_SET",
-              "READ",
-              "ACKNOWLEDGE",
-              "WRITE",
-              "FULL"
-            ]
-          }
-        },
-        "required": [
-          "name",
-          "access_level"
-        ]
-      },
-      "ModifyAPIKeyRequestBody": {
-        "title": "Edit API Key Request Body",
-        "description": "This is the request body to edit an API key.",
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "The name of the API key."
-          },
-          "description": {
-            "type": "string",
-            "description": "A textual description of the API key."
-          },
-          "access_level": {
-            "type": "string",
-            "description": "The access level of the API key.",
-            "enum": [
-              "NOT_SET",
-              "READ",
-              "ACKNOWLEDGE",
-              "WRITE",
-              "FULL"
-            ]
-          }
-        }
-      },
-      "TriggerPasswordResetRequest": {
-        "title": "Trigger Password Reset Request Body",
-        "description": "This is the body of the request to trigger the password reset process.",
-        "type": "object",
-        "properties": {
-          "username": {
-            "type": "string",
-            "description": "The user name of the user account that you want to initiate the password reset process for."
-          }
-        },
-        "required": [
-          "username"
-        ]
-      },
-      "ResetPasswordRequest": {
-        "title": "Reset Password Request",
-        "description": "This is the body of the request to change the password of a user account with the token from the password reset process.",
-        "type": "object",
-        "properties": {
-          "username": {
-            "type": "string",
-            "description": "The user name of the user account whose password you want to change."
-          },
-          "password": {
-            "type": "string",
-            "description": "The new password for the user account."
-          },
-          "token": {
-            "type": "string",
-            "description": "The token from the password reset process."
-          }
-        },
-        "required": [
-          "username",
-          "password",
-          "token"
-        ]
-      },
-      "TimeseriesRow": {
-        "type": "array",
-        "items": {
-          "anyOf": [
-            {
-              "$ref": "#/components/schemas/Timestamp"
-            },
-            {
-              "$ref": "#/components/schemas/ChannelID"
-            },
-            {
-              "$ref": "#/components/schemas/Integer"
-            },
-            {
-              "$ref": "#/components/schemas/Float"
-            }
-          ]
-        }
-      },
-      "Timestamp": {
-        "type": "string",
-        "format": "date-time"
-      },
-      "ChannelID": {
-        "type": "string",
-        "format": "sensorID.channel"
-      },
-      "Integer": {
-        "type": "integer"
-      },
-      "Float": {
-        "type": "number"
-      },
-      "json-response": {
-        "type": "object",
-        "description": "JSON response.",
-        "additionalProperties": {
-          "oneOf": [
-            {
-              "$ref": "#/components/schemas/json-response-section"
-            },
-            {
-              "$ref": "#/components/schemas/json-response-string"
-            },
-            {
-              "$ref": "#/components/schemas/json-response-number"
-            },
-            {
-              "$ref": "#/components/schemas/json-response-boolean"
-            },
-            {
-              "$ref": "#/components/schemas/json-response-integer"
-            },
-            {
-              "$ref": "#/components/schemas/json-response-string-array"
-            },
-            {
-              "$ref": "#/components/schemas/json-response-integer-array"
-            }
-          ]
-        }
-      },
-      "json-response-section": {
-        "type": "object",
-        "additionalProperties": {
-          "oneOf": [
-            {
-              "$ref": "#/components/schemas/json-response-string"
-            },
-            {
-              "$ref": "#/components/schemas/json-response-number"
-            },
-            {
-              "$ref": "#/components/schemas/json-response-boolean"
-            },
-            {
-              "$ref": "#/components/schemas/json-response-integer"
-            },
-            {
-              "$ref": "#/components/schemas/json-response-string-array"
-            },
-            {
-              "$ref": "#/components/schemas/json-response-integer-array"
-            }
-          ]
-        }
-      },
-      "json-response-string": {
-        "type": "string"
-      },
-      "json-response-integer": {
-        "type": "integer"
-      },
-      "json-response-number": {
-        "type": "number",
-        "format": "double"
-      },
-      "json-response-boolean": {
-        "type": "boolean"
-      },
       "json-response-string-array": {
         "type": "array",
         "items": {
           "type": "string"
         }
       },
-      "json-response-integer-array": {
-        "type": "array",
-        "items": {
-          "type": "integer"
-        }
+      "SettingsRequestBody": {
+        "title": "Edit Settings Request Body",
+        "description": "This is the body of the request to edit the settings of an object.",
+        "type": "object"
+      },
+      "ObjectInfo": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "ObjectInfo object. The vendor's published spec defines this type in an external file not included in this bundled export; represented here as a generic object."
+      },
+      "DeviceTemplates": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "DeviceTemplates object. The vendor's published spec defines this type in an external file not included in this bundled export; represented here as a generic object."
+      },
+      "GroupInfo": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "GroupInfo object. The vendor's published spec defines this type in an external file not included in this bundled export; represented here as a generic object."
+      },
+      "TreeNodeAdditionalProperties": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "TreeNodeAdditionalProperties object. The vendor's published spec defines this type in an external file not included in this bundled export; represented here as a generic object."
+      },
+      "Metascan": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Metascan object. The vendor's published spec defines this type in an external file not included in this bundled export; represented here as a generic object."
+      },
+      "ChannelInfo": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "ChannelInfo object. The vendor's published spec defines this type in an external file not included in this bundled export; represented here as a generic object."
+      },
+      "AutodiscoveryInfo": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "AutodiscoveryInfo object. The vendor's published spec defines this type in an external file not included in this bundled export; represented here as a generic object."
+      },
+      "TreeNode": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "TreeNode object. The vendor's published spec defines this type in an external file not included in this bundled export; represented here as a generic object."
+      },
+      "ProbeNetworkInfo": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "ProbeNetworkInfo object. The vendor's published spec defines this type in an external file not included in this bundled export; represented here as a generic object."
+      },
+      "DeviceInfo": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "DeviceInfo object. The vendor's published spec defines this type in an external file not included in this bundled export; represented here as a generic object."
+      },
+      "SensorInfo": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "SensorInfo object. The vendor's published spec defines this type in an external file not included in this bundled export; represented here as a generic object."
+      },
+      "ObjectSummary": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "ObjectSummary object. The vendor's published spec defines this type in an external file not included in this bundled export; represented here as a generic object."
+      },
+      "ActionResult": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "ActionResult object. The vendor's published spec defines this type in an external file not included in this bundled export; represented here as a generic object."
+      },
+      "DeviceIcon": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "DeviceIcon object. The vendor's published spec defines this type in an external file not included in this bundled export; represented here as a generic object."
+      },
+      "ChannelMeasurement": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "ChannelMeasurement object. The vendor's published spec defines this type in an external file not included in this bundled export; represented here as a generic object."
+      },
+      "ProbeInfo": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "ProbeInfo object. The vendor's published spec defines this type in an external file not included in this bundled export; represented here as a generic object."
       }
     },
     "responses": {
@@ -7681,7 +5077,31 @@
           }
         }
       },
-      "4XX": {
+      "4XX-Sensors-Data": {
+        "description": "Client Errors",
+        "content": {
+          "application/json": {
+            "examples": {
+              "400": {
+                "$ref": "#/components/examples/400-BAD_REQUEST"
+              },
+              "400-invalid-filter": {
+                "$ref": "#/components/examples/400-INVALID_FILTER"
+              },
+              "401": {
+                "$ref": "#/components/examples/401-UNAUTHORIZED"
+              },
+              "404": {
+                "$ref": "#/components/examples/404-NOT_FOUND"
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "4XX-Action": {
         "description": "Client Errors",
         "content": {
           "application/json": {
@@ -7726,16 +5146,25 @@
           }
         }
       },
-      "4XX-Overviews": {
-        "description": "Client Errors",
+      "5XX": {
+        "description": "Server Errors",
         "content": {
           "application/json": {
             "examples": {
-              "401": {
-                "$ref": "#/components/examples/401-UNAUTHORIZED"
+              "500": {
+                "$ref": "#/components/examples/500-INTERNAL"
               },
-              "404": {
-                "$ref": "#/components/examples/404-NOT_FOUND"
+              "502": {
+                "$ref": "#/components/examples/502-BAD_GATEWAY"
+              },
+              "503 unavailable": {
+                "$ref": "#/components/examples/503-SERVICE_UNAVAILABLE"
+              },
+              "503 inactive": {
+                "$ref": "#/components/examples/503-LICENSE_INACTIVE"
+              },
+              "505": {
+                "$ref": "#/components/examples/504-GATEWAY_TIMEOUT"
               }
             },
             "schema": {
@@ -7744,19 +5173,13 @@
           }
         }
       },
-      "4XX-Action": {
+      "4XX-Overviews": {
         "description": "Client Errors",
         "content": {
           "application/json": {
             "examples": {
-              "400": {
-                "$ref": "#/components/examples/400-BAD_REQUEST"
-              },
               "401": {
                 "$ref": "#/components/examples/401-UNAUTHORIZED"
-              },
-              "403": {
-                "$ref": "#/components/examples/403-FORBIDDEN"
               },
               "404": {
                 "$ref": "#/components/examples/404-NOT_FOUND"
@@ -7789,7 +5212,7 @@
           }
         }
       },
-      "4XX-Sensors-Data": {
+      "4XX": {
         "description": "Client Errors",
         "content": {
           "application/json": {
@@ -7797,11 +5220,11 @@
               "400": {
                 "$ref": "#/components/examples/400-BAD_REQUEST"
               },
-              "400-invalid-filter": {
-                "$ref": "#/components/examples/400-INVALID_FILTER"
-              },
               "401": {
                 "$ref": "#/components/examples/401-UNAUTHORIZED"
+              },
+              "403": {
+                "$ref": "#/components/examples/403-FORBIDDEN"
               },
               "404": {
                 "$ref": "#/components/examples/404-NOT_FOUND"
@@ -7812,205 +5235,9 @@
             }
           }
         }
-      },
-      "4XX-Login": {
-        "description": "Client Errors",
-        "content": {
-          "application/json": {
-            "examples": {
-              "400": {
-                "$ref": "#/components/examples/400-BAD_REQUEST"
-              },
-              "400-login-failed": {
-                "$ref": "#/components/examples/401-LOGIN_FAILED"
-              },
-              "401": {
-                "$ref": "#/components/examples/401-UNAUTHORIZED"
-              }
-            },
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "400-API-Key-Logout": {
-        "description": "Logout with API key",
-        "content": {
-          "application/json": {
-            "examples": {
-              "400": {
-                "$ref": "#/components/examples/400-API-KEY-LOGOUT"
-              }
-            },
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "4XX-Tree": {
-        "description": "Client Errors",
-        "content": {
-          "application/json": {
-            "examples": {
-              "400": {
-                "$ref": "#/components/examples/400-BAD_REQUEST"
-              },
-              "401": {
-                "$ref": "#/components/examples/401-UNAUTHORIZED"
-              }
-            },
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "4XX-Reset-Password": {
-        "description": "Client Errors",
-        "content": {
-          "application/json": {
-            "examples": {
-              "400": {
-                "$ref": "#/components/examples/400-BAD_REQUEST"
-              },
-              "400-low-password-complexity": {
-                "$ref": "#/components/examples/400-LOW_PASSWORD_COMPLEXITY"
-              },
-              "400-invalid-password-reset-token": {
-                "$ref": "#/components/examples/400-INVALID_PASSWORD_RESET_TOKEN"
-              }
-            },
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "5XX": {
-        "description": "Server Errors",
-        "content": {
-          "application/json": {
-            "examples": {
-              "500": {
-                "$ref": "#/components/examples/500-INTERNAL"
-              },
-              "502": {
-                "$ref": "#/components/examples/502-BAD_GATEWAY"
-              },
-              "503 unavailable": {
-                "$ref": "#/components/examples/503-SERVICE_UNAVAILABLE"
-              },
-              "503 inactive": {
-                "$ref": "#/components/examples/503-LICENSE_INACTIVE"
-              },
-              "505": {
-                "$ref": "#/components/examples/504-GATEWAY_TIMEOUT"
-              }
-            },
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "5XX-Public": {
-        "description": "Server Errors",
-        "content": {
-          "application/json": {
-            "examples": {
-              "500": {
-                "$ref": "#/components/examples/500-INTERNAL"
-              },
-              "502": {
-                "$ref": "#/components/examples/502-BAD_GATEWAY"
-              },
-              "503": {
-                "$ref": "#/components/examples/503-SERVICE_UNAVAILABLE"
-              },
-              "505": {
-                "$ref": "#/components/examples/504-GATEWAY_TIMEOUT"
-              }
-            },
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "5XX-Renew": {
-        "description": "Server Errors",
-        "content": {
-          "application/json": {
-            "examples": {
-              "500": {
-                "$ref": "#/components/examples/500-INTERNAL"
-              },
-              "500-RenewFailed": {
-                "$ref": "#/components/examples/500-RENEW_FAILED"
-              },
-              "502": {
-                "$ref": "#/components/examples/502-BAD_GATEWAY"
-              },
-              "503": {
-                "$ref": "#/components/examples/503-SERVICE_UNAVAILABLE"
-              },
-              "505": {
-                "$ref": "#/components/examples/504-GATEWAY_TIMEOUT"
-              }
-            },
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "5XX-Logout": {
-        "description": "Server Errors",
-        "content": {
-          "application/json": {
-            "examples": {
-              "500": {
-                "$ref": "#/components/examples/500-INTERNAL"
-              },
-              "500-LogoutFailed": {
-                "$ref": "#/components/examples/500-LOGOUT_FAILED"
-              },
-              "502": {
-                "$ref": "#/components/examples/502-BAD_GATEWAY"
-              },
-              "503": {
-                "$ref": "#/components/examples/503-SERVICE_UNAVAILABLE"
-              },
-              "505": {
-                "$ref": "#/components/examples/504-GATEWAY_TIMEOUT"
-              }
-            },
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
       }
     },
     "examples": {
-      "400-BAD_REQUEST": {
-        "summary": "400: Bad Request",
-        "value": {
-          "code": "BAD_REQUEST",
-          "message": "The request could not be processed. Check if the format and the data types are correct.",
-          "request_id": "lJMKhk"
-        }
-      },
-      "400-API-KEY-LOGOUT": {
-        "summary": "400: You can't log out while using an API key",
-        "value": {
-          "code": "BAD_REQUEST",
-          "message": "The request could not be processed. Check if the format and the data types are correct. Cause: You cannot log out when using an API key.",
-          "request_id": "DWXfDl"
-        }
-      },
       "400-INVALID_FILTER": {
         "summary": "400: Invalid Filter",
         "value": {
@@ -8019,36 +5246,12 @@
           "request_id": "OPdFec"
         }
       },
-      "400-LOW_PASSWORD_COMPLEXITY": {
-        "summary": "400: Low Password Complexity",
+      "504-GATEWAY_TIMEOUT": {
+        "summary": "504: Gateway Timeout",
         "value": {
-          "code": "LOW_PASSWORD_COMPLEXITY",
-          "message": "The password does not meet complexity requirements. Enter a password that matches the password requirements.",
-          "request_id": "lJMKhz"
-        }
-      },
-      "400-INVALID_PASSWORD_RESET_TOKEN": {
-        "summary": "400: Invalid Password Reset Token",
-        "value": {
-          "code": "INVALID_PASSWORD_RESET_TOKEN",
-          "message": "Invalid password reset token. Enter a valid password reset token.",
-          "request_id": "lJMKhz"
-        }
-      },
-      "401-UNAUTHORIZED": {
-        "summary": "401: Unauthorized",
-        "value": {
-          "code": "AUTH_FAILED",
-          "message": "Authentication failed. Enter valid credentials.",
-          "request_id": "Zsebji"
-        }
-      },
-      "401-LOGIN_FAILED": {
-        "summary": "401: Login Error",
-        "value": {
-          "code": "LOGIN_FAILED",
-          "message": "Login failed. Enter a valid user name and password or token.",
-          "request_id": "Zsebji"
+          "code": "GATEWAY_TIMEOUT",
+          "message": "The request to the PRTG core server timed out.",
+          "request_id": "kijuIU"
         }
       },
       "403-FORBIDDEN": {
@@ -8059,36 +5262,12 @@
           "request_id": "snwyak"
         }
       },
-      "404-NOT_FOUND": {
-        "summary": "404: Not Found",
+      "401-UNAUTHORIZED": {
+        "summary": "401: Unauthorized",
         "value": {
-          "code": "NOT_FOUND",
-          "message": "This object could not be found at this endpoint. Check the ID of the object.",
-          "request_id": "snwyak"
-        }
-      },
-      "500-INTERNAL": {
-        "summary": "500: Internal Server Error",
-        "value": {
-          "code": "UNKNOWN",
-          "message": "An unknown error has occurred. Check the log files for more information.",
-          "request_id": "snwyak"
-        }
-      },
-      "500-RENEW_FAILED": {
-        "summary": "500: Session Renewal Error",
-        "value": {
-          "code": "RENEW_FAILED",
-          "message": "The renewal of the active user session has failed.",
-          "request_id": "snwyak"
-        }
-      },
-      "500-LOGOUT_FAILED": {
-        "summary": "500: Logout failed",
-        "value": {
-          "code": "LOGOUT_FAILED",
-          "message": "The logout of the active user session has failed.",
-          "request_id": "snwyak"
+          "code": "AUTH_FAILED",
+          "message": "Authentication failed. Enter valid credentials.",
+          "request_id": "Zsebji"
         }
       },
       "502-BAD_GATEWAY": {
@@ -8107,6 +5286,22 @@
           "request_id": "kijuIU"
         }
       },
+      "500-INTERNAL": {
+        "summary": "500: Internal Server Error",
+        "value": {
+          "code": "UNKNOWN",
+          "message": "An unknown error has occurred. Check the log files for more information.",
+          "request_id": "snwyak"
+        }
+      },
+      "400-BAD_REQUEST": {
+        "summary": "400: Bad Request",
+        "value": {
+          "code": "BAD_REQUEST",
+          "message": "The request could not be processed. Check if the format and the data types are correct.",
+          "request_id": "lJMKhk"
+        }
+      },
       "503-LICENSE_INACTIVE": {
         "summary": "503: License Inactive",
         "value": {
@@ -8115,12 +5310,12 @@
           "request_id": "NsqmjD"
         }
       },
-      "504-GATEWAY_TIMEOUT": {
-        "summary": "504: Gateway Timeout",
+      "404-NOT_FOUND": {
+        "summary": "404: Not Found",
         "value": {
-          "code": "GATEWAY_TIMEOUT",
-          "message": "The request to the PRTG core server timed out.",
-          "request_id": "kijuIU"
+          "code": "NOT_FOUND",
+          "message": "This object could not be found at this endpoint. Check the ID of the object.",
+          "request_id": "snwyak"
         }
       }
     },
@@ -8132,5 +5327,10 @@
         "in": "header"
       }
     }
-  }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
 }

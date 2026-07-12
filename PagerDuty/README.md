@@ -1,2 +1,62 @@
+PagerDuty is an incident response and on-call management platform used to detect, alert, and coordinate response to operational incidents — covering services, escalation policies, on-call schedules, and the incidents raised against them.
+
+This project provides OpenAPI specs for automating against PagerDuty's REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for incident and on-call automation — see **OpenAPIs** below.
+
+## Contents
+
+| Asset | Description |
+|---|---|
+| [OpenAPIs/](./OpenAPIs/) | PagerDuty REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+
+## Requirements
+
+| Requirement | Version |
+|---|---|
+| Itential Platform | 6.x |
+| PagerDuty REST API | 2.0.0 |
+| PagerDuty Integration Model | Required to build automation against the OpenAPI specs |
+
+## Integration Configuration
+
+Import the OpenAPI spec from `OpenAPIs/` as an Integration Model in **Admin > Integrations**, then create an integration pointing at your PagerDuty account (`https://api.pagerduty.com`).
+
+Authentication is an API key in the `Authorization` header:
+
+```
+Authorization: Token token=<your-pagerduty-api-key>
+```
+
+Generate a REST API key in PagerDuty under **My Profile > User Settings > API Access**, or as a general access API key under **Integrations > API Access Keys**.
+
 ## OpenAPIs
-- [PagerDuty latest](./OpenAPIs/pagerduty-latest.json)
+
+### `pagerduty-latest.json` (curated)
+
+Actively-maintained spec (`x-vendor-api-version: 2.0.0`). Trimmed to 88 of 425 upstream operations covering common CRUD for automation.
+
+Resources included, by category:
+
+- **Incidents**: List, Create, Get, Update, Merge, Snooze, Alerts, Notes, Status Updates, Responder Requests
+- **Services**: List, Create, Get, Update, Delete, Integrations (event source keys)
+- **Escalation Policies**: List, Create, Get, Update, Delete
+- **Schedules**: List, Create, Get, Update, Delete, Overrides, On-Call Users
+- **On-Calls**: List
+- **Teams**: List, Create, Get, Update, Delete, Members, Escalation Policy Assignment, User Assignment
+- **Users**: List, Create, Get, Update, Delete, Contact Methods, Notification Rules
+- **Maintenance Windows**: List, Create, Get, Update, Delete
+- **Business Services**: List, Create, Get, Update, Delete
+- **Change Events**: List, Create, Get, Update
+- **Priorities**: List
+- **Tags**: List, Create, Get, Delete, Entity Assignment
+
+### Full, unmodified spec
+
+| Spec | Description |
+|---|---|
+| [`pagerduty-2.0.0.json`](./OpenAPIs/pagerduty-2.0.0.json) | Full spec for PagerDuty REST API 2.0.0 (425 operations). |
+
+## Dependencies
+
+| Dependency | Notes |
+|---|---|
+| PagerDuty Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

@@ -11,6 +11,7 @@ All asset types below live at `{Vendor}/[{Product}/]{AssetType}/`. The `{Product
 - Sample Use Cases - An example of an orchestrated workflow that utilizes your contribution example.
 - When submitting a Sample Use Case, include a corresponding Automation and Trigger (_when applicable_).
 - Files are exported Studio projects in `.project.json` format.
+- **Target the `-latest` Integration Model**: when building or updating a project against an OpenAPI-backed integration, wire its tasks to the `-latest` spec's Integration Model, not a pinned dated version — so projects automatically pick up the curated, actively-maintained spec rather than drifting to a version that will eventually be superseded.
 
 ### Automations (`{Vendor}/[{Product}/]Automations/`)
 - Exported automation definitions that correspond to a Studio Project submission.
@@ -22,7 +23,7 @@ All asset types below live at `{Vendor}/[{Product}/]{AssetType}/`. The `{Product
 ### OpenAPIs (`{Vendor}/[{Product}/]OpenAPIs/`)
 Imported into Itential Platform as Integration Models.
 
-- Version 2.x or 3.x OpenAPI specifications in `.json` format.
+- **`.json` format.** The `-latest.json` spec must be OpenAPI 3.x — if the vendor only publishes a Swagger 2.0 spec, convert it to OpenAPI 3.0 (e.g. with `swagger2openapi`) before using it as `-latest`. The dated `{title}-{version}.json` file preserves the vendor's spec exactly as published, including its original OpenAPI/Swagger version — do not convert it.
 - **Filename convention**: `{snake_case_title}-{version}.json`, with exactly one hyphen separating the title from the version (e.g., `cisco_meraki_dashboard-1.48.0.json`). The title portion must use lowercase `snake_case` only — no spaces, camelCase, or PascalCase.
 - **Version labeling**:
     - The version segment must be exactly the value in that spec's `info.version` field (e.g., `info.version: "3.7.8"` → `netbox-3.7.8.json`; `info.version: "v2"` → `servicenow_table_api-v2.json`).
@@ -30,6 +31,9 @@ Imported into Itential Platform as Integration Models.
     - Never use an underscore in place of the separating hyphen (e.g., `meraki_1.48.0.json` is incorrect; `meraki-1.48.0.json` is correct).
 - `info.title` must contain only the integration name — no version numbers (e.g., `Cisco Meraki Dashboard`, not `Cisco Meraki Dashboard v1.48`).
 - `info.version` must reflect the actual API version (use `"latest"` to match a `-latest.json` filename).
+- **Slim the `-latest` spec to common CRUD for automation**: A vendor's full published spec is often far larger than anything Itential Platform automation actually needs. The `-latest.json` file should be a curated subset — keep the core create/read/update/delete operations and resources someone would realistically automate, and drop long tails like device-type/config templates, modular-hardware sub-resources, the vendor's own internal tooling (scripts, webhooks, job/task management, user/permission administration), and other niche feature areas. When you slim a spec, keep the full original as its own dated `{title}-{version}.json` file (per the version-labeling rule above) so nothing is lost — the `-latest.json` is a derived, reduced copy, not a replacement. Document what's included/excluded in the product's `README.md` (list the kept resources by category so it's scannable — see NetBox's `README.md` for the pattern).
+    - `info.description` is shown in the Itential Platform GUI — keep it a normal, concise vendor/product description. Don't put curation notes there, and don't repeat boilerplate across specs.
+    - Instead, add a single `x-itential-curated` string field to `-latest.json`'s `info` block, briefly noting **what's included** (not what's excluded) and pointing to the README (e.g. `"Trimmed to <N> of <M> upstream operations covering <categories>. See the repo README for the full scope and the full spec."`). Its presence is the modified-flag — no separate boolean needed.
 - **File size**: The spec must be under 15MB.
 - **One auth method defined**: Only one `securityScheme` should be defined. Itential Platform supports a single authentication method per integration instance, so additional schemes will not be usable. If a vendor's API supports multiple incompatible auth methods (e.g., an API key header vs. a Bearer token), publish separate specs with distinct filenames (e.g., `cisco_meraki_dashboard-latest.json` vs. `cisco_meraki_dashboard_bearer_variant-latest.json`) rather than combining schemes in one spec.
 - **Global security block encouraged**: Define security at the top level of the spec rather than on individual operations. Per-operation overrides are supported but the global block is preferred for consistency.
