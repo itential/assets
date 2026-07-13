@@ -49,9 +49,3 @@ Resources included, by category:
 - **Access Requests**: browse the default access request catalog, create/list/retrieve requests, and add request messages
 - **Security Access Reviews**: create, list, retrieve, update, execute review actions (approve/deny), and add comments
 - **Access Revocation**: revoke a principal's access
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Okta Management Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

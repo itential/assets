@@ -53,9 +53,3 @@ Resources included, by category:
 - **Change Events**: List, Create, Get, Update
 - **Priorities**: List
 - **Tags**: List, Create, Get, Delete, Entity Assignment
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| PagerDuty Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

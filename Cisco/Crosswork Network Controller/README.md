@@ -53,9 +53,3 @@ Reviewed and confirmed already scoped to common CRUD for automation (4 operation
 Operations included, by category:
 
 - **L3VPN service intent**: Get, create/replace (PUT), partially update (PATCH), delete a VPN service by `vpn-service-vpn-id`
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| CNC Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

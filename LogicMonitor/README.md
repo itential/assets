@@ -47,9 +47,3 @@ Resources included, by category:
 - **Alerts**: List/get alerts, acknowledge, escalate, add note
 - **Scheduled Downtime (SDT)**: Scheduled downtime windows
 - **Collectors**: Collectors, Collector Groups
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| LogicMonitor Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

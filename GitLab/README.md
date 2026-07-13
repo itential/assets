@@ -52,6 +52,12 @@ Generate a Personal Access Token (or group/project access token) at GitLab → U
 | Get Diff for Merge | Get Diff for Merge | Retrieve merge request diff versions |
 | (root) | Get Branch, Get File, Create Branch, Create Merge Request, Update Project Variables | Read a branch or file; create a branch or merge request; update a project CI/CD variable |
 
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| [GitLab Adapter](https://gitlab.com/itentialopensource/adapters/adapter-gitlab) | Required for the Studio Project workflows. Update the `adapterId` in each workflow task to match your instance name. |
+
 ---
 
 ## OpenAPIs
@@ -88,10 +94,3 @@ Resources included, by category:
 - **Deploy Tokens**: Group and Project level (List, Create, Get, Delete)
 - **Runners**: Project-level List, Register, Delete
 - **Users**: List, Get (read-only reference lookup)
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| [GitLab Adapter](https://gitlab.com/itentialopensource/adapters/adapter-gitlab) | Required for the Studio Project workflows. Update the `adapterId` in each workflow task to match your instance name. |
-| GitLab Integration Model | Only needed if building automation directly against the OpenAPI specs above. |

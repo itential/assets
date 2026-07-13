@@ -46,9 +46,3 @@ Resources included, by category:
 - **Namespaces**: Bulk delete images within a namespace/repository
 - **Organization Settings**: Retrieve and update organization settings
 - **Authentication**: User login to obtain a bearer token
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Docker Hub Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

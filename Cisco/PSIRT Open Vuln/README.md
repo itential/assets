@@ -47,9 +47,3 @@ Operations included, by category:
 - **All advisories (CVRF format)**: List all advisories; filter by first-published date range; filter by last-published date range
 - **Advisory lookup (CVRF format)**: Get by advisory ID; get by CVE ID; get by product name; get all advisories published in a given year
 - **Advisories by severity (CVRF format)**: Get by severity rating; filtered by first-published date range; filtered by last-published date range
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Cisco PSIRT openVuln API Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

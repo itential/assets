@@ -51,9 +51,3 @@ Resources included, by category:
 - **Autodiscoveries**: List autodiscovery jobs
 
 Not included: user/usergroup/API-key administration, session-based login (the API key header is used instead), schema-discovery endpoints, PRTG libraries (custom dashboards), lookup definitions, system settings/feature toggles/license info, and the sensor status summary/reporting endpoint. Pull the full spec below if you need one of those areas.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Paessler PRTG Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

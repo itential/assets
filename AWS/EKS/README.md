@@ -47,9 +47,3 @@ Operations included, by category:
 - **Managed Node Groups**: Create, list, describe, delete; update config; update Kubernetes/AMI version
 - **Connected Cluster Registrations** (EKS Connector for external/on-prem clusters): Register, deregister
 - **Tags**: List, add, remove tags on an EKS resource
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Amazon EKS Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

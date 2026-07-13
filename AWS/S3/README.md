@@ -49,9 +49,3 @@ Resources included, by category:
 - **Multipart upload**: Create, Upload Part, Upload Part (Copy), Complete, Abort, List Parts, List Multipart Uploads
 
 Not included: bucket analytics/inventory/metrics/intelligent-tiering configurations, transfer acceleration, request payer, notification configuration, replication, static website hosting, object lock/legal-hold/retention, S3 Select, object attributes, torrent, and S3 Object Lambda's WriteGetObjectResponse. Pull the full spec below if you need one of these.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Amazon S3 Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

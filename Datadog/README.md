@@ -47,9 +47,3 @@ Resources included, by category:
 - **Metrics**: Active metric listing, Scalar and timeseries queries
 - **Tagging**: Tag enrichment rules
 - **Access management**: Users, Roles
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Datadog Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

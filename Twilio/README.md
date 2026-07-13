@@ -53,9 +53,3 @@ Resources included, by category:
 - **Outgoing Caller IDs**: Verified caller IDs (list, create, get, update, delete)
 - **Queues**: Call Queues (list, create, get, update, delete), Queue Members (list, get, update/dequeue)
 - **Recordings**: Account-level Recordings (list, get, delete)
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Twilio Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

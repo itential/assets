@@ -47,9 +47,3 @@ Resources included, by category:
 - **Privacy**: Purchase Privacy, Cancel Privacy
 
 Notification opt-in/acknowledgement management, domain action/job history, scheduled-maintenance reporting, and domain redemption recovery are not included. Pull the full spec below if you need one of those areas.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| GoDaddy Domains Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

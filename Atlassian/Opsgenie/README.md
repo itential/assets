@@ -55,9 +55,3 @@ Resources included, by category:
 - **Account**: Get account info
 
 Dropped as long-tail/admin: legacy v1 alert/notification policy endpoints (superseded by v2), saved searches, alert attachments, custom RBAC roles, per-team audit logs, calendar (`.ics`) exports, integration action/authenticate endpoints, and per-user personal admin (contact methods, personal notification rules and their steps, and per-user read-only lookups of teams/schedules/escalations/forwarding rules).
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| OpsGenie Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

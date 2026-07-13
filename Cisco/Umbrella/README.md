@@ -43,9 +43,3 @@ Operations included, by category:
 
 - **Destination lists**: List (`GET /destinationlists`), create (`POST /destinationlists`), get by ID (`GET /destinationlists/{destinationListId}`), update by ID (`PATCH /destinationlists/{destinationListId}`), delete by ID (`DELETE /destinationlists/{destinationListId}`)
 - **Destinations within a list**: List destinations in a list (`GET /destinationlists/{destinationListId}/destinations`), add destinations to a list (`POST /destinationlists/{destinationListId}/destinations`), remove destinations from a list (`DELETE /destinationlists/{destinationListId}/destinations/remove`)
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Cisco Umbrella Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

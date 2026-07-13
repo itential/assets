@@ -54,9 +54,3 @@ Resources included, by category:
 - **Account**: Get Account Settings, Get Function Concurrency
 
 Not included: code signing configs (create/describe/update/delete config plus function code-signing-config associations), runtime management config (get/put), and the deprecated legacy `InvokeAsync` operation superseded by `Invoke`. Pull the full spec below if you need one of these.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| AWS Lambda Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

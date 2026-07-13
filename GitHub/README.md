@@ -50,6 +50,12 @@ Generate a Personal Access Token at GitHub Settings → Developer settings → P
 | Create Branch | Create Branch | Create a new branch from a reference branch |
 | (root) | Create Pull Request, Get File | Open a pull request between branches; read a file's contents |
 
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| [GitHub Adapter](https://gitlab.com/itentialopensource/adapters/adapter-github) | Required. Update `adapterId` in each workflow task to match your instance name. |
+
 ---
 
 ## Workflow Input Reference
@@ -165,10 +171,3 @@ Resources included, by category:
 - **Webhooks**: Repository Hooks
 - **Organizations**: Org Teams, Members, Public Members, Outside Collaborators, Org Repos
 - **User**: Authenticated user profile
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| [GitHub Adapter](https://gitlab.com/itentialopensource/adapters/adapter-github) | Required for the Studio Project workflows. Update `adapterId` in each workflow task to match your instance name. |
-| GitHub Integration Model | Only needed if building automation directly against the OpenAPI specs above. |

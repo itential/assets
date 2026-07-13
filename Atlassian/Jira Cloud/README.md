@@ -50,6 +50,12 @@ Generate an API token at [id.atlassian.com/manage-profile/security/api-tokens](h
 | Create Issue | Create Issue | Build a payload and create a new Jira issue |
 | Transition Issue | Get Transitions, Transition Issue | Look up the available transitions for an issue and move it through its workflow |
 
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| [Jira Adapter](https://gitlab.com/itentialopensource/adapters/adapter-jira) | Required for the Studio Project workflows. Update `adapter_id` in each workflow task to match your instance name. |
+
 ---
 
 ## OpenAPIs
@@ -80,10 +86,3 @@ Resources included, by category:
 - **Project Versions**: List, Create, Get, Update, Delete
 - **Reference data**: Issue Types, Priorities, Resolutions, Fields, Statuses, Labels
 - **Users**: Get, Bulk Get, Email Lookup, current-user (`myself`), full User Search suite (assignable search, picker, by-query, permission search)
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| [Jira Adapter](https://gitlab.com/itentialopensource/adapters/adapter-jira) | Required for the Studio Project workflows. Update `adapter_id` in each workflow task to match your instance name. |
-| Jira Cloud Integration Model | Only needed if building automation directly against the OpenAPI specs above. |

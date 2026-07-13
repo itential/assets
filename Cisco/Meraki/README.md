@@ -51,6 +51,12 @@ Generate an API key in the Meraki Dashboard under your user profile → **My Pro
 | Claim Network Devices | Claim devices into a network |
 | Create Network and Claim Devices, Create Network and Claim Devices - Reset | Sample use-case workflows chaining the two above |
 
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| [Meraki Adapter](https://gitlab.com/itentialopensource/adapters/adapter-meraki) | Required for the Studio Project workflows. Update `adapterId` in each workflow task to match your instance name. |
+
 ## Automations
 
 - [Create Network and Claim Devices](./Automations/Create%20Network%20and%20Claim%20Devices.json)
@@ -77,10 +83,3 @@ Resources included, by category:
 - **VLAN Profiles & Group Policies**: Network-wide VLAN profiles and group policies
 - **Firmware**: Firmware upgrade scheduling
 - **Devices**: Claim/inventory, management interface, reboot, blink LEDs, clients
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| [Meraki Adapter](https://gitlab.com/itentialopensource/adapters/adapter-meraki) | Required for the Studio Project workflows. Update `adapterId` in each workflow task to match your instance name. |
-| Meraki Integration Model | Only needed if building automation directly against the OpenAPI specs above. |

@@ -46,9 +46,3 @@ Resources included, by category:
 - **Users**: List/create/retrieve/update/delete a user; check a user's email; update a user's email, password, and status; user settings (retrieve/update); create/list a user's meetings and webinars; list a user's recordings
 
 Excluded: sub-account administration and billing, groups and IM groups/chat, H.323/SIP device management, dashboard metrics, usage/report endpoints, past meeting/webinar instance history, TSP telephony provider configuration, webhook management, tracking fields, and long-tail user administration (assistants, schedulers, PAC accounts, profile pictures, SSO tokens, permissions). See the full spec below for these.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Zoom Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

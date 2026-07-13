@@ -55,9 +55,3 @@ Resources included, by category:
 - **User**: Get Current User
 
 Not included: the legacy Issue Tracker, Snippets, Pipelines/CI-CD (config, variables, caches, schedules, SSH keys, deployments, environments), webhooks, add-ons, code search, SSH keys, properties, and permissions/administration endpoints. Pull the full spec above if you need one of these.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Bitbucket Cloud Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

@@ -62,9 +62,3 @@ Resources included, by category:
 - **Teams**: List, create, get, update, and delete teams and team memberships
 
 Dropped as long tails not core to messaging automation: card/attachment actions, room linked folders, the audit event feed (already covered by `cisco_webex-latest.json`), the Hybrid Data Security module (a specialized enterprise deployment feature), room tabs, and webhook management.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Cisco Webex / Cisco Webex — Messaging Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

@@ -54,9 +54,3 @@ Resources included, by category:
 - **Labels, Schedules, Notification Templates & Notifications**: CRUD/read
 
 Excluded as long-tail/admin surface: activity streams, analytics/reporting, bulk operations, instance/instance-group and mesh/receptor infrastructure administration, RBAC role management (`roles`, `role_definitions`, `role_*_assignments`), the `service-index` federation API, system jobs/settings/config administration, workflow approvals, and webhook receiver endpoints (GitHub/GitLab/Bitbucket callback hooks).
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Ansible AWX (Tower) Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

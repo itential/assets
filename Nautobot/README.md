@@ -49,9 +49,3 @@ Resources included, by category:
 - **Tenancy**: Tenant Groups, Tenants
 - **Circuits**: Circuit Types, Providers, Circuits, Circuit Terminations
 - **Extras**: Tags, Statuses, Roles, Custom Fields
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Nautobot Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

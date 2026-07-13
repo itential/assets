@@ -47,9 +47,3 @@ Resources included, by category:
 - **Search**: Search components and assets, and search-and-download an asset
 - **Formats**: List supported formats and their component upload field requirements
 - **Status**: Health-check endpoints for read/write availability
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Sonatype Nexus Repository Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

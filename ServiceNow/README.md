@@ -56,6 +56,12 @@ Use a ServiceNow user/service account with appropriate ACL permissions on the ta
 | Update Request Item | Update Request Item | Update an existing request item |
 | Get Service Catalog Inputs | Get Service Catalog Inputs | Retrieve the input variables for a service catalog item |
 
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| ServiceNow Adapter | Required for the Studio Project workflows. Update `adapterId` in each workflow task to match your instance name. |
+
 ---
 
 ## OpenAPIs
@@ -103,10 +109,3 @@ Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-a
 Operations included, by category:
 
 - **REST Relay**: Make a REST call from ServiceNow to Itential Platform via the scoped app
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| ServiceNow Adapter | Required for the Studio Project workflows. Update `adapterId` in each workflow task to match your instance name. |
-| ServiceNow Integration Model | Only needed if building automation directly against the OpenAPI specs above. |

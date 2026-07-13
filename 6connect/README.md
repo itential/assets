@@ -48,9 +48,3 @@ Operations included, by category:
 - **Attachments**: List, attach, preview, download, delete
 - **Backup**: List backups, trigger a backup
 - **Provisioning actions**: Push a resource + poll push status; execute a named action + poll action status
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| 6connect Provision Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

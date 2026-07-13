@@ -55,9 +55,3 @@ Resources included, by category:
 - **Tags**: Tag Resource, Untag Resource, List Tags for Resource
 
 Not included: user import jobs (bulk CSV import via S3), advanced security/risk configuration, hosted UI customization, auth event feedback/analytics, and signing certificate retrieval. Pull the full spec below if you need one of these.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Amazon Cognito User Pools Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

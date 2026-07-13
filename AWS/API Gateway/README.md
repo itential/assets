@@ -49,10 +49,3 @@ Resources included, by category:
 - **Account & Tags**: Account settings, Resource Tags
 
 Excluded as niche developer-tooling/reporting add-ons not core to REST API lifecycle automation: API documentation generation (Documentation Parts/Versions), SDK generation (SDK Types, SDK export), API definition export, and usage plan analytics (usage-by-date reporting).
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Amazon API Gateway Integration Model | Import from the OpenAPI spec above to build automation against the management REST API. |
-| AWS IAM credentials | An access key ID and secret access key (or assumable role) with `apigateway:*` permissions, used to sign requests with AWS Signature Version 4. |

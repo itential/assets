@@ -57,9 +57,3 @@ Operations included, by category:
 - **Alerts Events, Incidents, Violations**: List events, incidents, and policy violations raised by alerting
 
 Several of the Alerts endpoints above carry vendor deprecation notices pointing users toward NerdGraph, but they remain live, callable REST operations in the current spec, so they are kept rather than excluded.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| New Relic Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

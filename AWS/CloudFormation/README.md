@@ -46,10 +46,3 @@ Resources included, by category:
 - **StackSets**: Create, Update, Delete, Describe, List, Create/Update/Delete Stack Instances, Describe/List Stack Instances, List/Describe/Stop Stack Set Operations
 
 Not included: type/extension registry management (`RegisterType`, `PublishType`, `ActivateType`, etc.), stack and resource drift detection, template cost estimation, export/import listing, and account limits — these are vendor tooling, reporting, or niche verticals rather than core stack automation. Pull the full spec below if you need something not covered here.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| AWS CloudFormation Integration Model | Import from the OpenAPI spec above to build automation against the CloudFormation API. |
-| AWS IAM credentials | An access key ID/secret access key pair with CloudFormation permissions, used to sign requests with SigV4. |

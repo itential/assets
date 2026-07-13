@@ -50,9 +50,3 @@ Resources included, by category:
 - **System (core admin)**: secrets engine mounts, auth method mounts, ACL policies, lease lifecycle (lookup/renew/revoke), response wrapping, health check
 
 Pull the full spec from a running Vault instance's `sys/internal/specs/openapi` endpoint if you need something not covered here.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| HashiCorp Vault Integration Model | Import from the OpenAPI spec above to build automation against the HTTP API. |

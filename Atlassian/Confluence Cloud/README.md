@@ -50,9 +50,3 @@ Resources included, by category:
 - **Tasks**: List, get, update
 
 Also removed 104 redundant per-operation `security` overrides that all duplicated the single `basicAuth` scheme, and promoted that scheme to a single top-level `security` block.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Confluence Cloud Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

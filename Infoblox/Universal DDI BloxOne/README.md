@@ -43,9 +43,3 @@ Resources included, by category:
 
 - **DHCP**: Global DHCP config, DHCP Servers, DHCP Hosts (with associations), HA Groups, Fixed Addresses, Hardware Filters, Option Filters, Option Codes, Option Spaces, Option Groups, MAC Address Items, DHCP Filters, DHCP Service instances, Universal Service associations, lease actions (clear leases)
 - **IPAM**: IP Spaces, Address Blocks (with ancestor/copy/next-available lookups), Subnets (with ancestor/copy/next-available lookups), Ranges (with next-available-IP), Addresses, Hosts
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Infoblox Universal DDI (BloxOne) Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

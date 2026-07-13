@@ -40,9 +40,3 @@ Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-a
 Operations included, by category:
 
 - **Mail sending**: `POST /users/{user-id}/sendMail` — send a message on behalf of a user (optionally saving a copy to Sent Items)
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Microsoft Graph Mail Integration Model | Import from the OpenAPI spec above to build automation against the Send Mail endpoint. |

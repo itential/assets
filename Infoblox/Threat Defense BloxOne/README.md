@@ -51,9 +51,3 @@ Operations included, by category:
 - **Access Codes**: List, create, delete (bulk), get, delete-by-id, update an access code
 - **Approvals**: List/update/patch Application Approvals; read/patch Address Block Approvals
 - **PoP Regions**: List, get a Point-of-Presence region (reference data for policy/proxy placement)
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Infoblox Threat Defense (BloxOne) Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

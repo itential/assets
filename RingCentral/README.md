@@ -63,9 +63,3 @@ Resources included, by category:
 - **API Info**: Service status/health check
 
 Dropped as long tails: OAuth2 endpoints (handled by the integration's security scheme, not called as workflow tasks), SCIM user provisioning (overlaps with Extension CRUD), Automatic Location Updates / E911 device-address management, Paging Only Groups, Glip compliance data exports and message-store export reports, Glip webhooks and interactive cards, regional-settings reference/lookup dictionaries (country, language, state, timezone), profile images, custom greetings, deprecated duplicate endpoints (`/ringout`, `/glip/groups`), and various bulk-assign administrative endpoints. See the full spec for anything not covered here.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| `RingCentral` Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

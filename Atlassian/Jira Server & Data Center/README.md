@@ -50,9 +50,3 @@ Resources included, by category:
 - **Session/Info**: Current user (myself), My Permissions, Permissions, Server Info
 
 Excluded: Jira Software Agile boards/sprints/epics (a separate add-on module), Jira administration (workflows, workflow schemes, permission/notification/security schemes, screens, role administration, application properties, clustering, monitoring, reindexing, license management, email templates), dashboards, avatars, custom field administration, terminology customization, and bulk worklog sync endpoints. Pull the full spec below if you need one of these.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Jira Server & Data Center Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

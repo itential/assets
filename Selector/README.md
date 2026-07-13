@@ -55,9 +55,3 @@ Single-purpose API exposing exactly one operation upstream (`x-vendor-api-versio
 - **Query**: `POST /command` — execute a Selector Query Language (S2QL) query and return results plus rendering metadata, for querying network telemetry/observability data (e.g. latency, jitter, packet loss) and violation events.
 
 Two pre-existing vendor spec issues were also cleaned up: a stray top-level `security` block referencing an undefined `apikey` scheme was previously removed (the operation itself already correctly declared `bearerAuth`), and now that redundant per-operation `bearerAuth` override has been consolidated into a single global `security` block at the spec level, since it was the same requirement repeated on every operation.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Selector AI Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

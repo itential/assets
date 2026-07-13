@@ -311,9 +311,3 @@ Operations included, by category:
 - **Staging**: Start staging, cancel staging, get staging status
 - **Proceed (execute upgrade)**: Initiate the upgrade, get upgrade-proceed status
 - **Summary**: Get the overall upgrade process summary status
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Cisco ISE Integration Model(s) | Import from the OpenAPI spec(s) above for the module(s) you need to automate against. |

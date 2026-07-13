@@ -49,10 +49,3 @@ Resources included, by category:
 - **Reference lookups & operations**: zones, regions, machine types, project info (get/list), and zone/region/global operation status polling (get, list, wait)
 
 See the repo README for the full scope and the full spec.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Google Cloud Compute Engine Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |
-| Google Cloud service account | Needs Compute Engine IAM permissions and an OAuth 2.0 access token for authentication. |

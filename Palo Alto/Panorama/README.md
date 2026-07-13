@@ -115,6 +115,13 @@ The project contains **47 workflows** organized into **12 folders**. All workflo
 | Zones | List | Template-scoped network zones |
 | Commit | Commit Configuration, Commit All Configuration | Panorama candidate config commit and push to managed devices |
 
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Palo Alto Panorama:11.1` Integration Model | Install from the IAP marketplace before importing the project |
+| `Panorama` integration instance | Create in **Admin > Integrations** with the connection properties above |
+
 ---
 
 ## Workflow Input Reference
@@ -329,13 +336,4 @@ No inputs required. The commit payload (`type=commit&cmd=<commit></commit>`) is 
 ```
 
 No inputs required. The commit-all payload (`type=commit-all&cmd=<commit-all><shared-policy></shared-policy></commit-all>`) is pre-configured in the workflow. Pushes the last committed Panorama configuration to all managed firewalls. Run this after **Commit Configuration** to fully deploy changes to devices.
-
----
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| `Palo Alto Panorama:11.1` Integration Model | Install from the IAP marketplace before importing the project |
-| `Panorama` integration instance | Create in **Admin > Integrations** with the connection properties above |
 

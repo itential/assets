@@ -52,9 +52,3 @@ Resources included, by category:
 - **Team & Auth**: Basic team info (`team.info`) and token validation (`auth.test`)
 
 This pass also removed 61 per-operation `security` overrides that were exact duplicates of the spec's global `security` block (`botToken`), so `securitySchemes` now has a single, unambiguous global auth definition.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Slack Web API Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

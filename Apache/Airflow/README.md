@@ -51,8 +51,3 @@ Resources included, by category:
 
 Excluded as internal vendor tooling or reporting-only tails: Config, DAG Warnings, Datasets (data-aware scheduling), Event Logs, Import Errors, Permissions, Plugins, Providers, Roles, and Users (RBAC administration).
 
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Apache Airflow Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

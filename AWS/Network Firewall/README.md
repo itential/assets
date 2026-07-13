@@ -48,9 +48,3 @@ Operations included, by category:
 - **Logging Configuration**: Describe, update
 - **Resource Policies** (cross-account sharing of rule groups/firewall policies): Put, describe, delete
 - **Tags**: List tags for a resource; add/remove tags
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| AWS Network Firewall Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

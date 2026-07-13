@@ -58,6 +58,12 @@ Enable API access for the account under **Grid → Grid Manager → Members → 
 
 All workflows read the adapter instance name from the `adapterId` job variable — set this input when running or calling each workflow.
 
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| [Infoblox NIOS DDI Adapter](https://gitlab.com/itentialopensource/adapters/adapter-infoblox) | Required for the Studio Project workflows. Update the `adapterId` job variable to match your instance name. |
+
 ---
 
 ## OpenAPIs
@@ -133,10 +139,3 @@ Resources included, by category:
 - **VLANs**: VLANs, VLAN Views, VLAN Ranges (including next-available-VLAN-ID)
 
 ---
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| [Infoblox NIOS DDI Adapter](https://gitlab.com/itentialopensource/adapters/adapter-infoblox) | Required for the Studio Project workflows. Update the `adapterId` job variable to match your instance name. |
-| Infoblox NIOS WAPI Integration Model | Only needed if building automation directly against the OpenAPI specs above. |

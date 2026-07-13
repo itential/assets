@@ -49,6 +49,12 @@ Authentication is AWS Signature Version 4 — sign requests with an AWS access k
 | Destroy VPC and EC2 Instance / Delete Subnets | (child workflow) | Delete subnets by VPC |
 | Destroy VPC and EC2 Instance | Destroy VPC and EC2 Instance, Detach and Delete Internet Gateways by VPC | Tear down a VPC and its instances |
 
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| [AWS EC2 Adapter](https://gitlab.com/itentialopensource/adapters/adapter-aws_ec2) | Required. Update `adapterId` in each workflow task to match your instance name. |
+
 ## Golden Configurations
 
 - [AWS EC2 - Security Group](./Golden%20Configurations/AWS%20-%20Security%20Group.json)
@@ -85,10 +91,3 @@ Resources included, by category:
 - **Placement Groups**: Describe, Create, Delete
 - **Reference data**: Availability Zones, Regions, Account Attributes
 - **Tags**: Create, Delete, Describe
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| [AWS EC2 Adapter](https://gitlab.com/itentialopensource/adapters/adapter-aws_ec2) | Required for the Studio Project workflows. Update `adapterId` in each workflow task to match your instance name. |
-| AWS EC2 Integration Model | Only needed if building automation directly against the OpenAPI specs above. |

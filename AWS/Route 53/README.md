@@ -50,10 +50,3 @@ Resources included, by category:
 - **Tags**: List Tags for a Resource, List Tags for Multiple Resources, Change Tags for a Resource
 
 Not included: CIDR collections, DNSSEC/key-signing key management, traffic policies and traffic policy instances, query logging configuration, reusable delegation sets, account/resource limit and count lookups, checker IP ranges, geolocation lookups, and the DNS answer test tool. Pull the full spec above if you need one of those areas.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Amazon Route 53 Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |
-| AWS IAM credentials | Used to sign requests with AWS Signature Version 4. |

@@ -63,10 +63,3 @@ Resources included, by category:
 - **Terraform**: Generate Zipped Terraform Script (OCI)
 
 Removed the two vendor-marked "Legacy" AWS ancestor/children endpoints (`/cloud-accounts-manager/v1/cloudAccounts/awsAccounts/.../ancestors` and `.../children`), which are superseded by their `/cas/v1/aws_account/...` equivalents already in the spec.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Prisma Cloud CSPM Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |
-| Prisma Cloud access key ID and secret key | Generate in the Prisma Cloud console under **Settings > Access Keys**; used to obtain a JWT via `POST /login`. |

@@ -49,9 +49,3 @@ Resources included, by category:
 - **Search**: Global entity search
 
 Excluded (not part of this curated spec): Confluence administration (user/group create-delete-enable-disable), backup and restore jobs, webhook management, long-running task queue, access mode, and content blueprint publishing. Pull the full spec below if you need one of those areas.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Confluence Server & Data Center Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

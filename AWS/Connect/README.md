@@ -57,9 +57,3 @@ Resources included, by category:
 - **Tags**: List, Tag, Untag Resource
 
 Not included: real-time and historical metrics/reporting, custom vocabularies (Contact Lens transcription), traffic distribution groups (multi-region resiliency), contact automation rules, Lex/Amazon Lex V2 bot and Lambda function associations, instance storage/security-key/approved-origin/integration-association configuration, task templates, chat participant and contact-monitoring/recording/streaming controls, federation tokens, and the `Search*` filtering variants of the list operations above. Pull the full spec below if you need one of these.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Amazon Connect Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

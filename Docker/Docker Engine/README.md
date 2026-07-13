@@ -49,9 +49,3 @@ Resources included, by category:
 - **System**: Ping, Version, Info
 
 Excluded as out of scope for this curated spec: Swarm mode and its orchestration objects (Swarm, Service, Task, Node, Secret, Config), plugin management, the experimental BuildKit session endpoint, Dockerfile-based image builds (`/build`, `/commit`), tar-based bulk image import/export, interactive container attach (stdin/stdout hijack), and admin/reporting-only endpoints (`/auth`, `/events`, `/system/df`). See the full spec below for these.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Docker Engine Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

@@ -50,9 +50,3 @@ Resources included, by category:
 - **RBAC**: Roles, RoleBindings, ClusterRoles, ClusterRoleBindings
 
 Excludes watch/streaming endpoints, exec/attach/portforward/proxy debug endpoints, deprecated and duplicate API group versions (e.g. `extensions/v1beta1` workloads superseded by `apps/v1`, `apps/v1beta1`/`v1beta2`), webhook and aggregation-layer admin APIs (`admissionregistration.k8s.io`, `apiregistration.k8s.io`, `apiextensions.k8s.io`), and specialized/internal endpoints (TokenReviews, SubjectAccessReviews, CertificateSigningRequests, PodSecurityPolicies, PodPresets, PriorityClasses, ComponentStatuses, raw `/logs/{logpath}`). Pull the full spec if you need one of the excluded areas.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Kubernetes Integration Model | Import from an OpenAPI spec above to build automation against the Kubernetes API. |

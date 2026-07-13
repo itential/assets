@@ -53,9 +53,3 @@ Operations included, by category:
 - **Resources**: List resources (across all accounts, by account, or by kind); get a single resource
 - **Roles**: Get role info; add or remove a role membership
 - **Secrets**: Fetch one or many secret values; create a secret value
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Conjur Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

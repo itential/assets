@@ -50,10 +50,3 @@ Resources included, by category:
 - **Revisions**: List, Get, Update, Delete
 
 Not included: change/activity polling and push-notification channels (`changes`, `channels` — sync-client tooling), the legacy `teamdrives` resource (superseded by `drives`), file ID pre-generation (`files.generateIds`), file watch/push notifications (`files.watch`), and the Drive Labels endpoints (`files.listLabels`, `files.modifyLabels` — a separate, optional Google Workspace add-on).
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Google Drive Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |
-| Google Cloud service account or OAuth client | Required to obtain the Bearer access token used by the integration. |

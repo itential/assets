@@ -50,9 +50,3 @@ Resources included, by category:
 - **Settings**: Org Settings, Site Settings
 
 The full upstream spec also covers MSPs, admin/SSO/API-token administration, webhooks, alarms, analytics/insights/SLEs, Marvis AI, NAC (network access control), guest portals, PSK/guest portals, asset tracking (BLE beacons, RTLS zones), RF planning (maps, spectrum analysis, RRM, rogues), device diagnostics/troubleshooting commands, EVPN topologies, Mist Edge (mxedge/mxtunnel), Session Smart Router (SSR/128T), and third-party security integrations (SkyATP, Zscaler, Cradlepoint) — none of those are included here. Pull the full spec from [Mist's official OpenAPI documentation](https://www.mist.com/documentation/mist-api/) if you need one of the excluded areas.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Juniper Mist Integration Model | Import from an OpenAPI spec above to build automation against the Mist Cloud API. |

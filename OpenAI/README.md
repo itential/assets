@@ -56,9 +56,3 @@ Resources included, by category:
 - **Videos**: Video generation create/get/delete/content
 
 Excluded: administration/org-management (API keys, users, roles, groups, invites, projects, audit logs, usage/cost reporting), Realtime voice API, ChatKit, Containers (code interpreter sandboxes), Evals, Skills, Uploads (large multipart upload flow), voice cloning/consents, webhooks, and niche video sub-features (characters, remix, extensions, edits). See the repo README for the full scope, or pull the full spec below if you need one of the excluded areas.
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| OpenAI Integration Model | Import from an OpenAPI spec above to build automation against the REST API. |

@@ -48,9 +48,3 @@ Operations included, by category:
 - **Cross-region replication**: Replicate a secret to regions, remove regions from replication, stop replication to a replica
 - **Tagging**: Tag resource, untag resource
 - **Utilities**: Generate a random password (used when creating secrets that need a generated value)
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| AWS Secrets Manager Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |

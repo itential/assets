@@ -49,9 +49,3 @@ Operations included, by category:
 - **Bulk zone requests** (async provisioning): Submit bulk-create request + check status + get result; submit bulk-delete request + check status + get result
 - **Zone status checks**: Get DNSSEC status for zones; get secondary-zone transfer status
 - **DNS reference data** (inputs required by the operations above, e.g. contract/group IDs for zone creation): Authoritative nameservers, contracts, groups, edge hostnames, record set types, DNSSEC algorithms, TSIG algorithms
-
-## Dependencies
-
-| Dependency | Notes |
-|---|---|
-| Akamai Edge DNS Integration Model | Import from the OpenAPI spec above to build automation against the REST API. |
