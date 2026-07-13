@@ -1,8 +1,8 @@
 # F5 BIG-IP
 Assets for the Itential Platform.
 
-## IAG Inventory
-Sample IAG 4.x Inventory using Ansible:
+## Itential Gateway Inventory
+Sample Itential Gateway 4.x Inventory using Ansible:
 ```
 {
   "ansible_host": "XXX.XX.XXX.XX",

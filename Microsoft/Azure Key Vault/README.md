@@ -1,6 +1,6 @@
-# Azure Key Vault — Custom Secret Provider for IAG
+# Azure Key Vault — Custom Secret Provider for Itential Gateway
 
-Itential Automation Gateway (IAG) 5.5+ supports **external secret providers**: instead of storing credentials in IAG's own encrypted store, IAG resolves them at execution time from an external secrets system. Out of the box it supports **HashiCorp Vault (KV v2)** and **CyberArk CCP** — see Itential's docs on [configuring a custom secret provider plugin](https://docs.itential.com/itential-gateway/secrets/external-secrets/configure-custom-plugin-provider) and [managing secret aliases](https://docs.itential.com/itential-gateway/secrets/external-secrets/manage-secret-aliases). Azure Key Vault isn't a built-in type, so this uses the third option — **`plugin`** — a small executable you provide that IAG calls to fetch a secret on demand.
+Itential Gateway 5.5+ supports **external secret providers**: instead of storing credentials in Itential Gateway's own encrypted store, Itential Gateway resolves them at execution time from an external secrets system. Out of the box it supports **HashiCorp Vault (KV v2)** and **CyberArk CCP** — see Itential's docs on [configuring a custom secret provider plugin](https://docs.itential.com/itential-gateway/secrets/external-secrets/configure-custom-plugin-provider) and [managing secret aliases](https://docs.itential.com/itential-gateway/secrets/external-secrets/manage-secret-aliases). Azure Key Vault isn't a built-in type, so this uses the third option — **`plugin`** — a small executable you provide that Itential Gateway calls to fetch a secret on demand.
 
 This is a working example: a Python plugin for Azure Key Vault, the service principal and role assignment it needs, the registration steps, and how to reference the resulting alias from a device inventory (for example, a NetBox-synced inventory in Itential Platform).
 
@@ -10,23 +10,23 @@ This is a working example: a Python plugin for Azure Key Vault, the service prin
 Itential Platform (Inventory Manager / device sync)
         │  device attribute: "itential_password": "$GATEWAYSECRET_(AZURE-IOSXE-PASSWORD)"
         ▼
-IAG Gateway  ──(resolves alias)──▶  azure-plugin.py  ──(OAuth2 client credentials)──▶  Azure Key Vault
+Itential Gateway  ──(resolves alias)──▶  azure-plugin.py  ──(OAuth2 client credentials)──▶  Azure Key Vault
         │
         ▼
 Device driver (e.g. netmiko) ──▶ target device, using the resolved plaintext password
 ```
 
-IAG resolves the `$GATEWAYSECRET_(...)` reference just before the value is used, so the plaintext password is never stored in Inventory Manager, in a sync template, or in IAG's own database — only the alias name is.
+Itential Gateway resolves the `$GATEWAYSECRET_(...)` reference just before the value is used, so the plaintext password is never stored in Inventory Manager, in a sync template, or in Itential Gateway's own database — only the alias name is.
 
 ## Prerequisites
 
-- IAG 5.5 or later, with the `secret-provider` feature available (`iagctl create secret-provider --help` should show the `plugin`, `vault`, and `cyberark` provider types). See the [custom plugin provider docs](https://docs.itential.com/itential-gateway/secrets/external-secrets/configure-custom-plugin-provider) for the full reference.
+- Itential Gateway 5.5 or later, with the `secret-provider` feature available (`iagctl create secret-provider --help` should show the `plugin`, `vault`, and `cyberark` provider types). See the [custom plugin provider docs](https://docs.itential.com/itential-gateway/secrets/external-secrets/configure-custom-plugin-provider) for the full reference.
 - An Azure Key Vault with the **Azure role-based access control (RBAC)** permission model enabled (this is the default/recommended option when creating a vault). This example uses an RBAC role assignment, not a legacy vault access policy.
-- Python 3 on the IAG host (already required by IAG itself).
+- Python 3 on the Itential Gateway host (already required by Itential Gateway itself).
 
 ## Setting Up a Service Principal
 
-IAG typically doesn't run on an Azure VM, so there's no Azure Managed Identity available to it — the plugin needs its own identity to authenticate as. If IAG *is* running on an Azure VM in your environment, use a **Managed Identity** instead of everything in this section — it removes the credential entirely.
+Itential Gateway typically doesn't run on an Azure VM, so there's no Azure Managed Identity available to it — the plugin needs its own identity to authenticate as. If Itential Gateway *is* running on an Azure VM in your environment, use a **Managed Identity** instead of everything in this section — it removes the credential entirely.
 
 Otherwise, create a dedicated App Registration for this integration (don't reuse a shared/general-purpose one):
 
@@ -55,7 +55,7 @@ This gives you three values the plugin needs: the **Tenant ID**, the **Client ID
 
 ## The Plugin
 
-IAG invokes the plugin as `<command> get`, writing a JSON request to stdin and reading a JSON response from stdout. Configuration (the non-sensitive values registered with the provider) arrives via the JSON on stdin, in `config.env` — the plugin process does not otherwise inherit IAG's environment.
+Itential Gateway invokes the plugin as `<command> get`, writing a JSON request to stdin and reading a JSON response from stdout. Configuration (the non-sensitive values registered with the provider) arrives via the JSON on stdin, in `config.env` — the plugin process does not otherwise inherit Itential Gateway's environment.
 
 **Request (stdin):**
 ```json
@@ -80,7 +80,7 @@ IAG invokes the plugin as `<command> get`, writing a JSON request to stdin and r
 
 On failure: write a message to stderr and exit non-zero.
 
-See [`azure-plugin.py`](./azure-plugin.py) for the full implementation. Copy it to the IAG host and make it executable:
+See [`azure-plugin.py`](./azure-plugin.py) for the full implementation. Copy it to the Itential Gateway host and make it executable:
 
 ```bash
 chmod +x /opt/gateway/azure-plugin.py
@@ -136,7 +136,7 @@ iagctl describe secret AZURE-IOSXE-PASSWORD
 
 ## Referencing the Alias
 
-Use `$GATEWAYSECRET_(alias-name)` anywhere IAG resolves secrets at execution time — including inside device inventory attributes, for example a device synced from NetBox into Itential Platform:
+Use `$GATEWAYSECRET_(alias-name)` anywhere Itential Gateway resolves secrets at execution time — including inside device inventory attributes, for example a device synced from NetBox into Itential Platform:
 
 ```json
 {
@@ -162,7 +162,7 @@ Use `$GATEWAYSECRET_(alias-name)` anywhere IAG resolves secrets at execution tim
 }
 ```
 
-IAG resolves the alias just before the device driver call, so the real password is fetched fresh from Key Vault on every run rather than stored anywhere on the platform.
+Itential Gateway resolves the alias just before the device driver call, so the real password is fetched fresh from Key Vault on every run rather than stored anywhere on the platform.
 
 ## Verifying It's Working
 
@@ -175,8 +175,8 @@ IAG resolves the alias just before the device driver call, so the real password 
 
 - **Multiple secrets**: register one provider, then create as many `secret` aliases as you need against it — each just needs its own `--secret <name>`.
 - **Structured secrets**: if you store a JSON object as a secret's value (e.g. `{"username": "...", "password": "..."}`), pass `--key <field-name>` when creating the alias — the plugin will parse the value as JSON and pull out that field.
-- **IAG running on an Azure VM**: use a Managed Identity instead of a service principal, and adjust the plugin's authentication step accordingly — no client secret to create, store, or rotate.
-- **Client secret rotation**: unlike some other providers, Azure AD client secrets expire. Track the expiration date you set and rotate the secret (`az ad app credential reset`) and the file on the IAG host before it does.
+- **Itential Gateway running on an Azure VM**: use a Managed Identity instead of a service principal, and adjust the plugin's authentication step accordingly — no client secret to create, store, or rotate.
+- **Client secret rotation**: unlike some other providers, Azure AD client secrets expire. Track the expiration date you set and rotate the secret (`az ad app credential reset`) and the file on the Itential Gateway host before it does.
 
 ## References
 

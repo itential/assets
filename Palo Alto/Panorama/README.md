@@ -4,6 +4,20 @@ Palo Alto Panorama is a centralized network security management platform that pr
 
 This project provides a Studio Project of pre-built workflows plus OpenAPI specs for building your own automation against the Panorama REST API via an Integration Model — see **Studio Projects** and **OpenAPIs** below. No Itential Gateway or SSH/NETCONF connectivity is required; all operations are REST calls authenticated with an API key in the `X-PAN-KEY` header.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+  - [Connection Properties](#connection-properties)
+  - [Generating an API Key](#generating-an-api-key)
+  - [Integration Name](#integration-name)
+- [OpenAPIs](#openapis)
+  - [`panorama-latest.json`](#panorama-latestjson)
+  - [`panorama-11.1.json`](#panorama-111json)
+- [Studio Projects](#studio-projects)
+  - [Panorama Project](#panorama-project)
+
 ## Contents
 
 | Asset | Description |
@@ -84,11 +98,15 @@ Resources included, by category:
 - **Panorama**: Device Groups, Templates, Template Stacks
 - **Commit**: Commit Configuration, Commit All Configuration (via the Panorama XML API)
 
+### `panorama-11.1.json`
+
+Full, unmodified vendor spec for Panorama 11.1 (223 operations) — the vendor's complete API surface, preserved as-is. See `panorama-latest.json` above for the curated subset if you just need common CRUD automation.
+
 ---
 
 ## Studio Projects
 
-### Palo Alto Panorama
+### Panorama Project
 
 Backed by the **Palo Alto Panorama 11.1 REST API** via an Integration Model. The project contains **47 workflows** organized into **12 folders**, spanning the full policy automation lifecycle: object management, rule CRUD, rule positioning, commit, and commit-all (push to managed devices). All workflows follow the naming convention `<Operation> <Resource>` (e.g. `List Security Pre-Rules`, `Create Address`).
 
@@ -118,13 +136,13 @@ Backed by the **Palo Alto Panorama 11.1 REST API** via an Integration Model. The
 
 ---
 
-## Workflow Input Reference
+#### Workflow Input Reference
 
 All workflows accept a JSON object when run manually or called as a child workflow. The tables below document the expected input fields for each category.
 
-### Security Rules (Pre and Post) / NAT Rules (Pre and Post)
+##### Security Rules (Pre and Post) / NAT Rules (Pre and Post)
 
-#### List
+###### List
 
 ```json
 {
@@ -138,7 +156,7 @@ All workflows accept a JSON object when run manually or called as a child workfl
 | `location` | string | Yes | Policy scope. Use `"device-group"` for Panorama-managed device groups. |
 | `device_group` | string | Yes | Panorama device group name (e.g. `"Shared"`, `"East-DG"`). |
 
-#### Create / Update
+###### Create / Update
 
 ```json
 {
@@ -167,7 +185,7 @@ All workflows accept a JSON object when run manually or called as a child workfl
 | `device_group` | string | Yes | Device group name. |
 | `config` | object | Yes | Full rule entry body. The `@name` attribute inside `entry` must match the top-level `name`. |
 
-#### Delete
+###### Delete
 
 ```json
 {
@@ -177,7 +195,7 @@ All workflows accept a JSON object when run manually or called as a child workfl
 }
 ```
 
-#### Move
+###### Move
 
 ```json
 {
@@ -199,9 +217,9 @@ All workflows accept a JSON object when run manually or called as a child workfl
 
 ---
 
-### Address Objects / Address Groups / Service Objects / Service Groups / Tags
+##### Address Objects / Address Groups / Service Objects / Service Groups / Tags
 
-#### List
+###### List
 
 ```json
 {
@@ -210,7 +228,7 @@ All workflows accept a JSON object when run manually or called as a child workfl
 }
 ```
 
-#### Create / Update
+###### Create / Update
 
 ```json
 {
@@ -234,7 +252,7 @@ All workflows accept a JSON object when run manually or called as a child workfl
 | `device_group` | string | For `device-group` scope | Device group name. |
 | `config` | object | Yes | Full entry body. See Panorama REST API docs for the schema of each object type. |
 
-#### Delete
+###### Delete
 
 ```json
 {
@@ -246,9 +264,9 @@ All workflows accept a JSON object when run manually or called as a child workfl
 
 ---
 
-### Device Groups
+##### Device Groups
 
-#### List
+###### List
 
 ```json
 {
@@ -260,7 +278,7 @@ All workflows accept a JSON object when run manually or called as a child workfl
 |---|---|---|---|
 | `name` | string | No | Filter by device group name. Omit to list all. |
 
-#### Create / Update
+###### Create / Update
 
 ```json
 {
@@ -279,7 +297,7 @@ All workflows accept a JSON object when run manually or called as a child workfl
 | `name` | string | Yes | Device group name. |
 | `config` | object | Yes | Device group entry body. |
 
-#### Delete
+###### Delete
 
 ```json
 {
@@ -289,11 +307,11 @@ All workflows accept a JSON object when run manually or called as a child workfl
 
 ---
 
-### Zones
+##### Zones
 
 Zones in Panorama are template-scoped — they are not tied to a device group but to a Template or Template Stack.
 
-#### List
+###### List
 
 ```json
 {
@@ -313,7 +331,7 @@ Zones in Panorama are template-scoped — they are not tied to a device group bu
 
 ---
 
-### Commit Configuration
+##### Commit Configuration
 
 ```json
 {}
@@ -323,7 +341,7 @@ No inputs required. The commit payload (`type=commit&cmd=<commit></commit>`) is 
 
 ---
 
-### Commit All Configuration
+##### Commit All Configuration
 
 ```json
 {}

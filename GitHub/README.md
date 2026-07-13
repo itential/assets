@@ -5,6 +5,19 @@ This project provides two complementary ways to automate against GitHub:
 - **Studio Project workflows** built on the **GitHub Adapter** — a set of repository CRUD workflows (create a branch, commit a file, get a file, open a pull request).
 - **OpenAPI specs** for building new automation directly against GitHub's REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for repository automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+  - [Adapter (Studio Project workflows)](#adapter-studio-project-workflows)
+  - [Integration Model (OpenAPI-based automation)](#integration-model-openapi-based-automation)
+- [Studio Projects](#studio-projects)
+  - [GitHub Project](#github-project)
+- [OpenAPIs](#openapis)
+  - [`github_rest_api-latest.json`](#github_rest_api-latestjson)
+  - [`github_rest_api-1.1.4.json`](#github_rest_api-114json)
+
 ## Contents
 
 | Asset | Description |
@@ -56,13 +69,11 @@ Generate a Personal Access Token at GitHub Settings → Developer settings → P
 |---|---|
 | [GitHub Adapter](https://gitlab.com/itentialopensource/adapters/adapter-github) | Required. Update `adapterId` in each workflow task to match your instance name. |
 
----
-
-## Workflow Input Reference
+#### Workflow Input Reference
 
 All workflows accept a JSON object when run manually or called as a child workflow.
 
-### Create Pull Request
+##### Create Pull Request
 
 ```json
 {
@@ -84,7 +95,7 @@ All workflows accept a JSON object when run manually or called as a child workfl
 | `sourceBranch` | string | Yes | Branch containing the changes. |
 | `targetBranch` | string | Yes | Branch to merge into. |
 
-### Commit File
+##### Commit File
 
 ```json
 {
@@ -108,7 +119,7 @@ All workflows accept a JSON object when run manually or called as a child workfl
 | `commitMessage` | string | Yes | Commit message. |
 | `fileContent` | string | Yes | New file content. |
 
-### Create Branch
+##### Create Branch
 
 ```json
 {
@@ -128,7 +139,7 @@ All workflows accept a JSON object when run manually or called as a child workfl
 | `branchName` | string | Yes | Name for the new branch. |
 | `refBranchName` | string | Yes | Existing branch to branch from. |
 
-### Get File
+##### Get File
 
 ```json
 {
@@ -171,3 +182,7 @@ Resources included, by category:
 - **Webhooks**: Repository Hooks
 - **Organizations**: Org Teams, Members, Public Members, Outside Collaborators, Org Repos
 - **User**: Authenticated user profile
+
+### `github_rest_api-1.1.4.json`
+
+Full, unmodified vendor spec (1.1.4) — the vendor's complete API surface, preserved as-is. See `github_rest_api-latest.json` above for the curated subset if you just need common CRUD automation.

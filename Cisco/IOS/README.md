@@ -8,7 +8,7 @@ Assets for the Itential Platform — Cisco IOS device automation.
 
 | Asset | Description |
 |---|---|
-| [Projects/Cisco IOS](./Projects/Cisco%20IOS.project.json) | IAP project — software upgrade, port turn-up, compliance, inventory management |
+| [Projects/Cisco IOS](./Projects/Cisco%20IOS.project.json) | Itential Platform project — software upgrade, port turn-up, compliance, inventory management |
 | [Golden Configurations/Cisco IOS - Simple](./Golden%20Configurations/Cisco%20IOS%20-%20Simple.json) | Golden config tree using literal matching |
 | [Golden Configurations/Cisco IOS - Jinja2](./Golden%20Configurations/Cisco%20IOS%20-%20Jinja2.json) | Golden config tree using Jinja2 expressions for flexible value matching |
 | [Golden Configurations/Cisco IOS - Lab](./Golden%20Configurations/Cisco%20IOS%20-%20Lab.json) | Golden config tree for lab baseline configuration |
@@ -68,7 +68,7 @@ Set these attributes on each node in Inventory Manager:
 
 ### Cisco IOS
 
-An IAP project covering software upgrade, port turn-up, golden configuration compliance, and inventory management for Cisco IOS devices, organized into four folders.
+An Itential Platform project covering software upgrade, port turn-up, golden configuration compliance, and inventory management for Cisco IOS devices, organized into four folders.
 
 **Software Upgrade**
 - **IOS Upgrade** — stages the image, runs pre/post checks, installs, and reloads

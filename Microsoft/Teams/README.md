@@ -22,7 +22,7 @@ Power Automate flow
 Microsoft Teams channel
 ```
 
-The workflow runs the card-building/POST logic directly on the Itential Gateway via a `runCode` task — no custom adapter or pre-registered IAG service required.
+The workflow runs the card-building/POST logic directly on the Itential Gateway via a `runCode` task — no custom adapter or pre-registered Itential Gateway service required.
 
 ## Building the Power Automate Flow
 
@@ -111,7 +111,7 @@ Minimal version — `facts`, `link_url`, and `link_text` are still present, just
 The trigger URL is not just a configuration value — it functions as a bearer credential. Anyone who has it can post into your Teams channel, regardless of the "Who can trigger the flow?" setting. Treat it accordingly:
 
 - Never commit it to version control or share it in plaintext.
-- Prefer resolving it at execution time from wherever your organization manages secrets (e.g. an IAG [external secret provider](https://docs.itential.com/itential-gateway/secrets/external-secrets/configure-custom-plugin-provider)) rather than passing it as a plain job input, if your workflow triggers aren't tightly access-controlled.
+- Prefer resolving it at execution time from wherever your organization manages secrets (e.g. an Itential Gateway [external secret provider](https://docs.itential.com/itential-gateway/secrets/external-secrets/configure-custom-plugin-provider)) rather than passing it as a plain job input, if your workflow triggers aren't tightly access-controlled.
 - Rotate the flow's trigger if the URL is ever exposed (regenerate it in Power Automate — this invalidates the old URL).
 
 ## Troubleshooting

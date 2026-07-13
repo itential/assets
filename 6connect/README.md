@@ -2,6 +2,13 @@
 
 This project provides the OpenAPI spec for automating against the 6connect Provision REST API via an Integration Model. The `-latest` spec is reviewed and curated for common CRUD automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+
 ## Contents
 
 | Asset | Description |

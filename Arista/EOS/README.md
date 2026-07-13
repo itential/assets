@@ -12,8 +12,8 @@ Assets for the Itential Platform.
 - [Automation Gateway 4.x](https://www.itential.com/automation-gateway/)
 - Automation Gateway Adapter (_ships with Itential Platform_)
 
-## IAG Inventory
-Sample IAG 4.x Inventory using Ansible:
+## Itential Gateway Inventory
+Sample Itential Gateway 4.x Inventory using Ansible:
 ```
 {
   "ansible_host": "XXX.XX.XXX.XX",
