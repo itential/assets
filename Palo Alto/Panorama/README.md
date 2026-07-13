@@ -1,21 +1,15 @@
 # Palo Alto Panorama
 
-Assets for the Itential Automation Platform.
-
-## Overview
-
 Palo Alto Panorama is a centralized network security management platform that provides unified policy control, visibility, and automation across Palo Alto Networks next-generation firewalls. Unlike PANOS — which is the operating system running on individual firewall devices — Panorama is an **API controller** that manages device groups, security and NAT policy rulebases, address and service objects, and configuration commits across an entire firewall estate.
 
-This project provides a complete set of IAP workflows backed by the **Palo Alto Panorama 11.1 REST API** via an Integration Model. No Automation Gateway or SSH/NETCONF connectivity is required. All operations are REST calls authenticated with an API key in the `X-PAN-KEY` header.
-
-The 47 workflows span 12 operational categories and cover the full policy automation lifecycle: object management, rule CRUD, rule positioning, commit, and commit-all (push to managed devices).
+This project provides a Studio Project of pre-built workflows plus OpenAPI specs for building your own automation against the Panorama REST API via an Integration Model — see **Studio Projects** and **OpenAPIs** below. No Itential Gateway or SSH/NETCONF connectivity is required; all operations are REST calls authenticated with an API key in the `X-PAN-KEY` header.
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Panorama REST API OpenAPI specs — curated `-latest` plus the full dated spec |
-| [Studio Projects/](./Studio%20Projects/) | IAP project containing all 46 workflows in 12 folders |
+| [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing all 47 workflows in 12 folders |
 | [Automations/](./Automations/) | Automation pairing for the Create Security Rule workflow |
 
 ## Requirements
@@ -24,13 +18,13 @@ The 47 workflows span 12 operational categories and cover the full policy automa
 |---|---|
 | Itential Platform | P6+ |
 | Palo Alto Panorama | 11.1 |
-| `Palo Alto Panorama:11.1` Integration Model | Installed via IAP marketplace |
+| `Palo Alto Panorama:11.1` Integration Model | Installed via the Itential Platform marketplace |
 
-> **Note:** This project does **not** require Itential Automation Gateway (IAG). All API calls are made directly from the IAP platform to the Panorama REST API.
+> **Note:** This project does **not** require Itential Gateway. All API calls are made directly from Itential Platform to the Panorama REST API.
 
 ## Integration Configuration
 
-Before importing the project, configure the `Palo Alto Panorama:11.1` Integration Model in **Admin > Integrations** and create an integration named `Panorama`. The integration connects IAP to your Panorama management server.
+Before importing the project, configure the `Palo Alto Panorama:11.1` Integration Model in **Admin > Integrations** and create an integration named `Panorama`. The integration connects Itential Platform to your Panorama management server.
 
 ### Connection Properties
 
@@ -96,7 +90,7 @@ Resources included, by category:
 
 ### Palo Alto Panorama
 
-The project contains **47 workflows** organized into **12 folders**. All workflows follow the naming convention `<Operation> <Resource>` (e.g. `List Security Pre-Rules`, `Create Address`).
+Backed by the **Palo Alto Panorama 11.1 REST API** via an Integration Model. The project contains **47 workflows** organized into **12 folders**, spanning the full policy automation lifecycle: object management, rule CRUD, rule positioning, commit, and commit-all (push to managed devices). All workflows follow the naming convention `<Operation> <Resource>` (e.g. `List Security Pre-Rules`, `Create Address`).
 
 #### Folder Structure
 
@@ -119,7 +113,7 @@ The project contains **47 workflows** organized into **12 folders**. All workflo
 
 | Dependency | Notes |
 |---|---|
-| `Palo Alto Panorama:11.1` Integration Model | Install from the IAP marketplace before importing the project |
+| `Palo Alto Panorama:11.1` Integration Model | Install from the Itential Platform marketplace before importing the project |
 | `Panorama` integration instance | Create in **Admin > Integrations** with the connection properties above |
 
 ---

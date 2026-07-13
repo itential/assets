@@ -10,7 +10,7 @@ This project provides two complementary ways to automate against NIOS WAPI:
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | NIOS WAPI OpenAPI specs — curated `-latest` plus the full dated spec, for the general API and each of the DHCP, DNS, Grid, and IPAM domains |
-| [Studio Projects/](./Studio%20Projects/) | IAP project containing the network/DNS record CRUD workflows |
+| [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing the network/DNS record CRUD workflows |
 
 ## Requirements
 

@@ -10,7 +10,7 @@ This project provides two complementary ways to automate against ServiceNow:
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | ServiceNow Change Management, Table API, and Itential Services App OpenAPI specs — curated `-latest` plus the full dated spec for each |
-| [Studio Projects/](./Studio%20Projects/) | IAP project containing the ITSM workflows |
+| [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing the ITSM workflows |
 
 ## Requirements
 

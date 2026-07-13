@@ -10,7 +10,7 @@ This project provides two complementary ways to automate against Meraki:
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Meraki Dashboard API OpenAPI specs — curated `-latest` plus the full dated spec |
-| [Studio Projects/](./Studio%20Projects/) | IAP project containing network/device workflows |
+| [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing network/device workflows |
 | [Automations/](./Automations/) | Standalone exported sample-use-case workflows |
 
 ## Requirements

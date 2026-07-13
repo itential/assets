@@ -10,7 +10,7 @@ This project provides two complementary ways to automate against EC2:
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | EC2 API OpenAPI specs — curated `-latest` plus the full dated spec |
-| [Studio Projects/](./Studio%20Projects/) | IAP project containing VPC/networking and instance lifecycle workflows |
+| [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing VPC/networking and instance lifecycle workflows |
 | [Golden Configurations/](./Golden%20Configurations/) | Security Group golden configuration |
 
 ## Requirements

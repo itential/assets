@@ -65,6 +65,8 @@ Imported into Itential Platform as Integration Models.
 ## Additional Requirements
 
 - **No Sensitive Data**: Ensure your contribution does not contain any sensitive or private data (e.g., API keys, passwords, personal information).
+- **Product README structure**: Each product folder's `README.md` should keep a plain `# {Product}` title but skip a separate `## Overview` heading and any "Assets for the Itential Platform" boilerplate — the description paragraph(s) flow directly under the title. Keep that intro **product-agnostic**: describe the vendor/product itself, not the specifics of any one asset it ships with. Detail that's specific to one asset (e.g. a Studio Project's workflow count, folder count, or category breakdown) belongs under that asset's own heading (e.g. `## Studio Projects`), not in the top-level intro. Avoid superlative/marketing language ("the premier...", "industry-leading...") since competing vendors coexist in this repo. See NetBox's or GitHub's `README.md` for the pattern.
+- **Branding**: Refer to the products as "Itential Platform" and "Itential Gateway" (or "Platform"/"Gateway" for brevity once already introduced, or a specific version like "P6" or "IG5" when relevant) — never the retired abbreviations "IAP" or "IAG".
 - **Proper Spelling and Grammar**: Proofread your contribution to make sure it is free of spelling and grammar errors.
 - **Title Case**: Use Title Case for headings, function names, and any other key titles.
 

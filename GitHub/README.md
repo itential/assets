@@ -10,7 +10,7 @@ This project provides two complementary ways to automate against GitHub:
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | GitHub REST API OpenAPI specs — curated `-latest` plus the full dated spec |
-| [Studio Projects/](./Studio%20Projects/) | IAP project containing the repository CRUD workflows |
+| [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing the repository CRUD workflows |
 
 ## Requirements
 

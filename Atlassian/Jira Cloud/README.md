@@ -10,7 +10,7 @@ This project provides two complementary ways to automate against Jira Cloud:
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Jira Cloud REST API OpenAPI specs — curated `-latest` plus the full dated spec |
-| [Studio Projects/](./Studio%20Projects/) | IAP project containing issue and project workflows |
+| [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing issue and project workflows |
 
 ## Requirements
 
