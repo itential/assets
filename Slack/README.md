@@ -2,6 +2,15 @@ Slack is a business messaging platform for team communication, offering channels
 
 This project provides OpenAPI specs for automating against the Slack Web API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`slack_web_api-latest.json`](#slack_web_api-latestjson)
+  - [`slack_web_api-1.7.0.json`](#slack_web_api-170json)
+
 ## Contents
 
 | Asset | Description |
@@ -52,3 +61,7 @@ Resources included, by category:
 - **Team & Auth**: Basic team info (`team.info`) and token validation (`auth.test`)
 
 This pass also removed 61 per-operation `security` overrides that were exact duplicates of the spec's global `security` block (`botToken`), so `securitySchemes` now has a single, unambiguous global auth definition.
+
+### `slack_web_api-1.7.0.json`
+
+Full, unmodified vendor spec for the Slack Web API, version 1.7.0 (174 operations) — the vendor's complete API surface, preserved as-is. See `slack_web_api-latest.json` above for the curated subset if you just need common CRUD automation.

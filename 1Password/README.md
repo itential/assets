@@ -2,6 +2,15 @@
 
 This project provides an OpenAPI spec for automating against the 1Password Connect REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for secrets automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`1password_connect-latest.json`](#1password_connect-latestjson)
+  - [`1password_connect-1.5.7.json`](#1password_connect-157json)
+
 ## Contents
 
 | Asset | Description |
@@ -44,3 +53,7 @@ Resources included, by category:
 - **Vaults**: List, get
 - **Items**: List, create, get, update, delete
 - **Item Files**: List, get, get content
+
+### `1password_connect-1.5.7.json`
+
+Full, unmodified vendor spec for 1Password Connect 1.5.7 (16 operations) — the vendor's complete API surface, preserved as-is. See `1password_connect-latest.json` above for the curated subset if you just need common CRUD automation.

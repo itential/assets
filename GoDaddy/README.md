@@ -1,5 +1,14 @@
 GoDaddy is a domain registrar and web hosting provider. This project covers the GoDaddy Domains API — domain registration, availability and suggestion lookups, DNS record management, domain forwarding, transfers, renewals, and privacy — for automating domain lifecycle operations from Itential Platform.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`godaddy_domains-latest.json`](#godaddy_domains-latestjson)
+  - [`godaddy_domains-1.0.0.json`](#godaddy_domains-100json)
+
 ## Contents
 
 | Asset | Description |
@@ -47,3 +56,7 @@ Resources included, by category:
 - **Privacy**: Purchase Privacy, Cancel Privacy
 
 Notification opt-in/acknowledgement management, domain action/job history, scheduled-maintenance reporting, and domain redemption recovery are not included. Pull the full spec below if you need one of those areas.
+
+### `godaddy_domains-1.0.0.json`
+
+Full, unmodified vendor spec for the GoDaddy Domains API, version 1.0.0 (42 operations) — the vendor's complete API surface, preserved as-is. See `godaddy_domains-latest.json` above for the curated subset if you just need common CRUD automation.

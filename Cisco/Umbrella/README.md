@@ -2,6 +2,15 @@ Cisco Umbrella is a cloud-delivered DNS-layer security service that blocks malic
 
 This project provides an OpenAPI spec for automating against the Umbrella Destination Lists API via an Integration Model. See **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`cisco_umbrella_destination_lists-latest.json`](#cisco_umbrella_destination_lists-latestjson)
+  - [`cisco_umbrella_destination_lists-2.0.0.json`](#cisco_umbrella_destination_lists-200json)
+
 ## Contents
 
 | Asset | Description |
@@ -43,3 +52,7 @@ Operations included, by category:
 
 - **Destination lists**: List (`GET /destinationlists`), create (`POST /destinationlists`), get by ID (`GET /destinationlists/{destinationListId}`), update by ID (`PATCH /destinationlists/{destinationListId}`), delete by ID (`DELETE /destinationlists/{destinationListId}`)
 - **Destinations within a list**: List destinations in a list (`GET /destinationlists/{destinationListId}/destinations`), add destinations to a list (`POST /destinationlists/{destinationListId}/destinations`), remove destinations from a list (`DELETE /destinationlists/{destinationListId}/destinations/remove`)
+
+### `cisco_umbrella_destination_lists-2.0.0.json`
+
+Full, unmodified vendor spec for the Destination Lists API v2.0.0 (8 operations) — the vendor's complete API surface, preserved as-is. See `cisco_umbrella_destination_lists-latest.json` above for the curated version if you just need common CRUD automation.

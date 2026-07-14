@@ -2,6 +2,15 @@ Infoblox Threat Defense (BloxOne) is a cloud-native DNS security service that pr
 
 This project provides the OpenAPI spec for automating against the Infoblox Threat Defense (BloxOne) API via an Integration Model.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`infoblox_threat_defense_bloxone-latest.json`](#infoblox_threat_defense_bloxone-latestjson)
+  - [`infoblox_threat_defense_bloxone-1.json`](#infoblox_threat_defense_bloxone-1json)
+
 ## Contents
 
 | Asset | Description |
@@ -51,3 +60,7 @@ Operations included, by category:
 - **Access Codes**: List, create, delete (bulk), get, delete-by-id, update an access code
 - **Approvals**: List/update/patch Application Approvals; read/patch Address Block Approvals
 - **PoP Regions**: List, get a Point-of-Presence region (reference data for policy/proxy placement)
+
+### `infoblox_threat_defense_bloxone-1.json`
+
+Full, unmodified vendor spec for Infoblox Threat Defense (BloxOne) API version 1 (61 operations) — the vendor's complete API surface, preserved as-is. See `infoblox_threat_defense_bloxone-latest.json` above for the curated subset if you just need common CRUD automation.

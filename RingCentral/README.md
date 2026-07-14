@@ -2,6 +2,15 @@ RingCentral is a cloud communications platform providing business phone, SMS/MMS
 
 This project provides OpenAPI specs for automating against the RingCentral Connect Platform API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`ringcentral-latest.json`](#ringcentral-latestjson)
+  - [`ringcentral-1.0.39.json`](#ringcentral-1039json)
+
 ## Contents
 
 | Asset | Description |
@@ -63,3 +72,7 @@ Resources included, by category:
 - **API Info**: Service status/health check
 
 Dropped as long tails: OAuth2 endpoints (handled by the integration's security scheme, not called as workflow tasks), SCIM user provisioning (overlaps with Extension CRUD), Automatic Location Updates / E911 device-address management, Paging Only Groups, Glip compliance data exports and message-store export reports, Glip webhooks and interactive cards, regional-settings reference/lookup dictionaries (country, language, state, timezone), profile images, custom greetings, deprecated duplicate endpoints (`/ringout`, `/glip/groups`), and various bulk-assign administrative endpoints. See the full spec for anything not covered here.
+
+### `ringcentral-1.0.39.json`
+
+Full, unmodified vendor spec for RingCentral Connect Platform API 1.0.39 (312 operations) — the vendor's complete API surface, preserved as-is. See `ringcentral-latest.json` above for the curated subset if you just need common CRUD automation.

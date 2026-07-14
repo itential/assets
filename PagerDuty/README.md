@@ -2,6 +2,15 @@ PagerDuty is an incident response and on-call management platform used to detect
 
 This project provides OpenAPI specs for automating against PagerDuty's REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for incident and on-call automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`pagerduty-latest.json`](#pagerduty-latestjson)
+  - [`pagerduty-2.0.0.json`](#pagerduty-200json)
+
 ## Contents
 
 | Asset | Description |
@@ -53,3 +62,7 @@ Resources included, by category:
 - **Change Events**: List, Create, Get, Update
 - **Priorities**: List
 - **Tags**: List, Create, Get, Delete, Entity Assignment
+
+### `pagerduty-2.0.0.json`
+
+Full, unmodified vendor spec for PagerDuty REST API 2.0.0 (425 operations) — the vendor's complete API surface, preserved as-is. See `pagerduty-latest.json` above for the curated subset if you just need common CRUD automation.

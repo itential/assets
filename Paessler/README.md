@@ -2,6 +2,15 @@ Paessler PRTG Network Monitor is an agentless infrastructure monitoring tool tha
 
 This project provides OpenAPI specs for automating against PRTG's REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`paessler_prtg-latest.json`](#paessler_prtg-latestjson)
+  - [`paessler_prtg-2.0.json`](#paessler_prtg-20json)
+
 ## Contents
 
 | Asset | Description |
@@ -51,3 +60,7 @@ Resources included, by category:
 - **Autodiscoveries**: List autodiscovery jobs
 
 Not included: user/usergroup/API-key administration, session-based login (the API key header is used instead), schema-discovery endpoints, PRTG libraries (custom dashboards), lookup definitions, system settings/feature toggles/license info, and the sensor status summary/reporting endpoint. Pull the full spec below if you need one of those areas.
+
+### `paessler_prtg-2.0.json`
+
+Full, unmodified vendor spec for PRTG REST API v2.0 (115 operations) — the vendor's complete API surface, preserved as-is. See `paessler_prtg-latest.json` above for the curated subset if you just need common CRUD automation.

@@ -2,6 +2,15 @@ Google Cloud Compute Engine is Google Cloud's infrastructure-as-a-service offeri
 
 This project provides OpenAPI specs for automating against the Compute Engine REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`google_cloud_compute_engine-latest.json`](#google_cloud_compute_engine-latestjson)
+  - [`google_cloud_compute_engine-v1.json`](#google_cloud_compute_engine-v1json)
+
 ## Contents
 
 | Asset | Description |
@@ -49,3 +58,7 @@ Resources included, by category:
 - **Reference lookups & operations**: zones, regions, machine types, project info (get/list), and zone/region/global operation status polling (get, list, wait)
 
 See the repo README for the full scope and the full spec.
+
+### `google_cloud_compute_engine-v1.json`
+
+Full, unmodified vendor spec for Compute Engine API v1 (694 operations) — the vendor's complete API surface, preserved as-is. See `google_cloud_compute_engine-latest.json` above for the curated subset if you just need common CRUD automation.

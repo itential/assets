@@ -5,6 +5,20 @@ This project provides two complementary ways to automate against EC2:
 - **Studio Project workflows** built on the **AWS EC2 Adapter** — VPC and networking provisioning workflows (create a VPC, subnet, route, internet gateway, security group) and instance lifecycle workflows (create and destroy).
 - **OpenAPI specs** for building new automation directly against the EC2 API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for compute and networking automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+  - [Adapter (Studio Project workflows)](#adapter-studio-project-workflows)
+  - [Integration Model (OpenAPI-based automation)](#integration-model-openapi-based-automation)
+- [Studio Projects](#studio-projects)
+  - [AWS EC2 Project](#aws-ec2-project)
+- [Golden Configurations](#golden-configurations)
+- [OpenAPIs](#openapis)
+  - [`amazon_ec2-latest.json`](#amazon_ec2-latestjson)
+  - [`amazon_ec2-2016-11-15.json`](#amazon_ec2-2016-11-15json)
+
 ## Contents
 
 | Asset | Description |
@@ -91,3 +105,7 @@ Resources included, by category:
 - **Placement Groups**: Describe, Create, Delete
 - **Reference data**: Availability Zones, Regions, Account Attributes
 - **Tags**: Create, Delete, Describe
+
+### `amazon_ec2-2016-11-15.json`
+
+Full, unmodified vendor spec for EC2 API version 2016-11-15 (1,773 operations) — the vendor's complete API surface, preserved as-is. See `amazon_ec2-latest.json` above for the curated subset if you just need common CRUD automation.

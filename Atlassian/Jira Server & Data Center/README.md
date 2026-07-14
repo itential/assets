@@ -2,6 +2,15 @@ Atlassian Jira Server and Data Center is Atlassian's self-hosted issue tracking 
 
 This project provides an OpenAPI spec for automating against the Jira Server/Data Center REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`atlassian_jira_server_data_center-latest.json`](#atlassian_jira_server_data_center-latestjson)
+  - [`atlassian_jira_server_data_center-10.0.0.json`](#atlassian_jira_server_data_center-1000json)
+
 ## Contents
 
 | Asset | Description |
@@ -50,3 +59,7 @@ Resources included, by category:
 - **Session/Info**: Current user (myself), My Permissions, Permissions, Server Info
 
 Excluded: Jira Software Agile boards/sprints/epics (a separate add-on module), Jira administration (workflows, workflow schemes, permission/notification/security schemes, screens, role administration, application properties, clustering, monitoring, reindexing, license management, email templates), dashboards, avatars, custom field administration, terminology customization, and bulk worklog sync endpoints. Pull the full spec below if you need one of these.
+
+### `atlassian_jira_server_data_center-10.0.0.json`
+
+Full, unmodified vendor spec for Jira Server & Data Center 10.0.0 (430 operations) — the vendor's complete API surface, preserved as-is. See `atlassian_jira_server_data_center-latest.json` above for the curated subset if you just need common CRUD automation.

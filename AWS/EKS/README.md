@@ -1,5 +1,14 @@
 Amazon Elastic Kubernetes Service (EKS) is a managed Kubernetes service for running containerized applications on AWS without managing control plane infrastructure. It handles cluster lifecycle, managed node groups, Fargate profiles, add-ons, and identity provider integration for Kubernetes RBAC.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`amazon_eks-latest.json`](#amazon_eks-latestjson)
+  - [`amazon_eks-2017-11-01.json`](#amazon_eks-2017-11-01json)
+
 ## Contents
 
 | Asset | Description |
@@ -47,3 +56,7 @@ Operations included, by category:
 - **Managed Node Groups**: Create, list, describe, delete; update config; update Kubernetes/AMI version
 - **Connected Cluster Registrations** (EKS Connector for external/on-prem clusters): Register, deregister
 - **Tags**: List, add, remove tags on an EKS resource
+
+### `amazon_eks-2017-11-01.json`
+
+Full, unmodified vendor spec for the Amazon EKS 2017-11-01 API (35 operations) — the vendor's complete API surface, preserved as-is. See `amazon_eks-latest.json` above for the curated subset if you just need common CRUD automation.

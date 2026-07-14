@@ -2,6 +2,15 @@ Amazon Cognito User Pools provides user directory and authentication functionali
 
 This project provides an OpenAPI spec for automating against the Cognito User Pools REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`amazon_cognito_user_pools-latest.json`](#amazon_cognito_user_pools-latestjson)
+  - [`amazon_cognito_user_pools-2016-04-18.json`](#amazon_cognito_user_pools-2016-04-18json)
+
 ## Contents
 
 | Asset | Description |
@@ -55,3 +64,7 @@ Resources included, by category:
 - **Tags**: Tag Resource, Untag Resource, List Tags for Resource
 
 Not included: user import jobs (bulk CSV import via S3), advanced security/risk configuration, hosted UI customization, auth event feedback/analytics, and signing certificate retrieval. Pull the full spec below if you need one of these.
+
+### `amazon_cognito_user_pools-2016-04-18.json`
+
+Full, unmodified vendor spec for the Amazon Cognito User Pools API (2016-04-18) — the vendor's complete API surface (101 operations), preserved as-is. See `amazon_cognito_user_pools-latest.json` above for the curated subset if you just need common CRUD automation.

@@ -2,6 +2,17 @@ Cisco Webex is a cloud collaboration platform providing team messaging, meetings
 
 This project provides OpenAPI specs for automating against the Webex REST API via an Integration Model. See **OpenAPIs** below for what each spec covers.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`cisco_webex-latest.json`](#cisco_webex-latestjson)
+  - [`cisco_webex_messaging-latest.json`](#cisco_webex_messaging-latestjson)
+  - [`cisco_webex-1.0.json`](#cisco_webex-10json)
+  - [`cisco_webex_messaging-1.0.0.json`](#cisco_webex_messaging-100json)
+
 ## Contents
 
 | Asset | Description |
@@ -62,3 +73,11 @@ Resources included, by category:
 - **Teams**: List, create, get, update, and delete teams and team memberships
 
 Dropped as long tails not core to messaging automation: card/attachment actions, room linked folders, the audit event feed (already covered by `cisco_webex-latest.json`), the Hybrid Data Security module (a specialized enterprise deployment feature), room tabs, and webhook management.
+
+### `cisco_webex-1.0.json`
+
+Full, unmodified vendor spec for the Cisco Webex core API, version 1.0 (10 operations) — the vendor's complete API surface, preserved as-is. See `cisco_webex-latest.json` above for the curated subset if you just need common CRUD automation.
+
+### `cisco_webex_messaging-1.0.0.json`
+
+Full, unmodified vendor spec for the Cisco Webex Messaging API, version 1.0.0 (63 operations) — the vendor's complete API surface, preserved as-is. See `cisco_webex_messaging-latest.json` above for the curated subset if you just need common CRUD automation.

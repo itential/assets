@@ -1,5 +1,16 @@
 Cisco Crosswork Network Controller (CNC) is a network automation platform for provisioning, monitoring, and optimizing service provider transport and IP networks, combining device inventory/element management with service-level provisioning such as L3VPN.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`cisco_crosswork_network_controller_device_management-latest.json`](#cisco_crosswork_network_controller_device_management-latestjson)
+  - [`cisco_crosswork_network_controller_l3vpn-latest.json`](#cisco_crosswork_network_controller_l3vpn-latestjson)
+  - [`cisco_crosswork_network_controller_device_management-7.2.0.json`](#cisco_crosswork_network_controller_device_management-720json)
+  - [`cisco_crosswork_network_controller_l3vpn-7.2.0.json`](#cisco_crosswork_network_controller_l3vpn-720json)
+
 ## Contents
 
 | Asset | Description |
@@ -53,3 +64,11 @@ Reviewed and confirmed already scoped to common CRUD for automation (4 operation
 Operations included, by category:
 
 - **L3VPN service intent**: Get, create/replace (PUT), partially update (PATCH), delete a VPN service by `vpn-service-vpn-id`
+
+### `cisco_crosswork_network_controller_device_management-7.2.0.json`
+
+Full, unmodified vendor spec for Device Management on CNC 7.2.0 (1 operation) — the vendor's complete API surface, preserved as-is. See `cisco_crosswork_network_controller_device_management-latest.json` above for the curated version if you just need common CRUD automation.
+
+### `cisco_crosswork_network_controller_l3vpn-7.2.0.json`
+
+Full, unmodified vendor spec for L3VPN on CNC 7.2.0 (4 operations) — the vendor's complete API surface, preserved as-is. See `cisco_crosswork_network_controller_l3vpn-latest.json` above for the curated version if you just need common CRUD automation.

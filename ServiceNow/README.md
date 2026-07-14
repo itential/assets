@@ -5,6 +5,23 @@ This project provides two complementary ways to automate against ServiceNow:
 - **Studio Project workflows** built on the **ServiceNow Adapter** — a set of ITSM workflows covering change requests, incidents, request items, and the service catalog.
 - **OpenAPI specs** for building new automation directly against ServiceNow's REST APIs via an Integration Model. All three specs in this folder are already narrow, single-purpose vendor APIs and are included in full — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+  - [Adapter (Studio Project workflows)](#adapter-studio-project-workflows)
+  - [Integration Model (OpenAPI-based automation)](#integration-model-openapi-based-automation)
+- [Studio Projects](#studio-projects)
+  - [ServiceNow Project](#servicenow-project)
+- [OpenAPIs](#openapis)
+  - [`servicenow_change_management-latest.json`](#servicenow_change_management-latestjson)
+  - [`servicenow_table_api-latest.json`](#servicenow_table_api-latestjson)
+  - [`servicenow_itential_services_app-latest.json`](#servicenow_itential_services_app-latestjson)
+  - [`servicenow_change_management-v1.json`](#servicenow_change_management-v1json)
+  - [`servicenow_table_api-v2.json`](#servicenow_table_api-v2json)
+  - [`servicenow_itential_services_app-v2.json`](#servicenow_itential_services_app-v2json)
+
 ## Contents
 
 | Asset | Description |
@@ -109,3 +126,15 @@ Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-a
 Operations included, by category:
 
 - **REST Relay**: Make a REST call from ServiceNow to Itential Platform via the scoped app
+
+### `servicenow_change_management-v1.json`
+
+Full, unmodified vendor spec for ServiceNow Change Management v1 (42 operations) — the vendor's complete API surface, preserved as-is. See `servicenow_change_management-latest.json` above, which carries through the same 42 operations since none were trimmed.
+
+### `servicenow_table_api-v2.json`
+
+Full, unmodified vendor spec for ServiceNow Table API v2 (6 operations) — the vendor's complete API surface, preserved as-is. See `servicenow_table_api-latest.json` above, which carries through the same 6 operations since none were trimmed.
+
+### `servicenow_itential_services_app-v2.json`
+
+Full, unmodified vendor spec for the ServiceNow Itential Services App API v2 (1 operation) — the vendor's complete API surface, preserved as-is. See `servicenow_itential_services_app-latest.json` above, which carries through the same operation since none were trimmed.

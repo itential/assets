@@ -2,6 +2,15 @@ OpenAI provides hosted large language models and generative AI capabilities — 
 
 This project provides OpenAPI specs for automating against the OpenAI REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`openai-latest.json`](#openai-latestjson)
+  - [`openai-2.3.0.json`](#openai-230json)
+
 ## Contents
 
 | Asset | Description |
@@ -56,3 +65,7 @@ Resources included, by category:
 - **Videos**: Video generation create/get/delete/content
 
 Excluded: administration/org-management (API keys, users, roles, groups, invites, projects, audit logs, usage/cost reporting), Realtime voice API, ChatKit, Containers (code interpreter sandboxes), Evals, Skills, Uploads (large multipart upload flow), voice cloning/consents, webhooks, and niche video sub-features (characters, remix, extensions, edits). See the repo README for the full scope, or pull the full spec below if you need one of the excluded areas.
+
+### `openai-2.3.0.json`
+
+Full, unmodified vendor spec covering all 242 upstream operations — the vendor's complete API surface, preserved as-is. See `openai-latest.json` above for the curated subset if you just need common CRUD automation.

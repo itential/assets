@@ -2,6 +2,15 @@ HashiCorp Vault provides secrets management, encryption-as-a-service, and privil
 
 This project provides OpenAPI specs for automating against the Vault HTTP API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for secrets automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`hashicorp_vault-latest.json`](#hashicorp_vault-latestjson)
+  - [`hashicorp_vault-1.15.0.json`](#hashicorp_vault-1150json)
+
 ## Contents
 
 | Asset | Description |
@@ -50,3 +59,7 @@ Resources included, by category:
 - **System (core admin)**: secrets engine mounts, auth method mounts, ACL policies, lease lifecycle (lookup/renew/revoke), response wrapping, health check
 
 Pull the full spec from a running Vault instance's `sys/internal/specs/openapi` endpoint if you need something not covered here.
+
+### `hashicorp_vault-1.15.0.json`
+
+Full, unmodified vendor spec for HashiCorp Vault 1.15.0 (1049 operations) — the vendor's complete API surface, preserved as-is. See `hashicorp_vault-latest.json` above for the curated subset if you just need common CRUD automation.

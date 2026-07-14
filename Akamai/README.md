@@ -2,6 +2,15 @@ Akamai provides a global content delivery, security, and edge computing platform
 
 This project provides an OpenAPI spec for automating against the Edge DNS REST API via an Integration Model.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`akamai_apis-latest.json`](#akamai_apis-latestjson)
+  - [`akamai_apis-v2.json`](#akamai_apis-v2json)
+
 ## Contents
 
 | Asset | Description |
@@ -49,3 +58,7 @@ Operations included, by category:
 - **Bulk zone requests** (async provisioning): Submit bulk-create request + check status + get result; submit bulk-delete request + check status + get result
 - **Zone status checks**: Get DNSSEC status for zones; get secondary-zone transfer status
 - **DNS reference data** (inputs required by the operations above, e.g. contract/group IDs for zone creation): Authoritative nameservers, contracts, groups, edge hostnames, record set types, DNSSEC algorithms, TSIG algorithms
+
+### `akamai_apis-v2.json`
+
+Full, unmodified vendor spec for the Akamai Edge DNS API, version v2 — the vendor's complete API surface, preserved as-is. See `akamai_apis-latest.json` above for the curated subset if you just need common CRUD automation.

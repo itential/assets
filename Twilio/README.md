@@ -2,6 +2,15 @@ Twilio is a cloud communications platform providing REST APIs for programmable v
 
 This project provides OpenAPI specs for automating against Twilio's REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`twilio-latest.json`](#twilio-latestjson)
+  - [`twilio-1.0.0.json`](#twilio-100json)
+
 ## Contents
 
 | Asset | Description |
@@ -53,3 +62,7 @@ Resources included, by category:
 - **Outgoing Caller IDs**: Verified caller IDs (list, create, get, update, delete)
 - **Queues**: Call Queues (list, create, get, update, delete), Queue Members (list, get, update/dequeue)
 - **Recordings**: Account-level Recordings (list, get, delete)
+
+### `twilio-1.0.0.json`
+
+Full, unmodified vendor spec for the Twilio REST API `2010-04-01`, version `1.0.0` (197 operations) — the vendor's complete API surface, preserved as-is. See `twilio-latest.json` above for the curated subset if you just need common CRUD automation.

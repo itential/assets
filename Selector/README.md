@@ -2,6 +2,17 @@ Selector AI is a network observability and AIOps platform that correlates teleme
 
 This project provides OpenAPI specs for automating against Selector AI's REST APIs via an Integration Model.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`selector_ai_metastore_inventory-latest.json`](#selector_ai_metastore_inventory-latestjson)
+  - [`selector_ai_query-latest.json`](#selector_ai_query-latestjson)
+  - [`selector_ai_metastore_inventory-1.0.0.json`](#selector_ai_metastore_inventory-100json)
+  - [`selector_ai_query-1.0.0.json`](#selector_ai_query-100json)
+
 ## Contents
 
 | Asset | Description |
@@ -55,3 +66,11 @@ Single-purpose API exposing exactly one operation upstream (`x-vendor-api-versio
 - **Query**: `POST /command` — execute a Selector Query Language (S2QL) query and return results plus rendering metadata, for querying network telemetry/observability data (e.g. latency, jitter, packet loss) and violation events.
 
 Two pre-existing vendor spec issues were also cleaned up: a stray top-level `security` block referencing an undefined `apikey` scheme was previously removed (the operation itself already correctly declared `bearerAuth`), and now that redundant per-operation `bearerAuth` override has been consolidated into a single global `security` block at the spec level, since it was the same requirement repeated on every operation.
+
+### `selector_ai_metastore_inventory-1.0.0.json`
+
+Full, unmodified vendor spec for the Metastore/Inventory API (33 operations) — the vendor's complete API surface, preserved as-is. See `selector_ai_metastore_inventory-latest.json` above for the curated subset if you just need common CRUD automation.
+
+### `selector_ai_query-1.0.0.json`
+
+Full, unmodified vendor spec for the Query API (1 operation) — the vendor's complete API surface, preserved as-is. See `selector_ai_query-latest.json` above for the curated subset if you just need common CRUD automation.

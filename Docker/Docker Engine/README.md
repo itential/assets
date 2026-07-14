@@ -2,6 +2,15 @@ Docker Engine is the core container runtime and daemon behind Docker — it mana
 
 This project provides OpenAPI specs for automating against the Docker Engine REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for container automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`docker_engine-latest.json`](#docker_engine-latestjson)
+  - [`docker_engine-1.33.json`](#docker_engine-133json)
+
 ## Contents
 
 | Asset | Description |
@@ -49,3 +58,7 @@ Resources included, by category:
 - **System**: Ping, Version, Info
 
 Excluded as out of scope for this curated spec: Swarm mode and its orchestration objects (Swarm, Service, Task, Node, Secret, Config), plugin management, the experimental BuildKit session endpoint, Dockerfile-based image builds (`/build`, `/commit`), tar-based bulk image import/export, interactive container attach (stdin/stdout hijack), and admin/reporting-only endpoints (`/auth`, `/events`, `/system/df`). See the full spec below for these.
+
+### `docker_engine-1.33.json`
+
+Full, unmodified vendor spec for Docker Engine API 1.33 (105 operations) — the vendor's complete API surface, preserved as-is. See `docker_engine-latest.json` above for the curated subset if you just need common CRUD automation.

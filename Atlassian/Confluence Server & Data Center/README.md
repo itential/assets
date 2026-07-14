@@ -2,6 +2,15 @@ Atlassian Confluence Server and Data Center is the self-hosted version of Conflu
 
 This project provides OpenAPI specs for automating against the Confluence Server/Data Center REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`atlassian_confluence_server_data_center-latest.json`](#atlassian_confluence_server_data_center-latestjson)
+  - [`atlassian_confluence_server_data_center-9.0.0.json`](#atlassian_confluence_server_data_center-900json)
+
 ## Contents
 
 | Asset | Description |
@@ -49,3 +58,7 @@ Resources included, by category:
 - **Search**: Global entity search
 
 Excluded (not part of this curated spec): Confluence administration (user/group create-delete-enable-disable), backup and restore jobs, webhook management, long-running task queue, access mode, and content blueprint publishing. Pull the full spec below if you need one of those areas.
+
+### `atlassian_confluence_server_data_center-9.0.0.json`
+
+Full, unmodified vendor spec for Confluence Server & Data Center 9.0.0 (111 operations) — the vendor's complete API surface, preserved as-is. See `atlassian_confluence_server_data_center-latest.json` above for the curated subset if you just need common CRUD automation.

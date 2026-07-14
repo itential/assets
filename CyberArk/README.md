@@ -2,6 +2,15 @@ CyberArk Conjur is an open-source secrets management platform for storing, contr
 
 This project provides OpenAPI specs for automating against Conjur's REST API via an Integration Model. Conjur's own API is already a narrow, single-purpose secrets-management surface; the `-latest` spec additionally trims a handful of generic diagnostic/introspection endpoints — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`conjur-latest.json`](#conjur-latestjson)
+  - [`conjur-5.3.2.json`](#conjur-532json)
+
 ## Contents
 
 | Asset | Description |
@@ -53,3 +62,7 @@ Operations included, by category:
 - **Resources**: List resources (across all accounts, by account, or by kind); get a single resource
 - **Roles**: Get role info; add or remove a role membership
 - **Secrets**: Fetch one or many secret values; create a secret value
+
+### `conjur-5.3.2.json`
+
+Full, unmodified vendor spec for Conjur Open Source 5.3.2 (38 operations) — the vendor's complete API surface, preserved as-is. See `conjur-latest.json` above for the curated subset if you just need common CRUD automation.

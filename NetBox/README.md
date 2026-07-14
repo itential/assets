@@ -4,6 +4,16 @@ NetBox is an open-source network source of truth platform for IP address managem
 
 This project provides OpenAPI specs for automating against NetBox's REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for network automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`netbox-latest.json`](#netbox-latestjson)
+  - [`netbox-4.1.json`](#netbox-41json)
+  - [`netbox-3.7.8.json`](#netbox-378json)
+
 ## Contents
 
 | Asset | Description |
@@ -50,3 +60,11 @@ Resources included, by category:
 - **Tenancy**: Tenant Groups, Tenants
 - **Circuits**: Circuit Types, Providers, Circuits, Circuit Terminations
 - **Extras**: Tags, Custom Fields
+
+### `netbox-4.1.json`
+
+Full, unmodified vendor spec for NetBox 4.1 (1073 operations) — the vendor's complete API surface, preserved as-is. See `netbox-latest.json` above for the curated subset if you just need common CRUD automation.
+
+### `netbox-3.7.8.json`
+
+Full, unmodified vendor spec for NetBox 3.7.8 (893 operations) — the vendor's complete API surface, preserved as-is. See `netbox-latest.json` above for the curated subset if you just need common CRUD automation.

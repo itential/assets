@@ -1,6 +1,19 @@
+# Palo Alto Prisma Cloud CSPM
+
 Prisma Cloud CSPM is Palo Alto Networks' cloud security posture management product, providing continuous visibility, compliance monitoring, and threat detection across AWS, Azure, GCP, OCI, and Alibaba Cloud accounts.
 
 This project provides OpenAPI specs for automating against the Prisma Cloud CSPM REST API via an Integration Model. Each `-latest` spec is scoped to one functional area of the API — see **OpenAPIs** below.
+
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`palo_alto_prisma_cloud_cspm_alerts-latest.json`](#palo_alto_prisma_cloud_cspm_alerts-latestjson)
+  - [`palo_alto_prisma_cloud_cspm_cloud_account_onboarding-latest.json`](#palo_alto_prisma_cloud_cspm_cloud_account_onboarding-latestjson)
+  - [`palo_alto_prisma_cloud_cspm_alerts-v1.json`](#palo_alto_prisma_cloud_cspm_alerts-v1json)
+  - [`palo_alto_prisma_cloud_cspm_cloud_account_onboarding-v1.json`](#palo_alto_prisma_cloud_cspm_cloud_account_onboarding-v1json)
 
 ## Contents
 
@@ -63,3 +76,11 @@ Resources included, by category:
 - **Terraform**: Generate Zipped Terraform Script (OCI)
 
 Removed the two vendor-marked "Legacy" AWS ancestor/children endpoints (`/cloud-accounts-manager/v1/cloudAccounts/awsAccounts/.../ancestors` and `.../children`), which are superseded by their `/cas/v1/aws_account/...` equivalents already in the spec.
+
+### `palo_alto_prisma_cloud_cspm_alerts-v1.json`
+
+Full, unmodified vendor spec for the Prisma Cloud CSPM Alerts API v1 (25 operations) — the vendor's complete API surface, preserved as-is. See `palo_alto_prisma_cloud_cspm_alerts-latest.json` above, which carries through the same 25 operations since none were trimmed.
+
+### `palo_alto_prisma_cloud_cspm_cloud_account_onboarding-v1.json`
+
+Full, unmodified vendor spec for the Prisma Cloud CSPM Cloud Account Onboarding API v1 (52 operations) — the vendor's complete API surface, preserved as-is. See `palo_alto_prisma_cloud_cspm_cloud_account_onboarding-latest.json` above for the curated subset if you just need common CRUD automation.

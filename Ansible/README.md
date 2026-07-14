@@ -2,6 +2,15 @@ Ansible AWX (the upstream open-source project behind Red Hat Ansible Automation 
 
 This project provides OpenAPI specs for automating against the AWX (Tower) REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`ansible_awx_tower-latest.json`](#ansible_awx_tower-latestjson)
+  - [`ansible_awx_tower-v2.json`](#ansible_awx_tower-v2json)
+
 ## Contents
 
 | Asset | Description |
@@ -54,3 +63,7 @@ Resources included, by category:
 - **Labels, Schedules, Notification Templates & Notifications**: CRUD/read
 
 Excluded as long-tail/admin surface: activity streams, analytics/reporting, bulk operations, instance/instance-group and mesh/receptor infrastructure administration, RBAC role management (`roles`, `role_definitions`, `role_*_assignments`), the `service-index` federation API, system jobs/settings/config administration, workflow approvals, and webhook receiver endpoints (GitHub/GitLab/Bitbucket callback hooks).
+
+### `ansible_awx_tower-v2.json`
+
+Full, unmodified vendor spec (API v2, 631 operations) — the vendor's complete API surface, preserved as-is. See `ansible_awx_tower-latest.json` above for the curated subset if you just need common CRUD automation.

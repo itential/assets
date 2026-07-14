@@ -2,6 +2,15 @@ AWS Lambda runs code without provisioning or managing servers, executing functio
 
 This project provides an OpenAPI spec for automating against the AWS Lambda API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`aws_lambda-latest.json`](#aws_lambda-latestjson)
+  - [`aws_lambda-2015-03-31.json`](#aws_lambda-2015-03-31json)
+
 ## Contents
 
 | Asset | Description |
@@ -54,3 +63,7 @@ Resources included, by category:
 - **Account**: Get Account Settings, Get Function Concurrency
 
 Not included: code signing configs (create/describe/update/delete config plus function code-signing-config associations), runtime management config (get/put), and the deprecated legacy `InvokeAsync` operation superseded by `Invoke`. Pull the full spec below if you need one of these.
+
+### `aws_lambda-2015-03-31.json`
+
+Full, unmodified vendor spec for the AWS Lambda API (2015-03-31) — the vendor's complete API surface, preserved as-is. See `aws_lambda-latest.json` above for the curated subset if you just need common CRUD automation.

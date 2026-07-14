@@ -2,6 +2,15 @@ AWS Secrets Manager protects access to applications, services, and IT resources 
 
 This project provides an OpenAPI spec for automating against the AWS Secrets Manager API via an Integration Model. AWS Secrets Manager's API surface is narrow and single-purpose, so the `-latest` spec was reviewed and curated for common CRUD automation.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`aws_secrets_manager-latest.json`](#aws_secrets_manager-latestjson)
+  - [`aws_secrets_manager-2017-10-17.json`](#aws_secrets_manager-2017-10-17json)
+
 ## Contents
 
 | Asset | Description |
@@ -48,3 +57,7 @@ Operations included, by category:
 - **Cross-region replication**: Replicate a secret to regions, remove regions from replication, stop replication to a replica
 - **Tagging**: Tag resource, untag resource
 - **Utilities**: Generate a random password (used when creating secrets that need a generated value)
+
+### `aws_secrets_manager-2017-10-17.json`
+
+Full, unmodified vendor spec for AWS Secrets Manager API version 2017-10-17 (22 operations) — the vendor's complete API surface, preserved as-is. See `aws_secrets_manager-latest.json` above for the curated automation spec; since AWS Secrets Manager's full API was already in scope for common CRUD, both specs cover the same 22 operations, but `-latest` is the one Studio Projects and new automation should target.

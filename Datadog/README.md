@@ -2,6 +2,16 @@ Datadog is a monitoring and observability platform for infrastructure, applicati
 
 This project provides OpenAPI specs for automating against Datadog's REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for observability automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`datadog-latest.json`](#datadog-latestjson)
+  - [`datadog-2.0.json`](#datadog-20json)
+  - [`datadog_legacy-1.0.json`](#datadog_legacy-10json)
+
 ## Contents
 
 | Asset | Description |
@@ -47,3 +57,11 @@ Resources included, by category:
 - **Metrics**: Active metric listing, Scalar and timeseries queries
 - **Tagging**: Tag enrichment rules
 - **Access management**: Users, Roles
+
+### `datadog-2.0.json`
+
+Full, unmodified vendor spec for Datadog API v2.0 (1198 operations) — the vendor's complete API surface, preserved as-is. See `datadog-latest.json` above for the curated subset if you just need common CRUD automation.
+
+### `datadog_legacy-1.0.json`
+
+Full, unmodified vendor spec for the legacy Datadog API v1.0 (235 operations) — the vendor's complete API surface, preserved as-is. See `datadog-latest.json` above for the curated subset if you just need common CRUD automation.

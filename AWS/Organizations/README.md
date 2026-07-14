@@ -1,6 +1,17 @@
+# AWS Organizations
+
 AWS Organizations is AWS's account-management service for centrally governing multiple AWS accounts — creating and closing accounts, grouping them into organizational units, attaching service control and other policies, managing invitations between accounts, registering delegated administrators, and tagging organizational resources.
 
 This project provides the OpenAPI spec for automating against the AWS Organizations API via an Integration Model.
+
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`aws_organizations-latest.json`](#aws_organizations-latestjson)
+  - [`aws_organizations-2016-11-28.json`](#aws_organizations-2016-11-28json)
 
 ## Contents
 
@@ -50,3 +61,7 @@ Operations included, by category:
 - **AWS service access**: Enable, disable, list enabled service access for the organization
 - **Resource policies**: Put (create/update), delete, describe
 - **Tags**: Tag a resource, untag a resource, list tags for a resource
+
+### `aws_organizations-2016-11-28.json`
+
+Full, unmodified vendor spec for AWS Organizations API version 2016-11-28 (55 operations) — the vendor's complete API surface, preserved as-is. See `aws_organizations-latest.json` above for the curated subset if you just need common CRUD automation.

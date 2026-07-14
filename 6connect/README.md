@@ -8,6 +8,8 @@ This project provides the OpenAPI spec for automating against the 6connect Provi
 - [Requirements](#requirements)
 - [Integration Configuration](#integration-configuration)
 - [OpenAPIs](#openapis)
+  - [`6connect_provision-latest.json`](#6connect_provision-latestjson)
+  - [`6connect_provision-2.0.0.json`](#6connect_provision-200json)
 
 ## Contents
 
@@ -44,7 +46,7 @@ Configure API access in 6connect under **Administration → Users**.
 
 ### `6connect_provision-latest.json`
 
-Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: 2.0.0`, 39 operations). Every operation in the upstream spec is CRUD or a provisioning action on the single `resources` model — there is no separate admin, webhook, or reporting surface to exclude, so nothing was removed.
+Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: 2.0.0`, 40 operations). Every operation in the upstream spec is CRUD or a provisioning action on the single `resources` model — there is no separate admin, webhook, or reporting surface to exclude, so nothing was removed.
 
 Operations included, by category:
 
@@ -55,3 +57,7 @@ Operations included, by category:
 - **Attachments**: List, attach, preview, download, delete
 - **Backup**: List backups, trigger a backup
 - **Provisioning actions**: Push a resource + poll push status; execute a named action + poll action status
+
+### `6connect_provision-2.0.0.json`
+
+Full, unmodified vendor spec for 6connect Provision 2.0.0 (40 operations) — the vendor's complete API surface, preserved as-is. See `6connect_provision-latest.json` above for the curated subset if you just need common CRUD automation.

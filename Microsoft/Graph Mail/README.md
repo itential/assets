@@ -1,5 +1,14 @@
 Microsoft Graph Mail is the Microsoft Graph API surface for sending email on behalf of a user in Microsoft 365 / Exchange Online.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`microsoft_graph_mail-latest.json`](#microsoft_graph_mail-latestjson)
+  - [`microsoft_graph_mail-1.0.json`](#microsoft_graph_mail-10json)
+
 ## Contents
 
 | Asset | Description |
@@ -40,3 +49,7 @@ Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-a
 Operations included, by category:
 
 - **Mail sending**: `POST /users/{user-id}/sendMail` — send a message on behalf of a user (optionally saving a copy to Sent Items)
+
+### `microsoft_graph_mail-1.0.json`
+
+Full, unmodified vendor spec for Microsoft Graph Mail v1.0 — the vendor's complete API surface, preserved as-is. See `microsoft_graph_mail-latest.json` above for the curated subset if you just need common CRUD automation.

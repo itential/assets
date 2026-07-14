@@ -5,6 +5,19 @@ This project provides two complementary ways to automate against GitLab:
 - **Studio Project workflows** built on the **GitLab Adapter** — project, branch, merge request, and file/commit lifecycle workflows.
 - **OpenAPI specs** for building new automation directly against GitLab's REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for repository and CI/CD automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+  - [Adapter (Studio Project workflows)](#adapter-studio-project-workflows)
+  - [Integration Model (OpenAPI-based automation)](#integration-model-openapi-based-automation)
+- [Studio Projects](#studio-projects)
+  - [GitLab Project](#gitlab-project)
+- [OpenAPIs](#openapis)
+  - [`gitlab_rest_api-latest.json`](#gitlab_rest_api-latestjson)
+  - [`gitlab_rest_api-v4.json`](#gitlab_rest_api-v4json)
+
 ## Contents
 
 | Asset | Description |
@@ -94,3 +107,7 @@ Resources included, by category:
 - **Deploy Tokens**: Group and Project level (List, Create, Get, Delete)
 - **Runners**: Project-level List, Register, Delete
 - **Users**: List, Get (read-only reference lookup)
+
+### `gitlab_rest_api-v4.json`
+
+Full, unmodified vendor spec for GitLab REST API v4 (1008 operations) — the vendor's complete API surface, preserved as-is. See `gitlab_rest_api-latest.json` above for the curated subset if you just need common CRUD automation.

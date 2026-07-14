@@ -1,5 +1,14 @@
 Cisco PSIRT openVuln API provides programmatic access to Cisco security vulnerability information, including CVEs, security advisories, affected products, severity ratings, and remediation details.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`cisco_psirt_openvuln-latest.json`](#cisco_psirt_openvuln-latestjson)
+  - [`cisco_psirt_openvuln-2.0.1.json`](#cisco_psirt_openvuln-201json)
+
 ## Contents
 
 | Asset | Description |
@@ -47,3 +56,7 @@ Operations included, by category:
 - **All advisories (CVRF format)**: List all advisories; filter by first-published date range; filter by last-published date range
 - **Advisory lookup (CVRF format)**: Get by advisory ID; get by CVE ID; get by product name; get all advisories published in a given year
 - **Advisories by severity (CVRF format)**: Get by severity rating; filtered by first-published date range; filtered by last-published date range
+
+### `cisco_psirt_openvuln-2.0.1.json`
+
+Full, unmodified vendor spec (30 operations) — the vendor's complete API surface, preserved as-is. See `cisco_psirt_openvuln-latest.json` above for the curated subset if you just need common CRUD automation.

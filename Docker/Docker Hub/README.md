@@ -2,6 +2,15 @@ Docker Hub is Docker's cloud-based container registry service for storing, distr
 
 This project provides OpenAPI specs for automating against the Docker Hub REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`docker_hub-latest.json`](#docker_hub-latestjson)
+  - [`docker_hub-beta.json`](#docker_hub-betajson)
+
 ## Contents
 
 | Asset | Description |
@@ -46,3 +55,7 @@ Resources included, by category:
 - **Namespaces**: Bulk delete images within a namespace/repository
 - **Organization Settings**: Retrieve and update organization settings
 - **Authentication**: User login to obtain a bearer token
+
+### `docker_hub-beta.json`
+
+Full, unmodified vendor spec for Docker Hub API (beta) (28 operations) — the vendor's complete API surface, preserved as-is. See `docker_hub-latest.json` above for the curated subset if you just need common CRUD automation.

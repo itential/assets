@@ -2,6 +2,15 @@ Amazon Route 53 is AWS's Domain Name System (DNS) web service, used to register 
 
 This project provides an OpenAPI spec for automating against the Route 53 REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for DNS automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`amazon_route_53-latest.json`](#amazon_route_53-latestjson)
+  - [`amazon_route_53-2013-04-01.json`](#amazon_route_53-2013-04-01json)
+
 ## Contents
 
 | Asset | Description |
@@ -50,3 +59,7 @@ Resources included, by category:
 - **Tags**: List Tags for a Resource, List Tags for Multiple Resources, Change Tags for a Resource
 
 Not included: CIDR collections, DNSSEC/key-signing key management, traffic policies and traffic policy instances, query logging configuration, reusable delegation sets, account/resource limit and count lookups, checker IP ranges, geolocation lookups, and the DNS answer test tool. Pull the full spec above if you need one of those areas.
+
+### `amazon_route_53-2013-04-01.json`
+
+Full, unmodified vendor spec for the Route 53 2013-04-01 API (70 operations) — the vendor's complete API surface, preserved as-is. See `amazon_route_53-latest.json` above for the curated subset if you just need common CRUD automation.

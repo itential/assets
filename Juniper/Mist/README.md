@@ -2,6 +2,15 @@ Juniper Mist is a cloud-managed networking platform for AI-driven wireless, wire
 
 This project provides OpenAPI specs for automating against the Mist Cloud API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for network automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`juniper_mist-latest.json`](#juniper_mist-latestjson)
+  - [`juniper_mist-2509.1.1.json`](#juniper_mist-250911json)
+
 ## Contents
 
 | Asset | Description |
@@ -50,3 +59,7 @@ Resources included, by category:
 - **Settings**: Org Settings, Site Settings
 
 The full upstream spec also covers MSPs, admin/SSO/API-token administration, webhooks, alarms, analytics/insights/SLEs, Marvis AI, NAC (network access control), guest portals, PSK/guest portals, asset tracking (BLE beacons, RTLS zones), RF planning (maps, spectrum analysis, RRM, rogues), device diagnostics/troubleshooting commands, EVPN topologies, Mist Edge (mxedge/mxtunnel), Session Smart Router (SSR/128T), and third-party security integrations (SkyATP, Zscaler, Cradlepoint) — none of those are included here. Pull the full spec from [Mist's official OpenAPI documentation](https://www.mist.com/documentation/mist-api/) if you need one of the excluded areas.
+
+### `juniper_mist-2509.1.1.json`
+
+Full, unmodified vendor spec for Juniper Mist Cloud API 2509.1.1 (1011 operations) — the vendor's complete API surface, preserved as-is. See `juniper_mist-latest.json` above for the curated subset if you just need common CRUD automation.

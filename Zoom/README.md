@@ -2,6 +2,15 @@ Zoom is a cloud unified communications platform for video meetings and webinars,
 
 This project provides OpenAPI specs for automating against the Zoom REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for meeting and webinar automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`zoom-latest.json`](#zoom-latestjson)
+  - [`zoom-2.0.0.json`](#zoom-200json)
+
 ## Contents
 
 | Asset | Description |
@@ -46,3 +55,7 @@ Resources included, by category:
 - **Users**: List/create/retrieve/update/delete a user; check a user's email; update a user's email, password, and status; user settings (retrieve/update); create/list a user's meetings and webinars; list a user's recordings
 
 Excluded: sub-account administration and billing, groups and IM groups/chat, H.323/SIP device management, dashboard metrics, usage/report endpoints, past meeting/webinar instance history, TSP telephony provider configuration, webhook management, tracking fields, and long-tail user administration (assistants, schedulers, PAC accounts, profile pictures, SSO tokens, permissions). See the full spec below for these.
+
+### `zoom-2.0.0.json`
+
+Full, unmodified vendor spec for Zoom API 2.0.0 (155 operations) — the vendor's complete API surface, preserved as-is. See `zoom-latest.json` above for the curated subset if you just need common CRUD automation.

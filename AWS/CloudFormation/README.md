@@ -2,6 +2,15 @@ AWS CloudFormation is Amazon's infrastructure-as-code service. It lets you model
 
 This project provides an OpenAPI spec for automating against the CloudFormation API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for stack automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`aws_cloudformation-latest.json`](#aws_cloudformation-latestjson)
+  - [`aws_cloudformation-2010-05-15.json`](#aws_cloudformation-2010-05-15json)
+
 ## Contents
 
 | Asset | Description |
@@ -46,3 +55,7 @@ Resources included, by category:
 - **StackSets**: Create, Update, Delete, Describe, List, Create/Update/Delete Stack Instances, Describe/List Stack Instances, List/Describe/Stop Stack Set Operations
 
 Not included: type/extension registry management (`RegisterType`, `PublishType`, `ActivateType`, etc.), stack and resource drift detection, template cost estimation, export/import listing, and account limits — these are vendor tooling, reporting, or niche verticals rather than core stack automation. Pull the full spec below if you need something not covered here.
+
+### `aws_cloudformation-2010-05-15.json`
+
+Full, unmodified vendor spec for the CloudFormation 2010-05-15 API (132 operations) — the vendor's complete API surface, preserved as-is. See `aws_cloudformation-latest.json` above for the curated subset if you just need common CRUD automation.

@@ -5,6 +5,19 @@ This project provides two complementary ways to automate against Jira Cloud:
 - **Studio Project workflows** built on the **Jira Adapter** — issue and project creation/transition workflows.
 - **OpenAPI specs** for building new automation directly against the Jira Cloud REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for issue and project automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+  - [Adapter (Studio Project workflows)](#adapter-studio-project-workflows)
+  - [Integration Model (OpenAPI-based automation)](#integration-model-openapi-based-automation)
+- [Studio Projects](#studio-projects)
+  - [Atlassian Jira Project](#atlassian-jira-project)
+- [OpenAPIs](#openapis)
+  - [`atlassian_jira_cloud-latest.json`](#atlassian_jira_cloud-latestjson)
+  - [`atlassian_jira_cloud-2.0.0.json`](#atlassian_jira_cloud-200json)
+
 ## Contents
 
 | Asset | Description |
@@ -86,3 +99,7 @@ Resources included, by category:
 - **Project Versions**: List, Create, Get, Update, Delete
 - **Reference data**: Issue Types, Priorities, Resolutions, Fields, Statuses, Labels
 - **Users**: Get, Bulk Get, Email Lookup, current-user (`myself`), full User Search suite (assignable search, picker, by-query, permission search)
+
+### `atlassian_jira_cloud-2.0.0.json`
+
+Full, unmodified vendor spec (2.0.0) — the vendor's complete API surface, preserved as-is. See `atlassian_jira_cloud-latest.json` above for the curated subset if you just need common CRUD automation.

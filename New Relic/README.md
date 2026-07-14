@@ -2,6 +2,15 @@ New Relic is an observability platform for application performance monitoring (A
 
 This project provides an OpenAPI spec for automating against the New Relic REST API v2 via an Integration Model. The `-latest` spec is the full REST API v2 surface — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`new_relic-latest.json`](#new_relic-latestjson)
+  - [`new_relic-v2.json`](#new_relic-v2json)
+
 ## Contents
 
 | Asset | Description |
@@ -57,3 +66,7 @@ Operations included, by category:
 - **Alerts Events, Incidents, Violations**: List events, incidents, and policy violations raised by alerting
 
 Several of the Alerts endpoints above carry vendor deprecation notices pointing users toward NerdGraph, but they remain live, callable REST operations in the current spec, so they are kept rather than excluded.
+
+### `new_relic-v2.json`
+
+Full, unmodified vendor spec for the New Relic REST API v2 — the vendor's complete API surface, preserved as-is. See `new_relic-latest.json` above for the curated subset if you just need common CRUD automation.

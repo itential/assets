@@ -5,6 +5,20 @@ This project provides two complementary ways to automate against Meraki:
 - **Studio Project workflows** built on the **Meraki Adapter** — network creation and device claim workflows, plus sample use-case workflows.
 - **OpenAPI specs** for building new automation directly against the Meraki Dashboard API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for network automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+  - [Adapter (Studio Project workflows)](#adapter-studio-project-workflows)
+  - [Integration Model (OpenAPI-based automation)](#integration-model-openapi-based-automation)
+- [Studio Projects](#studio-projects)
+  - [Meraki Project](#meraki-project)
+- [Automations](#automations)
+- [OpenAPIs](#openapis)
+  - [`cisco_meraki_dashboard-latest.json`](#cisco_meraki_dashboard-latestjson)
+  - [`cisco_meraki_dashboard-1.48.0.json`](#cisco_meraki_dashboard-1480json)
+
 ## Contents
 
 | Asset | Description |
@@ -83,3 +97,7 @@ Resources included, by category:
 - **VLAN Profiles & Group Policies**: Network-wide VLAN profiles and group policies
 - **Firmware**: Firmware upgrade scheduling
 - **Devices**: Claim/inventory, management interface, reboot, blink LEDs, clients
+
+### `cisco_meraki_dashboard-1.48.0.json`
+
+Full, unmodified vendor spec for the Meraki Dashboard API (729 operations) — the vendor's complete API surface, preserved as-is. See `cisco_meraki_dashboard-latest.json` above for the curated subset if you just need common CRUD automation.

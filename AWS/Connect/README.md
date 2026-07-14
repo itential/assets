@@ -2,6 +2,15 @@ Amazon Connect is AWS's cloud-based contact center service, providing telephony,
 
 This project provides OpenAPI specs for automating against the Amazon Connect API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for contact center automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`amazon_connect-latest.json`](#amazon_connect-latestjson)
+  - [`amazon_connect-2017-08-08.json`](#amazon_connect-2017-08-08json)
+
 ## Contents
 
 | Asset | Description |
@@ -57,3 +66,7 @@ Resources included, by category:
 - **Tags**: List, Tag, Untag Resource
 
 Not included: real-time and historical metrics/reporting, custom vocabularies (Contact Lens transcription), traffic distribution groups (multi-region resiliency), contact automation rules, Lex/Amazon Lex V2 bot and Lambda function associations, instance storage/security-key/approved-origin/integration-association configuration, task templates, chat participant and contact-monitoring/recording/streaming controls, federation tokens, and the `Search*` filtering variants of the list operations above. Pull the full spec below if you need one of these.
+
+### `amazon_connect-2017-08-08.json`
+
+Full, unmodified vendor spec for Amazon Connect API version 2017-08-08 (171 operations) — the vendor's complete API surface, preserved as-is. See `amazon_connect-latest.json` above for the curated subset if you just need common CRUD automation.

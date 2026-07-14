@@ -2,6 +2,15 @@ Confluence Cloud is Atlassian's team workspace and content collaboration product
 
 This project provides OpenAPI specs for automating against Confluence Cloud's REST API v2 via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`atlassian_confluence_cloud-latest.json`](#atlassian_confluence_cloud-latestjson)
+  - [`atlassian_confluence_cloud-1.0.0.json`](#atlassian_confluence_cloud-100json)
+
 ## Contents
 
 | Asset | Description |
@@ -50,3 +59,7 @@ Resources included, by category:
 - **Tasks**: List, get, update
 
 Also removed 104 redundant per-operation `security` overrides that all duplicated the single `basicAuth` scheme, and promoted that scheme to a single top-level `security` block.
+
+### `atlassian_confluence_cloud-1.0.0.json`
+
+Full, unmodified vendor spec for Confluence Cloud REST API v1 (174 operations) — the vendor's complete API surface, preserved as-is. See `atlassian_confluence_cloud-latest.json` above for the curated v2 subset if you just need common CRUD automation.

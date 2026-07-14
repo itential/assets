@@ -2,6 +2,15 @@ Amazon API Gateway is AWS's managed service for creating, publishing, and securi
 
 This project provides an OpenAPI spec for automating against the API Gateway management REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`amazon_api_gateway-latest.json`](#amazon_api_gateway-latestjson)
+  - [`amazon_api_gateway-2015-07-09.json`](#amazon_api_gateway-2015-07-09json)
+
 ## Contents
 
 | Asset | Description |
@@ -49,3 +58,7 @@ Resources included, by category:
 - **Account & Tags**: Account settings, Resource Tags
 
 Excluded as niche developer-tooling/reporting add-ons not core to REST API lifecycle automation: API documentation generation (Documentation Parts/Versions), SDK generation (SDK Types, SDK export), API definition export, and usage plan analytics (usage-by-date reporting).
+
+### `amazon_api_gateway-2015-07-09.json`
+
+Full, unmodified vendor spec for the Amazon API Gateway `2015-07-09` management API (120 operations) — the vendor's complete API surface, preserved as-is. See `amazon_api_gateway-latest.json` above for the curated subset if you just need common CRUD automation.

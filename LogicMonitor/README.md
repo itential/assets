@@ -2,6 +2,15 @@ LogicMonitor is a SaaS-based infrastructure performance monitoring platform prov
 
 This project provides OpenAPI specs for automating against LogicMonitor's REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`logicmonitor-latest.json`](#logicmonitor-latestjson)
+  - [`logicmonitor-3.0.0.json`](#logicmonitor-300json)
+
 ## Contents
 
 | Asset | Description |
@@ -47,3 +56,7 @@ Resources included, by category:
 - **Alerts**: List/get alerts, acknowledge, escalate, add note
 - **Scheduled Downtime (SDT)**: Scheduled downtime windows
 - **Collectors**: Collectors, Collector Groups
+
+### `logicmonitor-3.0.0.json`
+
+Full, unmodified vendor spec for LogicMonitor REST API v3.0.0 (353 operations) — the vendor's complete API surface, preserved as-is. See `logicmonitor-latest.json` above for the curated subset if you just need common CRUD automation.

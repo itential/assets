@@ -2,6 +2,15 @@ AWS Direct Connect creates dedicated private network connections between your da
 
 This project provides an OpenAPI spec for automating against the AWS Direct Connect API via an Integration Model. The `-latest` spec covers the full Direct Connect operation surface — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`aws_direct_connect-latest.json`](#aws_direct_connect-latestjson)
+  - [`aws_direct_connect-2012-10-25.json`](#aws_direct_connect-2012-10-25json)
+
 ## Contents
 
 | Asset | Description |
@@ -52,3 +61,7 @@ Operations included, by category:
 - **Locations & Router Configuration**: List the Direct Connect locations available for provisioning; describe a virtual interface's router configuration
 - **Customer Agreements**: Describe customer metadata/agreements; confirm a customer agreement when creating a connection/LAG
 - **Tagging**: Tag/untag resources; describe tags on a resource
+
+### `aws_direct_connect-2012-10-25.json`
+
+Full, unmodified vendor spec for AWS Direct Connect API version 2012-10-25 (63 operations) — the vendor's complete API surface, preserved as-is. See `aws_direct_connect-latest.json` above for the curated subset if you just need common CRUD automation.

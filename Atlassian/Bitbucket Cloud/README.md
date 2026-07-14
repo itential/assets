@@ -2,6 +2,15 @@ Bitbucket Cloud is Atlassian's hosted Git repository management service, providi
 
 This project provides OpenAPI specs for automating against the Bitbucket Cloud REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`atlassian_bitbucket_cloud-latest.json`](#atlassian_bitbucket_cloud-latestjson)
+  - [`atlassian_bitbucket_cloud-2.0.json`](#atlassian_bitbucket_cloud-20json)
+
 ## Contents
 
 | Asset | Description |
@@ -55,3 +64,7 @@ Resources included, by category:
 - **User**: Get Current User
 
 Not included: the legacy Issue Tracker, Snippets, Pipelines/CI-CD (config, variables, caches, schedules, SSH keys, deployments, environments), webhooks, add-ons, code search, SSH keys, properties, and permissions/administration endpoints. Pull the full spec above if you need one of these.
+
+### `atlassian_bitbucket_cloud-2.0.json`
+
+Full, unmodified vendor spec for Bitbucket Cloud REST API 2.0 (Swagger 2.0, as published by the vendor) — the vendor's complete API surface, preserved as-is. See `atlassian_bitbucket_cloud-latest.json` above for the curated subset if you just need common CRUD automation.

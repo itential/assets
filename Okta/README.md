@@ -2,6 +2,15 @@ Okta is a cloud identity platform providing single sign-on, multi-factor authent
 
 This project provides OpenAPI specs for automating against Okta's Identity Governance REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for governance automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`okta_management-latest.json`](#okta_management-latestjson)
+  - [`okta_management-3.2.0.json`](#okta_management-320json)
+
 ## Contents
 
 | Asset | Description |
@@ -49,3 +58,7 @@ Resources included, by category:
 - **Access Requests**: browse the default access request catalog, create/list/retrieve requests, and add request messages
 - **Security Access Reviews**: create, list, retrieve, update, execute review actions (approve/deny), and add comments
 - **Access Revocation**: revoke a principal's access
+
+### `okta_management-3.2.0.json`
+
+Full, unmodified vendor spec for Okta Identity Governance 3.2.0 (162 operations) — the vendor's complete API surface, preserved as-is. See `okta_management-latest.json` above for the curated subset if you just need common CRUD automation.

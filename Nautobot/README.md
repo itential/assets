@@ -4,6 +4,15 @@ Nautobot is an open-source network source of truth and network automation platfo
 
 This project provides OpenAPI specs for automating against Nautobot's REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for network automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`nautobot-latest.json`](#nautobot-latestjson)
+  - [`nautobot-2.4.14.json`](#nautobot-2414json)
+
 ## Contents
 
 | Asset | Description |
@@ -49,3 +58,7 @@ Resources included, by category:
 - **Tenancy**: Tenant Groups, Tenants
 - **Circuits**: Circuit Types, Providers, Circuits, Circuit Terminations
 - **Extras**: Tags, Statuses, Roles, Custom Fields
+
+### `nautobot-2.4.14.json`
+
+Full, unmodified vendor spec for Nautobot 2.4.14 (2141 operations), including all optional plugin APIs. See `nautobot-latest.json` above for the curated subset if you just need common CRUD automation.

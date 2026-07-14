@@ -2,6 +2,15 @@ Kubernetes is an open-source container orchestration system for automating deplo
 
 This project provides OpenAPI specs for automating against the Kubernetes API server via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for cluster automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`kubernetes-latest.json`](#kubernetes-latestjson)
+  - [`kubernetes-v1.10.0.json`](#kubernetes-v1100json)
+
 ## Contents
 
 | Asset | Description |
@@ -50,3 +59,7 @@ Resources included, by category:
 - **RBAC**: Roles, RoleBindings, ClusterRoles, ClusterRoleBindings
 
 Excludes watch/streaming endpoints, exec/attach/portforward/proxy debug endpoints, deprecated and duplicate API group versions (e.g. `extensions/v1beta1` workloads superseded by `apps/v1`, `apps/v1beta1`/`v1beta2`), webhook and aggregation-layer admin APIs (`admissionregistration.k8s.io`, `apiregistration.k8s.io`, `apiextensions.k8s.io`), and specialized/internal endpoints (TokenReviews, SubjectAccessReviews, CertificateSigningRequests, PodSecurityPolicies, PodPresets, PriorityClasses, ComponentStatuses, raw `/logs/{logpath}`). Pull the full spec if you need one of the excluded areas.
+
+### `kubernetes-v1.10.0.json`
+
+Full, unmodified vendor spec for Kubernetes v1.10.0 (933 operations) — the vendor's complete API surface, preserved as-is. See `kubernetes-latest.json` above for the curated subset if you just need common CRUD automation.

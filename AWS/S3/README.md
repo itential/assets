@@ -2,6 +2,15 @@ Amazon Simple Storage Service (S3) is AWS's object storage service, providing sc
 
 This project provides an OpenAPI spec for automating against the S3 REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for storage automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`amazon_s3-latest.json`](#amazon_s3-latestjson)
+  - [`amazon_s3-2006-03-01.json`](#amazon_s3-2006-03-01json)
+
 ## Contents
 
 | Asset | Description |
@@ -49,3 +58,7 @@ Resources included, by category:
 - **Multipart upload**: Create, Upload Part, Upload Part (Copy), Complete, Abort, List Parts, List Multipart Uploads
 
 Not included: bucket analytics/inventory/metrics/intelligent-tiering configurations, transfer acceleration, request payer, notification configuration, replication, static website hosting, object lock/legal-hold/retention, S3 Select, object attributes, torrent, and S3 Object Lambda's WriteGetObjectResponse. Pull the full spec below if you need one of these.
+
+### `amazon_s3-2006-03-01.json`
+
+Full, unmodified vendor spec for the Amazon S3 API (2006-03-01) (97 operations) — the vendor's complete API surface, preserved as-is. See `amazon_s3-latest.json` above for the curated subset if you just need common CRUD automation.

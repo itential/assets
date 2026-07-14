@@ -2,6 +2,15 @@ Google Drive is a cloud file storage and collaboration service — files and fol
 
 This project provides OpenAPI specs for automating against the Google Drive REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`google_drive-latest.json`](#google_drive-latestjson)
+  - [`google_drive-v3.json`](#google_drive-v3json)
+
 ## Contents
 
 | Asset | Description |
@@ -50,3 +59,7 @@ Resources included, by category:
 - **Revisions**: List, Get, Update, Delete
 
 Not included: change/activity polling and push-notification channels (`changes`, `channels` — sync-client tooling), the legacy `teamdrives` resource (superseded by `drives`), file ID pre-generation (`files.generateIds`), file watch/push notifications (`files.watch`), and the Drive Labels endpoints (`files.listLabels`, `files.modifyLabels` — a separate, optional Google Workspace add-on).
+
+### `google_drive-v3.json`
+
+Full, unmodified vendor spec for the Google Drive v3 API (48 operations) — the vendor's complete API surface, preserved as-is. See `google_drive-latest.json` above for the curated subset if you just need common CRUD automation.

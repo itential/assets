@@ -2,6 +2,15 @@ Sonatype Nexus Repository Manager is a repository manager for storing, organizin
 
 This project provides OpenAPI specs for automating against the Nexus Repository Manager REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for repository automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`sonatype_nexus_repository-latest.json`](#sonatype_nexus_repository-latestjson)
+  - [`sonatype_nexus_repository-3.69.0-02.json`](#sonatype_nexus_repository-3690-02json)
+
 ## Contents
 
 | Asset | Description |
@@ -47,3 +56,7 @@ Resources included, by category:
 - **Search**: Search components and assets, and search-and-download an asset
 - **Formats**: List supported formats and their component upload field requirements
 - **Status**: Health-check endpoints for read/write availability
+
+### `sonatype_nexus_repository-3.69.0-02.json`
+
+Full, unmodified vendor spec for Nexus Repository 3.69.0-02 (241 operations) — the vendor's complete API surface, preserved as-is. See `sonatype_nexus_repository-latest.json` above for the curated subset if you just need common CRUD automation.

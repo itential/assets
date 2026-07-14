@@ -2,6 +2,15 @@ AWS Network Firewall is a managed, stateful network firewall and intrusion detec
 
 This project provides an OpenAPI spec for automating against the AWS Network Firewall REST API via an Integration Model.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`aws_network_firewall-latest.json`](#aws_network_firewall-latestjson)
+  - [`aws_network_firewall-2020-11-12.json`](#aws_network_firewall-2020-11-12json)
+
 ## Contents
 
 | Asset | Description |
@@ -48,3 +57,7 @@ Operations included, by category:
 - **Logging Configuration**: Describe, update
 - **Resource Policies** (cross-account sharing of rule groups/firewall policies): Put, describe, delete
 - **Tags**: List tags for a resource; add/remove tags
+
+### `aws_network_firewall-2020-11-12.json`
+
+Full, unmodified vendor spec for API version 2020-11-12 (36 operations) — the vendor's complete API surface, preserved as-is. See `aws_network_firewall-latest.json` above for the curated `-latest` copy; per the review noted there, no operations were excluded, so both specs cover the same operation set.

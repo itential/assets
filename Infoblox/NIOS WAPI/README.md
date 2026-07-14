@@ -5,6 +5,27 @@ This project provides two complementary ways to automate against NIOS WAPI:
 - **Studio Project workflows** built on the **Infoblox NIOS DDI Adapter** — network and DNS record CRUD workflows (assign the next available IP, create/modify/delete networks, network containers, and A/CNAME/NS/PTR/fixed-address DNS records).
 - **OpenAPI specs** for building new automation directly against the WAPI REST endpoints via an Integration Model. Five `-latest` specs are provided — one general-purpose spec plus four object-domain specs (DHCP, DNS, Grid, IPAM) — each a curated subset covering common CRUD for automation. See **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+  - [Adapter (Studio Project workflows)](#adapter-studio-project-workflows)
+  - [Integration Model (OpenAPI-based automation)](#integration-model-openapi-based-automation)
+- [Studio Projects](#studio-projects)
+  - [Infoblox NIOS DDI Project](#infoblox-nios-ddi-project)
+- [OpenAPIs](#openapis)
+  - [`infoblox_nios_wapi-latest.json`](#infoblox_nios_wapi-latestjson)
+  - [`infoblox_nios_wapi-1.0.1.json`](#infoblox_nios_wapi-101json)
+  - [`infoblox_nios_wapi_dhcp-latest.json`](#infoblox_nios_wapi_dhcp-latestjson)
+  - [`infoblox_nios_wapi_dhcp-2.14.json`](#infoblox_nios_wapi_dhcp-214json)
+  - [`infoblox_nios_wapi_dns-latest.json`](#infoblox_nios_wapi_dns-latestjson)
+  - [`infoblox_nios_wapi_dns-2.14.json`](#infoblox_nios_wapi_dns-214json)
+  - [`infoblox_nios_wapi_grid-latest.json`](#infoblox_nios_wapi_grid-latestjson)
+  - [`infoblox_nios_wapi_grid-2.14.json`](#infoblox_nios_wapi_grid-214json)
+  - [`infoblox_nios_wapi_ipam-latest.json`](#infoblox_nios_wapi_ipam-latestjson)
+  - [`infoblox_nios_wapi_ipam-2.14.json`](#infoblox_nios_wapi_ipam-214json)
+
 ## Contents
 
 | Asset | Description |
@@ -95,6 +116,10 @@ Resources included, by category:
 - **Extensible Attributes**: Extensible Attribute Definitions
 - **Generic**: Reference-based get/update/delete endpoints used by WAPI for objects without a dedicated single-object path
 
+### `infoblox_nios_wapi-1.0.1.json`
+
+Full, unmodified vendor spec for WAPI 1.0.1 (168 operations) — the vendor's complete API surface, preserved as-is. See `infoblox_nios_wapi-latest.json` above for the curated subset if you just need common CRUD automation.
+
 ### `infoblox_nios_wapi_dhcp-latest.json`
 
 DHCP domain spec (`x-vendor-api-version: 2.14`). Trimmed to 40 of 132 upstream operations covering common CRUD for automation.
@@ -107,6 +132,10 @@ Resources included, by category:
 - **Leases**: Leases (read/delete)
 - **High availability**: DHCP Failover Associations
 
+### `infoblox_nios_wapi_dhcp-2.14.json`
+
+Full, unmodified vendor spec for the DHCP domain, WAPI 2.14 (132 operations) — the vendor's complete API surface, preserved as-is. See `infoblox_nios_wapi_dhcp-latest.json` above for the curated subset if you just need common CRUD automation.
+
 ### `infoblox_nios_wapi_dns-latest.json`
 
 DNS domain spec (`x-vendor-api-version: 2.14`). Trimmed to 71 of 241 upstream operations covering common CRUD for automation.
@@ -116,6 +145,10 @@ Resources included, by category:
 - **DNS records**: A, AAAA, CNAME, HOST, HOST_IPV4ADDR, HOST_IPV6ADDR, MX, NS, PTR, SRV, TXT
 - **Views**: DNS Views
 - **Zones**: Authoritative Zones, Forward Zones, Delegated Zones
+
+### `infoblox_nios_wapi_dns-2.14.json`
+
+Full, unmodified vendor spec for the DNS domain, WAPI 2.14 (241 operations) — the vendor's complete API surface, preserved as-is. See `infoblox_nios_wapi_dns-latest.json` above for the curated subset if you just need common CRUD automation.
 
 ### `infoblox_nios_wapi_grid-latest.json`
 
@@ -127,6 +160,10 @@ Resources included, by category:
 - **Members**: Grid Members, Member DNS Properties, Member DHCP Properties
 - **Extensible Attributes**: Extensible Attribute Definitions
 
+### `infoblox_nios_wapi_grid-2.14.json`
+
+Full, unmodified vendor spec for the Grid domain, WAPI 2.14 (183 operations) — the vendor's complete API surface, preserved as-is. See `infoblox_nios_wapi_grid-latest.json` above for the curated subset if you just need common CRUD automation.
+
 ### `infoblox_nios_wapi_ipam-latest.json`
 
 IPAM domain spec (`x-vendor-api-version: 2.14`). Trimmed to 63 of 104 upstream operations covering common CRUD for automation.
@@ -137,5 +174,9 @@ Resources included, by category:
 - **Views**: Network Views
 - **Addresses**: IPv4 Addresses, IPv6 Addresses
 - **VLANs**: VLANs, VLAN Views, VLAN Ranges (including next-available-VLAN-ID)
+
+### `infoblox_nios_wapi_ipam-2.14.json`
+
+Full, unmodified vendor spec for the IPAM domain, WAPI 2.14 (104 operations) — the vendor's complete API surface, preserved as-is. See `infoblox_nios_wapi_ipam-latest.json` above for the curated subset if you just need common CRUD automation.
 
 ---

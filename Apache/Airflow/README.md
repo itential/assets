@@ -2,6 +2,15 @@ Apache Airflow is an open-source platform for programmatically authoring, schedu
 
 This project provides OpenAPI specs for automating against the Airflow stable REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`apache_airflow-latest.json`](#apache_airflow-latestjson)
+  - [`apache_airflow-2.5.1.json`](#apache_airflow-251json)
+
 ## Contents
 
 | Asset | Description |
@@ -50,4 +59,8 @@ Resources included, by category:
 - **Monitoring**: Health, Version
 
 Excluded as internal vendor tooling or reporting-only tails: Config, DAG Warnings, Datasets (data-aware scheduling), Event Logs, Import Errors, Permissions, Plugins, Providers, Roles, and Users (RBAC administration).
+
+### `apache_airflow-2.5.1.json`
+
+Full, unmodified vendor spec for Apache Airflow 2.5.1 (73 operations) — the vendor's complete API surface, preserved as-is. See `apache_airflow-latest.json` above for the curated subset if you just need common CRUD automation.
 

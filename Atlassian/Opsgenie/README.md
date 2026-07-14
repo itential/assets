@@ -2,6 +2,15 @@ Atlassian OpsGenie is an alert and on-call management platform that routes, ackn
 
 This project provides OpenAPI specs for automating against OpsGenie's REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`atlassian_opsgenie-latest.json`](#atlassian_opsgenie-latestjson)
+  - [`atlassian_opsgenie-2.0.0.json`](#atlassian_opsgenie-200json)
+
 ## Contents
 
 | Asset | Description |
@@ -55,3 +64,7 @@ Resources included, by category:
 - **Account**: Get account info
 
 Dropped as long-tail/admin: legacy v1 alert/notification policy endpoints (superseded by v2), saved searches, alert attachments, custom RBAC roles, per-team audit logs, calendar (`.ics`) exports, integration action/authenticate endpoints, and per-user personal admin (contact methods, personal notification rules and their steps, and per-user read-only lookups of teams/schedules/escalations/forwarding rules).
+
+### `atlassian_opsgenie-2.0.0.json`
+
+Full, unmodified vendor spec for OpsGenie API v2.0.0 (170 operations) — the vendor's complete API surface, preserved as-is. See `atlassian_opsgenie-latest.json` above for the curated subset if you just need common CRUD automation.

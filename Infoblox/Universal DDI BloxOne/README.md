@@ -2,6 +2,15 @@ Infoblox Universal DDI (BloxOne) is Infoblox's cloud-managed DNS, DHCP, and IPAM
 
 This project provides an OpenAPI spec for automating against the BloxOne REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
+## Table of Contents
+
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Integration Configuration](#integration-configuration)
+- [OpenAPIs](#openapis)
+  - [`infoblox_universal_ddi_bloxone-latest.json`](#infoblox_universal_ddi_bloxone-latestjson)
+  - [`infoblox_universal_ddi_bloxone-1.json`](#infoblox_universal_ddi_bloxone-1json)
+
 ## Contents
 
 | Asset | Description |
@@ -43,3 +52,7 @@ Resources included, by category:
 
 - **DHCP**: Global DHCP config, DHCP Servers, DHCP Hosts (with associations), HA Groups, Fixed Addresses, Hardware Filters, Option Filters, Option Codes, Option Spaces, Option Groups, MAC Address Items, DHCP Filters, DHCP Service instances, Universal Service associations, lease actions (clear leases)
 - **IPAM**: IP Spaces, Address Blocks (with ancestor/copy/next-available lookups), Subnets (with ancestor/copy/next-available lookups), Ranges (with next-available-IP), Addresses, Hosts
+
+### `infoblox_universal_ddi_bloxone-1.json`
+
+Full, unmodified vendor spec for Infoblox Universal DDI (BloxOne) API version 1 (119 operations) — the vendor's complete API surface, preserved as-is. See `infoblox_universal_ddi_bloxone-latest.json` above for the curated subset if you just need common CRUD automation.
