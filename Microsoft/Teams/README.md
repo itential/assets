@@ -2,6 +2,19 @@
 
 Send rich, adaptive-card notifications from an Itential workflow to a Microsoft Teams channel — job results, compliance reports, ticket updates, anything — via a Power Automate flow instead of a deprecated direct webhook.
 
+## Table of Contents
+
+- [Why Power Automate](#why-power-automate)
+- [Architecture](#architecture)
+- [Building the Power Automate Flow](#building-the-power-automate-flow)
+- [The Itential Workflow](#the-itential-workflow)
+  - [Inputs](#inputs)
+  - [Sample Payload](#sample-payload)
+- [Security](#security)
+- [Troubleshooting](#troubleshooting)
+- [Projects](#projects)
+  - [Microsoft Teams Project](#microsoft-teams-project)
+
 ## Why Power Automate
 
 Microsoft retired direct Incoming Webhooks (Office 365 Connectors) for Teams channels. A Power Automate flow with a **"When a Teams webhook request is received"** trigger is the supported replacement — it gives you an HTTP endpoint that posts an Adaptive Card into a chat or channel, without needing a Teams-specific adapter or connector on the Itential side.

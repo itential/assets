@@ -4,6 +4,19 @@ Itential Gateway 5.5+ supports **external secret providers**: instead of storing
 
 This is a working example: a Python plugin for Delinea Secret Server Cloud, the registration steps, and how to reference the resulting alias from a device inventory (for example, a NetBox-synced inventory in Itential Platform).
 
+## Table of Contents
+
+- [Architecture](#architecture)
+- [Prerequisites](#prerequisites)
+- [How Delinea Secret Server API Access Works](#how-delinea-secret-server-api-access-works)
+- [The Plugin](#the-plugin)
+- [Storing the Password](#storing-the-password)
+- [Registering the Provider and Alias](#registering-the-provider-and-alias)
+- [Referencing the Alias](#referencing-the-alias)
+- [Verifying It's Working](#verifying-its-working)
+- [Adapting This Example](#adapting-this-example)
+- [References](#references)
+
 ## Architecture
 
 ```
