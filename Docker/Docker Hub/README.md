@@ -39,10 +39,10 @@ Obtain a token via `POST /v2/users/login` with your Docker Hub username and pass
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`docker_hub-latest.json`](./OpenAPIs/docker_hub-latest.json) | latest (curated) | Trimmed to 16 of 28 upstream operations covering common CRUD for automation — see breakdown below |
-| [`docker_hub-beta.json`](./OpenAPIs/docker_hub-beta.json) | beta | Full spec for Docker Hub API (beta). |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`docker_hub-latest.json`](./OpenAPIs/docker_hub-latest.json) | latest (curated) | 16 | Trimmed to 16 of 28 upstream operations covering common CRUD for automation — see breakdown below |
+| [`docker_hub-beta.json`](./OpenAPIs/docker_hub-beta.json) | beta | 28 | Full spec for Docker Hub API (beta). |
 
 ### `docker_hub-latest.json`
 

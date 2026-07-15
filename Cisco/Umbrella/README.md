@@ -147,22 +147,22 @@ Built on `cisco_umbrella_application_lists-latest.json`. Integration instance na
 
 Every module below shares the same authentication (OAuth2 Client Credentials). Each has its own `-latest.json` (actively-maintained) and dated `-{version}.json` (full, unmodified vendor spec) pair in `OpenAPIs/`.
 
-| Spec | Version | Description |
-|---|---|---|
-| [`cisco_umbrella_destination_lists-latest.json`](./OpenAPIs/cisco_umbrella_destination_lists-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_umbrella_application_lists-latest.json`](./OpenAPIs/cisco_umbrella_application_lists-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_umbrella_sites-latest.json`](./OpenAPIs/cisco_umbrella_sites-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_umbrella_networks-latest.json`](./OpenAPIs/cisco_umbrella_networks-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_umbrella_network_devices-latest.json`](./OpenAPIs/cisco_umbrella_network_devices-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_umbrella_internal_domains-latest.json`](./OpenAPIs/cisco_umbrella_internal_domains-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_umbrella_internal_networks-latest.json`](./OpenAPIs/cisco_umbrella_internal_networks-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_umbrella_destination_lists-2.0.0.json`](./OpenAPIs/cisco_umbrella_destination_lists-2.0.0.json) | 2.0.0 | Full spec for the Destination Lists module, API version 2.0.0. |
-| [`cisco_umbrella_application_lists-1.0.1.json`](./OpenAPIs/cisco_umbrella_application_lists-1.0.1.json) | 1.0.1 | Full spec for the Application Lists module, API version 1.0.1. |
-| [`cisco_umbrella_sites-2.0.0.json`](./OpenAPIs/cisco_umbrella_sites-2.0.0.json) | 2.0.0 | Full spec for the Sites module, API version 2.0.0. |
-| [`cisco_umbrella_networks-2.0.0.json`](./OpenAPIs/cisco_umbrella_networks-2.0.0.json) | 2.0.0 | Full spec for the Networks module, API version 2.0.0. |
-| [`cisco_umbrella_network_devices-2.0.0.json`](./OpenAPIs/cisco_umbrella_network_devices-2.0.0.json) | 2.0.0 | Full spec for the Network Devices module, API version 2.0.0. |
-| [`cisco_umbrella_internal_domains-2.0.0.json`](./OpenAPIs/cisco_umbrella_internal_domains-2.0.0.json) | 2.0.0 | Full spec for the Internal Domains module, API version 2.0.0. |
-| [`cisco_umbrella_internal_networks-2.0.0.json`](./OpenAPIs/cisco_umbrella_internal_networks-2.0.0.json) | 2.0.0 | Full spec for the Internal Networks module, API version 2.0.0. |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`cisco_umbrella_destination_lists-latest.json`](./OpenAPIs/cisco_umbrella_destination_lists-latest.json) | latest (curated) | 8 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_umbrella_application_lists-latest.json`](./OpenAPIs/cisco_umbrella_application_lists-latest.json) | latest (curated) | 6 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_umbrella_sites-latest.json`](./OpenAPIs/cisco_umbrella_sites-latest.json) | latest (curated) | 5 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_umbrella_networks-latest.json`](./OpenAPIs/cisco_umbrella_networks-latest.json) | latest (curated) | 6 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_umbrella_network_devices-latest.json`](./OpenAPIs/cisco_umbrella_network_devices-latest.json) | latest (curated) | 6 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_umbrella_internal_domains-latest.json`](./OpenAPIs/cisco_umbrella_internal_domains-latest.json) | latest (curated) | 5 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_umbrella_internal_networks-latest.json`](./OpenAPIs/cisco_umbrella_internal_networks-latest.json) | latest (curated) | 6 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_umbrella_destination_lists-2.0.0.json`](./OpenAPIs/cisco_umbrella_destination_lists-2.0.0.json) | 2.0.0 | 8 | Full spec for the Destination Lists module, API version 2.0.0. |
+| [`cisco_umbrella_application_lists-1.0.1.json`](./OpenAPIs/cisco_umbrella_application_lists-1.0.1.json) | 1.0.1 | 6 | Full spec for the Application Lists module, API version 1.0.1. |
+| [`cisco_umbrella_sites-2.0.0.json`](./OpenAPIs/cisco_umbrella_sites-2.0.0.json) | 2.0.0 | 5 | Full spec for the Sites module, API version 2.0.0. |
+| [`cisco_umbrella_networks-2.0.0.json`](./OpenAPIs/cisco_umbrella_networks-2.0.0.json) | 2.0.0 | 6 | Full spec for the Networks module, API version 2.0.0. |
+| [`cisco_umbrella_network_devices-2.0.0.json`](./OpenAPIs/cisco_umbrella_network_devices-2.0.0.json) | 2.0.0 | 6 | Full spec for the Network Devices module, API version 2.0.0. |
+| [`cisco_umbrella_internal_domains-2.0.0.json`](./OpenAPIs/cisco_umbrella_internal_domains-2.0.0.json) | 2.0.0 | 5 | Full spec for the Internal Domains module, API version 2.0.0. |
+| [`cisco_umbrella_internal_networks-2.0.0.json`](./OpenAPIs/cisco_umbrella_internal_networks-2.0.0.json) | 2.0.0 | 6 | Full spec for the Internal Networks module, API version 2.0.0. |
 
 ### `cisco_umbrella_destination_lists-latest.json`
 

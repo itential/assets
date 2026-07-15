@@ -39,10 +39,10 @@ Obtain an access token via the Google Cloud Console → **Service Accounts**, gr
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`google_drive-latest.json`](./OpenAPIs/google_drive-latest.json) | latest (curated) | Actively-maintained spec, trimmed to 35 of 48 upstream operations — see breakdown below |
-| [`google_drive-v3.json`](./OpenAPIs/google_drive-v3.json) | v3 | Full spec for the Google Drive v3 API (48 operations) |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`google_drive-latest.json`](./OpenAPIs/google_drive-latest.json) | latest (curated) | 35 | Actively-maintained spec, trimmed to 35 of 48 upstream operations — see breakdown below |
+| [`google_drive-v3.json`](./OpenAPIs/google_drive-v3.json) | v3 | 48 | Full spec for the Google Drive v3 API (48 operations) |
 
 ### `google_drive-latest.json`
 

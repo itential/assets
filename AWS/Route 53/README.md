@@ -40,10 +40,10 @@ Generate an access key ID and secret access key for an IAM user or role with Rou
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`amazon_route_53-latest.json`](./OpenAPIs/amazon_route_53-latest.json) | latest (curated) | Actively-maintained, trimmed to common CRUD for automation — see breakdown below |
-| [`amazon_route_53-2013-04-01.json`](./OpenAPIs/amazon_route_53-2013-04-01.json) | 2013-04-01 | Full spec for the Route 53 2013-04-01 API (70 operations). |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`amazon_route_53-latest.json`](./OpenAPIs/amazon_route_53-latest.json) | latest (curated) | 23 | Actively-maintained, trimmed to common CRUD for automation — see breakdown below |
+| [`amazon_route_53-2013-04-01.json`](./OpenAPIs/amazon_route_53-2013-04-01.json) | 2013-04-01 | 70 | Full spec for the Route 53 2013-04-01 API (70 operations). |
 
 ### `amazon_route_53-latest.json`
 

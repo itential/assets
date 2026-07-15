@@ -39,10 +39,10 @@ Generate an access token by creating a Server-to-Server OAuth app at [marketplac
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`zoom-latest.json`](./OpenAPIs/zoom-latest.json) | latest (curated) | Actively-maintained, trimmed to 49 of 155 upstream operations — see breakdown below |
-| [`zoom-2.0.0.json`](./OpenAPIs/zoom-2.0.0.json) | 2.0.0 | Full, unmodified vendor spec |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`zoom-latest.json`](./OpenAPIs/zoom-latest.json) | latest (curated) | 49 | Actively-maintained, trimmed to 49 of 155 upstream operations — see breakdown below |
+| [`zoom-2.0.0.json`](./OpenAPIs/zoom-2.0.0.json) | 2.0.0 | 155 | Full, unmodified vendor spec |
 
 ### `zoom-latest.json`
 

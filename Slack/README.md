@@ -39,10 +39,10 @@ Use a Slack bot token (`xoxb-*`) for bot operations, or a user token (`xoxp-*`) 
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`slack_web_api-latest.json`](./OpenAPIs/slack_web_api-latest.json) | latest (curated) | Trimmed to 61 of 174 upstream operations — see breakdown below |
-| [`slack_web_api-1.7.0.json`](./OpenAPIs/slack_web_api-1.7.0.json) | 1.7.0 | Full spec for the Slack Web API, version 1.7.0. |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`slack_web_api-latest.json`](./OpenAPIs/slack_web_api-latest.json) | latest (curated) | 61 | Trimmed to 61 of 174 upstream operations — see breakdown below |
+| [`slack_web_api-1.7.0.json`](./OpenAPIs/slack_web_api-1.7.0.json) | 1.7.0 | 174 | Full spec for the Slack Web API, version 1.7.0. |
 
 ### `slack_web_api-latest.json`
 

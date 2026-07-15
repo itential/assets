@@ -39,10 +39,10 @@ Generate an API key in OpsGenie under **Settings > API key management**.
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`atlassian_opsgenie-latest.json`](./OpenAPIs/atlassian_opsgenie-latest.json) | latest (curated) | Trimmed to 108 of 170 upstream operations — see breakdown below |
-| [`atlassian_opsgenie-2.0.0.json`](./OpenAPIs/atlassian_opsgenie-2.0.0.json) | 2.0.0 | Full, unmodified vendor spec |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`atlassian_opsgenie-latest.json`](./OpenAPIs/atlassian_opsgenie-latest.json) | latest (curated) | 108 | Trimmed to 108 of 170 upstream operations — see breakdown below |
+| [`atlassian_opsgenie-2.0.0.json`](./OpenAPIs/atlassian_opsgenie-2.0.0.json) | 2.0.0 | 170 | Full, unmodified vendor spec |
 
 ### `atlassian_opsgenie-latest.json`
 

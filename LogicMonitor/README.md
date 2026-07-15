@@ -39,10 +39,10 @@ Generate an API token in LogicMonitor under **Settings → Users and Roles → A
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`logicmonitor-latest.json`](./OpenAPIs/logicmonitor-latest.json) | latest (curated) | Actively-maintained spec, trimmed to 62 of 353 upstream operations — see breakdown below |
-| [`logicmonitor-3.0.0.json`](./OpenAPIs/logicmonitor-3.0.0.json) | 3.0.0 | Full spec for LogicMonitor REST API v3.0.0 (353 operations) |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`logicmonitor-latest.json`](./OpenAPIs/logicmonitor-latest.json) | latest (curated) | 62 | Actively-maintained spec, trimmed to 62 of 353 upstream operations — see breakdown below |
+| [`logicmonitor-3.0.0.json`](./OpenAPIs/logicmonitor-3.0.0.json) | 3.0.0 | 353 | Full spec for LogicMonitor REST API v3.0.0 (353 operations) |
 
 ### `logicmonitor-latest.json`
 

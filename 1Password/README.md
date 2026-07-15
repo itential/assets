@@ -39,14 +39,14 @@ Generate a 1Password Connect token when deploying a Connect server. See https://
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`1password_connect-latest.json`](./OpenAPIs/1password_connect-latest.json) | latest (curated) | Actively-maintained spec, trimmed to 12 of 16 upstream operations — see breakdown below |
-| [`1password_connect-1.5.7.json`](./OpenAPIs/1password_connect-1.5.7.json) | 1.5.7 | Full, unmodified vendor spec |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`1password_connect-latest.json`](./OpenAPIs/1password_connect-latest.json) | latest (curated) | 11 | Actively-maintained spec, trimmed to 12 of 16 upstream operations — see breakdown below |
+| [`1password_connect-1.5.7.json`](./OpenAPIs/1password_connect-1.5.7.json) | 1.5.7 | 15 | Full, unmodified vendor spec |
 
 ### `1password_connect-latest.json`
 
-Actively-maintained spec (`x-vendor-api-version: 1.5.7`). Trimmed to 12 of 16 upstream operations covering common CRUD for secrets automation. Excludes server activity/health/heartbeat/metrics endpoints (operational monitoring, not secrets automation). Also consolidated a redundant per-operation auth override into a single global `security` block.
+Actively-maintained spec (`x-vendor-api-version: 1.5.7`). Trimmed to 11 of 15 upstream operations covering common CRUD for secrets automation. Excludes server activity/health/heartbeat/metrics endpoints (operational monitoring, not secrets automation). Also consolidated a redundant per-operation auth override into a single global `security` block.
 
 Resources included, by category:
 
@@ -56,4 +56,4 @@ Resources included, by category:
 
 ### `1password_connect-1.5.7.json`
 
-Full, unmodified vendor spec for 1Password Connect 1.5.7 (16 operations) — the vendor's complete API surface, preserved as-is. See `1password_connect-latest.json` above for the curated subset if you just need common CRUD automation.
+Full, unmodified vendor spec for 1Password Connect 1.5.7 (15 operations) — the vendor's complete API surface, preserved as-is. See `1password_connect-latest.json` above for the curated subset if you just need common CRUD automation.

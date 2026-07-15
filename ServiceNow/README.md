@@ -83,14 +83,14 @@ Use a ServiceNow user/service account with appropriate ACL permissions on the ta
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`servicenow_change_management-latest.json`](./OpenAPIs/servicenow_change_management-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`servicenow_table_api-latest.json`](./OpenAPIs/servicenow_table_api-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`servicenow_itential_services_app-latest.json`](./OpenAPIs/servicenow_itential_services_app-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`servicenow_change_management-v1.json`](./OpenAPIs/servicenow_change_management-v1.json) | v1 | Full spec for ServiceNow Change Management v1. |
-| [`servicenow_table_api-v2.json`](./OpenAPIs/servicenow_table_api-v2.json) | v2 | Full spec for ServiceNow Table API v2. |
-| [`servicenow_itential_services_app-v2.json`](./OpenAPIs/servicenow_itential_services_app-v2.json) | v2 | Full spec for ServiceNow Itential Services App v2. |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`servicenow_change_management-latest.json`](./OpenAPIs/servicenow_change_management-latest.json) | latest (curated) | 42 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`servicenow_table_api-latest.json`](./OpenAPIs/servicenow_table_api-latest.json) | latest (curated) | 6 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`servicenow_itential_services_app-latest.json`](./OpenAPIs/servicenow_itential_services_app-latest.json) | latest (curated) | 1 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`servicenow_change_management-v1.json`](./OpenAPIs/servicenow_change_management-v1.json) | v1 | 42 | Full spec for ServiceNow Change Management v1. |
+| [`servicenow_table_api-v2.json`](./OpenAPIs/servicenow_table_api-v2.json) | v2 | 6 | Full spec for ServiceNow Table API v2. |
+| [`servicenow_itential_services_app-v2.json`](./OpenAPIs/servicenow_itential_services_app-v2.json) | v2 | 1 | Full spec for ServiceNow Itential Services App v2. |
 
 ### `servicenow_change_management-latest.json`
 

@@ -39,10 +39,10 @@ Generate a Personal Access Token in Jira under your user profile → **Personal 
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`atlassian_jira_server_data_center-latest.json`](./OpenAPIs/atlassian_jira_server_data_center-latest.json) | latest (curated) | Trimmed to 105 of 430 upstream operations — see breakdown below |
-| [`atlassian_jira_server_data_center-10.0.0.json`](./OpenAPIs/atlassian_jira_server_data_center-10.0.0.json) | 10.0.0 | Full spec for Jira Server & Data Center 10.0.0 (430 operations) |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`atlassian_jira_server_data_center-latest.json`](./OpenAPIs/atlassian_jira_server_data_center-latest.json) | latest (curated) | 105 | Trimmed to 105 of 430 upstream operations — see breakdown below |
+| [`atlassian_jira_server_data_center-10.0.0.json`](./OpenAPIs/atlassian_jira_server_data_center-10.0.0.json) | 10.0.0 | 430 | Full spec for Jira Server & Data Center 10.0.0 (430 operations) |
 
 ### `atlassian_jira_server_data_center-latest.json`
 

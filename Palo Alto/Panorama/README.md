@@ -81,10 +81,10 @@ The workflows in this project are wired to the integration instance named **`Pan
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`panorama-latest.json`](./OpenAPIs/panorama-latest.json) | latest (curated) | Trimmed from the full 541-operation upstream spec down to 92 operations — see breakdown below |
-| [`panorama-11.1.json`](./OpenAPIs/panorama-11.1.json) | 11.1 | Full spec for Panorama 11.1 (223 operations) |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`panorama-latest.json`](./OpenAPIs/panorama-latest.json) | latest (curated) | 93 | Trimmed from the full 541-operation upstream spec down to 92 operations — see breakdown below |
+| [`panorama-11.1.json`](./OpenAPIs/panorama-11.1.json) | 11.1 | 547 | Full spec for Panorama 11.1 (547 operations) |
 
 ### `panorama-latest.json`
 
@@ -100,7 +100,7 @@ Resources included, by category:
 
 ### `panorama-11.1.json`
 
-Full, unmodified vendor spec for Panorama 11.1 (223 operations) — the vendor's complete API surface, preserved as-is. See `panorama-latest.json` above for the curated subset if you just need common CRUD automation.
+Full, unmodified vendor spec for Panorama 11.1 (547 operations) — the vendor's complete API surface, preserved as-is. See `panorama-latest.json` above for the curated subset if you just need common CRUD automation.
 
 ---
 

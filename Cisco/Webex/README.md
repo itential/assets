@@ -41,12 +41,12 @@ Generate a bot token or personal access token at [developer.webex.com](https://d
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`cisco_webex-latest.json`](./OpenAPIs/cisco_webex-latest.json) | latest (curated) | Actively-maintained spec — see breakdown below |
-| [`cisco_webex_messaging-latest.json`](./OpenAPIs/cisco_webex_messaging-latest.json) | latest (curated) | Actively-maintained spec — see breakdown below |
-| [`cisco_webex-1.0.json`](./OpenAPIs/cisco_webex-1.0.json) | 1.0 | Full spec for the Cisco Webex core API, version 1.0. |
-| [`cisco_webex_messaging-1.0.0.json`](./OpenAPIs/cisco_webex_messaging-1.0.0.json) | 1.0.0 | Full spec for the Cisco Webex Messaging API, version 1.0.0. |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`cisco_webex-latest.json`](./OpenAPIs/cisco_webex-latest.json) | latest (curated) | 8 | Actively-maintained spec — see breakdown below |
+| [`cisco_webex_messaging-latest.json`](./OpenAPIs/cisco_webex_messaging-latest.json) | latest (curated) | 33 | Actively-maintained spec — see breakdown below |
+| [`cisco_webex-1.0.json`](./OpenAPIs/cisco_webex-1.0.json) | 1.0 | 10 | Full spec for the Cisco Webex core API, version 1.0. |
+| [`cisco_webex_messaging-1.0.0.json`](./OpenAPIs/cisco_webex_messaging-1.0.0.json) | 1.0.0 | 63 | Full spec for the Cisco Webex Messaging API, version 1.0.0. |
 
 ### `cisco_webex-latest.json`
 

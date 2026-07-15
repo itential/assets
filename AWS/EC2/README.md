@@ -75,14 +75,14 @@ Authentication is AWS Signature Version 4 — sign requests with an AWS access k
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`amazon_ec2-latest.json`](./OpenAPIs/amazon_ec2-latest.json) | latest (curated) | Trimmed to 318 of 1773 upstream operations covering common CRUD for compute and networking automation — see breakdown below |
-| [`amazon_ec2-2016-11-15.json`](./OpenAPIs/amazon_ec2-2016-11-15.json) | 2016-11-15 | Full spec for the EC2 API version 2016-11-15. |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`amazon_ec2-latest.json`](./OpenAPIs/amazon_ec2-latest.json) | latest (curated) | 212 | Trimmed to 212 of 1182 upstream operations covering common CRUD for compute and networking automation — see breakdown below |
+| [`amazon_ec2-2016-11-15.json`](./OpenAPIs/amazon_ec2-2016-11-15.json) | 2016-11-15 | 1182 | Full spec for the EC2 API version 2016-11-15. |
 
 ### `amazon_ec2-latest.json`
 
-Actively-maintained spec (`x-vendor-api-version: 2016-11-15`). Trimmed to 318 of 1773 upstream operations covering common CRUD for compute and networking automation. The full upstream spec models the entire EC2 API surface, including Transit Gateway, Client VPN, IPAM, Spot Fleet, Reserved Instances, Capacity Reservations, Outposts, and dozens of other specialized areas — none of those are included here. Pull the full spec from [AWS's official EC2 API reference](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/) if you need one of the excluded areas.
+Actively-maintained spec (`x-vendor-api-version: 2016-11-15`). Trimmed to 212 of 1182 upstream operations covering common CRUD for compute and networking automation. The full upstream spec models the entire EC2 API surface, including Transit Gateway, Client VPN, IPAM, Spot Fleet, Reserved Instances, Capacity Reservations, Outposts, and dozens of other specialized areas — none of those are included here. Pull the full spec from [AWS's official EC2 API reference](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/) if you need one of the excluded areas.
 
 Resources included, by category:
 

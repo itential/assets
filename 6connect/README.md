@@ -39,10 +39,10 @@ Configure API access in 6connect under **Administration → Users**.
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`6connect_provision-latest.json`](./OpenAPIs/6connect_provision-latest.json) | latest (curated) | Actively-maintained, curated for common CRUD automation — see breakdown below |
-| [`6connect_provision-2.0.0.json`](./OpenAPIs/6connect_provision-2.0.0.json) | 2.0.0 | Full, unmodified vendor spec |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`6connect_provision-latest.json`](./OpenAPIs/6connect_provision-latest.json) | latest (curated) | 40 | Actively-maintained, curated for common CRUD automation — see breakdown below |
+| [`6connect_provision-2.0.0.json`](./OpenAPIs/6connect_provision-2.0.0.json) | 2.0.0 | 40 | Full, unmodified vendor spec |
 
 ### `6connect_provision-latest.json`
 

@@ -89,58 +89,58 @@ Enable API access on the ISE node under **Administration > System > Settings > A
 
 Every module below shares the same authentication (HTTP Basic) and vendor API version (`1.0.0`). Each has its own `-latest.json` (actively-maintained) and dated `-1.0.0.json` (full, unmodified vendor spec) pair in `OpenAPIs/`.
 
-| Spec | Version | Description |
-|---|---|---|
-| [`cisco_ise_5g-latest.json`](./OpenAPIs/cisco_ise_5g-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_backup_and_restore-latest.json`](./OpenAPIs/cisco_ise_backup_and_restore-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_certificates-latest.json`](./OpenAPIs/cisco_ise_certificates-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_custom_attributes-latest.json`](./OpenAPIs/cisco_ise_custom_attributes-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_data_connect-latest.json`](./OpenAPIs/cisco_ise_data_connect-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_deployment-latest.json`](./OpenAPIs/cisco_ise_deployment-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_duo_identity_sync-latest.json`](./OpenAPIs/cisco_ise_duo_identity_sync-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_endpoint_replication-latest.json`](./OpenAPIs/cisco_ise_endpoint_replication-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_endpoints-latest.json`](./OpenAPIs/cisco_ise_endpoints-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_ipsec-latest.json`](./OpenAPIs/cisco_ise_ipsec-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_licensing-latest.json`](./OpenAPIs/cisco_ise_licensing-latest.json) | latest (curated) | Trimmed to 8 of 9 upstream operations — see breakdown below |
-| [`cisco_ise_lsd_settings-latest.json`](./OpenAPIs/cisco_ise_lsd_settings-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_mfa-latest.json`](./OpenAPIs/cisco_ise_mfa-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_network_device_groups-latest.json`](./OpenAPIs/cisco_ise_network_device_groups-latest.json) | latest (curated) | Trimmed to 7 of 8 operations — see breakdown below |
-| [`cisco_ise_network_devices-latest.json`](./OpenAPIs/cisco_ise_network_devices-latest.json) | latest (curated) | Trimmed to 12 of 13 operations — see breakdown below |
-| [`cisco_ise_nodes-latest.json`](./OpenAPIs/cisco_ise_nodes-latest.json) | latest (curated) | Trimmed to 3 of 4 operations — see breakdown below |
-| [`cisco_ise_patches-latest.json`](./OpenAPIs/cisco_ise_patches-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_policy-latest.json`](./OpenAPIs/cisco_ise_policy-latest.json) | latest (curated) | Trimmed to 86 of 126 upstream operations — see breakdown below |
-| [`cisco_ise_pxgrid_direct-latest.json`](./OpenAPIs/cisco_ise_pxgrid_direct-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_repository-latest.json`](./OpenAPIs/cisco_ise_repository-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_sgt_reservation-latest.json`](./OpenAPIs/cisco_ise_sgt_reservation-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_system_settings-latest.json`](./OpenAPIs/cisco_ise_system_settings-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_task_service-latest.json`](./OpenAPIs/cisco_ise_task_service-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_trustsec-latest.json`](./OpenAPIs/cisco_ise_trustsec-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_upgrade-latest.json`](./OpenAPIs/cisco_ise_upgrade-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_ise_5g-1.0.0.json`](./OpenAPIs/cisco_ise_5g-1.0.0.json) | 1.0.0 | Full spec for the 5G module, API version 1.0.0. |
-| [`cisco_ise_backup_and_restore-1.0.0.json`](./OpenAPIs/cisco_ise_backup_and_restore-1.0.0.json) | 1.0.0 | Full spec for the Backup and Restore module, API version 1.0.0. |
-| [`cisco_ise_certificates-1.0.0.json`](./OpenAPIs/cisco_ise_certificates-1.0.0.json) | 1.0.0 | Full spec for the Certificates module, API version 1.0.0. |
-| [`cisco_ise_custom_attributes-1.0.0.json`](./OpenAPIs/cisco_ise_custom_attributes-1.0.0.json) | 1.0.0 | Full spec for the Custom Attributes module, API version 1.0.0. |
-| [`cisco_ise_data_connect-1.0.0.json`](./OpenAPIs/cisco_ise_data_connect-1.0.0.json) | 1.0.0 | Full spec for the Data Connect module, API version 1.0.0. |
-| [`cisco_ise_deployment-1.0.0.json`](./OpenAPIs/cisco_ise_deployment-1.0.0.json) | 1.0.0 | Full spec for the Deployment module, API version 1.0.0. |
-| [`cisco_ise_duo_identity_sync-1.0.0.json`](./OpenAPIs/cisco_ise_duo_identity_sync-1.0.0.json) | 1.0.0 | Full spec for the Duo Identity Sync module, API version 1.0.0. |
-| [`cisco_ise_endpoint_replication-1.0.0.json`](./OpenAPIs/cisco_ise_endpoint_replication-1.0.0.json) | 1.0.0 | Full spec for the Endpoint Replication module, API version 1.0.0. |
-| [`cisco_ise_endpoints-1.0.0.json`](./OpenAPIs/cisco_ise_endpoints-1.0.0.json) | 1.0.0 | Full spec for the Endpoints module, API version 1.0.0. |
-| [`cisco_ise_ipsec-1.0.0.json`](./OpenAPIs/cisco_ise_ipsec-1.0.0.json) | 1.0.0 | Full spec for the IPSec module, API version 1.0.0. |
-| [`cisco_ise_licensing-1.0.0.json`](./OpenAPIs/cisco_ise_licensing-1.0.0.json) | 1.0.0 | Full spec for the Licensing module, API version 1.0.0. |
-| [`cisco_ise_lsd_settings-1.0.0.json`](./OpenAPIs/cisco_ise_lsd_settings-1.0.0.json) | 1.0.0 | Full spec for the LSD Settings module, API version 1.0.0. |
-| [`cisco_ise_mfa-1.0.0.json`](./OpenAPIs/cisco_ise_mfa-1.0.0.json) | 1.0.0 | Full spec for the MFA module, API version 1.0.0. |
-| [`cisco_ise_network_device_groups-1.0.0.json`](./OpenAPIs/cisco_ise_network_device_groups-1.0.0.json) | 1.0.0 | Full spec for the Network Device Groups module, API version 1.0.0. |
-| [`cisco_ise_network_devices-1.0.0.json`](./OpenAPIs/cisco_ise_network_devices-1.0.0.json) | 1.0.0 | Full spec for the Network Devices module, API version 1.0.0. |
-| [`cisco_ise_nodes-1.0.0.json`](./OpenAPIs/cisco_ise_nodes-1.0.0.json) | 1.0.0 | Full spec for the Nodes module, API version 1.0.0. |
-| [`cisco_ise_patches-1.0.0.json`](./OpenAPIs/cisco_ise_patches-1.0.0.json) | 1.0.0 | Full spec for the Patches module, API version 1.0.0. |
-| [`cisco_ise_policy-1.0.0.json`](./OpenAPIs/cisco_ise_policy-1.0.0.json) | 1.0.0 | Full spec for the Policy module (126 operations), API version 1.0.0. |
-| [`cisco_ise_pxgrid_direct-1.0.0.json`](./OpenAPIs/cisco_ise_pxgrid_direct-1.0.0.json) | 1.0.0 | Full spec for the pxGrid Direct module, API version 1.0.0. |
-| [`cisco_ise_repository-1.0.0.json`](./OpenAPIs/cisco_ise_repository-1.0.0.json) | 1.0.0 | Full spec for the Repository module, API version 1.0.0. |
-| [`cisco_ise_sgt_reservation-1.0.0.json`](./OpenAPIs/cisco_ise_sgt_reservation-1.0.0.json) | 1.0.0 | Full spec for the SGT Reservation module, API version 1.0.0. |
-| [`cisco_ise_system_settings-1.0.0.json`](./OpenAPIs/cisco_ise_system_settings-1.0.0.json) | 1.0.0 | Full spec for the System Settings module, API version 1.0.0. |
-| [`cisco_ise_task_service-1.0.0.json`](./OpenAPIs/cisco_ise_task_service-1.0.0.json) | 1.0.0 | Full spec for the Task Service module, API version 1.0.0. |
-| [`cisco_ise_trustsec-1.0.0.json`](./OpenAPIs/cisco_ise_trustsec-1.0.0.json) | 1.0.0 | Full spec for the TrustSec module, API version 1.0.0. |
-| [`cisco_ise_upgrade-1.0.0.json`](./OpenAPIs/cisco_ise_upgrade-1.0.0.json) | 1.0.0 | Full spec for the Upgrade module, API version 1.0.0. |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`cisco_ise_5g-latest.json`](./OpenAPIs/cisco_ise_5g-latest.json) | latest (curated) | 16 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_backup_and_restore-latest.json`](./OpenAPIs/cisco_ise_backup_and_restore-latest.json) | latest (curated) | 6 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_certificates-latest.json`](./OpenAPIs/cisco_ise_certificates-latest.json) | latest (curated) | 22 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_custom_attributes-latest.json`](./OpenAPIs/cisco_ise_custom_attributes-latest.json) | latest (curated) | 5 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_data_connect-latest.json`](./OpenAPIs/cisco_ise_data_connect-latest.json) | latest (curated) | 5 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_deployment-latest.json`](./OpenAPIs/cisco_ise_deployment-latest.json) | latest (curated) | 24 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_duo_identity_sync-latest.json`](./OpenAPIs/cisco_ise_duo_identity_sync-latest.json) | latest (curated) | 8 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_endpoint_replication-latest.json`](./OpenAPIs/cisco_ise_endpoint_replication-latest.json) | latest (curated) | 2 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_endpoints-latest.json`](./OpenAPIs/cisco_ise_endpoints-latest.json) | latest (curated) | 10 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_ipsec-latest.json`](./OpenAPIs/cisco_ise_ipsec-latest.json) | latest (curated) | 9 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_licensing-latest.json`](./OpenAPIs/cisco_ise_licensing-latest.json) | latest (curated) | 8 | Trimmed to 8 of 9 upstream operations — see breakdown below |
+| [`cisco_ise_lsd_settings-latest.json`](./OpenAPIs/cisco_ise_lsd_settings-latest.json) | latest (curated) | 2 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_mfa-latest.json`](./OpenAPIs/cisco_ise_mfa-latest.json) | latest (curated) | 6 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_network_device_groups-latest.json`](./OpenAPIs/cisco_ise_network_device_groups-latest.json) | latest (curated) | 7 | Trimmed to 7 of 8 operations — see breakdown below |
+| [`cisco_ise_network_devices-latest.json`](./OpenAPIs/cisco_ise_network_devices-latest.json) | latest (curated) | 12 | Trimmed to 12 of 13 operations — see breakdown below |
+| [`cisco_ise_nodes-latest.json`](./OpenAPIs/cisco_ise_nodes-latest.json) | latest (curated) | 3 | Trimmed to 3 of 4 operations — see breakdown below |
+| [`cisco_ise_patches-latest.json`](./OpenAPIs/cisco_ise_patches-latest.json) | latest (curated) | 6 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_policy-latest.json`](./OpenAPIs/cisco_ise_policy-latest.json) | latest (curated) | 86 | Trimmed to 86 of 126 upstream operations — see breakdown below |
+| [`cisco_ise_pxgrid_direct-latest.json`](./OpenAPIs/cisco_ise_pxgrid_direct-latest.json) | latest (curated) | 7 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_repository-latest.json`](./OpenAPIs/cisco_ise_repository-latest.json) | latest (curated) | 6 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_sgt_reservation-latest.json`](./OpenAPIs/cisco_ise_sgt_reservation-latest.json) | latest (curated) | 5 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_system_settings-latest.json`](./OpenAPIs/cisco_ise_system_settings-latest.json) | latest (curated) | 4 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_task_service-latest.json`](./OpenAPIs/cisco_ise_task_service-latest.json) | latest (curated) | 2 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_trustsec-latest.json`](./OpenAPIs/cisco_ise_trustsec-latest.json) | latest (curated) | 13 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_upgrade-latest.json`](./OpenAPIs/cisco_ise_upgrade-latest.json) | latest (curated) | 8 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_ise_5g-1.0.0.json`](./OpenAPIs/cisco_ise_5g-1.0.0.json) | 1.0.0 | 16 | Full spec for the 5G module, API version 1.0.0. |
+| [`cisco_ise_backup_and_restore-1.0.0.json`](./OpenAPIs/cisco_ise_backup_and_restore-1.0.0.json) | 1.0.0 | 6 | Full spec for the Backup and Restore module, API version 1.0.0. |
+| [`cisco_ise_certificates-1.0.0.json`](./OpenAPIs/cisco_ise_certificates-1.0.0.json) | 1.0.0 | 22 | Full spec for the Certificates module, API version 1.0.0. |
+| [`cisco_ise_custom_attributes-1.0.0.json`](./OpenAPIs/cisco_ise_custom_attributes-1.0.0.json) | 1.0.0 | 5 | Full spec for the Custom Attributes module, API version 1.0.0. |
+| [`cisco_ise_data_connect-1.0.0.json`](./OpenAPIs/cisco_ise_data_connect-1.0.0.json) | 1.0.0 | 5 | Full spec for the Data Connect module, API version 1.0.0. |
+| [`cisco_ise_deployment-1.0.0.json`](./OpenAPIs/cisco_ise_deployment-1.0.0.json) | 1.0.0 | 24 | Full spec for the Deployment module, API version 1.0.0. |
+| [`cisco_ise_duo_identity_sync-1.0.0.json`](./OpenAPIs/cisco_ise_duo_identity_sync-1.0.0.json) | 1.0.0 | 8 | Full spec for the Duo Identity Sync module, API version 1.0.0. |
+| [`cisco_ise_endpoint_replication-1.0.0.json`](./OpenAPIs/cisco_ise_endpoint_replication-1.0.0.json) | 1.0.0 | 2 | Full spec for the Endpoint Replication module, API version 1.0.0. |
+| [`cisco_ise_endpoints-1.0.0.json`](./OpenAPIs/cisco_ise_endpoints-1.0.0.json) | 1.0.0 | 10 | Full spec for the Endpoints module, API version 1.0.0. |
+| [`cisco_ise_ipsec-1.0.0.json`](./OpenAPIs/cisco_ise_ipsec-1.0.0.json) | 1.0.0 | 9 | Full spec for the IPSec module, API version 1.0.0. |
+| [`cisco_ise_licensing-1.0.0.json`](./OpenAPIs/cisco_ise_licensing-1.0.0.json) | 1.0.0 | 9 | Full spec for the Licensing module, API version 1.0.0. |
+| [`cisco_ise_lsd_settings-1.0.0.json`](./OpenAPIs/cisco_ise_lsd_settings-1.0.0.json) | 1.0.0 | 2 | Full spec for the LSD Settings module, API version 1.0.0. |
+| [`cisco_ise_mfa-1.0.0.json`](./OpenAPIs/cisco_ise_mfa-1.0.0.json) | 1.0.0 | 6 | Full spec for the MFA module, API version 1.0.0. |
+| [`cisco_ise_network_device_groups-1.0.0.json`](./OpenAPIs/cisco_ise_network_device_groups-1.0.0.json) | 1.0.0 | 8 | Full spec for the Network Device Groups module, API version 1.0.0. |
+| [`cisco_ise_network_devices-1.0.0.json`](./OpenAPIs/cisco_ise_network_devices-1.0.0.json) | 1.0.0 | 13 | Full spec for the Network Devices module, API version 1.0.0. |
+| [`cisco_ise_nodes-1.0.0.json`](./OpenAPIs/cisco_ise_nodes-1.0.0.json) | 1.0.0 | 4 | Full spec for the Nodes module, API version 1.0.0. |
+| [`cisco_ise_patches-1.0.0.json`](./OpenAPIs/cisco_ise_patches-1.0.0.json) | 1.0.0 | 6 | Full spec for the Patches module, API version 1.0.0. |
+| [`cisco_ise_policy-1.0.0.json`](./OpenAPIs/cisco_ise_policy-1.0.0.json) | 1.0.0 | 126 | Full spec for the Policy module (126 operations), API version 1.0.0. |
+| [`cisco_ise_pxgrid_direct-1.0.0.json`](./OpenAPIs/cisco_ise_pxgrid_direct-1.0.0.json) | 1.0.0 | 7 | Full spec for the pxGrid Direct module, API version 1.0.0. |
+| [`cisco_ise_repository-1.0.0.json`](./OpenAPIs/cisco_ise_repository-1.0.0.json) | 1.0.0 | 6 | Full spec for the Repository module, API version 1.0.0. |
+| [`cisco_ise_sgt_reservation-1.0.0.json`](./OpenAPIs/cisco_ise_sgt_reservation-1.0.0.json) | 1.0.0 | 5 | Full spec for the SGT Reservation module, API version 1.0.0. |
+| [`cisco_ise_system_settings-1.0.0.json`](./OpenAPIs/cisco_ise_system_settings-1.0.0.json) | 1.0.0 | 4 | Full spec for the System Settings module, API version 1.0.0. |
+| [`cisco_ise_task_service-1.0.0.json`](./OpenAPIs/cisco_ise_task_service-1.0.0.json) | 1.0.0 | 2 | Full spec for the Task Service module, API version 1.0.0. |
+| [`cisco_ise_trustsec-1.0.0.json`](./OpenAPIs/cisco_ise_trustsec-1.0.0.json) | 1.0.0 | 13 | Full spec for the TrustSec module, API version 1.0.0. |
+| [`cisco_ise_upgrade-1.0.0.json`](./OpenAPIs/cisco_ise_upgrade-1.0.0.json) | 1.0.0 | 8 | Full spec for the Upgrade module, API version 1.0.0. |
 
 ### `cisco_ise_5g-latest.json`
 

@@ -39,10 +39,10 @@ Sign requests with an AWS access key ID and secret access key belonging to an IA
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`amazon_api_gateway-latest.json`](./OpenAPIs/amazon_api_gateway-latest.json) | latest (curated) | Trimmed to 104 of 120 upstream operations covering common CRUD for automation — see breakdown below |
-| [`amazon_api_gateway-2015-07-09.json`](./OpenAPIs/amazon_api_gateway-2015-07-09.json) | 2015-07-09 | Full spec for the Amazon API Gateway `2015-07-09` management API (120 operations). |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`amazon_api_gateway-latest.json`](./OpenAPIs/amazon_api_gateway-latest.json) | latest (curated) | 104 | Trimmed to 104 of 120 upstream operations covering common CRUD for automation — see breakdown below |
+| [`amazon_api_gateway-2015-07-09.json`](./OpenAPIs/amazon_api_gateway-2015-07-09.json) | 2015-07-09 | 120 | Full spec for the Amazon API Gateway `2015-07-09` management API (120 operations). |
 
 ### `amazon_api_gateway-latest.json`
 

@@ -39,10 +39,10 @@ Generate an access key ID and secret access key for an IAM user or role with `ne
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`aws_network_firewall-latest.json`](./OpenAPIs/aws_network_firewall-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`aws_network_firewall-2020-11-12.json`](./OpenAPIs/aws_network_firewall-2020-11-12.json) | 2020-11-12 | Full, unmodified vendor spec |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`aws_network_firewall-latest.json`](./OpenAPIs/aws_network_firewall-latest.json) | latest (curated) | 36 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`aws_network_firewall-2020-11-12.json`](./OpenAPIs/aws_network_firewall-2020-11-12.json) | 2020-11-12 | 36 | Full, unmodified vendor spec |
 
 ### `aws_network_firewall-latest.json`
 

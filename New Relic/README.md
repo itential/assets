@@ -39,10 +39,10 @@ Generate a user or ingest API key in New Relic under **Account Settings > API Ke
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`new_relic-latest.json`](./OpenAPIs/new_relic-latest.json) | latest (curated) | Actively-maintained spec, reviewed and confirmed already scoped to CRUD, query, and provisioning actions — see breakdown below |
-| [`new_relic-v2.json`](./OpenAPIs/new_relic-v2.json) | v2 | Full, unmodified vendor spec |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`new_relic-latest.json`](./OpenAPIs/new_relic-latest.json) | latest (curated) | 59 | Actively-maintained spec, reviewed and confirmed already scoped to CRUD, query, and provisioning actions — see breakdown below |
+| [`new_relic-v2.json`](./OpenAPIs/new_relic-v2.json) | v2 | 59 | Full, unmodified vendor spec |
 
 ### `new_relic-latest.json`
 

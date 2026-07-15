@@ -39,10 +39,10 @@ Generate a token in the Okta Admin Console under **Security → API → Tokens**
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`okta_management-latest.json`](./OpenAPIs/okta_management-latest.json) | latest (curated) | Trimmed to 65 of 162 upstream operations — see breakdown below |
-| [`okta_management-3.2.0.json`](./OpenAPIs/okta_management-3.2.0.json) | 3.2.0 | Full spec for Okta Identity Governance 3.2.0 (162 operations). |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`okta_management-latest.json`](./OpenAPIs/okta_management-latest.json) | latest (curated) | 65 | Trimmed to 65 of 162 upstream operations — see breakdown below |
+| [`okta_management-3.2.0.json`](./OpenAPIs/okta_management-3.2.0.json) | 3.2.0 | 162 | Full spec for Okta Identity Governance 3.2.0 (162 operations). |
 
 ### `okta_management-latest.json`
 

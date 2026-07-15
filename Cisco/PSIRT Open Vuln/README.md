@@ -37,10 +37,10 @@ Register an app at https://apiconsole.cisco.com with openVuln API access, then o
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`cisco_psirt_openvuln-latest.json`](./OpenAPIs/cisco_psirt_openvuln-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_psirt_openvuln-2.0.1.json`](./OpenAPIs/cisco_psirt_openvuln-2.0.1.json) | 2.0.1 | Full, unmodified vendor spec |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`cisco_psirt_openvuln-latest.json`](./OpenAPIs/cisco_psirt_openvuln-latest.json) | latest (curated) | 30 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_psirt_openvuln-2.0.1.json`](./OpenAPIs/cisco_psirt_openvuln-2.0.1.json) | 2.0.1 | 30 | Full, unmodified vendor spec |
 
 ### `cisco_psirt_openvuln-latest.json`
 

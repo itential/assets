@@ -43,12 +43,12 @@ Obtain a JWT by calling `POST /login` with your Prisma Cloud access key ID and s
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`palo_alto_prisma_cloud_cspm_alerts-latest.json`](./OpenAPIs/palo_alto_prisma_cloud_cspm_alerts-latest.json) | latest (curated) | Actively-maintained spec, left as the full upstream spec — see breakdown below |
-| [`palo_alto_prisma_cloud_cspm_cloud_account_onboarding-latest.json`](./OpenAPIs/palo_alto_prisma_cloud_cspm_cloud_account_onboarding-latest.json) | latest (curated) | Actively-maintained spec, trimmed to 50 of 52 upstream operations — see breakdown below |
-| [`palo_alto_prisma_cloud_cspm_alerts-v1.json`](./OpenAPIs/palo_alto_prisma_cloud_cspm_alerts-v1.json) | v1 | Full spec for the Prisma Cloud CSPM Alerts API v1. |
-| [`palo_alto_prisma_cloud_cspm_cloud_account_onboarding-v1.json`](./OpenAPIs/palo_alto_prisma_cloud_cspm_cloud_account_onboarding-v1.json) | v1 | Full spec for the Prisma Cloud CSPM Cloud Account Onboarding API v1. |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`palo_alto_prisma_cloud_cspm_alerts-latest.json`](./OpenAPIs/palo_alto_prisma_cloud_cspm_alerts-latest.json) | latest (curated) | 25 | Actively-maintained spec, left as the full upstream spec — see breakdown below |
+| [`palo_alto_prisma_cloud_cspm_cloud_account_onboarding-latest.json`](./OpenAPIs/palo_alto_prisma_cloud_cspm_cloud_account_onboarding-latest.json) | latest (curated) | 50 | Actively-maintained spec, trimmed to 50 of 52 upstream operations — see breakdown below |
+| [`palo_alto_prisma_cloud_cspm_alerts-v1.json`](./OpenAPIs/palo_alto_prisma_cloud_cspm_alerts-v1.json) | v1 | 25 | Full spec for the Prisma Cloud CSPM Alerts API v1. |
+| [`palo_alto_prisma_cloud_cspm_cloud_account_onboarding-v1.json`](./OpenAPIs/palo_alto_prisma_cloud_cspm_cloud_account_onboarding-v1.json) | v1 | 52 | Full spec for the Prisma Cloud CSPM Cloud Account Onboarding API v1. |
 
 ### `palo_alto_prisma_cloud_cspm_alerts-latest.json`
 

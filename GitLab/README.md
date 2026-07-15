@@ -75,10 +75,10 @@ Generate a Personal Access Token (or group/project access token) at GitLab → U
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`gitlab_rest_api-latest.json`](./OpenAPIs/gitlab_rest_api-latest.json) | latest (curated) | Trimmed to 133 of 1008 upstream operations covering common CRUD for automation — see breakdown below |
-| [`gitlab_rest_api-v4.json`](./OpenAPIs/gitlab_rest_api-v4.json) | v4 | Full spec for GitLab REST API v4 (1008 operations) |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`gitlab_rest_api-latest.json`](./OpenAPIs/gitlab_rest_api-latest.json) | latest (curated) | 133 | Trimmed to 133 of 1008 upstream operations covering common CRUD for automation — see breakdown below |
+| [`gitlab_rest_api-v4.json`](./OpenAPIs/gitlab_rest_api-v4.json) | v4 | 1008 | Full spec for GitLab REST API v4 (1008 operations) |
 
 ### `gitlab_rest_api-latest.json`
 

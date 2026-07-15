@@ -39,10 +39,10 @@ Use a Kubernetes service account token, a kubeconfig user credential, or a clust
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`kubernetes-latest.json`](./OpenAPIs/kubernetes-latest.json) | latest (curated) | Actively-maintained, trimmed to 257 of 933 upstream operations — see breakdown below |
-| [`kubernetes-v1.10.0.json`](./OpenAPIs/kubernetes-v1.10.0.json) | v1.10.0 | Full, unmodified vendor spec (933 operations) |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`kubernetes-latest.json`](./OpenAPIs/kubernetes-latest.json) | latest (curated) | 257 | Actively-maintained, trimmed to 257 of 933 upstream operations — see breakdown below |
+| [`kubernetes-v1.10.0.json`](./OpenAPIs/kubernetes-v1.10.0.json) | v1.10.0 | 945 | Full, unmodified vendor spec (945 operations) |
 
 ### `kubernetes-latest.json`
 
@@ -62,4 +62,4 @@ Excludes watch/streaming endpoints, exec/attach/portforward/proxy debug endpoint
 
 ### `kubernetes-v1.10.0.json`
 
-Full, unmodified vendor spec for Kubernetes v1.10.0 (933 operations) — the vendor's complete API surface, preserved as-is. See `kubernetes-latest.json` above for the curated subset if you just need common CRUD automation.
+Full, unmodified vendor spec for Kubernetes v1.10.0 (945 operations) — the vendor's complete API surface, preserved as-is. See `kubernetes-latest.json` above for the curated subset if you just need common CRUD automation.

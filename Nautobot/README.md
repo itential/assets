@@ -41,10 +41,10 @@ Generate a token in Nautobot under your user profile → **API Tokens**.
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`nautobot-latest.json`](./OpenAPIs/nautobot-latest.json) | latest (curated) | Trimmed to 363 of 2141 upstream operations — see breakdown below |
-| [`nautobot-2.4.14.json`](./OpenAPIs/nautobot-2.4.14.json) | 2.4.14 | Full spec for Nautobot 2.4.14, including all optional plugin APIs. |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`nautobot-latest.json`](./OpenAPIs/nautobot-latest.json) | latest (curated) | 363 | Trimmed to 363 of 2141 upstream operations — see breakdown below |
+| [`nautobot-2.4.14.json`](./OpenAPIs/nautobot-2.4.14.json) | 2.4.14 | 2141 | Full spec for Nautobot 2.4.14, including all optional plugin APIs. |
 
 ### `nautobot-latest.json`
 

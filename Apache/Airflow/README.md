@@ -39,10 +39,10 @@ Create or manage the account under the Airflow UI's **Admin > Users**.
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`apache_airflow-latest.json`](./OpenAPIs/apache_airflow-latest.json) | latest (curated) | Trimmed to 50 of 73 upstream operations — see breakdown below |
-| [`apache_airflow-2.5.1.json`](./OpenAPIs/apache_airflow-2.5.1.json) | 2.5.1 | Full spec for Apache Airflow 2.5.1 (73 operations) |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`apache_airflow-latest.json`](./OpenAPIs/apache_airflow-latest.json) | latest (curated) | 50 | Trimmed to 50 of 73 upstream operations — see breakdown below |
+| [`apache_airflow-2.5.1.json`](./OpenAPIs/apache_airflow-2.5.1.json) | 2.5.1 | 73 | Full spec for Apache Airflow 2.5.1 (73 operations) |
 
 ### `apache_airflow-latest.json`
 

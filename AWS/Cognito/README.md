@@ -39,10 +39,10 @@ Generate an access key ID and secret access key in the AWS IAM console under you
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`amazon_cognito_user_pools-latest.json`](./OpenAPIs/amazon_cognito_user_pools-latest.json) | latest (curated) | Trimmed to 87 of 101 upstream operations covering common CRUD for automation — see breakdown below |
-| [`amazon_cognito_user_pools-2016-04-18.json`](./OpenAPIs/amazon_cognito_user_pools-2016-04-18.json) | 2016-04-18 | Full spec for the Amazon Cognito User Pools API (2016-04-18). |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`amazon_cognito_user_pools-latest.json`](./OpenAPIs/amazon_cognito_user_pools-latest.json) | latest (curated) | 87 | Trimmed to 87 of 101 upstream operations covering common CRUD for automation — see breakdown below |
+| [`amazon_cognito_user_pools-2016-04-18.json`](./OpenAPIs/amazon_cognito_user_pools-2016-04-18.json) | 2016-04-18 | 101 | Full spec for the Amazon Cognito User Pools API (2016-04-18). |
 
 ### `amazon_cognito_user_pools-latest.json`
 

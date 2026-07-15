@@ -41,10 +41,10 @@ Generate an access key ID and secret access key for an IAM principal with the ap
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`aws_organizations-latest.json`](./OpenAPIs/aws_organizations-latest.json) | latest (curated) | Actively-maintained spec, all operations are genuine CRUD/provisioning actions — see breakdown below |
-| [`aws_organizations-2016-11-28.json`](./OpenAPIs/aws_organizations-2016-11-28.json) | 2016-11-28 | Full, unmodified vendor spec |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`aws_organizations-latest.json`](./OpenAPIs/aws_organizations-latest.json) | latest (curated) | 55 | Actively-maintained spec, all operations are genuine CRUD/provisioning actions — see breakdown below |
+| [`aws_organizations-2016-11-28.json`](./OpenAPIs/aws_organizations-2016-11-28.json) | 2016-11-28 | 55 | Full, unmodified vendor spec |
 
 ### `aws_organizations-latest.json`
 

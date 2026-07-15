@@ -40,11 +40,11 @@ Generate both from Datadog under **Organization Settings → API Keys** and **Ap
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`datadog-latest.json`](./OpenAPIs/datadog-latest.json) | latest (curated) | Actively-maintained, curated for common CRUD for observability automation — see breakdown below |
-| [`datadog-2.0.json`](./OpenAPIs/datadog-2.0.json) | 2.0 | Full spec for Datadog API v2.0. |
-| [`datadog_legacy-1.0.json`](./OpenAPIs/datadog_legacy-1.0.json) | 1.0 | Legacy Datadog API v1.0 spec. |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`datadog-latest.json`](./OpenAPIs/datadog-latest.json) | latest (curated) | 39 | Actively-maintained, curated for common CRUD for observability automation — see breakdown below |
+| [`datadog-2.0.json`](./OpenAPIs/datadog-2.0.json) | 2.0 | 1198 | Full spec for Datadog API v2.0. |
+| [`datadog_legacy-1.0.json`](./OpenAPIs/datadog_legacy-1.0.json) | 1.0 | 235 | Legacy Datadog API v1.0 spec. |
 
 ### `datadog-latest.json`
 

@@ -39,10 +39,10 @@ Generate an access key ID and secret access key for an IAM user or role with the
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`amazon_connect-latest.json`](./OpenAPIs/amazon_connect-latest.json) | latest (curated) | Actively-maintained, trimmed to 96 of 171 upstream operations covering common CRUD for automation — see breakdown below |
-| [`amazon_connect-2017-08-08.json`](./OpenAPIs/amazon_connect-2017-08-08.json) | 2017-08-08 | Full spec for Amazon Connect API version 2017-08-08 (171 operations). |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`amazon_connect-latest.json`](./OpenAPIs/amazon_connect-latest.json) | latest (curated) | 96 | Actively-maintained, trimmed to 96 of 171 upstream operations covering common CRUD for automation — see breakdown below |
+| [`amazon_connect-2017-08-08.json`](./OpenAPIs/amazon_connect-2017-08-08.json) | 2017-08-08 | 171 | Full spec for Amazon Connect API version 2017-08-08 (171 operations). |
 
 ### `amazon_connect-latest.json`
 

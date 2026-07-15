@@ -39,10 +39,10 @@ Generate an access key ID and secret access key in the AWS IAM console under **U
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`aws_secrets_manager-latest.json`](./OpenAPIs/aws_secrets_manager-latest.json) | latest (curated) | Actively-maintained, reviewed and confirmed already scoped to core secret lifecycle management — see breakdown below |
-| [`aws_secrets_manager-2017-10-17.json`](./OpenAPIs/aws_secrets_manager-2017-10-17.json) | 2017-10-17 | Full spec for AWS Secrets Manager API version 2017-10-17. |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`aws_secrets_manager-latest.json`](./OpenAPIs/aws_secrets_manager-latest.json) | latest (curated) | 22 | Actively-maintained, reviewed and confirmed already scoped to core secret lifecycle management — see breakdown below |
+| [`aws_secrets_manager-2017-10-17.json`](./OpenAPIs/aws_secrets_manager-2017-10-17.json) | 2017-10-17 | 22 | Full spec for AWS Secrets Manager API version 2017-10-17. |
 
 ### `aws_secrets_manager-latest.json`
 

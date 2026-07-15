@@ -37,10 +37,10 @@ Obtain a token via the OAuth2 client credentials grant: `POST https://login.micr
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`microsoft_graph_mail-latest.json`](./OpenAPIs/microsoft_graph_mail-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`microsoft_graph_mail-1.0.json`](./OpenAPIs/microsoft_graph_mail-1.0.json) | 1.0 | Full spec for Microsoft Graph Mail v1.0. |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`microsoft_graph_mail-latest.json`](./OpenAPIs/microsoft_graph_mail-latest.json) | latest (curated) | 1 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`microsoft_graph_mail-1.0.json`](./OpenAPIs/microsoft_graph_mail-1.0.json) | 1.0 | 1 | Full spec for Microsoft Graph Mail v1.0. |
 
 ### `microsoft_graph_mail-latest.json`
 

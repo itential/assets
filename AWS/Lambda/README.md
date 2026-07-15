@@ -39,10 +39,10 @@ Generate an access key ID and secret access key for an IAM user or role with the
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`aws_lambda-latest.json`](./OpenAPIs/aws_lambda-latest.json) | latest (curated) | Actively-maintained, curated for common CRUD automation — see breakdown below |
-| [`aws_lambda-2015-03-31.json`](./OpenAPIs/aws_lambda-2015-03-31.json) | 2015-03-31 | Full spec for the AWS Lambda API (2015-03-31). |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`aws_lambda-latest.json`](./OpenAPIs/aws_lambda-latest.json) | latest (curated) | 54 | Actively-maintained, curated for common CRUD automation — see breakdown below |
+| [`aws_lambda-2015-03-31.json`](./OpenAPIs/aws_lambda-2015-03-31.json) | 2015-03-31 | 66 | Full spec for the AWS Lambda API (2015-03-31). |
 
 ### `aws_lambda-latest.json`
 

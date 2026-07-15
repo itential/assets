@@ -42,11 +42,11 @@ Generate a token in NetBox under your user profile → **API Tokens**.
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`netbox-latest.json`](./OpenAPIs/netbox-latest.json) | latest (curated) | Trimmed to 329 of 1194 upstream operations covering common CRUD for network automation — see breakdown below |
-| [`netbox-4.1.json`](./OpenAPIs/netbox-4.1.json) | 4.1 | Full spec for NetBox 4.1. |
-| [`netbox-3.7.8.json`](./OpenAPIs/netbox-3.7.8.json) | 3.7.8 | Full spec for NetBox 3.7.8. |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`netbox-latest.json`](./OpenAPIs/netbox-latest.json) | latest (curated) | 329 | Trimmed to 329 of 1194 upstream operations covering common CRUD for network automation — see breakdown below |
+| [`netbox-4.1.json`](./OpenAPIs/netbox-4.1.json) | 4.1 | 1073 | Full spec for NetBox 4.1. |
+| [`netbox-3.7.8.json`](./OpenAPIs/netbox-3.7.8.json) | 3.7.8 | 893 | Full spec for NetBox 3.7.8. |
 
 ### `netbox-latest.json`
 

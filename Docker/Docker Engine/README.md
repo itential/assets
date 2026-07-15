@@ -39,10 +39,10 @@ Local socket access typically requires no authentication. For remote/production 
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`docker_engine-latest.json`](./OpenAPIs/docker_engine-latest.json) | latest (curated) | Actively-maintained spec, trimmed to 52 of 105 upstream operations covering common CRUD for automation — see breakdown below |
-| [`docker_engine-1.33.json`](./OpenAPIs/docker_engine-1.33.json) | 1.33 | Full spec for Docker Engine API 1.33 (105 operations) |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`docker_engine-latest.json`](./OpenAPIs/docker_engine-latest.json) | latest (curated) | 52 | Actively-maintained spec, trimmed to 52 of 105 upstream operations covering common CRUD for automation — see breakdown below |
+| [`docker_engine-1.33.json`](./OpenAPIs/docker_engine-1.33.json) | 1.33 | 105 | Full spec for Docker Engine API 1.33 (105 operations) |
 
 ### `docker_engine-latest.json`
 

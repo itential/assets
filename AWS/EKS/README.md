@@ -37,10 +37,10 @@ Generate an AWS access key ID and secret access key for an IAM principal with `e
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`amazon_eks-latest.json`](./OpenAPIs/amazon_eks-latest.json) | latest (curated) | Actively-maintained, full spec kept as-is (no trimming needed) — see breakdown below |
-| [`amazon_eks-2017-11-01.json`](./OpenAPIs/amazon_eks-2017-11-01.json) | 2017-11-01 | Full spec for the Amazon EKS 2017-11-01 API. |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`amazon_eks-latest.json`](./OpenAPIs/amazon_eks-latest.json) | latest (curated) | 35 | Actively-maintained, full spec kept as-is (no trimming needed) — see breakdown below |
+| [`amazon_eks-2017-11-01.json`](./OpenAPIs/amazon_eks-2017-11-01.json) | 2017-11-01 | 35 | Full spec for the Amazon EKS 2017-11-01 API. |
 
 ### `amazon_eks-latest.json`
 

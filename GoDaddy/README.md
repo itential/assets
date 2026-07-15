@@ -37,10 +37,10 @@ Generate an API key pair at https://developer.godaddy.com/keys.
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`godaddy_domains-latest.json`](./OpenAPIs/godaddy_domains-latest.json) | latest (curated) | Trimmed to 31 of 42 upstream operations covering common CRUD for domain automation — see breakdown below |
-| [`godaddy_domains-1.0.0.json`](./OpenAPIs/godaddy_domains-1.0.0.json) | 1.0.0 | Full spec for the GoDaddy Domains API, version 1.0.0. |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`godaddy_domains-latest.json`](./OpenAPIs/godaddy_domains-latest.json) | latest (curated) | 31 | Trimmed to 31 of 42 upstream operations covering common CRUD for domain automation — see breakdown below |
+| [`godaddy_domains-1.0.0.json`](./OpenAPIs/godaddy_domains-1.0.0.json) | 1.0.0 | 42 | Full spec for the GoDaddy Domains API, version 1.0.0. |
 
 ### `godaddy_domains-latest.json`
 

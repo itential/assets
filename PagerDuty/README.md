@@ -39,10 +39,10 @@ Generate a REST API key in PagerDuty under **My Profile > User Settings > API Ac
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`pagerduty-latest.json`](./OpenAPIs/pagerduty-latest.json) | latest (curated) | Actively-maintained spec, trimmed to 88 of 425 upstream operations — see breakdown below |
-| [`pagerduty-2.0.0.json`](./OpenAPIs/pagerduty-2.0.0.json) | 2.0.0 | Full spec for PagerDuty REST API 2.0.0 (425 operations) |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`pagerduty-latest.json`](./OpenAPIs/pagerduty-latest.json) | latest (curated) | 88 | Actively-maintained spec, trimmed to 88 of 425 upstream operations — see breakdown below |
+| [`pagerduty-2.0.0.json`](./OpenAPIs/pagerduty-2.0.0.json) | 2.0.0 | 425 | Full spec for PagerDuty REST API 2.0.0 (425 operations) |
 
 ### `pagerduty-latest.json`
 

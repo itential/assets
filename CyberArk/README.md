@@ -39,10 +39,10 @@ Conjur also exposes dedicated authenticator endpoints (`/authn`, `/authn-ldap`, 
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`conjur-latest.json`](./OpenAPIs/conjur-latest.json) | latest (curated) | Trimmed to 34 of 38 upstream operations — see breakdown below |
-| [`conjur-5.3.2.json`](./OpenAPIs/conjur-5.3.2.json) | 5.3.2 | Full spec for Conjur Open Source 5.3.2. |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`conjur-latest.json`](./OpenAPIs/conjur-latest.json) | latest (curated) | 34 | Trimmed to 34 of 38 upstream operations — see breakdown below |
+| [`conjur-5.3.2.json`](./OpenAPIs/conjur-5.3.2.json) | 5.3.2 | 38 | Full spec for Conjur Open Source 5.3.2. |
 
 ### `conjur-latest.json`
 

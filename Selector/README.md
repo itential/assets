@@ -41,12 +41,12 @@ Obtain a token from your Selector AI instance credentials. See https://docs.sele
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`selector_ai_metastore_inventory-latest.json`](./OpenAPIs/selector_ai_metastore_inventory-latest.json) | latest (curated) | Trimmed to 15 of 33 upstream operations — see breakdown below |
-| [`selector_ai_query-latest.json`](./OpenAPIs/selector_ai_query-latest.json) | latest (curated) | Single-purpose, reviewed and confirmed already scoped — see breakdown below |
-| [`selector_ai_metastore_inventory-1.0.0.json`](./OpenAPIs/selector_ai_metastore_inventory-1.0.0.json) | 1.0.0 | Full, unmodified vendor spec |
-| [`selector_ai_query-1.0.0.json`](./OpenAPIs/selector_ai_query-1.0.0.json) | 1.0.0 | Full, unmodified vendor spec |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`selector_ai_metastore_inventory-latest.json`](./OpenAPIs/selector_ai_metastore_inventory-latest.json) | latest (curated) | 15 | Trimmed to 15 of 33 upstream operations — see breakdown below |
+| [`selector_ai_query-latest.json`](./OpenAPIs/selector_ai_query-latest.json) | latest (curated) | 1 | Single-purpose, reviewed and confirmed already scoped — see breakdown below |
+| [`selector_ai_metastore_inventory-1.0.0.json`](./OpenAPIs/selector_ai_metastore_inventory-1.0.0.json) | 1.0.0 | 33 | Full, unmodified vendor spec |
+| [`selector_ai_query-1.0.0.json`](./OpenAPIs/selector_ai_query-1.0.0.json) | 1.0.0 | 1 | Full, unmodified vendor spec |
 
 ### `selector_ai_metastore_inventory-latest.json`
 

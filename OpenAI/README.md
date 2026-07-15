@@ -39,10 +39,10 @@ Generate an API key at [platform.openai.com/api-keys](https://platform.openai.co
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`openai-latest.json`](./OpenAPIs/openai-latest.json) | latest (curated) | Trimmed to 84 of 242 upstream operations — see breakdown below |
-| [`openai-2.3.0.json`](./OpenAPIs/openai-2.3.0.json) | 2.3.0 | Full, unmodified vendor spec |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`openai-latest.json`](./OpenAPIs/openai-latest.json) | latest (curated) | 84 | Trimmed to 84 of 242 upstream operations — see breakdown below |
+| [`openai-2.3.0.json`](./OpenAPIs/openai-2.3.0.json) | 2.3.0 | 242 | Full, unmodified vendor spec |
 
 ### `openai-latest.json`
 

@@ -39,10 +39,10 @@ Generate a token by issuing `POST /api/v2/tokens/` with your AWX username and pa
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`ansible_awx_tower-latest.json`](./OpenAPIs/ansible_awx_tower-latest.json) | latest (curated) | Trimmed to 277 of 631 upstream operations — see breakdown below |
-| [`ansible_awx_tower-v2.json`](./OpenAPIs/ansible_awx_tower-v2.json) | v2 | Full, unmodified vendor spec |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`ansible_awx_tower-latest.json`](./OpenAPIs/ansible_awx_tower-latest.json) | latest (curated) | 277 | Trimmed to 277 of 631 upstream operations — see breakdown below |
+| [`ansible_awx_tower-v2.json`](./OpenAPIs/ansible_awx_tower-v2.json) | v2 | 631 | Full, unmodified vendor spec |
 
 ### `ansible_awx_tower-latest.json`
 

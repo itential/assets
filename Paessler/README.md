@@ -39,10 +39,10 @@ Generate a token in PRTG under **Setup > Account Settings > My Account > API Tok
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`paessler_prtg-latest.json`](./OpenAPIs/paessler_prtg-latest.json) | latest (curated) | Actively-maintained spec, trimmed to 77 of 115 upstream operations — see breakdown below |
-| [`paessler_prtg-2.0.json`](./OpenAPIs/paessler_prtg-2.0.json) | 2.0 | Full spec for PRTG REST API v2.0. |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`paessler_prtg-latest.json`](./OpenAPIs/paessler_prtg-latest.json) | latest (curated) | 77 | Actively-maintained spec, trimmed to 77 of 115 upstream operations — see breakdown below |
+| [`paessler_prtg-2.0.json`](./OpenAPIs/paessler_prtg-2.0.json) | 2.0 | 115 | Full spec for PRTG REST API v2.0. |
 
 ### `paessler_prtg-latest.json`
 

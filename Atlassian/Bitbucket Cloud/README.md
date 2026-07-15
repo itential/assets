@@ -41,10 +41,10 @@ Generate an App Password in Bitbucket under **Personal Settings > App passwords*
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`atlassian_bitbucket_cloud-latest.json`](./OpenAPIs/atlassian_bitbucket_cloud-latest.json) | latest (curated) | Trimmed to 91 of 318 upstream operations — see breakdown below |
-| [`atlassian_bitbucket_cloud-2.0.json`](./OpenAPIs/atlassian_bitbucket_cloud-2.0.json) | 2.0 | Full spec for Bitbucket Cloud REST API 2.0 (Swagger 2.0, as published by the vendor) |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`atlassian_bitbucket_cloud-latest.json`](./OpenAPIs/atlassian_bitbucket_cloud-latest.json) | latest (curated) | 91 | Trimmed to 91 of 318 upstream operations — see breakdown below |
+| [`atlassian_bitbucket_cloud-2.0.json`](./OpenAPIs/atlassian_bitbucket_cloud-2.0.json) | 2.0 | 318 | Full spec for Bitbucket Cloud REST API 2.0 (Swagger 2.0, as published by the vendor) |
 
 ### `atlassian_bitbucket_cloud-latest.json`
 

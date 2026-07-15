@@ -39,10 +39,10 @@ Generate an access key ID and secret access key in the AWS Console under **IAM >
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`aws_cloudformation-latest.json`](./OpenAPIs/aws_cloudformation-latest.json) | latest (curated) | Trimmed to 74 of 132 upstream operations — see breakdown below |
-| [`aws_cloudformation-2010-05-15.json`](./OpenAPIs/aws_cloudformation-2010-05-15.json) | 2010-05-15 | Full spec for the CloudFormation 2010-05-15 API (132 operations). |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`aws_cloudformation-latest.json`](./OpenAPIs/aws_cloudformation-latest.json) | latest (curated) | 74 | Trimmed to 74 of 132 upstream operations — see breakdown below |
+| [`aws_cloudformation-2010-05-15.json`](./OpenAPIs/aws_cloudformation-2010-05-15.json) | 2010-05-15 | 132 | Full spec for the CloudFormation 2010-05-15 API (132 operations). |
 
 ### `aws_cloudformation-latest.json`
 

@@ -39,10 +39,10 @@ Generate an API token in the Mist dashboard under **Organization → Settings �
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`juniper_mist-latest.json`](./OpenAPIs/juniper_mist-latest.json) | latest (curated) | Trimmed to 137 of 1011 upstream operations — see breakdown below |
-| [`juniper_mist-2509.1.1.json`](./OpenAPIs/juniper_mist-2509.1.1.json) | 2509.1.1 | Full spec for Juniper Mist Cloud API 2509.1.1 (1011 operations) |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`juniper_mist-latest.json`](./OpenAPIs/juniper_mist-latest.json) | latest (curated) | 137 | Trimmed to 137 of 1011 upstream operations — see breakdown below |
+| [`juniper_mist-2509.1.1.json`](./OpenAPIs/juniper_mist-2509.1.1.json) | 2509.1.1 | 1011 | Full spec for Juniper Mist Cloud API 2509.1.1 (1011 operations) |
 
 ### `juniper_mist-latest.json`
 

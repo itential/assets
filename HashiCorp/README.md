@@ -39,10 +39,10 @@ Obtain a client token by authenticating against your configured auth method (use
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`hashicorp_vault-latest.json`](./OpenAPIs/hashicorp_vault-latest.json) | latest (curated) | Trimmed to 193 of 1049 upstream operations — see breakdown below |
-| [`hashicorp_vault-1.15.0.json`](./OpenAPIs/hashicorp_vault-1.15.0.json) | 1.15.0 | Full spec for HashiCorp Vault 1.15.0 (1049 operations). |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`hashicorp_vault-latest.json`](./OpenAPIs/hashicorp_vault-latest.json) | latest (curated) | 193 | Trimmed to 193 of 1049 upstream operations — see breakdown below |
+| [`hashicorp_vault-1.15.0.json`](./OpenAPIs/hashicorp_vault-1.15.0.json) | 1.15.0 | 1049 | Full spec for HashiCorp Vault 1.15.0 (1049 operations). |
 
 ### `hashicorp_vault-latest.json`
 

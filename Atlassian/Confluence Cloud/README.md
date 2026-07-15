@@ -39,10 +39,10 @@ Generate an API token at https://id.atlassian.com/manage-profile/security/api-to
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`atlassian_confluence_cloud-latest.json`](./OpenAPIs/atlassian_confluence_cloud-latest.json) | latest (curated) | Actively-maintained spec, trimmed to 104 of 172 upstream operations covering common CRUD for automation — see breakdown below |
-| [`atlassian_confluence_cloud-1.0.0.json`](./OpenAPIs/atlassian_confluence_cloud-1.0.0.json) | 1.0.0 | Full spec for Confluence Cloud REST API v1 |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`atlassian_confluence_cloud-latest.json`](./OpenAPIs/atlassian_confluence_cloud-latest.json) | latest (curated) | 104 | Actively-maintained spec, trimmed to 104 of 172 upstream operations covering common CRUD for automation — see breakdown below |
+| [`atlassian_confluence_cloud-1.0.0.json`](./OpenAPIs/atlassian_confluence_cloud-1.0.0.json) | 1.0.0 | 174 | Full spec for Confluence Cloud REST API v1 |
 
 ### `atlassian_confluence_cloud-latest.json`
 

@@ -37,10 +37,10 @@ Authorization: Basic <base64(username:password_or_token)>
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`atlassian_confluence_server_data_center-latest.json`](./OpenAPIs/atlassian_confluence_server_data_center-latest.json) | latest (curated) | Trimmed to 74 of 111 upstream operations — see breakdown below |
-| [`atlassian_confluence_server_data_center-9.0.0.json`](./OpenAPIs/atlassian_confluence_server_data_center-9.0.0.json) | 9.0.0 | Full spec for Confluence Server & Data Center 9.0.0. |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`atlassian_confluence_server_data_center-latest.json`](./OpenAPIs/atlassian_confluence_server_data_center-latest.json) | latest (curated) | 74 | Trimmed to 74 of 111 upstream operations — see breakdown below |
+| [`atlassian_confluence_server_data_center-9.0.0.json`](./OpenAPIs/atlassian_confluence_server_data_center-9.0.0.json) | 9.0.0 | 111 | Full spec for Confluence Server & Data Center 9.0.0. |
 
 ### `atlassian_confluence_server_data_center-latest.json`
 

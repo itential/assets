@@ -42,12 +42,12 @@ Paste the JWT as the bearer token. JWTs expire and must be refreshed manually un
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`cisco_crosswork_network_controller_device_management-latest.json`](./OpenAPIs/cisco_crosswork_network_controller_device_management-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_crosswork_network_controller_l3vpn-latest.json`](./OpenAPIs/cisco_crosswork_network_controller_l3vpn-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`cisco_crosswork_network_controller_device_management-7.2.0.json`](./OpenAPIs/cisco_crosswork_network_controller_device_management-7.2.0.json) | 7.2.0 | Full Device Management spec for CNC 7.2.0. |
-| [`cisco_crosswork_network_controller_l3vpn-7.2.0.json`](./OpenAPIs/cisco_crosswork_network_controller_l3vpn-7.2.0.json) | 7.2.0 | Full L3VPN spec for CNC 7.2.0. |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`cisco_crosswork_network_controller_device_management-latest.json`](./OpenAPIs/cisco_crosswork_network_controller_device_management-latest.json) | latest (curated) | 1 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_crosswork_network_controller_l3vpn-latest.json`](./OpenAPIs/cisco_crosswork_network_controller_l3vpn-latest.json) | latest (curated) | 4 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`cisco_crosswork_network_controller_device_management-7.2.0.json`](./OpenAPIs/cisco_crosswork_network_controller_device_management-7.2.0.json) | 7.2.0 | 1 | Full Device Management spec for CNC 7.2.0. |
+| [`cisco_crosswork_network_controller_l3vpn-7.2.0.json`](./OpenAPIs/cisco_crosswork_network_controller_l3vpn-7.2.0.json) | 7.2.0 | 4 | Full L3VPN spec for CNC 7.2.0. |
 
 ### `cisco_crosswork_network_controller_device_management-latest.json`
 

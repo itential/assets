@@ -78,10 +78,10 @@ Generate an API key in the Meraki Dashboard under your user profile → **My Pro
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`cisco_meraki_dashboard-latest.json`](./OpenAPIs/cisco_meraki_dashboard-latest.json) | latest (curated) | Actively-maintained, trimmed to 357 of 729 upstream operations covering common CRUD for network automation — see breakdown below |
-| [`cisco_meraki_dashboard-1.48.0.json`](./OpenAPIs/cisco_meraki_dashboard-1.48.0.json) | 1.48.0 | Full, unmodified vendor spec |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`cisco_meraki_dashboard-latest.json`](./OpenAPIs/cisco_meraki_dashboard-latest.json) | latest (curated) | 357 | Actively-maintained, trimmed to 357 of 729 upstream operations covering common CRUD for network automation — see breakdown below |
+| [`cisco_meraki_dashboard-1.48.0.json`](./OpenAPIs/cisco_meraki_dashboard-1.48.0.json) | 1.48.0 | 729 | Full, unmodified vendor spec |
 
 ### `cisco_meraki_dashboard-latest.json`
 

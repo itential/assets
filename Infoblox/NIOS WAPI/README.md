@@ -89,18 +89,18 @@ All workflows read the adapter instance name from the `adapterId` job variable �
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`infoblox_nios_wapi-latest.json`](./OpenAPIs/infoblox_nios_wapi-latest.json) | latest (curated) | General-purpose spec — see breakdown below |
-| [`infoblox_nios_wapi_dhcp-latest.json`](./OpenAPIs/infoblox_nios_wapi_dhcp-latest.json) | latest (curated) | DHCP domain spec — see breakdown below |
-| [`infoblox_nios_wapi_dns-latest.json`](./OpenAPIs/infoblox_nios_wapi_dns-latest.json) | latest (curated) | DNS domain spec — see breakdown below |
-| [`infoblox_nios_wapi_grid-latest.json`](./OpenAPIs/infoblox_nios_wapi_grid-latest.json) | latest (curated) | Grid domain spec — see breakdown below |
-| [`infoblox_nios_wapi_ipam-latest.json`](./OpenAPIs/infoblox_nios_wapi_ipam-latest.json) | latest (curated) | IPAM domain spec — see breakdown below |
-| [`infoblox_nios_wapi-1.0.1.json`](./OpenAPIs/infoblox_nios_wapi-1.0.1.json) | 1.0.1 | Full general-purpose spec for WAPI 1.0.1 (168 operations). |
-| [`infoblox_nios_wapi_dhcp-2.14.json`](./OpenAPIs/infoblox_nios_wapi_dhcp-2.14.json) | 2.14 | Full DHCP domain spec for WAPI 2.14 (132 operations). |
-| [`infoblox_nios_wapi_dns-2.14.json`](./OpenAPIs/infoblox_nios_wapi_dns-2.14.json) | 2.14 | Full DNS domain spec for WAPI 2.14 (241 operations). |
-| [`infoblox_nios_wapi_grid-2.14.json`](./OpenAPIs/infoblox_nios_wapi_grid-2.14.json) | 2.14 | Full Grid domain spec for WAPI 2.14 (183 operations). |
-| [`infoblox_nios_wapi_ipam-2.14.json`](./OpenAPIs/infoblox_nios_wapi_ipam-2.14.json) | 2.14 | Full IPAM domain spec for WAPI 2.14 (104 operations). |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`infoblox_nios_wapi-latest.json`](./OpenAPIs/infoblox_nios_wapi-latest.json) | latest (curated) | 102 | General-purpose spec — see breakdown below |
+| [`infoblox_nios_wapi_dhcp-latest.json`](./OpenAPIs/infoblox_nios_wapi_dhcp-latest.json) | latest (curated) | 40 | DHCP domain spec — see breakdown below |
+| [`infoblox_nios_wapi_dns-latest.json`](./OpenAPIs/infoblox_nios_wapi_dns-latest.json) | latest (curated) | 71 | DNS domain spec — see breakdown below |
+| [`infoblox_nios_wapi_grid-latest.json`](./OpenAPIs/infoblox_nios_wapi_grid-latest.json) | latest (curated) | 25 | Grid domain spec — see breakdown below |
+| [`infoblox_nios_wapi_ipam-latest.json`](./OpenAPIs/infoblox_nios_wapi_ipam-latest.json) | latest (curated) | 63 | IPAM domain spec — see breakdown below |
+| [`infoblox_nios_wapi-1.0.1.json`](./OpenAPIs/infoblox_nios_wapi-1.0.1.json) | 1.0.1 | 321 | Full general-purpose spec for WAPI 1.0.1 (321 operations). |
+| [`infoblox_nios_wapi_dhcp-2.14.json`](./OpenAPIs/infoblox_nios_wapi_dhcp-2.14.json) | 2.14 | 132 | Full DHCP domain spec for WAPI 2.14 (132 operations). |
+| [`infoblox_nios_wapi_dns-2.14.json`](./OpenAPIs/infoblox_nios_wapi_dns-2.14.json) | 2.14 | 241 | Full DNS domain spec for WAPI 2.14 (241 operations). |
+| [`infoblox_nios_wapi_grid-2.14.json`](./OpenAPIs/infoblox_nios_wapi_grid-2.14.json) | 2.14 | 183 | Full Grid domain spec for WAPI 2.14 (183 operations). |
+| [`infoblox_nios_wapi_ipam-2.14.json`](./OpenAPIs/infoblox_nios_wapi_ipam-2.14.json) | 2.14 | 104 | Full IPAM domain spec for WAPI 2.14 (104 operations). |
 
 ### `infoblox_nios_wapi-latest.json`
 
@@ -118,7 +118,7 @@ Resources included, by category:
 
 ### `infoblox_nios_wapi-1.0.1.json`
 
-Full, unmodified vendor spec for WAPI 1.0.1 (168 operations) — the vendor's complete API surface, preserved as-is. See `infoblox_nios_wapi-latest.json` above for the curated subset if you just need common CRUD automation.
+Full, unmodified vendor spec for WAPI 1.0.1 (321 operations) — the vendor's complete API surface, preserved as-is. See `infoblox_nios_wapi-latest.json` above for the curated subset if you just need common CRUD automation.
 
 ### `infoblox_nios_wapi_dhcp-latest.json`
 

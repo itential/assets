@@ -39,10 +39,10 @@ Generate an access key ID and secret access key in the AWS IAM console under you
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`amazon_s3-latest.json`](./OpenAPIs/amazon_s3-latest.json) | latest (curated) | Trimmed to 54 of 97 upstream operations covering common CRUD for automation — see breakdown below |
-| [`amazon_s3-2006-03-01.json`](./OpenAPIs/amazon_s3-2006-03-01.json) | 2006-03-01 | Full spec for the Amazon S3 API (2006-03-01). |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`amazon_s3-latest.json`](./OpenAPIs/amazon_s3-latest.json) | latest (curated) | 54 | Trimmed to 54 of 97 upstream operations covering common CRUD for automation — see breakdown below |
+| [`amazon_s3-2006-03-01.json`](./OpenAPIs/amazon_s3-2006-03-01.json) | 2006-03-01 | 97 | Full spec for the Amazon S3 API (2006-03-01). |
 
 ### `amazon_s3-latest.json`
 

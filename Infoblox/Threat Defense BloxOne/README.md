@@ -39,10 +39,10 @@ Generate an API key in the Infoblox Cloud Services Portal under **Administration
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`infoblox_threat_defense_bloxone-latest.json`](./OpenAPIs/infoblox_threat_defense_bloxone-latest.json) | latest (curated) | Trimmed to 60 of 61 upstream operations — see breakdown below |
-| [`infoblox_threat_defense_bloxone-1.json`](./OpenAPIs/infoblox_threat_defense_bloxone-1.json) | 1 | Full, unmodified vendor spec |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`infoblox_threat_defense_bloxone-latest.json`](./OpenAPIs/infoblox_threat_defense_bloxone-latest.json) | latest (curated) | 60 | Trimmed to 60 of 61 upstream operations — see breakdown below |
+| [`infoblox_threat_defense_bloxone-1.json`](./OpenAPIs/infoblox_threat_defense_bloxone-1.json) | 1 | 61 | Full, unmodified vendor spec |
 
 ### `infoblox_threat_defense_bloxone-latest.json`
 

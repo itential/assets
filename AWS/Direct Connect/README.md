@@ -39,10 +39,10 @@ Sign requests with an AWS access key ID and secret access key that has IAM permi
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`aws_direct_connect-latest.json`](./OpenAPIs/aws_direct_connect-latest.json) | latest (curated) | Actively-maintained, curated for common CRUD automation — see breakdown below |
-| [`aws_direct_connect-2012-10-25.json`](./OpenAPIs/aws_direct_connect-2012-10-25.json) | 2012-10-25 | Full, unmodified vendor spec (63 operations) |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`aws_direct_connect-latest.json`](./OpenAPIs/aws_direct_connect-latest.json) | latest (curated) | 63 | Actively-maintained, curated for common CRUD automation — see breakdown below |
+| [`aws_direct_connect-2012-10-25.json`](./OpenAPIs/aws_direct_connect-2012-10-25.json) | 2012-10-25 | 63 | Full, unmodified vendor spec (63 operations) |
 
 ### `aws_direct_connect-latest.json`
 

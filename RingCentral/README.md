@@ -39,10 +39,10 @@ Obtain an access token via RingCentral's OAuth2 flow (client credentials or JWT 
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`ringcentral-latest.json`](./OpenAPIs/ringcentral-latest.json) | latest (curated) | Trimmed to 153 of 312 upstream operations — see breakdown below |
-| [`ringcentral-1.0.39.json`](./OpenAPIs/ringcentral-1.0.39.json) | 1.0.39 | Full spec for RingCentral Connect Platform API 1.0.39 (312 operations). |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`ringcentral-latest.json`](./OpenAPIs/ringcentral-latest.json) | latest (curated) | 153 | Trimmed to 153 of 312 upstream operations — see breakdown below |
+| [`ringcentral-1.0.39.json`](./OpenAPIs/ringcentral-1.0.39.json) | 1.0.39 | 312 | Full spec for RingCentral Connect Platform API 1.0.39 (312 operations). |
 
 ### `ringcentral-latest.json`
 

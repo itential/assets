@@ -39,10 +39,10 @@ Generate EdgeGrid credentials in Akamai Control Center (Identity and Access Mana
 
 ## OpenAPIs
 
-| Spec | Version | Description |
-|---|---|---|
-| [`akamai_apis-latest.json`](./OpenAPIs/akamai_apis-latest.json) | latest (curated) | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`akamai_apis-v2.json`](./OpenAPIs/akamai_apis-v2.json) | v2 | Full spec for the Akamai Edge DNS API, version v2. |
+| Spec | Version | Operations | Description |
+|---|---|---|---|
+| [`akamai_apis-latest.json`](./OpenAPIs/akamai_apis-latest.json) | latest (curated) | 60 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`akamai_apis-v2.json`](./OpenAPIs/akamai_apis-v2.json) | v2 | 60 | Full spec for the Akamai Edge DNS API, version v2. |
 
 ### `akamai_apis-latest.json`
 
