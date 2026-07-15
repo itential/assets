@@ -1,15 +1,34 @@
 # Juniper JUNOS
 
-Assets for the Itential Platform — Juniper JUNOS device automation using NETCONF.
+Juniper JUNOS is the network operating system running Juniper's routers, switches, and security devices — a single FreeBSD-based codebase with a hierarchical, transactional configuration model exposed over NETCONF.
 
-**Requirements:** Itential Platform >= 6.4 · Itential Automation Gateway >= 5.4
+This project provides a NETCONF-based device driver, a Studio Project covering software upgrade, port turn-up, golden configuration compliance, and inventory management, plus golden configuration trees and a configuration parser for JUNOS `set`-format lines — see **Device Drivers**, **Projects**, and **Golden Configurations** below.
+
+**Requirements:** Itential Platform >= 6.4 · Itential Gateway >= 5.4
+
+## Table of Contents
+
+- [Contents](#contents)
+- [Inventory Manager Configuration](#inventory-manager-configuration)
+  - [Action Configuration](#action-configuration)
+  - [Node Attributes](#node-attributes)
+- [Device Drivers](#device-drivers)
+  - [netconf-python](#netconf-python)
+- [Projects](#projects)
+  - [Juniper JUNOS](#juniper-junos-1)
+- [Configuration Parsers](#configuration-parsers)
+  - [juniper-junos-set](#juniper-junos-set)
+- [Golden Configurations](#golden-configurations)
+  - [Juniper JUNOS set](#juniper-junos-set-1)
+  - [Juniper JUNOS text - Jinja2](#juniper-junos-text---jinja2)
+  - [Juniper JUNOS text - Simple](#juniper-junos-text---simple)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
-| [device-drivers/netconf-python](./device-drivers/netconf-python/) | IAG5 Python NETCONF driver — is-alive, run-command, get-config, send-command, reboot |
-| [Projects/Juniper JUNOS](./Projects/Juniper%20JUNOS.project.json) | IAG5 project — software upgrade, port turn-up, push configuration, command runner |
+| [device-drivers/netconf-python](./device-drivers/netconf-python/) | IG5 Python NETCONF driver — is-alive, run-command, get-config, send-command, reboot |
+| [Projects/Juniper JUNOS](./Projects/Juniper%20JUNOS.project.json) | IG5 project — software upgrade, port turn-up, push configuration, command runner |
 | [Configuration Parsers/juniper-junos-set.json](./Configuration%20Parsers/juniper-junos-set.json) | Config Manager parser defining the `juniper-junos-set` device type |
 | [Golden Configurations/Juniper JUNOS set](./Golden%20Configurations/Juniper%20JUNOS%20set.json) | Golden config tree using JUNOS `set`-format lines — requires `juniper-junos-set` parser |
 | [Golden Configurations/Juniper JUNOS text - Jinja2](./Golden%20Configurations/Juniper%20JUNOS%20text%20-%20Jinja2.json) | Golden config tree using `text`-format lines with Jinja2 templates for flexible value matching |
@@ -27,7 +46,7 @@ configuration in a specific format (`xml`, `text`, `set`, `json`).
 ### Action Configuration
 
 Wire the four broker contracts to their `junos-netconf-*` services when creating or
-updating an inventory. Replace `your-cluster-id` with the `clusterId` of your IAG5 instance.
+updating an inventory. Replace `your-cluster-id` with the `clusterId` of your IG5 instance.
 
 ```json
 {
@@ -72,7 +91,7 @@ updating an inventory. Replace `your-cluster-id` with the `clusterId` of your IA
 }
 ```
 
-The `name` field is the broker contract the platform calls. The `serviceName` is the IAG5
+The `name` field is the broker contract the platform calls. The `serviceName` is the IG5
 service that handles it. They do not need to match — the mapping is the bridge.
 
 ### Node Attributes
@@ -114,7 +133,7 @@ Devices use NETCONF over SSH (port 830). Set these attributes on each node in In
 > set system services netconf ssh
 > commit
 > ```
-> TCP/830 must be reachable from the IAG5 host.
+> TCP/830 must be reachable from the IG5 host.
 
 ---
 
@@ -122,13 +141,13 @@ Devices use NETCONF over SSH (port 830). Set these attributes on each node in In
 
 ### netconf-python
 
-A native Python NETCONF driver for IAG5. Use this for any JUNOS operation that would
+A native Python NETCONF driver for IG5. Use this for any JUNOS operation that would
 drop a CLI/SSH session mid-response — software installs and reboots in particular.
 
 See [device-drivers/netconf-python/README.md](./device-drivers/netconf-python/README.md)
 for full documentation including all operations, locking behavior, and local testing.
 
-**Quick start — register services in IAG5:**
+**Quick start — register services in IG5:**
 
 ```bash
 iagctl db import device-drivers/netconf-python/import.yaml --force
@@ -139,7 +158,7 @@ Or copy the `services` and `decorators` blocks from
 
 **Registered services:**
 
-Four services implement the IAG5 device broker input/output contracts and are called
+Four services implement the IG5 device broker input/output contracts and are called
 directly by the gateway adapter (is-alive checks, Config Manager remediation, etc.):
 
 | Service | Broker contract | Notes |
@@ -166,7 +185,7 @@ Use them in workflow tasks to give operators structured, typed inputs:
 
 ### Juniper JUNOS
 
-An IAG5 project for Juniper JUNOS device automation via NETCONF, organized into three folders.
+An IG5 project for Juniper JUNOS device automation via NETCONF, organized into three folders.
 
 **Software Upgrade**
 - **JUNOS Upgrade** — backs up the running config, stages the image, verifies SHA-256, runs pre/post checks, installs, and reboots
@@ -195,7 +214,7 @@ An IAG5 project for Juniper JUNOS device automation via NETCONF, organized into 
 > **Before running:** Ensure the target interface supports VLAN tagging and the security zone
 > already exists on the device. The form's `zone` field must match an existing zone name exactly.
 
-**Dependencies:** `junos-netconf-*` services registered in IAG5 (see Device Drivers above)
+**Dependencies:** `junos-netconf-*` services registered in IG5 (see Device Drivers above)
 
 ---
 
@@ -230,7 +249,7 @@ via the `junos-netconf-set-config` service.
 > first (see Configuration Parsers above). Then update `"devices"` in the root node to
 > match your Inventory Manager group name and device name.
 
-**Dependencies:** `juniper-junos-set` parser · Config Manager enabled · `junos-netconf-set-config` registered in IAG5
+**Dependencies:** `juniper-junos-set` parser · Config Manager enabled · `junos-netconf-set-config` registered in IG5
 
 ### Juniper JUNOS text - Jinja2
 
