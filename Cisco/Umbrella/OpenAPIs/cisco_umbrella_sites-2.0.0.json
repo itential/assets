@@ -1,0 +1,727 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Cisco Umbrella — Sites",
+    "version": "2.0.0",
+    "x-vendor-api-version": "2.0.0",
+    "description": "Cisco Umbrella Sites API — Create and manage the sites in your organization.\n\nAuthentication: OAuth2 Client Credentials — obtain a client key and secret from Cisco Umbrella Admin → API Keys → Umbrella API. The token endpoint requires the client credentials as HTTP Basic auth on the Authorization header — on the Integration instance, set auth_method to client_secret_basic (defaults to client_secret_post) and Itential Platform builds this header automatically from the plain client_id/client_secret values.\n\nSource: https://developer.cisco.com/docs/cloud-security/"
+  },
+  "servers": [
+    {
+      "url": "https://api.umbrella.com/{basePath}",
+      "variables": {
+        "basePath": {
+          "default": "deployments/v2"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "oauthFlow": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Sites"
+    },
+    {
+      "name": "Umbrella"
+    }
+  ],
+  "paths": {
+    "/sites": {
+      "post": {
+        "tags": [
+          "Sites",
+          "Umbrella"
+        ],
+        "description": "Create a site.",
+        "summary": "Create Site",
+        "operationId": "createSite",
+        "security": [
+          {
+            "oauthFlow": [
+              "deployments.sites:write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the site. The name is a sequence of characters with a length from 1 through 255.",
+                    "minLength": 1,
+                    "maxLength": 255
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "name"
+                ]
+              },
+              "example": {
+                "name": "A site name"
+              }
+            }
+          },
+          "description": "Register a site."
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteObject"
+                },
+                "example": {
+                  "originId": 1234,
+                  "name": "Name of the site",
+                  "siteId": 14,
+                  "isDefault": false,
+                  "type": "Type of site",
+                  "internalNetworkCount": 10,
+                  "vaCount": 2,
+                  "modifiedAt": "2020-03-09T22:18:26.625Z",
+                  "createdAt": "2020-03-09T22:18:26.625Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/404Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Sites",
+          "Umbrella"
+        ],
+        "description": "List the sites in the organization.",
+        "summary": "List Sites",
+        "operationId": "listSites",
+        "security": [
+          {
+            "oauthFlow": [
+              "deployments.sites:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/paginationPageParam"
+          },
+          {
+            "$ref": "#/components/parameters/paginationLimitParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SiteObject"
+                  }
+                },
+                "example": [
+                  {
+                    "originId": 1234,
+                    "name": "Name of the site",
+                    "siteId": 14,
+                    "isDefault": false,
+                    "modifiedAt": "2020-03-09T22:18:26.625Z",
+                    "createdAt": "2020-03-09T22:18:26.625Z"
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/404Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/sites/{siteId}": {
+      "get": {
+        "tags": [
+          "Sites",
+          "Umbrella"
+        ],
+        "description": "Get a site in the organization.",
+        "summary": "Get Site",
+        "operationId": "getSite",
+        "security": [
+          {
+            "oauthFlow": [
+              "deployments.sites:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "siteId",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The ID of the site.",
+            "in": "path",
+            "required": true,
+            "example": 13545
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteObject"
+                },
+                "example": {
+                  "originId": 1234,
+                  "name": "Name of the site",
+                  "siteId": 14,
+                  "isDefault": false,
+                  "modifiedAt": "2020-03-09T22:18:26.625Z",
+                  "createdAt": "2020-03-09T22:18:26.625Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/404Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Sites",
+          "Umbrella"
+        ],
+        "description": "Update a site.",
+        "summary": "Update Site",
+        "operationId": "updateSite",
+        "security": [
+          {
+            "oauthFlow": [
+              "deployments.sites:write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "siteId",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The ID of the site.",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the site. The name is a sequence of characters with a length from 1 through 255.",
+                    "minLength": 1,
+                    "maxLength": 255
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "name"
+                ]
+              },
+              "example": {
+                "name": "my network and site"
+              }
+            }
+          },
+          "description": "Provide a site that you want to update."
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteObject"
+                },
+                "example": {
+                  "originId": 1234,
+                  "name": "Name of the Site",
+                  "siteId": 12,
+                  "isDefault": false,
+                  "modifiedAt": "2020-03-09T22:18:26.625Z",
+                  "createdAt": "2020-03-09T22:18:26.625Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/404Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Sites",
+          "Umbrella"
+        ],
+        "description": "Delete a site.",
+        "summary": "Delete Site",
+        "operationId": "deleteSite",
+        "security": [
+          {
+            "oauthFlow": [
+              "deployments.sites:write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "siteId",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The ID of the site.",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "example": null
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/404Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "oauthFlow": {
+        "type": "oauth2",
+        "description": "client credential flow",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://api.umbrella.com/auth/v2/token",
+            "scopes": {
+              "deployments.sites:write": "Write deployments sites",
+              "deployments.sites:read": "Read deployments sites"
+            }
+          }
+        }
+      }
+    },
+    "headers": {
+      "Content-Type": {
+        "schema": {
+          "type": "string"
+        },
+        "description": "The MIME content type of the response body.",
+        "example": "application/json"
+      },
+      "Date": {
+        "schema": {
+          "type": "string",
+          "pattern": "^[0-90-90-90-9-0-90-9-0-90-9T0-90-9:0-90-9:0-90-9Z]+$"
+        },
+        "description": "The timestamp of the response.",
+        "example": "2023-03-14T18:34:25Z"
+      }
+    },
+    "parameters": {
+      "paginationPageParam": {
+        "name": "page",
+        "in": "query",
+        "description": "The number of a page in the collection.",
+        "required": false,
+        "schema": {
+          "default": 1,
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1
+        }
+      },
+      "paginationLimitParam": {
+        "name": "limit",
+        "in": "query",
+        "description": "The number of records in the collection to return on the page.",
+        "required": false,
+        "schema": {
+          "default": 100,
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1,
+          "maximum": 100
+        }
+      }
+    },
+    "schemas": {
+      "SiteObject": {
+        "type": "object",
+        "properties": {
+          "originId": {
+            "type": "integer",
+            "description": "The origin ID of the site.",
+            "example": 13456
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the site.",
+            "example": "local network one"
+          },
+          "siteId": {
+            "type": "integer",
+            "description": "The ID of the site.",
+            "example": 1356
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "Specifies whether the site is the default.",
+            "example": true
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the site."
+          },
+          "internalNetworkCount": {
+            "type": "integer",
+            "description": "The number of internal networks that are attached to the site.",
+            "example": 20
+          },
+          "vaCount": {
+            "type": "integer",
+            "description": "The number of virtual appliances that are attached to the site.",
+            "example": 25
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time (ISO 8601 timestamp) when the site was created.\n",
+            "example": "2018-06-13T16:07:07.222Z"
+          },
+          "modifiedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time (ISO 8601 timestamp) when the site was modified.",
+            "example": "2018-06-13T16:07:07.222Z"
+          }
+        },
+        "required": [
+          "originId",
+          "name",
+          "siteId",
+          "isDefault",
+          "modifiedAt",
+          "createdAt"
+        ],
+        "example": {
+          "originId": 1234,
+          "name": "Name of the site",
+          "siteId": 14,
+          "isDefault": false,
+          "modifiedAt": "2020-03-09T22:18:26.625Z",
+          "createdAt": "2020-03-09T22:18:26.625Z"
+        }
+      }
+    },
+    "responses": {
+      "400Error": {
+        "description": "Bad Request",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/Content-Type"
+          },
+          "Date": {
+            "$ref": "#/components/headers/Date"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "example": 400,
+                  "description": "HTTP status code"
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Validation Error",
+                  "description": "A brief description of the error"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Detailed error message"
+                }
+              }
+            }
+          }
+        }
+      },
+      "401Error": {
+        "description": "Unauthorized",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/Content-Type"
+          },
+          "Date": {
+            "$ref": "#/components/headers/Date"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "example": 401,
+                  "description": "HTTP status code"
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Validation error",
+                  "description": "A brief description of the error"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Detailed error message"
+                }
+              }
+            }
+          }
+        }
+      },
+      "403Error": {
+        "description": "Forbidden",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/Content-Type"
+          },
+          "Date": {
+            "$ref": "#/components/headers/Date"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "example": 403,
+                  "description": "HTTP status code"
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Forbidden",
+                  "description": "A brief description of the error"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Detailed error message"
+                }
+              }
+            }
+          }
+        }
+      },
+      "404Error": {
+        "description": "Not Found",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/Content-Type"
+          },
+          "Date": {
+            "$ref": "#/components/headers/Date"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "example": 404,
+                  "description": "HTTP status code"
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Not Found",
+                  "description": "A brief description of the error"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Detailed error message"
+                }
+              }
+            }
+          }
+        }
+      },
+      "500Error": {
+        "description": "Internal Server Error",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/Content-Type"
+          },
+          "Date": {
+            "$ref": "#/components/headers/Date"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "example": 500,
+                  "description": "HTTP status code"
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Internal error",
+                  "description": "A brief description of the error"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Detailed error message"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
