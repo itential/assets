@@ -1,0 +1,109 @@
+---
+repositories:
+  - name: itential-assets
+    description: Itential community assets repository
+    url: https://github.com/itential/assets.git
+    reference: devel
+
+decorators:
+  - name: f5-rest-run-command-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: f5-rest-run-command inputs
+      type: object
+      properties:
+        command:
+          description: Bash or TMSH command to execute (e.g. "tmsh show sys version")
+          type: string
+      required: [command]
+      additionalProperties: false
+
+  - name: f5-rest-set-config-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: f5-rest-set-config inputs
+      type: object
+      properties:
+        config:
+          description: JSON-encoded Config Manager changes array [{parents, old, new}]
+          type: string
+      required: [config]
+      additionalProperties: false
+
+  - name: f5-rest-call-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: f5-rest-call inputs
+      type: object
+      properties:
+        verb:
+          description: HTTP method for the iControl REST call
+          type: string
+          enum: [GET, POST, PUT, PATCH, DELETE]
+        route:
+          description: Full iControl path from root (e.g. "/mgmt/tm/ltm/virtual")
+          type: string
+        body:
+          description: JSON-encoded request body (omit for GET/DELETE)
+          type: string
+      required: [verb, route]
+      additionalProperties: false
+
+services:
+  - name: f5-rest-is-alive
+    type: python-script
+    description: F5 iControl REST — verify reachability via GET /mgmt/tm/sys/version
+    repository: itential-assets
+    working-directory: F5/BIG-IP/device-drivers/f5-rest
+    filename: main.py
+    runtime:
+      env:
+        F5_REST_OP: is-alive
+    tags: [driver, f5, bigip, rest]
+
+  - name: f5-rest-run-command
+    type: python-script
+    description: F5 iControl REST — execute a bash or TMSH command via /mgmt/tm/util/bash
+    repository: itential-assets
+    working-directory: F5/BIG-IP/device-drivers/f5-rest
+    filename: main.py
+    decorator: f5-rest-run-command-input
+    runtime:
+      env:
+        F5_REST_OP: run-command
+    tags: [driver, f5, bigip, rest]
+
+  - name: f5-rest-get-config
+    type: python-script
+    description: F5 iControl REST — retrieve running configuration via the configured TMSH command
+    repository: itential-assets
+    working-directory: F5/BIG-IP/device-drivers/f5-rest
+    filename: main.py
+    runtime:
+      env:
+        F5_REST_OP: get-config
+    tags: [driver, f5, bigip, rest]
+
+  - name: f5-rest-set-config
+    type: python-script
+    description: F5 iControl REST — Config Manager remediation via IM iag5-service action (broker entry point)
+    repository: itential-assets
+    working-directory: F5/BIG-IP/device-drivers/f5-rest
+    filename: main.py
+    decorator: f5-rest-set-config-input
+    runtime:
+      env:
+        F5_REST_OP: set-config
+    tags: [driver, f5, bigip, rest, broker]
+
+  - name: f5-rest-call
+    type: python-script
+    description: F5 iControl REST — generic REST passthrough (workflow task, not a broker action)
+    repository: itential-assets
+    working-directory: F5/BIG-IP/device-drivers/f5-rest
+    filename: main.py
+    decorator: f5-rest-call-input
+    runtime:
+      env:
+        F5_REST_OP: rest-call
+    tags: [driver, f5, bigip, rest]
