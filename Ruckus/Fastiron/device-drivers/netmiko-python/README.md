@@ -1,9 +1,25 @@
-# fastiron-netmiko — IAG5 Python script service
+# fastiron-netmiko — IG5 Python script service
 
 SSH CLI-based driver for Ruckus Fastiron (IronWare OS) switches. Uses
 [netmiko](https://github.com/ktbyers/netmiko) for SSH connectivity.
 
 Tested against Ruckus ICX series switches running FastIron OS (SPS 08.0.95r+).
+
+## Table of Contents
+
+- [Why a custom driver](#why-a-custom-driver)
+- [Actions](#actions)
+- [get-config section filter](#get-config-section-filter)
+- [Known incompatible workflow tasks](#known-incompatible-workflow-tasks)
+  - [`sendCommand` (GatewayManager)](#sendcommand-gatewaymanager)
+- [Invocation model](#invocation-model)
+  - [Registered services](#registered-services)
+  - [From iagctl](#from-iagctl)
+  - [From an Inventory Manager action mapping](#from-an-inventory-manager-action-mapping)
+  - [Direct local testing](#direct-local-testing)
+- [Inventory attributes](#inventory-attributes)
+- [Prerequisites](#prerequisites)
+- [Local development](#local-development)
 
 ## Why a custom driver
 
@@ -57,7 +73,7 @@ parsing time \"\" as \"2006-01-02 15:04:05\": cannot parse \"\" as \"2006\""
 ```
 
 **Use instead:**
-- `GatewayManager.runService` — call the IAG5 service directly by name
+- `GatewayManager.runService` — call the IG5 service directly by name
 - `MOP.runCommandTemplate` — brokered device tasks such as MOP command templates
 
 ---
@@ -200,13 +216,13 @@ Set these on the device record in Inventory Manager:
 | `device_type` | `ruckus_fastiron` | netmiko device type |
 | `disabled_algorithms` | — | Re-enables `ssh-rsa` host keys disabled by default in newer paramiko versions. Required for Fastiron devices. Set to `{"pubkeys": []}` |
 
-> **Note:** Only fields defined in netsdk's `DriverOptions` model are allowed inside `itential_driver_options.netmiko`. Do not add `port`, `timeout`, or other unrecognised fields — IAG5 will reject the inventory node with a pydantic validation error.
+> **Note:** Only fields defined in netsdk's `DriverOptions` model are allowed inside `itential_driver_options.netmiko`. Do not add `port`, `timeout`, or other unrecognised fields — IG5 will reject the inventory node with a pydantic validation error.
 
 > **Note:** Fastiron has user EXEC and privileged EXEC modes. If your devices are configured to auto-elevate to privileged mode on SSH login, no enable password is needed. If your devices require a separate enable password, add `"secret": "<enable-password>"` under `itential_driver_options.netmiko` and pass `--secret` when testing locally.
 
 ## Prerequisites
 
-- TCP/22 reachable from IAG5 to the device
+- TCP/22 reachable from IG5 to the device
 - SSH enabled on the device (`ip ssh`)
 - Credentials with sufficient privilege for the required operations
 
