@@ -1,8 +1,22 @@
 # Cisco IOS
 
-Assets for the Itential Platform — Cisco IOS device automation.
+Cisco IOS is the network operating system running Cisco's routers and switches — a mature CLI-driven platform (spanning IOS and IOS-XE) widely deployed across enterprise and service provider networks.
+
+This project provides a Studio Project covering software upgrade, port turn-up, golden configuration compliance, and inventory management for Cisco IOS devices — see **Projects** below.
 
 **Requirements:** Itential Platform >= 6.4 · Itential Automation Gateway >= 5.0
+
+## Table of Contents
+
+- [Contents](#contents)
+- [Inventory Manager Configuration](#inventory-manager-configuration)
+  - [Node Attributes](#node-attributes)
+- [Projects](#projects)
+  - [Cisco IOS](#cisco-ios-1)
+- [Golden Configurations](#golden-configurations)
+  - [Cisco IOS - Simple](#cisco-ios---simple)
+  - [Cisco IOS - Jinja2](#cisco-ios---jinja2)
+  - [Cisco IOS - Lab](#cisco-ios---lab)
 
 ## Contents
 
