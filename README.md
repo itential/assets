@@ -46,7 +46,6 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **HashiCorp** | Vault (secrets management) |
 | **Infoblox** | NIOS WAPI · Threat Defense BloxOne · Universal DDI BloxOne |
 | **IP Fabric** | Network intelligence |
-| **Itential** | Platform utilities (data manipulation, config management, regex, email, workflow utilities) |
 | **Juniper** | JUNOS · Mist |
 | **Kentik** | Network observability |
 | **Kubernetes** | Container orchestration |
@@ -131,7 +130,7 @@ Follow the instructions in the driver's `README.md`. Drivers typically require c
 Minimum versions vary by asset - check each product's `README.md` for specifics. In general:
 
 - **Itential Platform** ≥ 6.4
-- **Itential Automation Gateway** ≥ 5.0 (for device-driver assets)
+- **Itential Gateway** ≥ 5.0 (for device-driver assets)
 
 ---
 
