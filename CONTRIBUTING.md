@@ -25,6 +25,8 @@ By participating in this project, you are expected to uphold our [Code of Conduc
 5. **Verify your contribution** — import it into a running Itential Platform (or Itential Gateway, for device drivers) instance and confirm it behaves as described.
 6. **Submit a pull request** against `main`.
 
+Using an AI coding tool to contribute? Start with [`AGENTS.md`](./AGENTS.md) — it points AI tools at this doc and `STANDARDS.md`, plus a handful of repo-specific gotchas worth knowing before hand-editing workflow JSON.
+
 ## Contribution Standards
 
 Every asset type in this repo — Studio Projects, Automations, Golden Configurations, OpenAPIs, LCM Resource Models — has its own naming, versioning, and structural rules, plus a set of requirements that apply repo-wide (branding, README structure, no sensitive data, etc.). These all live in [`STANDARDS.md`](./STANDARDS.md).
