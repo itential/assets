@@ -1,0 +1,93 @@
+name: Itential Asset & Integration Promotion
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  diff:
+    runs-on: ubuntu-latest
+    outputs:
+      has_asset_changes: ${{ steps.diff.outputs.has_asset_changes }}
+      changed_files: ${{ steps.diff.outputs.changed_files }}
+      has_spec_changes: ${{ steps.diff.outputs.has_spec_changes }}
+      changed_specs: ${{ steps.diff.outputs.changed_specs }}
+      deleted_files: ${{ steps.diff.outputs.deleted_files }}
+      deleted_specs: ${{ steps.diff.outputs.deleted_specs }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find changed files
+        id: diff
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: bash .github/scripts/diff.sh
+
+
+  deploy-assets-production:
+    needs: [diff]
+    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'develop' && needs.diff.outputs.has_asset_changes == 'true'
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install asyncplatform
+        run: pip install git+https://github.com/Itential/asyncplatform.git
+
+      - name: Deploy to Production
+        env:
+          HOST: ${{ secrets.PLATFORM_HOST }}
+          CLIENT_ID: ${{ secrets.PLATFORM_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.PLATFORM_CLIENT_SECRET }}
+          PROJECT_MEMBERS: ${{ vars.PROJECT_MEMBERS }}
+          CHANGED_FILES: ${{ needs.diff.outputs.changed_files }}
+        run: python .github/scripts/deploy.py Production
+
+
+  deploy-integrations-production:
+    needs: [diff]
+    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'develop' && needs.diff.outputs.has_spec_changes == 'true'
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install ipctl
+        run: |
+          curl -LO "https://github.com/itential/ipctl/releases/latest/download/ipctl-linux-x86_64.tar.gz"
+          tar -xzf ipctl-linux-x86_64.tar.gz
+          sudo mv ipctl /usr/local/bin/
+
+      - name: Configure ipctl
+        env:
+          HOST: ${{ secrets.PLATFORM_HOST }}
+          CLIENT_ID: ${{ secrets.PLATFORM_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.PLATFORM_CLIENT_SECRET }}
+        run: |
+          printf '[profile default]\nhost = %s\nport = 0\nuse_tls = true\nclient_id = %s\nclient_secret = %s\n' \
+            "$HOST" "$CLIENT_ID" "$CLIENT_SECRET" > /tmp/ipctl.ini
+
+      - name: Import integration models
+        env:
+          IPCTL_CONFIG_FILE: /tmp/ipctl.ini
+          CHANGED_SPECS: ${{ needs.diff.outputs.changed_specs }}
+        run: bash .github/scripts/deploy_integrations.sh
