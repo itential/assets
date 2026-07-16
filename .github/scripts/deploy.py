@@ -86,35 +86,35 @@ class AssetDeployer:
             "configurations": [],
         }
 
-        for studio_dir in repo_root.glob("*/Studio Projects"):
+        for studio_dir in repo_root.glob("**/Studio Projects"):
             if studio_dir.is_dir():
                 for f in studio_dir.glob("*.json"):
                     if is_changed(f):
                         assets["projects"].append(f)
                         print(f"📦 Found Studio project: {f.name}")
 
-        # for ap_dir in repo_root.glob("*/Agent Projects"):
+        # for ap_dir in repo_root.glob("**/Agent Projects"):
         #     if ap_dir.is_dir():
         #         for f in ap_dir.glob("*.json"):
         #             if is_changed(f):
         #                 assets["agent_projects"].append(f)
         #                 print(f"🤖 Found Agent project: {f.name}")
 
-        for om_dir in repo_root.glob("*/Automations"):
+        for om_dir in repo_root.glob("**/Automations"):
             if om_dir.is_dir():
                 for f in om_dir.glob("*.json"):
                     if is_changed(f):
                         assets["automations"].append(f)
                         print(f"🤖 Found automation: {f.name}")
 
-        for lm_dir in repo_root.glob("*/LCM Resource Models"):
+        for lm_dir in repo_root.glob("**/LCM Resource Models"):
             if lm_dir.is_dir():
                 for f in lm_dir.glob("*.json"):
                     if is_changed(f):
                         assets["lifecycle_manager_resources"].append(f)
                         print(f"🔧 Found LCM resource model: {f.name}")
 
-        for cm_dir in repo_root.glob("*/Golden Configs"):
+        for cm_dir in repo_root.glob("**/Golden Configs"):
             if cm_dir.is_dir():
                 for f in cm_dir.glob("*.json"):
                     if is_changed(f):

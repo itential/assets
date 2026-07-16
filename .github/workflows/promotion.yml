@@ -8,6 +8,7 @@ on:
 
 jobs:
   diff:
+    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'devel'
     runs-on: ubuntu-latest
     outputs:
       has_asset_changes: ${{ steps.diff.outputs.has_asset_changes }}
@@ -31,7 +32,7 @@ jobs:
 
   deploy-assets-production:
     needs: [diff]
-    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'devel' && needs.diff.outputs.has_asset_changes == 'true'
+    if: needs.diff.outputs.has_asset_changes == 'true'
     runs-on: ubuntu-latest
     environment: production
 
@@ -61,7 +62,7 @@ jobs:
 
   deploy-integrations-production:
     needs: [diff]
-    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'devel' && needs.diff.outputs.has_spec_changes == 'true'
+    if: needs.diff.outputs.has_spec_changes == 'true'
     runs-on: ubuntu-latest
     environment: production
 
