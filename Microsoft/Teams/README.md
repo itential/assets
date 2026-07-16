@@ -2,6 +2,19 @@
 
 Send rich, adaptive-card notifications from an Itential workflow to a Microsoft Teams channel — job results, compliance reports, ticket updates, anything — via a Power Automate flow instead of a deprecated direct webhook.
 
+## Table of Contents
+
+- [Why Power Automate](#why-power-automate)
+- [Architecture](#architecture)
+- [Building the Power Automate Flow](#building-the-power-automate-flow)
+- [The Itential Workflow](#the-itential-workflow)
+  - [Inputs](#inputs)
+  - [Sample Payload](#sample-payload)
+- [Security](#security)
+- [Troubleshooting](#troubleshooting)
+- [Projects](#projects)
+  - [Microsoft Teams Project](#microsoft-teams-project)
+
 ## Why Power Automate
 
 Microsoft retired direct Incoming Webhooks (Office 365 Connectors) for Teams channels. A Power Automate flow with a **"When a Teams webhook request is received"** trigger is the supported replacement — it gives you an HTTP endpoint that posts an Adaptive Card into a chat or channel, without needing a Teams-specific adapter or connector on the Itential side.
@@ -22,7 +35,7 @@ Power Automate flow
 Microsoft Teams channel
 ```
 
-The workflow runs the card-building/POST logic directly on the Itential Gateway via a `runCode` task — no custom adapter or pre-registered IAG service required.
+The workflow runs the card-building/POST logic directly on the Itential Gateway via a `runCode` task — no custom adapter or pre-registered Itential Gateway service required.
 
 ## Building the Power Automate Flow
 
@@ -111,7 +124,7 @@ Minimal version — `facts`, `link_url`, and `link_text` are still present, just
 The trigger URL is not just a configuration value — it functions as a bearer credential. Anyone who has it can post into your Teams channel, regardless of the "Who can trigger the flow?" setting. Treat it accordingly:
 
 - Never commit it to version control or share it in plaintext.
-- Prefer resolving it at execution time from wherever your organization manages secrets (e.g. an IAG [external secret provider](https://docs.itential.com/itential-gateway/secrets/external-secrets/configure-custom-plugin-provider)) rather than passing it as a plain job input, if your workflow triggers aren't tightly access-controlled.
+- Prefer resolving it at execution time from wherever your organization manages secrets (e.g. an Itential Gateway [external secret provider](https://docs.itential.com/itential-gateway/secrets/external-secrets/configure-custom-plugin-provider)) rather than passing it as a plain job input, if your workflow triggers aren't tightly access-controlled.
 - Rotate the flow's trigger if the URL is ever exposed (regenerate it in Power Automate — this invalidates the old URL).
 
 ## Troubleshooting

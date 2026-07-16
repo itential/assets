@@ -34,7 +34,8 @@
         "version": "3.0"
       }
     ],
-    "x-providerName": "apache.org"
+    "x-providerName": "apache.org",
+    "x-itential-curated": "Trimmed to 50 of 73 upstream operations covering common CRUD for automation: DAGs, DAG Runs, Task Instances (incl. XCom entries), Connections, Variables, and Pools, plus Health/Version. See the repo README for the full scope and the full spec."
   },
   "externalDocs": {
     "url": "https://airflow.apache.org/docs/apache-airflow/stable/"
@@ -101,66 +102,6 @@
     }
   ],
   "paths": {
-    "/config": {
-      "get": {
-        "operationId": "get_config",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "sections": [
-                    {
-                      "name": "core",
-                      "options": [
-                        {
-                          "key": "dags_folder",
-                          "value": "/home/user/my-dags-folder"
-                        }
-                      ]
-                    },
-                    {
-                      "name": "smtp",
-                      "options": [
-                        {
-                          "key": "smtp_host",
-                          "value": "localhost"
-                        },
-                        {
-                          "key": "smtp_mail_from",
-                          "value": "airflow@example.com"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/Config"
-                }
-              },
-              "text/plain": {
-                "example": "[core]\ndags_folder = /home/user/my-dags-folder\n[smtp]\nsmtp_host = localhost\nsmtp_mail_from =  airflow@example.com\n",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "description": "Success."
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          }
-        },
-        "summary": "Get current configuration",
-        "tags": [
-          "Config"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.config_endpoint"
-      }
-    },
     "/connections": {
       "get": {
         "operationId": "get_connections",
@@ -441,63 +382,6 @@
           "$ref": "#/components/parameters/FileToken"
         }
       ]
-    },
-    "/dagWarnings": {
-      "get": {
-        "operationId": "get_dag_warnings",
-        "parameters": [
-          {
-            "description": "If set, only return DAG warnings with this dag_id.",
-            "in": "query",
-            "name": "dag_id",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "If set, only return DAG warnings with this type.",
-            "in": "query",
-            "name": "warning_type",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "$ref": "#/components/parameters/PageLimit"
-          },
-          {
-            "$ref": "#/components/parameters/PageOffset"
-          },
-          {
-            "$ref": "#/components/parameters/OrderBy"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DagWarningCollection"
-                }
-              }
-            },
-            "description": "Success."
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          }
-        },
-        "summary": "List dag warnings",
-        "tags": [
-          "DagWarning"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.dag_warning_endpoint"
-      }
     },
     "/dags": {
       "get": {
@@ -1773,47 +1657,6 @@
         "x-openapi-router-controller": "airflow.api_connexion.endpoints.task_instance_endpoint"
       }
     },
-    "/dags/{dag_id}/dagRuns/{dag_run_id}/upstreamDatasetEvents": {
-      "get": {
-        "description": "Get datasets for a dag run.\n\n*New in version 2.4.0*\n",
-        "operationId": "get_upstream_dataset_events",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DatasetEventCollection"
-                }
-              }
-            },
-            "description": "Success."
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        },
-        "summary": "Get dataset events for a DAG run",
-        "tags": [
-          "DAGRun",
-          "Dataset"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.dag_run_endpoint"
-      },
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/DAGID"
-        },
-        {
-          "$ref": "#/components/parameters/DAGRunID"
-        }
-      ]
-    },
     "/dags/{dag_id}/details": {
       "get": {
         "description": "The response contains many DAG attributes, so the response can be large. If possible, consider using GET /dags/{dag_id}.\n",
@@ -2061,225 +1904,6 @@
         "x-openapi-router-controller": "airflow.api_connexion.endpoints.task_instance_endpoint"
       }
     },
-    "/datasets": {
-      "get": {
-        "operationId": "get_datasets",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/PageLimit"
-          },
-          {
-            "$ref": "#/components/parameters/PageOffset"
-          },
-          {
-            "$ref": "#/components/parameters/OrderBy"
-          },
-          {
-            "description": "If set, only return datasets with uris matching this pattern.\n",
-            "in": "query",
-            "name": "uri_pattern",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DatasetCollection"
-                }
-              }
-            },
-            "description": "Success."
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          }
-        },
-        "summary": "List datasets",
-        "tags": [
-          "Dataset"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.dataset_endpoint"
-      }
-    },
-    "/datasets/events": {
-      "get": {
-        "description": "Get dataset events",
-        "operationId": "get_dataset_events",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DatasetEventCollection"
-                }
-              }
-            },
-            "description": "Success."
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        },
-        "summary": "Get dataset events",
-        "tags": [
-          "Dataset"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.dataset_endpoint"
-      },
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/PageLimit"
-        },
-        {
-          "$ref": "#/components/parameters/PageOffset"
-        },
-        {
-          "$ref": "#/components/parameters/OrderBy"
-        },
-        {
-          "$ref": "#/components/parameters/FilterDatasetID"
-        },
-        {
-          "$ref": "#/components/parameters/FilterSourceDAGID"
-        },
-        {
-          "$ref": "#/components/parameters/FilterSourceTaskID"
-        },
-        {
-          "$ref": "#/components/parameters/FilterSourceRunID"
-        },
-        {
-          "$ref": "#/components/parameters/FilterSourceMapIndex"
-        }
-      ]
-    },
-    "/datasets/{uri}": {
-      "get": {
-        "description": "Get a dataset by uri.",
-        "operationId": "get_dataset",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Dataset"
-                }
-              }
-            },
-            "description": "Success."
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        },
-        "summary": "Get a dataset",
-        "tags": [
-          "Dataset"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.dataset_endpoint"
-      },
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/DatasetURI"
-        }
-      ]
-    },
-    "/eventLogs": {
-      "get": {
-        "description": "List log entries from event log.",
-        "operationId": "get_event_logs",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/PageLimit"
-          },
-          {
-            "$ref": "#/components/parameters/PageOffset"
-          },
-          {
-            "$ref": "#/components/parameters/OrderBy"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EventLogCollection"
-                }
-              }
-            },
-            "description": "Success."
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          }
-        },
-        "summary": "List log entries",
-        "tags": [
-          "EventLog"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.event_log_endpoint"
-      }
-    },
-    "/eventLogs/{event_log_id}": {
-      "get": {
-        "operationId": "get_event_log",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EventLog"
-                }
-              }
-            },
-            "description": "Success."
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        },
-        "summary": "Get a log entry",
-        "tags": [
-          "EventLog"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.event_log_endpoint"
-      },
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/EventLogID"
-        }
-      ]
-    },
     "/health": {
       "get": {
         "description": "Get the status of Airflow's metadatabase and scheduler. It includes info about\nmetadatabase and last heartbeat of scheduler.\n",
@@ -2301,158 +1925,6 @@
           "Monitoring"
         ],
         "x-openapi-router-controller": "airflow.api_connexion.endpoints.health_endpoint"
-      }
-    },
-    "/importErrors": {
-      "get": {
-        "operationId": "get_import_errors",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/PageLimit"
-          },
-          {
-            "$ref": "#/components/parameters/PageOffset"
-          },
-          {
-            "$ref": "#/components/parameters/OrderBy"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImportErrorCollection"
-                }
-              }
-            },
-            "description": "Success."
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          }
-        },
-        "summary": "List import errors",
-        "tags": [
-          "ImportError"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.import_error_endpoint"
-      }
-    },
-    "/importErrors/{import_error_id}": {
-      "get": {
-        "operationId": "get_import_error",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImportError"
-                }
-              }
-            },
-            "description": "Success."
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        },
-        "summary": "Get an import error",
-        "tags": [
-          "ImportError"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.import_error_endpoint"
-      },
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/ImportErrorID"
-        }
-      ]
-    },
-    "/permissions": {
-      "get": {
-        "description": "Get a list of permissions.\n\n*New in version 2.1.0*\n",
-        "operationId": "get_permissions",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/PageLimit"
-          },
-          {
-            "$ref": "#/components/parameters/PageOffset"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ActionCollection"
-                }
-              }
-            },
-            "description": "Success."
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          }
-        },
-        "summary": "List permissions",
-        "tags": [
-          "Permission"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.role_and_permission_endpoint"
-      }
-    },
-    "/plugins": {
-      "get": {
-        "description": "Get a list of loaded plugins.\n\n*New in version 2.1.0*\n",
-        "operationId": "get_plugins",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/PageLimit"
-          },
-          {
-            "$ref": "#/components/parameters/PageOffset"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PluginCollection"
-                }
-              }
-            },
-            "description": "Success"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        },
-        "summary": "Get a list of loaded plugins",
-        "tags": [
-          "Plugin"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.plugin_endpoint"
       }
     },
     "/pools": {
@@ -2642,427 +2114,6 @@
           "Pool"
         ],
         "x-openapi-router-controller": "airflow.api_connexion.endpoints.pool_endpoint"
-      }
-    },
-    "/providers": {
-      "get": {
-        "description": "Get a list of providers.\n\n*New in version 2.1.0*\n",
-        "operationId": "get_providers",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ProviderCollection"
-                    },
-                    {
-                      "$ref": "#/components/schemas/CollectionInfo"
-                    }
-                  ]
-                }
-              }
-            },
-            "description": "List of providers."
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          }
-        },
-        "summary": "List providers",
-        "tags": [
-          "Provider"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.provider_endpoint"
-      }
-    },
-    "/roles": {
-      "get": {
-        "description": "Get a list of roles.\n\n*New in version 2.1.0*\n",
-        "operationId": "get_roles",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/PageLimit"
-          },
-          {
-            "$ref": "#/components/parameters/PageOffset"
-          },
-          {
-            "$ref": "#/components/parameters/OrderBy"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RoleCollection"
-                }
-              }
-            },
-            "description": "Success."
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          }
-        },
-        "summary": "List roles",
-        "tags": [
-          "Role"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.role_and_permission_endpoint"
-      },
-      "post": {
-        "description": "Create a new role.\n\n*New in version 2.1.0*\n",
-        "operationId": "post_role",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Role"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Role"
-                }
-              }
-            },
-            "description": "Success."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          }
-        },
-        "summary": "Create a role",
-        "tags": [
-          "Role"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.role_and_permission_endpoint"
-      }
-    },
-    "/roles/{role_name}": {
-      "delete": {
-        "description": "Delete a role.\n\n*New in version 2.1.0*\n",
-        "operationId": "delete_role",
-        "responses": {
-          "204": {
-            "description": "Success."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        },
-        "summary": "Delete a role",
-        "tags": [
-          "Role"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.role_and_permission_endpoint"
-      },
-      "get": {
-        "description": "Get a role.\n\n*New in version 2.1.0*\n",
-        "operationId": "get_role",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Role"
-                }
-              }
-            },
-            "description": "Success."
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        },
-        "summary": "Get a role",
-        "tags": [
-          "Role"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.role_and_permission_endpoint"
-      },
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/RoleName"
-        }
-      ],
-      "patch": {
-        "description": "Update a role.\n\n*New in version 2.1.0*\n",
-        "operationId": "patch_role",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/UpdateMask"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Role"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Role"
-                }
-              }
-            },
-            "description": "Success."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        },
-        "summary": "Update a role",
-        "tags": [
-          "Role"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.role_and_permission_endpoint"
-      }
-    },
-    "/users": {
-      "get": {
-        "description": "Get a list of users.\n\n*New in version 2.1.0*\n",
-        "operationId": "get_users",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/PageLimit"
-          },
-          {
-            "$ref": "#/components/parameters/PageOffset"
-          },
-          {
-            "$ref": "#/components/parameters/OrderBy"
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserCollection"
-                }
-              }
-            },
-            "description": "Success."
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          }
-        },
-        "summary": "List users",
-        "tags": [
-          "User"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.user_endpoint"
-      },
-      "post": {
-        "description": "Create a new user with unique username and email.\n\n*New in version 2.2.0*\n",
-        "operationId": "post_user",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            },
-            "description": "Success."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          },
-          "409": {
-            "$ref": "#/components/responses/AlreadyExists"
-          }
-        },
-        "summary": "Create a user",
-        "tags": [
-          "User"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.user_endpoint"
-      }
-    },
-    "/users/{username}": {
-      "delete": {
-        "description": "Delete a user with a specific username.\n\n*New in version 2.2.0*\n",
-        "operationId": "delete_user",
-        "responses": {
-          "204": {
-            "description": "Success."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        },
-        "summary": "Delete a user",
-        "tags": [
-          "User"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.user_endpoint"
-      },
-      "get": {
-        "description": "Get a user with a specific username.\n\n*New in version 2.1.0*\n",
-        "operationId": "get_user",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserCollectionItem"
-                }
-              }
-            },
-            "description": "Success."
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        },
-        "summary": "Get a user",
-        "tags": [
-          "User"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.user_endpoint"
-      },
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/Username"
-        }
-      ],
-      "patch": {
-        "description": "Update fields for a user.\n\n*New in version 2.2.0*\n",
-        "operationId": "patch_user",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/UpdateMask"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Role"
-                }
-              }
-            },
-            "description": "Success."
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "403": {
-            "$ref": "#/components/responses/PermissionDenied"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        },
-        "summary": "Update a user",
-        "tags": [
-          "User"
-        ],
-        "x-openapi-router-controller": "airflow.api_connexion.endpoints.user_endpoint"
       }
     },
     "/variables": {
@@ -3278,569 +2329,7 @@
     }
   },
   "components": {
-    "callbacks": {},
-    "examples": {},
-    "headers": {},
-    "links": {},
-    "parameters": {
-      "ConnectionID": {
-        "description": "The connection ID.",
-        "in": "path",
-        "name": "connection_id",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "ContinuationToken": {
-        "description": "A token that allows you to continue fetching logs.\nIf passed, it will specify the location from which the download should be continued.\n",
-        "in": "query",
-        "name": "token",
-        "required": false,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "DAGID": {
-        "description": "The DAG ID.",
-        "in": "path",
-        "name": "dag_id",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "DAGRunID": {
-        "description": "The DAG run ID.",
-        "in": "path",
-        "name": "dag_run_id",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "DatasetURI": {
-        "description": "The encoded Dataset URI",
-        "in": "path",
-        "name": "uri",
-        "required": true,
-        "schema": {
-          "format": "path",
-          "type": "string"
-        }
-      },
-      "EventLogID": {
-        "description": "The event log ID.",
-        "in": "path",
-        "name": "event_log_id",
-        "required": true,
-        "schema": {
-          "type": "integer"
-        }
-      },
-      "FileToken": {
-        "description": "The key containing the encrypted path to the file. Encryption and decryption take place only on\nthe server. This prevents the client from reading an non-DAG file. This also ensures API\nextensibility, because the format of encrypted data may change.\n",
-        "in": "path",
-        "name": "file_token",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "FilterDatasetID": {
-        "description": "The Dataset ID that updated the dataset.",
-        "in": "query",
-        "name": "dataset_id",
-        "schema": {
-          "type": "integer"
-        }
-      },
-      "FilterDurationGTE": {
-        "description": "Returns objects greater than or equal to the specified values.\n\nThis can be combined with duration_lte parameter to receive only the selected period.\n",
-        "in": "query",
-        "name": "duration_gte",
-        "required": false,
-        "schema": {
-          "type": "number"
-        }
-      },
-      "FilterDurationLTE": {
-        "description": "Returns objects less than or equal to the specified values.\n\nThis can be combined with duration_gte parameter to receive only the selected range.\n",
-        "in": "query",
-        "name": "duration_lte",
-        "required": false,
-        "schema": {
-          "type": "number"
-        }
-      },
-      "FilterEndDateGTE": {
-        "description": "Returns objects greater or equal the specified date.\n\nThis can be combined with start_date_lte parameter to receive only the selected period.\n",
-        "in": "query",
-        "name": "end_date_gte",
-        "required": false,
-        "schema": {
-          "format": "date-time",
-          "type": "string"
-        }
-      },
-      "FilterEndDateLTE": {
-        "description": "Returns objects less than or equal to the specified date.\n\nThis can be combined with start_date_gte parameter to receive only the selected period.\n",
-        "in": "query",
-        "name": "end_date_lte",
-        "required": false,
-        "schema": {
-          "format": "date-time",
-          "type": "string"
-        }
-      },
-      "FilterExecutionDateGTE": {
-        "description": "Returns objects greater or equal to the specified date.\n\nThis can be combined with execution_date_lte parameter to receive only the selected period.\n",
-        "in": "query",
-        "name": "execution_date_gte",
-        "required": false,
-        "schema": {
-          "format": "date-time",
-          "type": "string"
-        }
-      },
-      "FilterExecutionDateLTE": {
-        "description": "Returns objects less than or equal to the specified date.\n\nThis can be combined with execution_date_gte parameter to receive only the selected period.\n",
-        "in": "query",
-        "name": "execution_date_lte",
-        "required": false,
-        "schema": {
-          "format": "date-time",
-          "type": "string"
-        }
-      },
-      "FilterMapIndex": {
-        "description": "Filter on map index for mapped task.",
-        "in": "query",
-        "name": "map_index",
-        "schema": {
-          "type": "integer"
-        }
-      },
-      "FilterPool": {
-        "description": "The value can be repeated to retrieve multiple matching values (OR condition).",
-        "in": "query",
-        "name": "pool",
-        "required": false,
-        "schema": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        }
-      },
-      "FilterQueue": {
-        "description": "The value can be repeated to retrieve multiple matching values (OR condition).",
-        "in": "query",
-        "name": "queue",
-        "schema": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        }
-      },
-      "FilterSourceDAGID": {
-        "description": "The DAG ID that updated the dataset.",
-        "in": "query",
-        "name": "source_dag_id",
-        "schema": {
-          "type": "string"
-        }
-      },
-      "FilterSourceMapIndex": {
-        "description": "The map index that updated the dataset.",
-        "in": "query",
-        "name": "source_map_index",
-        "schema": {
-          "type": "integer"
-        }
-      },
-      "FilterSourceRunID": {
-        "description": "The DAG run ID that updated the dataset.",
-        "in": "query",
-        "name": "source_run_id",
-        "schema": {
-          "type": "string"
-        }
-      },
-      "FilterSourceTaskID": {
-        "description": "The task ID that updated the dataset.",
-        "in": "query",
-        "name": "source_task_id",
-        "schema": {
-          "type": "string"
-        }
-      },
-      "FilterStartDateGTE": {
-        "description": "Returns objects greater or equal the specified date.\n\nThis can be combined with start_date_lte parameter to receive only the selected period.\n",
-        "in": "query",
-        "name": "start_date_gte",
-        "required": false,
-        "schema": {
-          "format": "date-time",
-          "type": "string"
-        }
-      },
-      "FilterStartDateLTE": {
-        "description": "Returns objects less or equal the specified date.\n\nThis can be combined with start_date_gte parameter to receive only the selected period.\n",
-        "in": "query",
-        "name": "start_date_lte",
-        "required": false,
-        "schema": {
-          "format": "date-time",
-          "type": "string"
-        }
-      },
-      "FilterState": {
-        "description": "The value can be repeated to retrieve multiple matching values (OR condition).",
-        "in": "query",
-        "name": "state",
-        "required": false,
-        "schema": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        }
-      },
-      "FilterTags": {
-        "description": "List of tags to filter results.\n\n*New in version 2.2.0*\n",
-        "in": "query",
-        "name": "tags",
-        "schema": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        }
-      },
-      "FullContent": {
-        "description": "A full content will be returned.\nBy default, only the first fragment will be returned.\n",
-        "in": "query",
-        "name": "full_content",
-        "required": false,
-        "schema": {
-          "type": "boolean"
-        }
-      },
-      "ImportErrorID": {
-        "description": "The import error ID.",
-        "in": "path",
-        "name": "import_error_id",
-        "required": true,
-        "schema": {
-          "type": "integer"
-        }
-      },
-      "MapIndex": {
-        "description": "The map index.",
-        "in": "path",
-        "name": "map_index",
-        "required": true,
-        "schema": {
-          "type": "integer"
-        }
-      },
-      "OnlyActive": {
-        "description": "Only filter active DAGs.\n\n*New in version 2.1.1*\n",
-        "in": "query",
-        "name": "only_active",
-        "required": false,
-        "schema": {
-          "default": true,
-          "type": "boolean"
-        }
-      },
-      "OrderBy": {
-        "description": "The name of the field to order the results by.\nPrefix a field name with `-` to reverse the sort order.\n\n*New in version 2.1.0*\n",
-        "in": "query",
-        "name": "order_by",
-        "required": false,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "PageLimit": {
-        "description": "The numbers of items to return.",
-        "in": "query",
-        "name": "limit",
-        "required": false,
-        "schema": {
-          "default": 100,
-          "type": "integer"
-        }
-      },
-      "PageOffset": {
-        "description": "The number of items to skip before starting to collect the result set.",
-        "in": "query",
-        "name": "offset",
-        "required": false,
-        "schema": {
-          "minimum": 0,
-          "type": "integer"
-        }
-      },
-      "PoolName": {
-        "description": "The pool name.",
-        "in": "path",
-        "name": "pool_name",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "RoleName": {
-        "description": "The role name",
-        "in": "path",
-        "name": "role_name",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "TaskID": {
-        "description": "The task ID.",
-        "in": "path",
-        "name": "task_id",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "TaskTryNumber": {
-        "description": "The task try number.",
-        "in": "path",
-        "name": "task_try_number",
-        "required": true,
-        "schema": {
-          "type": "integer"
-        }
-      },
-      "UpdateMask": {
-        "description": "The fields to update on the resource. If absent or empty, all modifiable fields are updated.\nA comma-separated list of fully qualified names of fields.\n",
-        "explode": false,
-        "in": "query",
-        "name": "update_mask",
-        "schema": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
-        "style": "form"
-      },
-      "Username": {
-        "description": "The username of the user.\n\n*New in version 2.1.0*\n",
-        "in": "path",
-        "name": "username",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "VariableKey": {
-        "description": "The variable Key.",
-        "in": "path",
-        "name": "variable_key",
-        "required": true,
-        "schema": {
-          "format": "path",
-          "type": "string"
-        }
-      },
-      "XComKey": {
-        "description": "The XCom key.",
-        "in": "path",
-        "name": "xcom_key",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      }
-    },
-    "requestBodies": {},
-    "responses": {
-      "AlreadyExists": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        },
-        "description": "An existing resource conflicts with the request."
-      },
-      "BadRequest": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        },
-        "description": "Client specified an invalid argument."
-      },
-      "MethodNotAllowed": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        },
-        "description": "Request method is known by the server but is not supported by the target resource."
-      },
-      "NotAcceptable": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        },
-        "description": "A specified Accept header is not allowed."
-      },
-      "NotFound": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        },
-        "description": "A specified resource is not found."
-      },
-      "PermissionDenied": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        },
-        "description": "Client does not have sufficient permission."
-      },
-      "Unauthenticated": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        },
-        "description": "Request not authenticated due to missing, invalid, authentication info."
-      },
-      "Unknown": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        },
-        "description": "Unknown server error."
-      }
-    },
     "schemas": {
-      "Action": {
-        "description": "An action Item.\n\n*New in version 2.1.0*\n",
-        "properties": {
-          "name": {
-            "description": "The name of the permission \"action\"",
-            "nullable": false,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "ActionCollection": {
-        "allOf": [
-          {
-            "properties": {
-              "actions": {
-                "items": {
-                  "$ref": "#/components/schemas/Action"
-                },
-                "type": "array"
-              }
-            },
-            "type": "object"
-          },
-          {
-            "$ref": "#/components/schemas/CollectionInfo"
-          }
-        ],
-        "description": "A collection of actions.\n\n*New in version 2.1.0*\n",
-        "type": "object"
-      },
-      "ActionResource": {
-        "description": "The Action-Resource item.\n\n*New in version 2.1.0*\n",
-        "properties": {
-          "action": {
-            "$ref": "#/components/schemas/Action",
-            "description": "The permission action",
-            "type": "object"
-          },
-          "resource": {
-            "$ref": "#/components/schemas/Resource",
-            "description": "The permission resource",
-            "type": "object"
-          }
-        },
-        "type": "object"
-      },
-      "BasicDAGRun": {
-        "properties": {
-          "dag_id": {
-            "readOnly": true,
-            "type": "string"
-          },
-          "data_interval_end": {
-            "format": "date-time",
-            "nullable": true,
-            "readOnly": true,
-            "type": "string"
-          },
-          "data_interval_start": {
-            "format": "date-time",
-            "nullable": true,
-            "readOnly": true,
-            "type": "string"
-          },
-          "end_date": {
-            "format": "date-time",
-            "nullable": true,
-            "readOnly": true,
-            "type": "string"
-          },
-          "logical_date": {
-            "description": "The logical date (previously called execution date). This is the time or interval covered by\nthis DAG run, according to the DAG definition.\n\nThe value of this field can be set only when creating the object. If you try to modify the\nfield of an existing object, the request fails with an BAD_REQUEST error.\n\nThis together with DAG_ID are a unique key.\n\n*New in version 2.2.0*\n",
-            "format": "date-time",
-            "type": "string"
-          },
-          "run_id": {
-            "description": "Run ID.\n",
-            "type": "string"
-          },
-          "start_date": {
-            "description": "The start time. The time when DAG run was actually created.\n\n*Changed in version 2.1.3*&#58; Field becomes nullable.\n",
-            "format": "date-time",
-            "nullable": true,
-            "readOnly": true,
-            "type": "string"
-          },
-          "state": {
-            "$ref": "#/components/schemas/DagState",
-            "readOnly": true
-          }
-        },
-        "type": "object"
-      },
       "ClassReference": {
         "description": "Class reference",
         "properties": {
@@ -3954,48 +2443,6 @@
         "description": "Color in hexadecimal notation.",
         "pattern": "^#[a-fA-F0-9]{3,6}$",
         "type": "string"
-      },
-      "Config": {
-        "description": "The configuration.",
-        "properties": {
-          "sections": {
-            "items": {
-              "$ref": "#/components/schemas/ConfigSection"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "ConfigOption": {
-        "description": "The option of configuration.",
-        "properties": {
-          "key": {
-            "readOnly": true,
-            "type": "string"
-          },
-          "value": {
-            "readOnly": true,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "ConfigSection": {
-        "description": "The section of configuration.",
-        "properties": {
-          "name": {
-            "readOnly": true,
-            "type": "string"
-          },
-          "options": {
-            "items": {
-              "$ref": "#/components/schemas/ConfigOption"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
       },
       "Connection": {
         "allOf": [
@@ -4489,27 +2936,6 @@
         "description": "Collection of DAG runs.\n\n*Changed in version 2.1.0*&#58; 'total_entries' field is added.\n",
         "type": "object"
       },
-      "DagScheduleDatasetReference": {
-        "description": "A datasets reference to a downstream DAG.\n\n*New in version 2.4.0*\n",
-        "properties": {
-          "created_at": {
-            "description": "The dataset reference creation time",
-            "nullable": false,
-            "type": "string"
-          },
-          "dag_id": {
-            "description": "The DAG ID that depends on the dataset.",
-            "nullable": true,
-            "type": "string"
-          },
-          "updated_at": {
-            "description": "The dataset reference update time",
-            "nullable": false,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "DagState": {
         "description": "DAG State.\n\n*Changed in version 2.1.3*&#58; 'queued' is added as a possible value.\n",
         "enum": [
@@ -4519,185 +2945,6 @@
           "failed"
         ],
         "type": "string"
-      },
-      "DagWarning": {
-        "properties": {
-          "dag_id": {
-            "description": "The dag_id.",
-            "readOnly": true,
-            "type": "string"
-          },
-          "message": {
-            "description": "The message for the dag warning.",
-            "readOnly": true,
-            "type": "string"
-          },
-          "timestamp": {
-            "description": "The time when this warning was logged.",
-            "format": "datetime",
-            "readOnly": true,
-            "type": "string"
-          },
-          "warning_type": {
-            "description": "The warning type for the dag warning.",
-            "readOnly": true,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "DagWarningCollection": {
-        "allOf": [
-          {
-            "properties": {
-              "import_errors": {
-                "items": {
-                  "$ref": "#/components/schemas/DagWarning"
-                },
-                "type": "array"
-              }
-            },
-            "type": "object"
-          },
-          {
-            "$ref": "#/components/schemas/CollectionInfo"
-          }
-        ],
-        "description": "Collection of DAG warnings.\n",
-        "type": "object"
-      },
-      "Dataset": {
-        "description": "A dataset item.\n\n*New in version 2.4.0*\n",
-        "properties": {
-          "consuming_dags": {
-            "items": {
-              "$ref": "#/components/schemas/DagScheduleDatasetReference"
-            },
-            "type": "array"
-          },
-          "created_at": {
-            "description": "The dataset creation time",
-            "nullable": false,
-            "type": "string"
-          },
-          "extra": {
-            "description": "The dataset extra",
-            "nullable": true,
-            "type": "object"
-          },
-          "id": {
-            "description": "The dataset id",
-            "type": "integer"
-          },
-          "producing_tasks": {
-            "items": {
-              "$ref": "#/components/schemas/TaskOutletDatasetReference"
-            },
-            "type": "array"
-          },
-          "updated_at": {
-            "description": "The dataset update time",
-            "nullable": false,
-            "type": "string"
-          },
-          "uri": {
-            "description": "The dataset uri",
-            "nullable": false,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "DatasetCollection": {
-        "allOf": [
-          {
-            "properties": {
-              "datasets": {
-                "items": {
-                  "$ref": "#/components/schemas/Dataset"
-                },
-                "type": "array"
-              }
-            },
-            "type": "object"
-          },
-          {
-            "$ref": "#/components/schemas/CollectionInfo"
-          }
-        ],
-        "description": "A collection of datasets.\n\n*New in version 2.4.0*\n",
-        "type": "object"
-      },
-      "DatasetEvent": {
-        "description": "A dataset event.\n\n*New in version 2.4.0*\n",
-        "properties": {
-          "created_dagruns": {
-            "items": {
-              "$ref": "#/components/schemas/BasicDAGRun"
-            },
-            "type": "array"
-          },
-          "dataset_id": {
-            "description": "The dataset id",
-            "type": "integer"
-          },
-          "dataset_uri": {
-            "description": "The URI of the dataset",
-            "nullable": false,
-            "type": "string"
-          },
-          "extra": {
-            "description": "The dataset event extra",
-            "nullable": true,
-            "type": "object"
-          },
-          "source_dag_id": {
-            "description": "The DAG ID that updated the dataset.",
-            "nullable": true,
-            "type": "string"
-          },
-          "source_map_index": {
-            "description": "The task map index that updated the dataset.",
-            "nullable": true,
-            "type": "integer"
-          },
-          "source_run_id": {
-            "description": "The DAG run ID that updated the dataset.",
-            "nullable": true,
-            "type": "string"
-          },
-          "source_task_id": {
-            "description": "The task ID that updated the dataset.",
-            "nullable": true,
-            "type": "string"
-          },
-          "timestamp": {
-            "description": "The dataset event creation time",
-            "nullable": false,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "DatasetEventCollection": {
-        "allOf": [
-          {
-            "properties": {
-              "dataset_events": {
-                "items": {
-                  "$ref": "#/components/schemas/DatasetEvent"
-                },
-                "type": "array"
-              }
-            },
-            "type": "object"
-          },
-          {
-            "$ref": "#/components/schemas/CollectionInfo"
-          }
-        ],
-        "description": "A collection of dataset events.\n\n*New in version 2.4.0*\n",
-        "type": "object"
       },
       "Error": {
         "description": "[RFC7807](https://tools.ietf.org/html/rfc7807) compliant response.\n",
@@ -4728,78 +2975,6 @@
           "title",
           "status"
         ],
-        "type": "object"
-      },
-      "EventLog": {
-        "description": "Log of user operations via CLI or Web UI.",
-        "properties": {
-          "dag_id": {
-            "description": "The DAG ID",
-            "nullable": true,
-            "readOnly": true,
-            "type": "string"
-          },
-          "event": {
-            "description": "A key describing the type of event.",
-            "readOnly": true,
-            "type": "string"
-          },
-          "event_log_id": {
-            "description": "The event log ID",
-            "readOnly": true,
-            "type": "integer"
-          },
-          "execution_date": {
-            "description": "When the event was dispatched for an object having execution_date, the value of this field.\n",
-            "format": "date-time",
-            "nullable": true,
-            "readOnly": true,
-            "type": "string"
-          },
-          "extra": {
-            "description": "Other information that was not included in the other fields, e.g. the complete CLI command.\n",
-            "nullable": true,
-            "readOnly": true,
-            "type": "string"
-          },
-          "owner": {
-            "description": "Name of the user who triggered these events a.",
-            "readOnly": true,
-            "type": "string"
-          },
-          "task_id": {
-            "description": "The DAG ID",
-            "nullable": true,
-            "readOnly": true,
-            "type": "string"
-          },
-          "when": {
-            "description": "The time when these events happened.",
-            "format": "date-time",
-            "readOnly": true,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "EventLogCollection": {
-        "allOf": [
-          {
-            "properties": {
-              "event_logs": {
-                "items": {
-                  "$ref": "#/components/schemas/EventLog"
-                },
-                "type": "array"
-              }
-            },
-            "type": "object"
-          },
-          {
-            "$ref": "#/components/schemas/CollectionInfo"
-          }
-        ],
-        "description": "Collection of event logs.\n\n*Changed in version 2.1.0*&#58; 'total_entries' field is added.\n",
         "type": "object"
       },
       "ExtraLink": {
@@ -4850,52 +3025,6 @@
           "unhealthy"
         ],
         "type": "string"
-      },
-      "ImportError": {
-        "properties": {
-          "filename": {
-            "description": "The filename",
-            "readOnly": true,
-            "type": "string"
-          },
-          "import_error_id": {
-            "description": "The import error ID.",
-            "readOnly": true,
-            "type": "integer"
-          },
-          "stack_trace": {
-            "description": "The full stackstrace..",
-            "readOnly": true,
-            "type": "string"
-          },
-          "timestamp": {
-            "description": "The time when this error was created.",
-            "format": "datetime",
-            "readOnly": true,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "ImportErrorCollection": {
-        "allOf": [
-          {
-            "properties": {
-              "import_errors": {
-                "items": {
-                  "$ref": "#/components/schemas/ImportError"
-                },
-                "type": "array"
-              }
-            },
-            "type": "object"
-          },
-          {
-            "$ref": "#/components/schemas/CollectionInfo"
-          }
-        ],
-        "description": "Collection of import errors.\n\n*Changed in version 2.1.0*&#58; 'total_entries' field is added.\n",
-        "type": "object"
       },
       "Job": {
         "properties": {
@@ -5088,105 +3217,6 @@
         },
         "type": "object"
       },
-      "PluginCollection": {
-        "allOf": [
-          {
-            "properties": {
-              "plugins": {
-                "items": {
-                  "$ref": "#/components/schemas/PluginCollectionItem"
-                },
-                "type": "array"
-              }
-            },
-            "type": "object"
-          },
-          {
-            "$ref": "#/components/schemas/CollectionInfo"
-          }
-        ],
-        "description": "A collection of plugin.\n\n*New in version 2.1.0*\n",
-        "type": "object"
-      },
-      "PluginCollectionItem": {
-        "description": "A plugin Item.\n\n*New in version 2.1.0*\n",
-        "properties": {
-          "appbuilder_menu_items": {
-            "description": "The Flask Appbuilder menu items",
-            "items": {
-              "nullable": true,
-              "type": "object"
-            },
-            "type": "array"
-          },
-          "appbuilder_views": {
-            "description": "The appuilder views",
-            "items": {
-              "nullable": true,
-              "type": "object"
-            },
-            "type": "array"
-          },
-          "executors": {
-            "description": "The plugin executors",
-            "items": {
-              "nullable": true,
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "flask_blueprints": {
-            "description": "The flask blueprints",
-            "items": {
-              "nullable": true,
-              "type": "object"
-            },
-            "type": "array"
-          },
-          "global_operator_extra_links": {
-            "description": "The global operator extra links",
-            "items": {
-              "nullable": true,
-              "type": "object"
-            },
-            "type": "array"
-          },
-          "hooks": {
-            "description": "The plugin hooks",
-            "items": {
-              "nullable": true,
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "macros": {
-            "description": "The plugin macros",
-            "items": {
-              "nullable": true,
-              "type": "object"
-            },
-            "type": "array"
-          },
-          "name": {
-            "description": "The name of the plugin",
-            "type": "string"
-          },
-          "operator_extra_links": {
-            "description": "Operator extra links",
-            "items": {
-              "nullable": true,
-              "type": "object"
-            },
-            "type": "array"
-          },
-          "source": {
-            "description": "The plugin source",
-            "nullable": true,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "Pool": {
         "description": "The pool",
         "properties": {
@@ -5244,36 +3274,6 @@
           }
         ],
         "description": "Collection of pools.\n\n*Changed in version 2.1.0*&#58; 'total_entries' field is added.\n",
-        "type": "object"
-      },
-      "Provider": {
-        "description": "The provider\n\n*New in version 2.1.0*\n",
-        "properties": {
-          "description": {
-            "description": "The description of the provider.",
-            "type": "string"
-          },
-          "package_name": {
-            "description": "The package name of the provider.",
-            "type": "string"
-          },
-          "version": {
-            "description": "The version of the provider.",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "ProviderCollection": {
-        "description": "Collection of providers.\n\n*New in version 2.1.0*\n",
-        "properties": {
-          "providers": {
-            "items": {
-              "$ref": "#/components/schemas/Provider"
-            },
-            "type": "array"
-          }
-        },
         "type": "object"
       },
       "RelativeDelta": {
@@ -5346,54 +3346,6 @@
           "second",
           "microsecond"
         ],
-        "type": "object"
-      },
-      "Resource": {
-        "description": "A resource on which permissions are granted.\n\n*New in version 2.1.0*\n",
-        "properties": {
-          "name": {
-            "description": "The name of the resource",
-            "nullable": false,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "Role": {
-        "description": "a role item.\n\n*New in version 2.1.0*\n",
-        "properties": {
-          "actions": {
-            "items": {
-              "$ref": "#/components/schemas/ActionResource"
-            },
-            "type": "array"
-          },
-          "name": {
-            "description": "The name of the role\n\n*Changed in version 2.3.0*&#58; A minimum character length requirement ('minLength') is added.\n",
-            "minLength": 1,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "RoleCollection": {
-        "allOf": [
-          {
-            "properties": {
-              "roles": {
-                "items": {
-                  "$ref": "#/components/schemas/Role"
-                },
-                "type": "array"
-              }
-            },
-            "type": "object"
-          },
-          {
-            "$ref": "#/components/schemas/CollectionInfo"
-          }
-        ],
-        "description": "A collection of roles.\n\n*New in version 2.1.0*\n",
         "type": "object"
       },
       "SLAMiss": {
@@ -5779,32 +3731,6 @@
         },
         "type": "object"
       },
-      "TaskOutletDatasetReference": {
-        "description": "A datasets reference to an upstream task.\n\n*New in version 2.4.0*\n",
-        "properties": {
-          "created_at": {
-            "description": "The dataset creation time",
-            "nullable": false,
-            "type": "string"
-          },
-          "dag_id": {
-            "description": "The DAG ID that updates the dataset.",
-            "nullable": true,
-            "type": "string"
-          },
-          "task_id": {
-            "description": "The task ID that updates the dataset.",
-            "nullable": true,
-            "type": "string"
-          },
-          "updated_at": {
-            "description": "The dataset update time",
-            "nullable": false,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "TaskState": {
         "description": "Task state.\n\n*Changed in version 2.0.2*&#58; 'removed' is added as a possible value.\n\n*Changed in version 2.2.0*&#58; 'deferred' is added as a possible value.\n\n*Changed in version 2.4.0*&#58; 'sensing' state has been removed.\n*Changed in version 2.4.2*&#58; 'restarting' is added as a possible value\n",
         "enum": [
@@ -5969,120 +3895,6 @@
         },
         "type": "object"
       },
-      "User": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/UserCollectionItem"
-          },
-          {
-            "properties": {
-              "password": {
-                "type": "string",
-                "writeOnly": true
-              }
-            },
-            "type": "object"
-          }
-        ],
-        "description": "A user object with sensitive data.\n\n*New in version 2.1.0*\n",
-        "type": "object"
-      },
-      "UserCollection": {
-        "allOf": [
-          {
-            "properties": {
-              "users": {
-                "items": {
-                  "$ref": "#/components/schemas/UserCollectionItem"
-                },
-                "type": "array"
-              }
-            },
-            "type": "object"
-          },
-          {
-            "$ref": "#/components/schemas/CollectionInfo"
-          }
-        ],
-        "description": "Collection of users.\n\n*New in version 2.1.0*\n",
-        "type": "object"
-      },
-      "UserCollectionItem": {
-        "description": "A user object.\n\n*New in version 2.1.0*\n",
-        "properties": {
-          "active": {
-            "description": "Whether the user is active",
-            "nullable": true,
-            "readOnly": true,
-            "type": "boolean"
-          },
-          "changed_on": {
-            "description": "The date user was changed",
-            "format": "datetime",
-            "nullable": true,
-            "readOnly": true,
-            "type": "string"
-          },
-          "created_on": {
-            "description": "The date user was created",
-            "format": "datetime",
-            "nullable": true,
-            "readOnly": true,
-            "type": "string"
-          },
-          "email": {
-            "description": "The user's email.\n\n*Changed in version 2.2.0*&#58; A minimum character length requirement ('minLength') is added.\n",
-            "minLength": 1,
-            "type": "string"
-          },
-          "failed_login_count": {
-            "description": "The number of times the login failed",
-            "nullable": true,
-            "readOnly": true,
-            "type": "integer"
-          },
-          "first_name": {
-            "description": "The user's first name.\n\n*Changed in version 2.4.0*&#58; The requirement for this to be non-empty was removed.\n",
-            "type": "string"
-          },
-          "last_login": {
-            "description": "The last user login",
-            "format": "datetime",
-            "nullable": true,
-            "readOnly": true,
-            "type": "string"
-          },
-          "last_name": {
-            "description": "The user's last name.\n\n*Changed in version 2.4.0*&#58; The requirement for this to be non-empty was removed.\n",
-            "type": "string"
-          },
-          "login_count": {
-            "description": "The login count",
-            "nullable": true,
-            "readOnly": true,
-            "type": "integer"
-          },
-          "roles": {
-            "description": "User roles.\n\n*Changed in version 2.2.0*&#58; Field is no longer read-only.\n",
-            "items": {
-              "nullable": true,
-              "properties": {
-                "name": {
-                  "type": "string"
-                }
-              },
-              "type": "object"
-            },
-            "type": "array"
-          },
-          "username": {
-            "description": "The username.\n\n*Changed in version 2.2.0*&#58; A minimum character length requirement ('minLength') is added.\n",
-            "minLength": 1,
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "Variable": {
         "allOf": [
           {
@@ -6216,6 +4028,363 @@
           }
         },
         "type": "object"
+      }
+    },
+    "parameters": {
+      "ConnectionID": {
+        "description": "The connection ID.",
+        "in": "path",
+        "name": "connection_id",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "ContinuationToken": {
+        "description": "A token that allows you to continue fetching logs.\nIf passed, it will specify the location from which the download should be continued.\n",
+        "in": "query",
+        "name": "token",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "DAGID": {
+        "description": "The DAG ID.",
+        "in": "path",
+        "name": "dag_id",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "DAGRunID": {
+        "description": "The DAG run ID.",
+        "in": "path",
+        "name": "dag_run_id",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "FileToken": {
+        "description": "The key containing the encrypted path to the file. Encryption and decryption take place only on\nthe server. This prevents the client from reading an non-DAG file. This also ensures API\nextensibility, because the format of encrypted data may change.\n",
+        "in": "path",
+        "name": "file_token",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "FilterDurationGTE": {
+        "description": "Returns objects greater than or equal to the specified values.\n\nThis can be combined with duration_lte parameter to receive only the selected period.\n",
+        "in": "query",
+        "name": "duration_gte",
+        "required": false,
+        "schema": {
+          "type": "number"
+        }
+      },
+      "FilterDurationLTE": {
+        "description": "Returns objects less than or equal to the specified values.\n\nThis can be combined with duration_gte parameter to receive only the selected range.\n",
+        "in": "query",
+        "name": "duration_lte",
+        "required": false,
+        "schema": {
+          "type": "number"
+        }
+      },
+      "FilterEndDateGTE": {
+        "description": "Returns objects greater or equal the specified date.\n\nThis can be combined with start_date_lte parameter to receive only the selected period.\n",
+        "in": "query",
+        "name": "end_date_gte",
+        "required": false,
+        "schema": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "FilterEndDateLTE": {
+        "description": "Returns objects less than or equal to the specified date.\n\nThis can be combined with start_date_gte parameter to receive only the selected period.\n",
+        "in": "query",
+        "name": "end_date_lte",
+        "required": false,
+        "schema": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "FilterExecutionDateGTE": {
+        "description": "Returns objects greater or equal to the specified date.\n\nThis can be combined with execution_date_lte parameter to receive only the selected period.\n",
+        "in": "query",
+        "name": "execution_date_gte",
+        "required": false,
+        "schema": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "FilterExecutionDateLTE": {
+        "description": "Returns objects less than or equal to the specified date.\n\nThis can be combined with execution_date_gte parameter to receive only the selected period.\n",
+        "in": "query",
+        "name": "execution_date_lte",
+        "required": false,
+        "schema": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "FilterMapIndex": {
+        "description": "Filter on map index for mapped task.",
+        "in": "query",
+        "name": "map_index",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "FilterPool": {
+        "description": "The value can be repeated to retrieve multiple matching values (OR condition).",
+        "in": "query",
+        "name": "pool",
+        "required": false,
+        "schema": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "FilterQueue": {
+        "description": "The value can be repeated to retrieve multiple matching values (OR condition).",
+        "in": "query",
+        "name": "queue",
+        "schema": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "FilterStartDateGTE": {
+        "description": "Returns objects greater or equal the specified date.\n\nThis can be combined with start_date_lte parameter to receive only the selected period.\n",
+        "in": "query",
+        "name": "start_date_gte",
+        "required": false,
+        "schema": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "FilterStartDateLTE": {
+        "description": "Returns objects less or equal the specified date.\n\nThis can be combined with start_date_gte parameter to receive only the selected period.\n",
+        "in": "query",
+        "name": "start_date_lte",
+        "required": false,
+        "schema": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "FilterState": {
+        "description": "The value can be repeated to retrieve multiple matching values (OR condition).",
+        "in": "query",
+        "name": "state",
+        "required": false,
+        "schema": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "FilterTags": {
+        "description": "List of tags to filter results.\n\n*New in version 2.2.0*\n",
+        "in": "query",
+        "name": "tags",
+        "schema": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "FullContent": {
+        "description": "A full content will be returned.\nBy default, only the first fragment will be returned.\n",
+        "in": "query",
+        "name": "full_content",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      "MapIndex": {
+        "description": "The map index.",
+        "in": "path",
+        "name": "map_index",
+        "required": true,
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "OnlyActive": {
+        "description": "Only filter active DAGs.\n\n*New in version 2.1.1*\n",
+        "in": "query",
+        "name": "only_active",
+        "required": false,
+        "schema": {
+          "default": true,
+          "type": "boolean"
+        }
+      },
+      "OrderBy": {
+        "description": "The name of the field to order the results by.\nPrefix a field name with `-` to reverse the sort order.\n\n*New in version 2.1.0*\n",
+        "in": "query",
+        "name": "order_by",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PageLimit": {
+        "description": "The numbers of items to return.",
+        "in": "query",
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "default": 100,
+          "type": "integer"
+        }
+      },
+      "PageOffset": {
+        "description": "The number of items to skip before starting to collect the result set.",
+        "in": "query",
+        "name": "offset",
+        "required": false,
+        "schema": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "PoolName": {
+        "description": "The pool name.",
+        "in": "path",
+        "name": "pool_name",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "TaskID": {
+        "description": "The task ID.",
+        "in": "path",
+        "name": "task_id",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "TaskTryNumber": {
+        "description": "The task try number.",
+        "in": "path",
+        "name": "task_try_number",
+        "required": true,
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "UpdateMask": {
+        "description": "The fields to update on the resource. If absent or empty, all modifiable fields are updated.\nA comma-separated list of fully qualified names of fields.\n",
+        "explode": false,
+        "in": "query",
+        "name": "update_mask",
+        "schema": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "style": "form"
+      },
+      "VariableKey": {
+        "description": "The variable Key.",
+        "in": "path",
+        "name": "variable_key",
+        "required": true,
+        "schema": {
+          "format": "path",
+          "type": "string"
+        }
+      },
+      "XComKey": {
+        "description": "The XCom key.",
+        "in": "path",
+        "name": "xcom_key",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "AlreadyExists": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "An existing resource conflicts with the request."
+      },
+      "BadRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Client specified an invalid argument."
+      },
+      "NotAcceptable": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "A specified Accept header is not allowed."
+      },
+      "NotFound": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "A specified resource is not found."
+      },
+      "PermissionDenied": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Client does not have sufficient permission."
+      },
+      "Unauthenticated": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Request not authenticated due to missing, invalid, authentication info."
       }
     },
     "securitySchemes": {

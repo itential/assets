@@ -1,0 +1,995 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Cisco Umbrella — Networks",
+    "version": "2.0.0",
+    "x-vendor-api-version": "2.0.0",
+    "description": "Cisco Umbrella Networks API — Create and manage the networks in your organization.\n\nAuthentication: OAuth2 Client Credentials — obtain a client key and secret from Cisco Umbrella Admin → API Keys → Umbrella API. The token endpoint requires the client credentials as HTTP Basic auth on the Authorization header — on the Integration instance, set auth_method to client_secret_basic (defaults to client_secret_post) and Itential Platform builds this header automatically from the plain client_id/client_secret values.\n\nSource: https://developer.cisco.com/docs/cloud-security/"
+  },
+  "servers": [
+    {
+      "url": "https://api.umbrella.com/{basePath}",
+      "variables": {
+        "basePath": {
+          "default": "deployments/v2"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "oauthFlow": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Networks"
+    },
+    {
+      "name": "Umbrella"
+    }
+  ],
+  "paths": {
+    "/networks": {
+      "post": {
+        "tags": [
+          "Networks",
+          "Umbrella"
+        ],
+        "description": "Create a network. Before you can create a network, contact Support to get your IP range verified.",
+        "summary": "Create Network",
+        "operationId": "createNetwork",
+        "security": [
+          {
+            "oauthFlow": [
+              "deployments.networks:write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the network.",
+                    "minLength": 1,
+                    "maxLength": 50
+                  },
+                  "ipAddress": {
+                    "type": "string",
+                    "description": "The IP address of the network."
+                  },
+                  "prefixLength": {
+                    "$ref": "#/components/schemas/prefixLength"
+                  },
+                  "isDynamic": {
+                    "type": "boolean",
+                    "description": "Specifies whether the IP is dynamic."
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "The status of the network.",
+                    "pattern": "^(OPEN|CLOSED)$"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "name",
+                  "prefixLength",
+                  "isDynamic",
+                  "status"
+                ]
+              },
+              "example": {
+                "name": "network name",
+                "prefixLength": 32,
+                "isDynamic": true,
+                "status": "OPEN"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkObject"
+                },
+                "example": {
+                  "originId": 1234,
+                  "name": "name of the network",
+                  "ipAddress": "network ip address",
+                  "prefixLength": 32,
+                  "isDynamic": true,
+                  "isVerified": true,
+                  "status": "OPEN",
+                  "createdAt": "2020-03-09T22:18:26.625Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Error"
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTP status code",
+                      "example": 403
+                    },
+                    "error": {
+                      "type": "string",
+                      "description": "Shorthand error message",
+                      "example": "Forbidden"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Detailed error message",
+                      "example": "The IP address that you provided is outside of your verified CIDR blocks."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Networks",
+          "Umbrella"
+        ],
+        "description": "List the Networks.",
+        "summary": "List Networks",
+        "operationId": "listNetworks",
+        "security": [
+          {
+            "oauthFlow": [
+              "deployments.networks:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/paginationPageParam"
+          },
+          {
+            "$ref": "#/components/parameters/paginationLimitParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NetworkObject"
+                  }
+                },
+                "example": [
+                  {
+                    "originId": 1234,
+                    "name": "network name",
+                    "ipAddress": "network ip address",
+                    "prefixLength": 32,
+                    "isDynamic": true,
+                    "isVerified": true,
+                    "status": "OPEN",
+                    "createdAt": "2020-03-09T22:18:26.625Z"
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/404Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/networks/{networkId}": {
+      "get": {
+        "tags": [
+          "Networks",
+          "Umbrella"
+        ],
+        "description": "Get a Network.",
+        "summary": "Get Network",
+        "operationId": "getNetwork",
+        "security": [
+          {
+            "oauthFlow": [
+              "deployments.networks:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/networkId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkObject"
+                },
+                "example": {
+                  "originId": 1234,
+                  "name": "network name",
+                  "ipAddress": "network ip address",
+                  "prefixLength": 32,
+                  "isDynamic": true,
+                  "isVerified": true,
+                  "status": "OPEN",
+                  "createdAt": "2020-03-09T22:18:26.625Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/404Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Networks",
+          "Umbrella"
+        ],
+        "description": "Update a Network. Before you can update the network's IP address, contact Support to get your IP range verified.",
+        "summary": "Update Network",
+        "operationId": "updateNetwork",
+        "security": [
+          {
+            "oauthFlow": [
+              "deployments.networks:write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/networkId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the network.",
+                    "minLength": 1,
+                    "maxLength": 50
+                  },
+                  "ipAddress": {
+                    "type": "string",
+                    "description": "The IP address of the network.",
+                    "minLength": 7
+                  },
+                  "prefixLength": {
+                    "$ref": "#/components/schemas/prefixLength"
+                  },
+                  "isDynamic": {
+                    "type": "boolean",
+                    "description": "Specifies whether the IP address is dynamic."
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "The status of the network.",
+                    "pattern": "^(OPEN|CLOSED)$"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "name",
+                  "isDynamic",
+                  "status"
+                ]
+              },
+              "example": {
+                "name": "network name",
+                "isDynamic": true,
+                "status": "OPEN"
+              }
+            }
+          },
+          "description": "Update a network.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkObject"
+                },
+                "example": {
+                  "originId": 1234,
+                  "name": "network name",
+                  "ipAddress": "network ip address",
+                  "prefixLength": 32,
+                  "isDynamic": true,
+                  "isVerified": true,
+                  "status": "OPEN",
+                  "createdAt": "2020-03-09T22:18:26.625Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Error"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTP status code",
+                      "example": 403
+                    },
+                    "error": {
+                      "type": "string",
+                      "description": "Shorthand error message",
+                      "example": "Forbidden"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Detailed error message",
+                      "example": "The IP address you provided is outside of your verified CIDR blocks"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Networks",
+          "Umbrella"
+        ],
+        "description": "Delete a network.",
+        "summary": "Delete Network",
+        "operationId": "deleteNetwork",
+        "security": [
+          {
+            "oauthFlow": [
+              "deployments.networks:write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/networkId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "example": null
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/404Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/networks/{networkId}/policies": {
+      "get": {
+        "tags": [
+          "Networks",
+          "Umbrella"
+        ],
+        "description": "List the policies for a network.",
+        "summary": "List Policies for Network",
+        "operationId": "listNetworkPolicies",
+        "security": [
+          {
+            "oauthFlow": [
+              "deployments.networks:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/networkId"
+          },
+          {
+            "name": "type",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "dns",
+                "web"
+              ]
+            },
+            "in": "query",
+            "required": false,
+            "description": "The type of the Umbrella policy.",
+            "example": "web"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PolicyObject"
+                  }
+                },
+                "example": [
+                  {
+                    "id": 1234,
+                    "name": "The policy name",
+                    "type": "dns",
+                    "organizationId": 123456,
+                    "priority": 1,
+                    "isDefault": false,
+                    "isAppliedDirectly": true,
+                    "createdAt": "2020-03-09T22:18:26.625Z",
+                    "modifiedAt": "2020-03-09T22:18:26.625Z",
+                    "uri": "The resource URI"
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/404Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "oauthFlow": {
+        "type": "oauth2",
+        "description": "The client credential flow.",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://api.umbrella.com/auth/v2/token",
+            "scopes": {
+              "deployments.networks:write": "Write deployments networks",
+              "deployments.networks:read": "Read deployments networks"
+            }
+          }
+        }
+      }
+    },
+    "headers": {
+      "Content-Type": {
+        "schema": {
+          "type": "string"
+        },
+        "description": "The MIME content type of the response body.",
+        "example": "application/json"
+      },
+      "Date": {
+        "schema": {
+          "type": "string",
+          "pattern": "^[0-90-90-90-9-0-90-9-0-90-9T0-90-9:0-90-9:0-90-9Z]+$"
+        },
+        "description": "The timestamp of the response.",
+        "example": "2023-03-14T18:34:25Z"
+      }
+    },
+    "parameters": {
+      "paginationPageParam": {
+        "name": "page",
+        "in": "query",
+        "description": "The number of a page in the collection.",
+        "required": false,
+        "schema": {
+          "default": 1,
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1
+        }
+      },
+      "paginationLimitParam": {
+        "name": "limit",
+        "in": "query",
+        "description": "The number of records to return from the collection on the page.",
+        "required": false,
+        "schema": {
+          "default": 100,
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "networkId": {
+        "name": "networkId",
+        "schema": {
+          "type": "integer"
+        },
+        "description": "The ID of the network.",
+        "in": "path",
+        "required": true,
+        "example": 13456
+      }
+    },
+    "schemas": {
+      "prefixLength": {
+        "type": "integer",
+        "description": "The length of the prefix. Set a prefix length that is greater than 28 and less than 33.",
+        "minimum": 29,
+        "maximum": 32,
+        "example": 30
+      },
+      "NetworkObject": {
+        "type": "object",
+        "properties": {
+          "originId": {
+            "type": "integer",
+            "description": "The origin ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the network."
+          },
+          "ipAddress": {
+            "type": "string",
+            "description": "The IP address of the network."
+          },
+          "prefixLength": {
+            "$ref": "#/components/schemas/prefixLength"
+          },
+          "isDynamic": {
+            "type": "boolean",
+            "description": "Specifies whether the network has a dynamic IP."
+          },
+          "isVerified": {
+            "type": "boolean",
+            "description": "Specifies whether the network is verified."
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the network.",
+            "pattern": "^(OPEN|CLOSED)$"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "The date and time (timestamp) when the network was created.",
+            "format": "date-time",
+            "example": "2018-06-13T16:07:07.222Z"
+          }
+        },
+        "required": [
+          "originId",
+          "name",
+          "ipAddress",
+          "prefixLength",
+          "isDynamic",
+          "isVerified",
+          "status",
+          "createdAt"
+        ],
+        "example": {
+          "originId": 1234,
+          "name": "name of the network",
+          "ipAddress": "The network IP address",
+          "prefixLength": 32,
+          "isDynamic": true,
+          "isVerified": true,
+          "status": "OPEN",
+          "createdAt": "2020-03-09T22:18:26.625Z"
+        }
+      },
+      "PolicyObject": {
+        "type": "object",
+        "readOnly": true,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The ID of the policy. Use the policy ID as a reference for subsequent requests.",
+            "example": 134556
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the policy.",
+            "example": "my policy name"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the policy.",
+            "enum": [
+              "dns",
+              "web"
+            ],
+            "example": "dns"
+          },
+          "organizationId": {
+            "type": "integer",
+            "description": "The organization ID.",
+            "example": 123466
+          },
+          "priority": {
+            "type": "integer",
+            "description": "A number that represents the priority of the policy in the policy list.",
+            "example": 12
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "Specifies whether the policy is the default policy.",
+            "example": true
+          },
+          "isAppliedDirectly": {
+            "type": "boolean",
+            "description": "Indicates if policy is applied directly to this identity.",
+            "example": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time (ISO 8601 timestamp) when the policy was created.",
+            "example": "2018-06-13T16:07:07.222Z"
+          },
+          "modifiedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time (ISO 8601 timestamp) when the policy was modified.",
+            "example": "2018-06-13T16:07:07.222Z"
+          },
+          "uri": {
+            "type": "string",
+            "description": "The resource URI."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "organizationId",
+          "priority",
+          "isDefault",
+          "isAppliedDirectly",
+          "createdAt",
+          "modifiedAt",
+          "uri"
+        ],
+        "example": {
+          "id": 1234,
+          "name": "The policy name",
+          "type": "dns",
+          "organizationId": 123456,
+          "priority": 1,
+          "isDefault": false,
+          "isAppliedDirectly": true,
+          "createdAt": "2020-03-09T22:18:26.625Z",
+          "modifiedAt": "2020-03-09T22:18:26.625Z",
+          "uri": "The resource URI"
+        }
+      }
+    },
+    "responses": {
+      "400Error": {
+        "description": "Bad Request",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/Content-Type"
+          },
+          "Date": {
+            "$ref": "#/components/headers/Date"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "example": 400,
+                  "description": "HTTP status code"
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Validation Error",
+                  "description": "A brief description of the error"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Detailed error message"
+                }
+              }
+            }
+          }
+        }
+      },
+      "401Error": {
+        "description": "Unauthorized",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/Content-Type"
+          },
+          "Date": {
+            "$ref": "#/components/headers/Date"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "example": 401,
+                  "description": "HTTP status code"
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Validation error",
+                  "description": "A brief description of the error"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Detailed error message"
+                }
+              }
+            }
+          }
+        }
+      },
+      "403Error": {
+        "description": "Forbidden",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/Content-Type"
+          },
+          "Date": {
+            "$ref": "#/components/headers/Date"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "example": 403,
+                  "description": "HTTP status code"
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Forbidden",
+                  "description": "A brief description of the error"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Detailed error message"
+                }
+              }
+            }
+          }
+        }
+      },
+      "404Error": {
+        "description": "Not Found",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/Content-Type"
+          },
+          "Date": {
+            "$ref": "#/components/headers/Date"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "example": 404,
+                  "description": "HTTP status code"
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Not Found",
+                  "description": "A brief description of the error"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Detailed error message"
+                }
+              }
+            }
+          }
+        }
+      },
+      "500Error": {
+        "description": "Internal Server Error",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/Content-Type"
+          },
+          "Date": {
+            "$ref": "#/components/headers/Date"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "example": 500,
+                  "description": "HTTP status code"
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Internal error",
+                  "description": "A brief description of the error"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Detailed error message"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

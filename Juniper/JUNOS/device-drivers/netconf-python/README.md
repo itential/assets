@@ -1,4 +1,4 @@
-# junos-netconf — IAG5 Python script service
+# junos-netconf — IG5 Python script service
 
 NETCONF-based driver for Juniper Junos devices. Use this for any flow that
 needs to survive an in-flight session restart (software add, reboot, halt)
@@ -7,6 +7,23 @@ they wait for a prompt that never returns.
 
 Transport: NETCONF over SSH (port 830). Requires `set system services
 netconf ssh` committed on the target device.
+
+## Table of Contents
+
+- [Actions](#actions)
+- [get-config format options](#get-config-format-options)
+- [Invocation model](#invocation-model)
+  - [Registered services](#registered-services)
+  - [From iagctl](#from-iagctl)
+  - [From an Inventory Manager action mapping](#from-an-inventory-manager-action-mapping)
+  - [Direct local testing](#direct-local-testing)
+  - [Required vs optional inputs](#required-vs-optional-inputs)
+- [Candidate datastore locking (send-command)](#candidate-datastore-locking-send-command)
+- [Long-running commands (software add)](#long-running-commands-software-add)
+- [Recommended inventory attributes per device](#recommended-inventory-attributes-per-device)
+- [Why NETCONF for destructive ops](#why-netconf-for-destructive-ops)
+- [Prerequisites on the device](#prerequisites-on-the-device)
+- [Local development](#local-development)
 
 ## Actions
 
@@ -126,7 +143,7 @@ python main.py \
   --password "$JUNOS_PASS" \
   --command "show version"
 
-# Or via env var (mirrors how the IAG5 services invoke it):
+# Or via env var (mirrors how the IG5 services invoke it):
 JUNOS_OP=run-command python main.py \
   --host 10.0.16.8 --user itential --password "$JUNOS_PASS" \
   --command "show version"
@@ -229,8 +246,8 @@ set system services netconf ssh
 commit
 ```
 
-Port 830 must be reachable from IAG5. The vSRX security group should
-allow TCP/22 (CLI) and TCP/830 (NETCONF) from the IAG5 host.
+Port 830 must be reachable from IG5. The vSRX security group should
+allow TCP/22 (CLI) and TCP/830 (NETCONF) from the IG5 host.
 
 ## Local development
 

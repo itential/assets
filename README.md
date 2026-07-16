@@ -15,7 +15,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Studio Projects** | Bundles of related automation assets (workflows, forms, templates, and transformations) for a specific use case |
 | **OpenAPIs** | JSON-based definitions imported as Integration Models that specify how Itential Platform connects to external APIs, databases, and systems |
 | **Golden Configurations** | Config Manager compliance trees for auditing device configuration drift |
-| **device-drivers** | Netmiko-based drivers for connecting IAG to physical and virtual devices |
+| **device-drivers** | Netmiko-based drivers for connecting Itential Gateway to physical and virtual devices |
 | **Configuration Parsers** | Scripts for parsing structured output from device CLI commands |
 | **Automations** | Standalone automation scripts |
 | **LCM Resource Models** | JSON Schema definitions that specify which properties Lifecycle Manager tracks for an infrastructure entity over time |
@@ -29,7 +29,6 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **1Password** | Connect (secrets access) |
 | **6connect** | IP address management |
 | **Akamai** | CDN & edge platform APIs |
-| **Alkira** | SD-WAN |
 | **Ansible** | AWX / Tower |
 | **Apache** | Airflow · Kafka |
 | **Arista** | EOS |
@@ -47,7 +46,6 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **HashiCorp** | Vault (secrets management) |
 | **Infoblox** | NIOS WAPI · Threat Defense BloxOne · Universal DDI BloxOne |
 | **IP Fabric** | Network intelligence |
-| **Itential** | Platform utilities (data manipulation, config management, regex, email, workflow utilities) |
 | **Juniper** | JUNOS · Mist |
 | **Kentik** | Network observability |
 | **Kubernetes** | Container orchestration |
@@ -123,7 +121,7 @@ See [Manage Lifecycle Manager resources](https://docs.itential.com/itential-plat
 3. On the **Model** tab, paste the JSON Schema from the file and click **Save**.
 
 ### Install a Device Driver (Gateway)
-Follow the instructions in the driver's `README.md`. Drivers typically require copying files to your IAG host and restarting the IAG service.
+Follow the instructions in the driver's `README.md`. Drivers typically require copying files to your Itential Gateway host and restarting the Itential Gateway service.
 
 ---
 
@@ -132,7 +130,7 @@ Follow the instructions in the driver's `README.md`. Drivers typically require c
 Minimum versions vary by asset - check each product's `README.md` for specifics. In general:
 
 - **Itential Platform** ≥ 6.4
-- **Itential Automation Gateway** ≥ 5.0 (for device-driver assets)
+- **Itential Gateway** ≥ 5.0 (for device-driver assets)
 
 ---
 

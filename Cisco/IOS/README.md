@@ -1,14 +1,28 @@
 # Cisco IOS
 
-Assets for the Itential Platform — Cisco IOS device automation.
+Cisco IOS is the network operating system running Cisco's routers and switches — a mature CLI-driven platform (spanning IOS and IOS-XE) widely deployed across enterprise and service provider networks.
+
+This project provides a Studio Project covering software upgrade, port turn-up, golden configuration compliance, and inventory management for Cisco IOS devices — see **Projects** below.
 
 **Requirements:** Itential Platform >= 6.4 · Itential Automation Gateway >= 5.0
+
+## Table of Contents
+
+- [Contents](#contents)
+- [Inventory Manager Configuration](#inventory-manager-configuration)
+  - [Node Attributes](#node-attributes)
+- [Projects](#projects)
+  - [Cisco IOS](#cisco-ios-1)
+- [Golden Configurations](#golden-configurations)
+  - [Cisco IOS - Simple](#cisco-ios---simple)
+  - [Cisco IOS - Jinja2](#cisco-ios---jinja2)
+  - [Cisco IOS - Lab](#cisco-ios---lab)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
-| [Projects/Cisco IOS](./Projects/Cisco%20IOS.project.json) | IAP project — software upgrade, port turn-up, compliance, inventory management |
+| [Projects/Cisco IOS](./Projects/Cisco%20IOS.project.json) | Itential Platform project — software upgrade, port turn-up, compliance, inventory management |
 | [Golden Configurations/Cisco IOS - Simple](./Golden%20Configurations/Cisco%20IOS%20-%20Simple.json) | Golden config tree using literal matching |
 | [Golden Configurations/Cisco IOS - Jinja2](./Golden%20Configurations/Cisco%20IOS%20-%20Jinja2.json) | Golden config tree using Jinja2 expressions for flexible value matching |
 | [Golden Configurations/Cisco IOS - Lab](./Golden%20Configurations/Cisco%20IOS%20-%20Lab.json) | Golden config tree for lab baseline configuration |
@@ -68,7 +82,7 @@ Set these attributes on each node in Inventory Manager:
 
 ### Cisco IOS
 
-An IAP project covering software upgrade, port turn-up, golden configuration compliance, and inventory management for Cisco IOS devices, organized into four folders.
+An Itential Platform project covering software upgrade, port turn-up, golden configuration compliance, and inventory management for Cisco IOS devices, organized into four folders.
 
 **Software Upgrade**
 - **IOS Upgrade** — stages the image, runs pre/post checks, installs, and reloads

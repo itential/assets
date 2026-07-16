@@ -1,0 +1,974 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Cisco Umbrella — Internal Networks",
+    "version": "latest",
+    "x-vendor-api-version": "2.0.0",
+    "description": "Cisco Umbrella Internal Networks API — Create and manage the internal networks in your organization.\n\nAuthentication: OAuth2 Client Credentials — obtain a client key and secret from Cisco Umbrella Admin → API Keys → Umbrella API. The token endpoint requires the client credentials as HTTP Basic auth on the Authorization header — on the Integration instance, set auth_method to client_secret_basic (defaults to client_secret_post) and Itential Platform builds this header automatically from the plain client_id/client_secret values.\n\nSource: https://developer.cisco.com/docs/cloud-security/",
+    "x-itential-curated": "Reviewed against the repo's common-CRUD-for-automation policy: all 6 upstream operations are already in scope, so the full spec is carried through as -latest. See the repo README for the operation breakdown and the full spec."
+  },
+  "servers": [
+    {
+      "url": "https://api.umbrella.com/{basePath}",
+      "variables": {
+        "basePath": {
+          "default": "deployments/v2"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "oauthFlow": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Internal Networks"
+    },
+    {
+      "name": "Umbrella"
+    }
+  ],
+  "paths": {
+    "/internalnetworks": {
+      "post": {
+        "tags": [
+          "Internal Networks",
+          "Umbrella"
+        ],
+        "description": "Create an internal network.",
+        "summary": "Create Internal Network",
+        "operationId": "createInternalNetwork",
+        "security": [
+          {
+            "oauthFlow": [
+              "deployments.internalnetworks:write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "The properties of the internal network.",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the internal network.",
+                    "minLength": 1,
+                    "maxLength": 50
+                  },
+                  "ipAddress": {
+                    "type": "string",
+                    "description": "The IPv4 address of the internal network.",
+                    "minLength": 7,
+                    "maxLength": 15
+                  },
+                  "prefixLength": {
+                    "type": "integer",
+                    "description": "The length of the prefix. The prefix length is from 8 through 32.",
+                    "minimum": 8,
+                    "maximum": 32
+                  },
+                  "siteId": {
+                    "type": "integer",
+                    "description": "The site ID. For DNS policies, specify the ID of the site that is associated with internal network.\nProvide the value of either the `siteId`, `networkId`, or `tunnelId`."
+                  },
+                  "networkId": {
+                    "type": "integer",
+                    "description": "The network ID. For Web policies that use proxy chaining, specify the\nID of the network, which is associated with the internal network. Provide the value of either the `siteId`, `networkId`, or `tunnelId`."
+                  },
+                  "tunnelId": {
+                    "type": "integer",
+                    "description": "The ID of the tunnel. For Web policies that use an IPsec tunnel, specify the\nID of tunnel, which is associated with the internal network. Provide the value of either the `siteId`, `networkId`, or `tunnelId`."
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "name",
+                  "ipAddress",
+                  "prefixLength"
+                ]
+              },
+              "example": {
+                "name": "internal network label",
+                "ipAddress": "An IPv4 address",
+                "prefixLength": 28,
+                "siteId": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalNetworkObject"
+                },
+                "example": {
+                  "originId": 1234,
+                  "name": "internal network label",
+                  "ipAddress": "An IPv4 address",
+                  "prefixLength": 24,
+                  "siteName": "Site name",
+                  "siteId": 2,
+                  "networkName": "Internal network name",
+                  "networkId": 2,
+                  "tunnelName": "Tunnel name",
+                  "tunnelId": 3,
+                  "createdAt": "2020-03-09T22:18:26.625Z",
+                  "modifiedAt": "2020-03-09T22:18:26.625Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/404Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Internal Networks",
+          "Umbrella"
+        ],
+        "description": "List the internal networks.",
+        "summary": "List Internal Networks",
+        "operationId": "listInternalNetworks",
+        "security": [
+          {
+            "oauthFlow": [
+              "deployments.internalnetworks:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/paginationPageParam"
+          },
+          {
+            "$ref": "#/components/parameters/paginationLimitParam"
+          },
+          {
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "required": false,
+            "description": "internal network label"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalNetworkObject"
+                  }
+                },
+                "example": [
+                  {
+                    "originId": 1234,
+                    "name": "internal network label",
+                    "ipAddress": "An IPv4 address",
+                    "prefixLength": 24,
+                    "siteName": "Site name",
+                    "siteId": 2,
+                    "createdAt": "2020-03-09T22:18:26.625Z",
+                    "modifiedAt": "2020-03-09T22:18:26.625Z"
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/404Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/internalnetworks/{internalNetworkId}": {
+      "get": {
+        "tags": [
+          "Internal Networks",
+          "Umbrella"
+        ],
+        "description": "Get an internal network.",
+        "summary": "Get Internal Network",
+        "operationId": "getInternalNetwork",
+        "security": [
+          {
+            "oauthFlow": [
+              "deployments.internalnetworks:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "internalNetworkId",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The origin ID (originId) of the internal network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalNetworkObject"
+                },
+                "example": {
+                  "originId": 1234,
+                  "name": "internal network label",
+                  "ipAddress": "An IPv4 address",
+                  "prefixLength": 24,
+                  "tunnelName": "Tunnel name",
+                  "tunnelId": 3,
+                  "createdAt": "2020-03-09T22:18:26.625Z",
+                  "modifiedAt": "2020-03-09T22:18:26.625Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/404Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Internal Networks",
+          "Umbrella"
+        ],
+        "description": "Update an internal network.",
+        "summary": "Update Internal Network",
+        "operationId": "updateInternalNetwork",
+        "security": [
+          {
+            "oauthFlow": [
+              "deployments.internalnetworks:write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "internalNetworkId",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The origin ID (originId) of the internal network.",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the internal network.",
+                    "minLength": 1,
+                    "maxLength": 50
+                  },
+                  "ipAddress": {
+                    "type": "string",
+                    "description": "The IPv4 address of the internal network.",
+                    "minLength": 7,
+                    "maxLength": 15
+                  },
+                  "prefixLength": {
+                    "type": "integer",
+                    "description": "Specifies the prefix length. The prefix length must be greater than 8 and no more than 32.",
+                    "minimum": 8,
+                    "maximum": 32
+                  },
+                  "siteId": {
+                    "type": "integer",
+                    "description": "The site ID. For DNS policies, specify the ID of the site that is associated with internal network.\nProvide either the `siteId`, `networkId`, or `tunnelId`."
+                  },
+                  "networkId": {
+                    "type": "integer",
+                    "description": "The network ID. For Web policies through proxy chaining, specify the\nID of the network that is associated with the internal network.\nProvide either the `siteId`, `networkId`, or `tunnelId`."
+                  },
+                  "tunnelId": {
+                    "type": "integer",
+                    "description": "The ID of the tunnel. For Web policies through the IPsec tunnel, specify the\nID of Tunnel that is associated with the internal network.\nProvide either the `siteId`, `networkId`, or `tunnelId`."
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "name",
+                  "ipAddress",
+                  "prefixLength"
+                ]
+              },
+              "example": {
+                "name": "internal network label",
+                "ipAddress": "An IPv4 address",
+                "prefixLength": 32
+              }
+            }
+          },
+          "description": "The Internal Network that you want to update."
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalNetworkObject"
+                },
+                "example": {
+                  "originId": 1234,
+                  "name": "internal network label",
+                  "ipAddress": "An IPv4 address",
+                  "prefixLength": 24,
+                  "siteName": "Site name",
+                  "siteId": 2,
+                  "createdAt": "2020-03-09T22:18:26.625Z",
+                  "modifiedAt": "2020-03-09T22:18:26.625Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/404Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Internal Networks",
+          "Umbrella"
+        ],
+        "description": "Delete an internal network.",
+        "summary": "Delete Internal Network",
+        "operationId": "deleteInternalNetwork",
+        "security": [
+          {
+            "oauthFlow": [
+              "deployments.internalnetworks:write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "internalNetworkId",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The origin ID (originId) of the internal network.",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {}
+          },
+          "400": {
+            "$ref": "#/components/responses/400Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/404Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/internalnetworks/{internalNetworkId}/policies": {
+      "get": {
+        "tags": [
+          "Internal Networks",
+          "Umbrella"
+        ],
+        "description": "List the policies for an internal network.",
+        "summary": "List Policies for Internal Network",
+        "operationId": "listInternalNetworkPolicies",
+        "security": [
+          {
+            "oauthFlow": [
+              "deployments.internalnetworks:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "internalNetworkId",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The origin ID (originId) of the internal network.",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "type",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "dns",
+                "web"
+              ]
+            },
+            "in": "query",
+            "required": false,
+            "description": "Specifies the type of Umbrella policy."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Content-Type": {
+                "$ref": "#/components/headers/Content-Type"
+              },
+              "Date": {
+                "$ref": "#/components/headers/Date"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PolicyObject"
+                  }
+                },
+                "example": [
+                  {
+                    "id": 1234,
+                    "name": "internal network label",
+                    "type": "dns",
+                    "organizationId": 123456,
+                    "priority": 1,
+                    "isDefault": false,
+                    "isAppliedDirectly": true,
+                    "createdAt": "2020-03-09T22:18:26.625Z",
+                    "modifiedAt": "2020-03-09T22:18:26.625Z",
+                    "uri": "URI for internal network"
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/404Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "oauthFlow": {
+        "type": "oauth2",
+        "description": "client credential flow",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://api.umbrella.com/auth/v2/token",
+            "scopes": {
+              "deployments.internalnetworks:write": "Write deployments internal networks",
+              "deployments.internalnetworks:read": "Read deployments internal networks"
+            }
+          }
+        }
+      }
+    },
+    "headers": {
+      "Content-Type": {
+        "schema": {
+          "type": "string"
+        },
+        "description": "The MIME content type of the response body.",
+        "example": "application/json"
+      },
+      "Date": {
+        "schema": {
+          "type": "string",
+          "pattern": "^[0-90-90-90-9-0-90-9-0-90-9T0-90-9:0-90-9:0-90-9Z]+$"
+        },
+        "description": "The timestamp of the response.",
+        "example": "2023-03-14T18:34:25Z"
+      }
+    },
+    "parameters": {
+      "paginationPageParam": {
+        "name": "page",
+        "in": "query",
+        "description": "The number of a page in the collection.",
+        "required": false,
+        "schema": {
+          "default": 1,
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1
+        }
+      },
+      "paginationLimitParam": {
+        "name": "limit",
+        "in": "query",
+        "description": "The number of records to return from the collection on the page.",
+        "required": false,
+        "schema": {
+          "default": 100,
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1,
+          "maximum": 100
+        }
+      }
+    },
+    "schemas": {
+      "PolicyObject": {
+        "type": "object",
+        "readOnly": true,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The ID of the policy. Use the policy ID as a reference for subsequent requests."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name that is given to the policy."
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the policy.",
+            "enum": [
+              "dns",
+              "web"
+            ]
+          },
+          "organizationId": {
+            "type": "integer",
+            "description": "The Umbrella organization ID."
+          },
+          "priority": {
+            "type": "integer",
+            "description": "A number that represents the priority of the policy in the policy list."
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "Specifies whether the policy is the default policy."
+          },
+          "isAppliedDirectly": {
+            "type": "boolean",
+            "description": "Indicates if policy is directly applied to this identity."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time (ISO8601 timestamp) when the policy was created.",
+            "example": "2018-06-13T16:07:07.222Z"
+          },
+          "modifiedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time (ISO8601 timestamp) when the policy was modified.",
+            "example": "2018-06-13T16:07:07.222Z"
+          },
+          "uri": {
+            "type": "string",
+            "description": "The resource URI."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "organizationId",
+          "priority",
+          "isDefault",
+          "isAppliedDirectly",
+          "createdAt",
+          "modifiedAt",
+          "uri"
+        ],
+        "example": {
+          "id": 1234,
+          "name": "The policy name",
+          "type": "dns",
+          "organizationId": 123456,
+          "priority": 1,
+          "isDefault": false,
+          "isAppliedDirectly": true,
+          "createdAt": "2020-03-09T22:18:26.625Z",
+          "modifiedAt": "2020-03-09T22:18:26.625Z",
+          "uri": "The resource URI"
+        }
+      },
+      "InternalNetworkObject": {
+        "type": "object",
+        "description": "The properties of the internal network.",
+        "properties": {
+          "originId": {
+            "type": "integer",
+            "description": "The origin ID of the internal network."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the internal network."
+          },
+          "ipAddress": {
+            "type": "string",
+            "description": "The IPv4 address of the internal network."
+          },
+          "prefixLength": {
+            "type": "integer",
+            "description": "The prefix length of the internal network.\nThe prefix length is greater than 8 and no more than 32.",
+            "minimum": 8,
+            "maximum": 32
+          },
+          "siteName": {
+            "type": "string",
+            "description": "The name of the site associated with the internal network."
+          },
+          "siteId": {
+            "type": "integer",
+            "description": "The ID of the site associated with the internal network."
+          },
+          "networkName": {
+            "type": "string",
+            "description": "The name of the network associated with the internal network."
+          },
+          "networkId": {
+            "type": "integer",
+            "description": "The ID of the network associated with the internal network."
+          },
+          "tunnelName": {
+            "type": "string",
+            "description": "The name of the tunnel associated with the internal network."
+          },
+          "tunnelId": {
+            "type": "integer",
+            "description": "The ID of the tunnel associated with the internal network."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time (ISO8601 timestamp) when the internal network was created.",
+            "example": "2018-06-13T16:07:07.222Z"
+          },
+          "modifiedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time (ISO8601 timestamp) when the internal network was modified.",
+            "example": "2018-06-13T16:07:07.222Z"
+          }
+        },
+        "required": [
+          "originId",
+          "name",
+          "ipAddress",
+          "prefixLength"
+        ],
+        "example": {
+          "originId": 1234,
+          "name": "internal network label",
+          "ipAddress": "An IPv4 address",
+          "prefixLength": 24,
+          "siteName": "Site name",
+          "siteId": 2,
+          "createdAt": "2020-03-09T22:18:26.625Z",
+          "modifiedAt": "2020-03-09T22:18:26.625Z"
+        }
+      }
+    },
+    "responses": {
+      "400Error": {
+        "description": "Bad Request",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/Content-Type"
+          },
+          "Date": {
+            "$ref": "#/components/headers/Date"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "example": 400,
+                  "description": "HTTP status code"
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Validation Error",
+                  "description": "A brief description of the error"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Detailed error message"
+                }
+              }
+            }
+          }
+        }
+      },
+      "401Error": {
+        "description": "Unauthorized",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/Content-Type"
+          },
+          "Date": {
+            "$ref": "#/components/headers/Date"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "example": 401,
+                  "description": "HTTP status code"
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Validation error",
+                  "description": "A brief description of the error"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Detailed error message"
+                }
+              }
+            }
+          }
+        }
+      },
+      "403Error": {
+        "description": "Forbidden",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/Content-Type"
+          },
+          "Date": {
+            "$ref": "#/components/headers/Date"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "example": 403,
+                  "description": "HTTP status code"
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Forbidden",
+                  "description": "A brief description of the error"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Detailed error message"
+                }
+              }
+            }
+          }
+        }
+      },
+      "404Error": {
+        "description": "Not Found",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/Content-Type"
+          },
+          "Date": {
+            "$ref": "#/components/headers/Date"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "example": 404,
+                  "description": "HTTP status code"
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Not Found",
+                  "description": "A brief description of the error"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Detailed error message"
+                }
+              }
+            }
+          }
+        }
+      },
+      "500Error": {
+        "description": "Internal Server Error",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/Content-Type"
+          },
+          "Date": {
+            "$ref": "#/components/headers/Date"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {
+                  "type": "integer",
+                  "example": 500,
+                  "description": "HTTP status code"
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Internal Server Error",
+                  "description": "A brief description of the error"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Detailed error message"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
