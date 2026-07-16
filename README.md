@@ -136,7 +136,7 @@ Minimum versions vary by asset - check each product's `README.md` for specifics.
 
 ## Contributing
 
-Have an asset to share? Sanitize it and follow the guidelines in [CONTRIBUTING.md](./CONTRIBUTING.md).
+Have an asset to share? Sanitize it and follow the guidelines in [CONTRIBUTING.md](./CONTRIBUTING.md). See [STANDARDS.md](./STANDARDS.md) for the detailed content rules each asset type needs to follow.
 
 ---
 
