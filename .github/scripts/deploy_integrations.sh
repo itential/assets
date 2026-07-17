@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+failed=0
+
 while IFS= read -r spec; do
   name=$(basename "$spec" .json)
   title=$(jq -r '.info.title' "$spec")
@@ -24,6 +26,12 @@ while IFS= read -r spec; do
   if ipctl import integration-model "$spec" --verbose; then
     echo "✅ Successfully imported: $name"
   else
-    echo "⚠️  Skipping $name (import failed)"
+    echo "❌ Failed to import: $name"
+    failed=$((failed + 1))
   fi
 done < <(echo "$CHANGED_SPECS" | jq -r '.[]')
+
+if [ "$failed" -gt 0 ]; then
+  echo "❌ $failed spec(s) failed to import"
+  exit 1
+fi
