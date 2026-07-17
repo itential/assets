@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BASE_SHA="${BASE_SHA:-}"
+BASE_SHA=$(git log --pretty=format:'%P' -n 1 HEAD | awk '{print $1}')
 ASSET_DIRS="Studio Projects|Agent Projects|Automations|LCM Resource Models|Golden Configs"
 INTEGRATION_MODELS_DIR="OpenAPIs"
 
