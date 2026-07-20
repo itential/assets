@@ -13,6 +13,8 @@ This project provides OpenAPI specs for automating against NetBox's REST API via
   - [`netbox-latest.json`](#netbox-latestjson)
   - [`netbox-4.1.json`](#netbox-41json)
   - [`netbox-3.7.8.json`](#netbox-378json)
+- [Studio Projects](#StudioProjects)
+    - [`Netbox Inventory Sync`](#netbox-inventory-sync)
 
 ## Contents
 
@@ -60,6 +62,16 @@ Resources included, by category:
 - **Tenancy**: Tenant Groups, Tenants
 - **Circuits**: Circuit Types, Providers, Circuits, Circuit Terminations
 - **Extras**: Tags, Custom Fields
+
+## `StudioProjects`
+
+### `netbox-inventory-sync` [Netbox Inventory Sync.project.json]
+This project contains workflows for creating inventories and populating them with nodes in Inventory Manager from Netbox
+This pulls the netbox inventory through loops using pagination, check and creates a inventory called "Netbox" in inventory manager and adds all the devices to the "Netbox" Inventory. The "platform" for IAG5 is fetched using the "Manufacturer" of the device, i.e if cisco is "cisco-ios", juniper is "junos" and nokia/aclatel is "sros"
+- Netbox Inventory Sync
+- Get Netbox Inventory 
+- Create Inventory And Add Nodes
+- Add Device to Inventory
 
 ### `netbox-4.1.json`
 
