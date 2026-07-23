@@ -1,0 +1,74 @@
+name: Itential Asset & Integration Bootstrap Import
+
+on:
+  workflow_dispatch:
+
+jobs:
+  bootstrap-assets:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install asyncplatform
+        run: pip install git+https://github.com/Itential/asyncplatform.git
+
+      - name: Import all assets
+        env:
+          HOST: ${{ secrets.PLATFORM_HOST }}
+          CLIENT_ID: ${{ secrets.PLATFORM_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.PLATFORM_CLIENT_SECRET }}
+          PROJECT_MEMBERS: ${{ vars.PROJECT_MEMBERS }}
+        run: python .github/scripts/deploy.py Production
+
+
+  bootstrap-integrations:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install ipctl
+        run: |
+          curl -LO "https://github.com/itential/ipctl/releases/latest/download/ipctl-linux-x86_64.tar.gz"
+          tar -xzf ipctl-linux-x86_64.tar.gz
+          sudo mv ipctl /usr/local/bin/
+
+      - name: Configure ipctl
+        env:
+          HOST: ${{ secrets.PLATFORM_HOST }}
+          CLIENT_ID: ${{ secrets.PLATFORM_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.PLATFORM_CLIENT_SECRET }}
+        run: |
+          printf '[profile default]\nhost = %s\nport = 0\nuse_tls = true\nclient_id = %s\nclient_secret = %s\n' \
+            "$HOST" "$CLIENT_ID" "$CLIENT_SECRET" > /tmp/ipctl.ini
+
+      - name: Find all integration specs
+        id: specs
+        run: |
+          CHANGED_SPECS=$(find . -type f -path "*/OpenAPIs/*-latest.json" | sed 's|^\./||' | jq -R . | jq -sc .)
+          echo "Found specs: $CHANGED_SPECS"
+          {
+            echo "changed_specs<<EOF"
+            echo "$CHANGED_SPECS"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Import integration models
+        env:
+          IPCTL_CONFIG_FILE: /tmp/ipctl.ini
+          CHANGED_SPECS: ${{ steps.specs.outputs.changed_specs }}
+        run: bash .github/scripts/deploy_integrations.sh
