@@ -1,34 +1,10 @@
-name: Itential Asset & Integration Promotion
+name: Itential Asset & Integration Bootstrap Import
 
 on:
-  pull_request_target:
-    types: [closed]
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
-  diff:
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    outputs:
-      has_asset_changes: ${{ steps.diff.outputs.has_asset_changes }}
-      changed_files: ${{ steps.diff.outputs.changed_files }}
-      has_spec_changes: ${{ steps.diff.outputs.has_spec_changes }}
-      changed_specs: ${{ steps.diff.outputs.changed_specs }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Find changed files
-        id: diff
-        run: bash .github/scripts/diff.sh
-
-
-  deploy-assets-production:
-    needs: [diff]
-    if: github.event.pull_request.merged == true && needs.diff.outputs.has_asset_changes == 'true'
+  bootstrap-assets:
     runs-on: ubuntu-latest
     environment: production
 
@@ -46,19 +22,16 @@ jobs:
       - name: Install asyncplatform
         run: pip install git+https://github.com/Itential/asyncplatform.git
 
-      - name: Deploy to Production
+      - name: Import all assets
         env:
           HOST: ${{ secrets.PLATFORM_HOST }}
           CLIENT_ID: ${{ secrets.PLATFORM_CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.PLATFORM_CLIENT_SECRET }}
           PROJECT_MEMBERS: ${{ vars.PROJECT_MEMBERS }}
-          CHANGED_FILES: ${{ needs.diff.outputs.changed_files }}
         run: python .github/scripts/deploy.py Production
 
 
-  deploy-integrations-production:
-    needs: [diff]
-    if: github.event.pull_request.merged == true && needs.diff.outputs.has_spec_changes == 'true'
+  bootstrap-integrations:
     runs-on: ubuntu-latest
     environment: production
 
@@ -83,8 +56,19 @@ jobs:
           printf '[profile default]\nhost = %s\nport = 0\nuse_tls = true\nclient_id = %s\nclient_secret = %s\n' \
             "$HOST" "$CLIENT_ID" "$CLIENT_SECRET" > /tmp/ipctl.ini
 
+      - name: Find all integration specs
+        id: specs
+        run: |
+          CHANGED_SPECS=$(find . -type f -path "*/OpenAPIs/*-latest.json" | sed 's|^\./||' | jq -R . | jq -sc .)
+          echo "Found specs: $CHANGED_SPECS"
+          {
+            echo "changed_specs<<EOF"
+            echo "$CHANGED_SPECS"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Import integration models
         env:
           IPCTL_CONFIG_FILE: /tmp/ipctl.ini
-          CHANGED_SPECS: ${{ needs.diff.outputs.changed_specs }}
+          CHANGED_SPECS: ${{ steps.specs.outputs.changed_specs }}
         run: bash .github/scripts/deploy_integrations.sh

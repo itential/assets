@@ -54,72 +54,61 @@ class AssetDeployer:
 
         print(f"🚀 Deploying to {environment} environment")
 
-    def find_asset_files(self) -> dict[str, list[Path]]:
-        """Scan repository for asset files in bundle structure.
+    # Maps each asset directory name (must match diff.sh's ASSET_DIRS) to the
+    # bucket key, emoji, and label used when reporting found files.
+    _ASSET_DIR_MAP = {
+        "Studio Projects": ("projects", "📦", "Studio project"),
+        "Automations": ("automations", "🤖", "automation"),
+        "LCM Resource Models": ("lifecycle_manager_resources", "🔧", "LCM resource model"),
+        "Golden Configs": ("configurations", "⚙️ ", "golden config"),
+    }
 
-        If CHANGED_FILES env var is set (JSON array of repo-relative paths),
-        only files in that list are returned. Otherwise all files are returned.
+    def find_asset_files(self) -> dict[str, list[Path]]:
+        """Find asset files to deploy.
+
+        If CHANGED_FILES env var is set (JSON array of repo-relative paths
+        from diff.sh), those exact files are used directly — diff.sh already
+        determined what changed, so no filesystem walk is needed. Otherwise,
+        every asset file in the repo is found via a full glob (manual run).
 
         Returns:
             Dictionary mapping asset types to list of file paths
         """
         repo_root = Path.cwd()
 
-        changed_raw = os.environ.get("CHANGED_FILES", "")
-        changed_files: set[str] | None = None
-        if changed_raw:
-            try:
-                changed_files = set(json.loads(changed_raw))
-            except json.JSONDecodeError:
-                pass
-
-        def is_changed(path: Path) -> bool:
-            if changed_files is None:
-                return True
-            return str(path.relative_to(repo_root)) in changed_files
-
         assets: dict[str, list[Path]] = {
             "projects": [],
-            # "agent_projects": [],
             "automations": [],
             "lifecycle_manager_resources": [],
             "configurations": [],
         }
 
-        for studio_dir in repo_root.glob("**/Studio Projects"):
-            if studio_dir.is_dir():
-                for f in studio_dir.glob("*.json"):
-                    if is_changed(f):
-                        assets["projects"].append(f)
-                        print(f"📦 Found Studio project: {f.name}")
+        changed_raw = os.environ.get("CHANGED_FILES", "")
+        changed_files: list[str] | None = None
+        if changed_raw:
+            try:
+                changed_files = json.loads(changed_raw)
+            except json.JSONDecodeError:
+                pass
 
-        # for ap_dir in repo_root.glob("**/Agent Projects"):
-        #     if ap_dir.is_dir():
-        #         for f in ap_dir.glob("*.json"):
-        #             if is_changed(f):
-        #                 assets["agent_projects"].append(f)
-        #                 print(f"🤖 Found Agent project: {f.name}")
+        if changed_files is not None:
+            for rel_path in changed_files:
+                f = repo_root / rel_path
+                mapping = self._ASSET_DIR_MAP.get(f.parent.name)
+                if mapping is None:
+                    continue
+                bucket, emoji, label = mapping
+                assets[bucket].append(f)
+                print(f"{emoji} Found {label}: {f.name}")
+            return assets
 
-        for om_dir in repo_root.glob("**/Automations"):
-            if om_dir.is_dir():
-                for f in om_dir.glob("*.json"):
-                    if is_changed(f):
-                        assets["automations"].append(f)
-                        print(f"🤖 Found automation: {f.name}")
-
-        for lm_dir in repo_root.glob("**/LCM Resource Models"):
-            if lm_dir.is_dir():
-                for f in lm_dir.glob("*.json"):
-                    if is_changed(f):
-                        assets["lifecycle_manager_resources"].append(f)
-                        print(f"🔧 Found LCM resource model: {f.name}")
-
-        for cm_dir in repo_root.glob("**/Golden Configs"):
-            if cm_dir.is_dir():
-                for f in cm_dir.glob("*.json"):
-                    if is_changed(f):
-                        assets["configurations"].append(f)
-                        print(f"⚙️  Found golden config: {f.name}")
+        # No CHANGED_FILES set — full-repo run, walk the tree.
+        for dir_name, (bucket, emoji, label) in self._ASSET_DIR_MAP.items():
+            for asset_dir in repo_root.glob(f"**/{dir_name}"):
+                if asset_dir.is_dir():
+                    for f in asset_dir.glob("*.json"):
+                        assets[bucket].append(f)
+                        print(f"{emoji} Found {label}: {f.name}")
 
         return assets
 

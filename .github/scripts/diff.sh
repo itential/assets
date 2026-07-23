@@ -11,6 +11,7 @@ echo "Diffing against merge base $BASE_SHA"
 # core.quotePath=false prevents git from quoting paths that contain spaces
 CHANGED_FILES=$(git -c core.quotePath=false diff --name-only --diff-filter=AM "$BASE_SHA" HEAD \
   | { grep -E "(${ASSET_DIRS})/.*\.json$" || true; } | jq -R . | jq -sc .)
+echo "changed_files: $CHANGED_FILES"
 {
   echo "changed_files<<EOF"
   echo "$CHANGED_FILES"
@@ -25,27 +26,10 @@ else
   echo "has_asset_changes=false" >> "$GITHUB_OUTPUT"
 fi
 
-DELETED_FILES=$(git -c core.quotePath=false diff --name-only --diff-filter=D "$BASE_SHA" HEAD \
-  | { grep -E "(${ASSET_DIRS})/.*\.json$" || true; } | jq -R . | jq -sc .)
-{
-  echo "deleted_files<<EOF"
-  echo "$DELETED_FILES"
-  echo "EOF"
-} >> "$GITHUB_OUTPUT"
-echo "Deleted assets: $(echo "$DELETED_FILES" | jq 'length')"
-
 # ── Integration spec diff ─────────────────────────────────────────────────────
 CHANGED_SPECS=$(git -c core.quotePath=false diff --name-only --diff-filter=AM "$BASE_SHA" HEAD \
   | { grep "${INTEGRATION_MODELS_DIR}/.*-latest\.json$" || true; } | jq -R . | jq -sc .)
-
-DELETED_SPECS=$(git -c core.quotePath=false diff --name-only --diff-filter=D "$BASE_SHA" HEAD \
-  | { grep "${INTEGRATION_MODELS_DIR}/.*-latest\.json$" || true; } | jq -R . | jq -sc .)
-{
-  echo "deleted_specs<<EOF"
-  echo "$DELETED_SPECS"
-  echo "EOF"
-} >> "$GITHUB_OUTPUT"
-echo "Deleted specs: $(echo "$DELETED_SPECS" | jq 'length')"
+echo "changed_specs: $CHANGED_SPECS"
 
 # Use heredoc format — GitHub Actions rejects bare JSON arrays as output values
 {
