@@ -7,6 +7,7 @@ the target Itential Platform environment using the asyncplatform library.
 
 Currently supports:
     - Studio projects
+    - Agent projects
     - Operations Manager automations
     - Lifecycle Manager resources
     - Configuration Manager golden configs
@@ -58,6 +59,7 @@ class AssetDeployer:
     # bucket key, emoji, and label used when reporting found files.
     _ASSET_DIR_MAP = {
         "Studio Projects": ("projects", "📦", "Studio project"),
+        "Agent Projects": ("agent_projects", "🧠", "agent project"),
         "Automations": ("automations", "🤖", "automation"),
         "LCM Resource Models": ("lifecycle_manager_resources", "🔧", "LCM resource model"),
         "Golden Configs": ("configurations", "⚙️ ", "golden config"),
@@ -78,6 +80,7 @@ class AssetDeployer:
 
         assets: dict[str, list[Path]] = {
             "projects": [],
+            "agent_projects": [],
             "automations": [],
             "lifecycle_manager_resources": [],
             "configurations": [],
@@ -168,28 +171,42 @@ class AssetDeployer:
                 print(f"❌ Failed to import project {project_name}: {e}")
                 print(f"⚠️  Skipping {project_name} and continuing deployment")
 
-    # async def deploy_agent_projects(
-    #     self, client: Any, bundle_files: list[Path]
-    # ) -> None:
-    #     agent_projects_resource = client.resource("agent_projects")
-    #     for bundle_file in bundle_files:
-    #         with open(bundle_file, "r") as f:
-    #             bundle_data = json.load(f)
-    #         bundle_name = bundle_data.get("name", bundle_file.stem)
-    #         try:
-    #             members = []
-    #             for member in self.members:
-    #                 member_data = {"type": member["type"], "role": member["role"]}
-    #                 if member["type"] == "account":
-    #                     member_data["username"] = member["username"]
-    #                 else:
-    #                     member_data["name"] = member["name"]
-    #                 members.append(ProjectMember(**member_data))
-    #             await agent_projects_resource.importer(bundle_data, members=members)
-    #             print(f"✅ Successfully imported Agent project: {bundle_name}")
-    #         except Exception as e:
-    #             print(f"❌ Failed to import Agent project {bundle_name}: {e}")
-    #             print(f"⚠️  Skipping {bundle_name} and continuing deployment")
+    async def deploy_agent_projects(
+        self, client: Any, bundle_files: list[Path]
+    ) -> None:
+        """Deploy Agent projects to the platform.
+
+        Args:
+            client: Asyncplatform client instance
+            bundle_files: List of agent project bundle file paths
+        """
+        if not bundle_files:
+            print("ℹ️  No Agent projects to deploy")
+            return
+
+        agent_projects_resource = client.resource("agent_projects")
+        for bundle_file in bundle_files:
+            with open(bundle_file, "r") as f:
+                bundle_data = json.load(f)
+            bundle_name = bundle_data.get("name", bundle_file.stem)
+            try:
+                members = []
+                for member in self.members:
+                    member_data = {"type": member["type"], "role": member["role"]}
+                    if member["type"] == "account":
+                        member_data["username"] = member["username"]
+                    else:
+                        member_data["name"] = member["name"]
+                    members.append(ProjectMember(**member_data))
+
+                print(f"📥 Importing agent project: {bundle_name}")
+                await agent_projects_resource.importer(
+                    bundle_data, members=members, overwrite=True
+                )
+                print(f"✅ Successfully imported Agent project: {bundle_name}")
+            except Exception as e:
+                print(f"❌ Failed to import Agent project {bundle_name}: {e}")
+                print(f"⚠️  Skipping {bundle_name} and continuing deployment")
 
     async def deploy_automations(
         self, client: Any, automation_files: list[Path]
@@ -324,7 +341,7 @@ class AssetDeployer:
 
             await self.deploy_projects(client, assets["projects"])
 
-            # await self.deploy_agent_projects(client, assets["agent_projects"])
+            await self.deploy_agent_projects(client, assets["agent_projects"])
 
             await self.deploy_lifecycle_manager_resources(
                 client, assets["lifecycle_manager_resources"]
