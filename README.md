@@ -13,6 +13,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | Asset Type | Description |
 |---|---|
 | **Studio Projects** | Bundles of related automation assets (workflows, forms, templates, and transformations) for a specific use case |
+| **Agent Projects** | Bundles of FlowAI agents (instructions, input schema, and tools) for a specific use case |
 | **OpenAPIs** | JSON-based definitions imported as Integration Models that specify how Itential Platform connects to external APIs, databases, and systems |
 | **Golden Configurations** | Config Manager compliance trees for auditing device configuration drift |
 | **device-drivers** | Netmiko-based drivers for connecting Itential Gateway to physical and virtual devices |
@@ -76,6 +77,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 ```
 Vendor/
 └── Product/
+    ├── Agent Projects/
     ├── Automations/
     ├── Configuration Parsers/
     ├── device-drivers/
@@ -99,6 +101,11 @@ See [Create and manage projects](https://docs.itential.com/itential-platform/stu
 1. In Itential Platform, go to **Studio → Projects**.
 2. Click the **Import** button on the Projects homepage.
 3. Upload the `.json` file by drag-and-drop or browse the file system.
+
+### Import an Agent Project
+1. In Itential Platform, go to **Agent Projects**.
+2. Click the **Import** button on the Agent Projects homepage.
+3. Upload the `.agent_project.json` file by drag-and-drop or browse the file system.
 
 ### Import an OpenAPI spec/Integration Model
 See [Integration models](https://docs.itential.com/itential-platform/6/admin-essentials/integration-models) for full details.
