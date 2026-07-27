@@ -46,6 +46,24 @@ Authorization: Token <token>
 
 Generate a token in NetBox under your user profile → **API Tokens**; the token's `Version` column tells you which format it is.
 
+In Itential Platform's **Admin Essentials**, this goes in the integration's `authentication.tokenAuth.value` field — set it to the **full header value**, scheme prefix included, not just the bare key/token:
+
+```json
+"authentication": {
+  "tokenAuth": {
+    "value": "Bearer nbt_<KEY>.<TOKEN>"
+  }
+}
+```
+
+```json
+"authentication": {
+  "tokenAuth": {
+    "value": "Token <TOKEN>"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |
