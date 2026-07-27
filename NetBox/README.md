@@ -14,17 +14,15 @@ This project provides OpenAPI specs for automating against NetBox's REST API via
   - [`netbox-4.1.json`](#netbox-41json)
   - [`netbox-3.7.8.json`](#netbox-378json)
 - [Studio Projects](#studio-projects)
-  - [Devices](#devices)
-  - [IP Addresses](#ip-addresses)
-  - [Prefixes](#prefixes)
-  - [VLANs](#vlans)
+  - [`NetBox.project.json`](#netboxprojectjson)
+  - [`NetBox Inventory Sync.project.json`](#netbox-inventory-syncprojectjson)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | NetBox REST API OpenAPI specs — curated `-latest` plus full dated versions |
-| [Studio Projects/](./Studio%20Projects/) | List/Create/Get/Update/Delete workflows for Devices, IP Addresses, Prefixes, and VLANs |
+| [Studio Projects/](./Studio%20Projects/) | CRUD workflows for Devices, IP Addresses, Prefixes, and VLANs, plus a NetBox-to-Inventory-Manager sync project |
 
 ## Requirements
 
@@ -97,11 +95,13 @@ Full, unmodified vendor spec for NetBox 3.7.8 (893 operations) — the vendor's 
 
 ## Studio Projects
 
-Import [`NetBox.project.json`](./Studio%20Projects/NetBox.project.json) via **Automation Studio > Projects > Import**. It contains one folder per resource, each with a List/Create/Get/Update/Delete workflow built on `netbox-latest.json`'s Integration Model.
+### `NetBox.project.json`
+
+Import via **Automation Studio > Projects > Import**. It contains one folder per resource, each with a List/Create/Get/Update/Delete workflow built on `netbox-latest.json`'s Integration Model.
 
 Every workflow's adapter task is wired to the Integration instance name `NetBox`. After importing, either name your Integration instance `NetBox`, or update the `adapter_id` value in each workflow task to match your own instance name.
 
-### Devices
+**Devices**
 
 | Workflow | Scope |
 |---|---|
@@ -111,7 +111,7 @@ Every workflow's adapter task is wired to the Integration instance name `NetBox`
 | Update Device | Update a device object by ID |
 | Delete Device | Delete a device object by ID |
 
-### IP Addresses
+**IP Addresses**
 
 | Workflow | Scope |
 |---|---|
@@ -121,7 +121,7 @@ Every workflow's adapter task is wired to the Integration instance name `NetBox`
 | Update IP Address | Update an IP address object by ID |
 | Delete IP Address | Delete an IP address object by ID |
 
-### Prefixes
+**Prefixes**
 
 | Workflow | Scope |
 |---|---|
@@ -131,7 +131,7 @@ Every workflow's adapter task is wired to the Integration instance name `NetBox`
 | Update Prefix | Update a prefix object by ID |
 | Delete Prefix | Delete a prefix object by ID |
 
-### VLANs
+**VLANs**
 
 | Workflow | Scope |
 |---|---|
@@ -140,3 +140,14 @@ Every workflow's adapter task is wired to the Integration instance name `NetBox`
 | Get VLAN | Get a VLAN object by ID |
 | Update VLAN | Update a VLAN object by ID |
 | Delete VLAN | Delete a VLAN object by ID |
+
+### `NetBox Inventory Sync.project.json`
+
+Import via **Automation Studio > Projects > Import**. Syncs NetBox's device inventory into Itential Platform's Inventory Manager — pages through every device in NetBox, creates a `NetBox` inventory if one doesn't already exist, and adds each device as a node. The IG5 `platform` value for each node is derived from the device's NetBox **Manufacturer** (e.g. Cisco → `cisco-ios`, Juniper → `junos`, Nokia/Alcatel → `sros`).
+
+| Workflow | Scope |
+|---|---|
+| NetBox Inventory Sync | Orchestrator — pages through NetBox devices and syncs each one into Inventory Manager |
+| Get NetBox Inventory | Retrieve one page of devices from NetBox |
+| Create Inventory And Add Nodes | Create the `NetBox` inventory in Inventory Manager if it doesn't exist |
+| Add Device to Inventory | Add a single device as a node, mapping its NetBox Manufacturer to an IG5 platform |
