@@ -32,15 +32,35 @@ This project provides OpenAPI specs for automating against NetBox's REST API via
 
 ## Integration Configuration
 
-Import one of the OpenAPI specs from `OpenAPIs/` as an Integration Model in **Admin > Integrations**, then create an integration pointing at your NetBox instance.
-
-Authentication is an API token in the `Authorization` header:
+Authentication is an API token in the `Authorization` header. NetBox 4.6+ generates **v2 tokens** by default — the header scheme depends on which version your token is:
 
 ```
-Authorization: Token <your-netbox-api-token>
+# v2 (current standard, NetBox 4.6+)
+Authorization: Bearer <key>.<token>
+
+# v1 (legacy — deprecated in NetBox 4.6, removed in 5.0)
+Authorization: Token <token>
 ```
 
-Generate a token in NetBox under your user profile → **API Tokens**.
+Generate a token in NetBox under your user profile → **API Tokens**; the token's `Version` column tells you which format it is.
+
+In Itential Platform's **Admin Essentials**, this goes in the integration's `authentication.tokenAuth.value` field — set it to the **full header value**, scheme prefix included, not just the bare key/token:
+
+```json
+"authentication": {
+  "tokenAuth": {
+    "value": "Bearer nbt_<KEY>.<TOKEN>"
+  }
+}
+```
+
+```json
+"authentication": {
+  "tokenAuth": {
+    "value": "Token <TOKEN>"
+  }
+}
+```
 
 ## OpenAPIs
 
