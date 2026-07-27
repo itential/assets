@@ -13,14 +13,18 @@ This project provides OpenAPI specs for automating against NetBox's REST API via
   - [`netbox-latest.json`](#netbox-latestjson)
   - [`netbox-4.1.json`](#netbox-41json)
   - [`netbox-3.7.8.json`](#netbox-378json)
-- [Studio Projects](#StudioProjects)
-    - [`Netbox Inventory Sync`](#netbox-inventory-sync)
+- [Studio Projects](#studio-projects)
+  - [Devices](#devices)
+  - [IP Addresses](#ip-addresses)
+  - [Prefixes](#prefixes)
+  - [VLANs](#vlans)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | NetBox REST API OpenAPI specs — curated `-latest` plus full dated versions |
+| [Studio Projects/](./Studio%20Projects/) | List/Create/Get/Update/Delete workflows for Devices, IP Addresses, Prefixes, and VLANs |
 
 ## Requirements
 
@@ -83,16 +87,6 @@ Resources included, by category:
 - **Circuits**: Circuit Types, Providers, Circuits, Circuit Terminations
 - **Extras**: Tags, Custom Fields
 
-## `StudioProjects`
-
-### `netbox-inventory-sync` [Netbox Inventory Sync.project.json]
-This project contains workflows for creating inventories and populating them with nodes in Inventory Manager from Netbox
-This pulls the netbox inventory through loops using pagination, check and creates a inventory called "Netbox" in inventory manager and adds all the devices to the "Netbox" Inventory. The "platform" for IAG5 is fetched using the "Manufacturer" of the device, i.e if cisco is "cisco-ios", juniper is "junos" and nokia/aclatel is "sros"
-- Netbox Inventory Sync
-- Get Netbox Inventory 
-- Create Inventory And Add Nodes
-- Add Device to Inventory
-
 ### `netbox-4.1.json`
 
 Full, unmodified vendor spec for NetBox 4.1 (1073 operations) — the vendor's complete API surface, preserved as-is. See `netbox-latest.json` above for the curated subset if you just need common CRUD automation.
@@ -100,3 +94,49 @@ Full, unmodified vendor spec for NetBox 4.1 (1073 operations) — the vendor's c
 ### `netbox-3.7.8.json`
 
 Full, unmodified vendor spec for NetBox 3.7.8 (893 operations) — the vendor's complete API surface, preserved as-is. See `netbox-latest.json` above for the curated subset if you just need common CRUD automation.
+
+## Studio Projects
+
+Import [`NetBox.project.json`](./Studio%20Projects/NetBox.project.json) via **Automation Studio > Projects > Import**. It contains one folder per resource, each with a List/Create/Get/Update/Delete workflow built on `netbox-latest.json`'s Integration Model.
+
+Every workflow's adapter task is wired to the Integration instance name `NetBox`. After importing, either name your Integration instance `NetBox`, or update the `adapter_id` value in each workflow task to match your own instance name.
+
+### Devices
+
+| Workflow | Scope |
+|---|---|
+| List Devices | Get a list of device objects |
+| Create Device | Create a device object |
+| Get Device | Get a device object by ID |
+| Update Device | Update a device object by ID |
+| Delete Device | Delete a device object by ID |
+
+### IP Addresses
+
+| Workflow | Scope |
+|---|---|
+| List IP Addresses | Get a list of IP address objects |
+| Create IP Address | Create an IP address object |
+| Get IP Addresses | Get an IP address object by ID |
+| Update IP Address | Update an IP address object by ID |
+| Delete IP Address | Delete an IP address object by ID |
+
+### Prefixes
+
+| Workflow | Scope |
+|---|---|
+| List Prefixes | Get a list of prefix objects |
+| Create Prefix | Create a prefix object |
+| Get Prefix | Get a prefix object by ID |
+| Update Prefix | Update a prefix object by ID |
+| Delete Prefix | Delete a prefix object by ID |
+
+### VLANs
+
+| Workflow | Scope |
+|---|---|
+| List VLAN | Get a list of VLAN objects |
+| Create VLAN | Create a VLAN object |
+| Get VLAN | Get a VLAN object by ID |
+| Update VLAN | Update a VLAN object by ID |
+| Delete VLAN | Delete a VLAN object by ID |
