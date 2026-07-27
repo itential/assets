@@ -32,8 +32,6 @@ This project provides OpenAPI specs for automating against NetBox's REST API via
 
 ## Integration Configuration
 
-Import one of the OpenAPI specs from `OpenAPIs/` as an Integration Model in **Admin > Integrations**, then create an integration pointing at your NetBox instance.
-
 Authentication is an API token in the `Authorization` header. NetBox 4.6+ generates **v2 tokens** by default — the header scheme depends on which version your token is:
 
 ```
