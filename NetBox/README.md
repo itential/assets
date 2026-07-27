@@ -97,7 +97,7 @@ Full, unmodified vendor spec for NetBox 3.7.8 (893 operations) — the vendor's 
 
 ### `NetBox.project.json`
 
-Import via **Automation Studio > Projects > Import**. It contains one folder per resource, each with a List/Create/Get/Update/Delete workflow built on `netbox-latest.json`'s Integration Model.
+One folder per resource, each with a List/Create/Get/Update/Delete workflow built on `netbox-latest.json`'s Integration Model.
 
 Every workflow's adapter task is wired to the Integration instance name `NetBox`. After importing, either name your Integration instance `NetBox`, or update the `adapter_id` value in each workflow task to match your own instance name.
 
@@ -143,7 +143,7 @@ Every workflow's adapter task is wired to the Integration instance name `NetBox`
 
 ### `NetBox Inventory Sync.project.json`
 
-Import via **Automation Studio > Projects > Import**. Syncs NetBox's device inventory into Itential Platform's Inventory Manager — pages through every device in NetBox, creates a `NetBox` inventory if one doesn't already exist, and adds each device as a node. The IG5 `platform` value for each node is derived from the device's NetBox **Manufacturer** (e.g. Cisco → `cisco-ios`, Juniper → `junos`, Nokia/Alcatel → `sros`).
+Syncs NetBox's device inventory into Itential Platform's Inventory Manager — pages through every device in NetBox, creates a `NetBox` inventory if one doesn't already exist, and adds each device as a node. The IG5 `platform` value for each node is derived from the device's NetBox **Manufacturer** (e.g. Cisco → `cisco-ios`, Juniper → `junos`, Nokia/Alcatel → `sros`).
 
 | Workflow | Scope |
 |---|---|
