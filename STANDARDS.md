@@ -8,6 +8,7 @@ All asset types below live at `{Vendor}/[{Product}/]{AssetType}/`. The `{Product
 
 - [General Principles](#general-principles)
 - [Studio Projects](#studio-projects-vendorproductstudio-projects)
+- [Agent Projects](#agent-projects-vendorproductagent-projects)
 - [Automations](#automations-vendorproductautomations)
 - [Golden Configurations](#golden-configurations-vendorproductgolden-configurations)
 - [OpenAPIs](#openapis-vendorproductopenapis)
@@ -28,6 +29,10 @@ All asset types below live at `{Vendor}/[{Product}/]{AssetType}/`. The `{Product
 - When submitting a Sample Use Case, include a corresponding Automation and Trigger (_when applicable_).
 - Files are exported Studio projects in `.project.json` format.
 - **Target the `-latest` Integration Model**: when building or updating a project against an OpenAPI-backed integration, wire its tasks to the `-latest` spec's Integration Model, not a pinned dated version — so projects automatically pick up the curated, actively-maintained spec rather than drifting to a version that will eventually be superseded.
+
+## Agent Projects (`{Vendor}/[{Product}/]Agent Projects/`)
+- Bundles of FlowAI agents (instructions, input schema, and tools) for a specific use case.
+- Files are exported Agent Project bundles in `.agent_project.json` format.
 
 ## Automations (`{Vendor}/[{Product}/]Automations/`)
 - Exported automation definitions that correspond to a Studio Project submission.

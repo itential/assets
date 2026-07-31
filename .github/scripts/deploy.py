@@ -7,6 +7,7 @@ the target Itential Platform environment using the asyncplatform library.
 
 Currently supports:
     - Studio projects
+    - Agent projects
     - Operations Manager automations
     - Lifecycle Manager resources
     - Configuration Manager golden configs
@@ -58,6 +59,7 @@ class AssetDeployer:
     # bucket key, emoji, and label used when reporting found files.
     _ASSET_DIR_MAP = {
         "Studio Projects": ("projects", "📦", "Studio project"),
+        "Agent Projects": ("agent_projects", "🧠", "agent project"),
         "Automations": ("automations", "🤖", "automation"),
         "LCM Resource Models": ("lifecycle_manager_resources", "🔧", "LCM resource model"),
         "Golden Configs": ("configurations", "⚙️ ", "golden config"),
@@ -78,6 +80,7 @@ class AssetDeployer:
 
         assets: dict[str, list[Path]] = {
             "projects": [],
+            "agent_projects": [],
             "automations": [],
             "lifecycle_manager_resources": [],
             "configurations": [],
@@ -166,30 +169,44 @@ class AssetDeployer:
                         print(f"👤 Added {member.type} {member_identifier} as {member.role}")
             except Exception as e:
                 print(f"❌ Failed to import project {project_name}: {e}")
-                raise
+                print(f"⚠️  Skipping {project_name} and continuing deployment")
 
-    # async def deploy_agent_projects(
-    #     self, client: Any, bundle_files: list[Path]
-    # ) -> None:
-    #     agent_projects_resource = client.resource("agent_projects")
-    #     for bundle_file in bundle_files:
-    #         with open(bundle_file, "r") as f:
-    #             bundle_data = json.load(f)
-    #         bundle_name = bundle_data.get("name", bundle_file.stem)
-    #         try:
-    #             members = []
-    #             for member in self.members:
-    #                 member_data = {"type": member["type"], "role": member["role"]}
-    #                 if member["type"] == "account":
-    #                     member_data["username"] = member["username"]
-    #                 else:
-    #                     member_data["name"] = member["name"]
-    #                 members.append(ProjectMember(**member_data))
-    #             await agent_projects_resource.importer(bundle_data, members=members)
-    #             print(f"✅ Successfully imported Agent project: {bundle_name}")
-    #         except Exception as e:
-    #             print(f"❌ Failed to import Agent project {bundle_name}: {e}")
-    #             raise
+    async def deploy_agent_projects(
+        self, client: Any, bundle_files: list[Path]
+    ) -> None:
+        """Deploy Agent projects to the platform.
+
+        Args:
+            client: Asyncplatform client instance
+            bundle_files: List of agent project bundle file paths
+        """
+        if not bundle_files:
+            print("ℹ️  No Agent projects to deploy")
+            return
+
+        agent_projects_resource = client.resource("agent_projects")
+        for bundle_file in bundle_files:
+            with open(bundle_file, "r") as f:
+                bundle_data = json.load(f)
+            bundle_name = bundle_data.get("name", bundle_file.stem)
+            try:
+                members = []
+                for member in self.members:
+                    member_data = {"type": member["type"], "role": member["role"]}
+                    if member["type"] == "account":
+                        member_data["username"] = member["username"]
+                    else:
+                        member_data["name"] = member["name"]
+                    members.append(ProjectMember(**member_data))
+
+                print(f"📥 Importing agent project: {bundle_name}")
+                await agent_projects_resource.importer(
+                    bundle_data, members=members, overwrite=True
+                )
+                print(f"✅ Successfully imported Agent project: {bundle_name}")
+            except Exception as e:
+                print(f"❌ Failed to import Agent project {bundle_name}: {e}")
+                print(f"⚠️  Skipping {bundle_name} and continuing deployment")
 
     async def deploy_automations(
         self, client: Any, automation_files: list[Path]
@@ -217,8 +234,9 @@ class AssetDeployer:
                 )
 
                 if existing_automation:
-                    print(f"ℹ️  Automation already exists, skipping: {automation_name}")
-                    continue
+                    print(f"📝 Automation exists, deleting existing version: {automation_name}")
+                    await automations_resource.delete(automation_name)
+                    print(f"🗑️  Deleted existing automation: {automation_name}")
 
                 print(f"📥 Importing automation: {automation_name}")
                 result = await automations_resource.importer(automation_data)
@@ -253,15 +271,16 @@ class AssetDeployer:
             try:
                 existing_resource = await lm_resource.get_resource_by_name(resource_name)
                 if existing_resource:
-                    print(f"ℹ️  Resource model already exists, skipping: {resource_name}")
-                    continue
+                    print(f"📝 LCM Resource exists, deleting existing version: {resource_name}")
+                    await lm_resource.delete(resource_name)
+                    print(f"🗑️  Deleted existing LCM resource: {resource_name}")
 
                 print(f"📥 Importing resource model: {resource_name}")
                 result = await lm_resource.importer(lifecyle_manager_resource_payload)
                 print(f"✅ Successfully imported resource model: {result['data']['name']}")
             except Exception as e:
                 print(f"❌ Failed to import resource model {resource_name}: {e}")
-                raise
+                print(f"⚠️  Skipping {resource_name} and continuing deployment")
 
     async def deploy_configurations(
         self, client: Any, config_files: list[Path]
@@ -278,22 +297,25 @@ class AssetDeployer:
 
         cm_resource = client.resource("configuration_manager")
 
+
         for config_file in config_files:
             with open(config_file, "r") as f:
                 config_data = json.load(f)
-            config_name = config_data.get("data", [{}])[0].get("name", config_file.stem)
-
+            config_name = config_data.get("name",config_file.stem)
             try:
-                if await cm_resource.check_if_golden_config_exists(config_name):
-                    print(f"ℹ️  Golden config already exists, skipping: {config_name}")
-                    continue
+                # Check if golden config already exists and delete before re-importing
+                existing_config = await cm_resource.check_if_golden_config_exists(config_name)
+                if existing_config:
+                    print(f"📝 Golden config exists, deleting existing version: {config_name}")
+                    await cm_resource.delete(config_name)
+                    print(f"🗑️  Deleted existing golden config: {config_name}")
 
                 print(f"📥 Importing golden config: {config_name}")
-                result = await cm_resource.import_golden_config([config_data])
-                print(f"✅ {result.get('message', f'Successfully imported golden config: {config_name}')}")
+                result = await cm_resource.importer([config_data])
+                print(f"✅ Successfully imported golden config: {config_name}")
             except Exception as e:
                 print(f"❌ Failed to import golden config {config_name}: {e}")
-                raise
+                print(f"⚠️  Skipping {config_name} and continuing deployment")
 
     async def deploy(self) -> None:
         """Execute the deployment process."""
@@ -319,7 +341,7 @@ class AssetDeployer:
 
             await self.deploy_projects(client, assets["projects"])
 
-            # await self.deploy_agent_projects(client, assets["agent_projects"])
+            await self.deploy_agent_projects(client, assets["agent_projects"])
 
             await self.deploy_lifecycle_manager_resources(
                 client, assets["lifecycle_manager_resources"]
