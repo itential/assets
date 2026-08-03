@@ -1,0 +1,46 @@
+name: Itential Asset & Integration Validation
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+    diff:
+        if: github.event.review.state == 'approved' && github.event.pull_request.base.ref == 'main'
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout trusted scripts
+            uses: actions/checkout@v4
+
+          - name: Checkout PR content
+            uses: actions/checkout@v4
+            with:
+              ref: refs/pull/${{ github.event.pull_request.number }}/merge
+              fetch-depth: 0
+              path: pr
+              allow-unsafe-pr-checkout: true
+
+          - name: Find changed files
+            id: diff
+            working-directory: pr
+            env:
+              BASE_SHA: ${{ github.event.pull_request.base.sha }}
+            run: bash "$GITHUB_WORKSPACE/.github/scripts/diff.sh"
+
+          - name: Save PR context for deploy
+            run: |
+              jq -n \
+                --argjson pr_number ${{ github.event.pull_request.number }} \
+                --arg head_sha "${{ github.event.pull_request.head.sha }}" \
+                --arg has_asset_changes "${{ steps.diff.outputs.has_asset_changes }}" \
+                --argjson changed_files '${{ steps.diff.outputs.changed_files }}' \
+                --arg has_spec_changes "${{ steps.diff.outputs.has_spec_changes }}" \
+                --argjson changed_specs '${{ steps.diff.outputs.changed_specs }}' \
+                '{pr_number: $pr_number, head_sha: $head_sha, has_asset_changes: $has_asset_changes, changed_files: $changed_files, has_spec_changes: $has_spec_changes, changed_specs: $changed_specs}' \
+                > event.json
+
+          - name: Upload PR context artifact
+            uses: actions/upload-artifact@v4
+            with:
+              name: validation-event
+              path: event.json
