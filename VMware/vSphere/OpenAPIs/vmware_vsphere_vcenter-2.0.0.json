@@ -12284,7 +12284,25 @@
                 "type": "apiKey",
                 "in": "header",
                 "name": "vmware-api-session-id",
-                "description": "vSphere Automation API session token. Not a long-lived key: obtain it by POSTing HTTP Basic credentials to the vCenter session-creation endpoint (POST /rest/com/vmware/cis/session or POST /api/session), which returns a token that expires after ~30 minutes of inactivity by default (server-configurable). Paste the current token as this scheme's value and re-generate it whenever it expires."
+                "description": "vSphere Automation API session token, retrieved dynamically by POSTing HTTP Basic credentials to vCenter's session-creation endpoint. Itential Platform extracts the token from the 'value' response field, injects it as the vmware-api-session-id header on every request, and automatically re-retrieves it on a 401 (e.g. after the session's idle timeout expires).",
+                "x-itential-dynamic-retrieval": {
+                    "method": "POST",
+                    "url": "https://<vcenter-hostname-or-ip>/rest/com/vmware/cis/session",
+                    "responsePointer": "/value"
+                },
+                "x-itential-parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "x-itential-use-in": [
+                            "key"
+                        ],
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "HTTP Basic credential for the session-retrieval call, e.g. 'Basic <base64(username:password)>'"
+                    }
+                ]
             }
         },
         "requestBodies": {
