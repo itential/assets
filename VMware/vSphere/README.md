@@ -6,17 +6,22 @@ This project provides a Studio Project of workflows covering the vCenter REST AP
 
 ## Table of Contents
 
-- [Contents](#contents)
-- [Requirements](#requirements)
-- [Integration Configuration](#integration-configuration)
-  - [Connection Properties](#connection-properties)
-  - [Session Authentication](#session-authentication)
-  - [Generating the Basic Auth Header](#generating-the-basic-auth-header)
-- [OpenAPIs](#openapis)
-  - [`vmware_vsphere_vcenter-latest.json`](#vmware_vsphere_vcenter-latestjson)
-  - [`vmware_vsphere_vcenter-2.0.0.json`](#vmware_vsphere_vcenter-200json)
-- [Studio Projects](#studio-projects)
-  - [VMware vSphere vCenter Project](#vmware-vsphere-vcenter-project)
+- [vSphere](#vsphere)
+  - [Table of Contents](#table-of-contents)
+  - [Contents](#contents)
+  - [Requirements](#requirements)
+  - [Integration Configuration](#integration-configuration)
+    - [Connection Properties](#connection-properties)
+    - [Session Authentication](#session-authentication)
+    - [Generating the Basic Auth Header](#generating-the-basic-auth-header)
+  - [OpenAPIs](#openapis)
+    - [`vmware_vsphere_vcenter-latest.json`](#vmware_vsphere_vcenter-latestjson)
+    - [`vmware_vsphere_vcenter-2.0.0.json`](#vmware_vsphere_vcenter-200json)
+  - [Studio Projects](#studio-projects)
+    - [VMware vSphere vCenter Project](#vmware-vsphere-vcenter-project)
+      - [Folder Structure](#folder-structure)
+      - [Dependencies](#dependencies)
+      - [Known Limitations](#known-limitations)
 
 ## Contents
 
@@ -106,13 +111,11 @@ Resources included, by category:
 - **Storage Policies**: List policies, read/assign a VM's storage policy, compliance checks
 - **Guest Customization**: List guest customization specs
 
-**Note on `list` filter parameters**: vSphere's REST API uses dot-notation query parameter names for list filters (e.g. `filter.names`, `filter.clusters`). Itential Platform's task-naming convention doesn't permit dots in parameter names, and there's no way to alias a task's input name independently of the actual wire parameter name — so these optional filter parameters are omitted from every `list` operation. All `list` operations still work and return the full unfiltered result set; filter client-side (e.g. with a transformation task) if you need to narrow results.
-
 ### `vmware_vsphere_vcenter-2.0.0.json`
 
 Full spec (178 operations), generated directly from a live vCenter 9.1 instance using VMware's [`vmware-openapi-generator`](https://github.com/vmware/vmware-openapi-generator). VMware doesn't publish a static OpenAPI/Swagger file for the vSphere Automation API, so this is captured from a running server's metamodel rather than preserved from an official vendor download — regenerate against your own vCenter if you need an exact match to a different version. See `vmware_vsphere_vcenter-latest.json` above for the curated subset if you just need common CRUD automation.
 
-The same dot-notation filter parameters described above are omitted here too, for the same reason (Itential Platform naming convention incompatibility).
+vSphere's REST API uses dot-notation query parameter names for list filters (e.g. `filter.names`, `filter.clusters`), which Itential Platform's naming convention doesn't allow — these optional filter parameters are omitted here too, for the same reason. See Known Limitations below.
 
 ---
 
@@ -140,6 +143,5 @@ CRUD is only built out where vCenter's REST API actually supports it. Inventory 
 
 #### Known Limitations
 
-- **No server-side filtering**: every `List` workflow returns the full unfiltered inventory (see [Note on `list` filter parameters](#vmware_vsphere_vcenter-latestjson) above / PROAD-654). Filter client-side if you need a subset.
+- **No server-side filtering**: every `List` workflow returns the full unfiltered inventory. Filter client-side if you need a subset.
 - **No cluster/host/resource-pool capacity data**: vCenter's REST API doesn't expose CPU or memory utilization for clusters, hosts, or resource pools — that data lives in the older SOAP-based Performance Manager API, which isn't part of this Integration Model. `Get Datastore` is the only workflow with a real capacity number (`free_space`); there's no equivalent for compute capacity.
-- **No built-in error handling**: workflow tasks have a single success transition and no error branch, by design, to keep each workflow's canvas minimal. A failed task will fail the job rather than routing to a graceful error path.
