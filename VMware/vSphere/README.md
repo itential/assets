@@ -11,7 +11,7 @@ This project provides OpenAPI specs for building automation directly against the
 - [Integration Configuration](#integration-configuration)
   - [Connection Properties](#connection-properties)
   - [Session Authentication](#session-authentication)
-  - [Generating the Basic Auth Header](#generating-the-basic-auth-header)
+  - [Generating a Session Token](#generating-a-session-token)
 - [OpenAPIs](#openapis)
   - [`vmware_vsphere_vcenter-latest.json`](#vmware_vsphere_vcenter-latestjson)
   - [`vmware_vsphere_vcenter-2.0.0.json`](#vmware_vsphere_vcenter-200json)
@@ -47,37 +47,32 @@ Import one of the OpenAPI specs from `OpenAPIs/` as an Integration Model in **Ad
   },
   "authentication": {
     "sessionIdAuth": {
-      "dynamicRetrieval": {
-        "method": "POST",
-        "url": "https://<vcenter-hostname-or-ip>/rest/com/vmware/cis/session",
-        "responsePointer": "/value"
-      }
+      "value": "<vcenter-session-token>"
     }
   },
   "tls": {
     "enabled": true,
     "rejectUnauthorized": false
   },
-  "variables": {
-    "vcenterBasicAuthHeader": "Basic <base64(username:password)>"
-  },
+  "variables": {},
   "version": "latest"
 }
 ```
 
 ### Session Authentication
 
-vCenter doesn't issue a static, long-lived API key. This spec's `sessionIdAuth` security scheme models vCenter's session-token flow using Itential Platform's dynamic API key retrieval: instead of a fixed value, Itential calls vCenter's session-creation endpoint itself, extracts the returned token, and sends it back as the `vmware-api-session-id` header on every request. If a request comes back `401` (e.g. because the session hit its idle timeout — 30 minutes by default, server-configurable), Itential automatically re-fetches a new token and retries once, so there's no need to script your own re-login logic.
+vCenter doesn't issue a static, long-lived API key. This spec's `sessionIdAuth` security scheme sends a session token as the `vmware-api-session-id` header on every request. Generate the token yourself (see below) and paste it into `authentication.sessionIdAuth.value` above.
 
-The dynamic-retrieval call itself authenticates with HTTP Basic credentials, supplied via the `vcenterBasicAuthHeader` variable above.
+The token expires after ~30 minutes of inactivity by default (server-configurable) — when calls start failing with `401`, regenerate the token and update the integration's Connection Properties with the new value.
 
-### Generating the Basic Auth Header
+### Generating a Session Token
 
 ```bash
-echo -n '<username>:<password>' | base64
+curl -k -X POST -u '<username>:<password>' \
+  https://<vcenter-hostname-or-ip>/rest/com/vmware/cis/session
 ```
 
-Prefix the output with `Basic ` (e.g. `Basic dXNlcjpwYXNz`) and use that full string as the `vcenterBasicAuthHeader` variable value.
+The response is `{"value": "<session-token>"}` — use that token string (without the surrounding JSON) as the `sessionIdAuth.value` above.
 
 ## OpenAPIs
 
