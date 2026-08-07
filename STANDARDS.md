@@ -24,8 +24,6 @@ All asset types below live at `{Vendor}/[{Product}/]{AssetType}/`. The `{Product
 
 ## Studio Projects (`{Vendor}/[{Product}/]Studio Projects/`)
 - Examples - Examples of how to perform reusable generic tasks.
-- Sample Use Cases - An example of an orchestrated workflow that utilizes your contribution example.
-- When submitting a Sample Use Case, include a corresponding Automation and Trigger (_when applicable_).
 - Files are exported Studio projects in `.project.json` format.
 - **Target the `-latest` Integration Model**: when building or updating a project against an OpenAPI-backed integration, wire its tasks to the `-latest` spec's Integration Model, not a pinned dated version — so projects automatically pick up the curated, actively-maintained spec rather than drifting to a version that will eventually be superseded.
 
