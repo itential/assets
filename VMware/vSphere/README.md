@@ -103,6 +103,10 @@ Resources included, by category:
 - **Storage Policies**: List policies, read/assign a VM's storage policy, compliance checks
 - **Guest Customization**: List guest customization specs
 
+**Note on `list` filter parameters**: vSphere's REST API uses dot-notation query parameter names for list filters (e.g. `filter.names`, `filter.clusters`). Itential Platform's task-naming convention doesn't permit dots in parameter names, and there's no way to alias a task's input name independently of the actual wire parameter name — so these optional filter parameters are omitted from every `list` operation. All `list` operations still work and return the full unfiltered result set; filter client-side (e.g. with a transformation task) if you need to narrow results.
+
 ### `vmware_vsphere_vcenter-2.0.0.json`
 
 Full spec (178 operations), generated directly from a live vCenter 9.1 instance using VMware's [`vmware-openapi-generator`](https://github.com/vmware/vmware-openapi-generator). VMware doesn't publish a static OpenAPI/Swagger file for the vSphere Automation API, so this is captured from a running server's metamodel rather than preserved from an official vendor download — regenerate against your own vCenter if you need an exact match to a different version. See `vmware_vsphere_vcenter-latest.json` above for the curated subset if you just need common CRUD automation.
+
+The same dot-notation filter parameters described above are omitted here too, for the same reason (Itential Platform naming convention incompatibility).
