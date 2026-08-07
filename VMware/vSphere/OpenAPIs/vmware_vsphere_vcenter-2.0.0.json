@@ -5,6 +5,11 @@
         "title": "VMware vSphere vCenter",
         "version": "2.0.0"
     },
+    "security": [
+        {
+            "sessionIdAuth": []
+        }
+    ],
     "paths": {
         "/rest/com/vmware/vcenter/inventory/datastore?~action=find": {
             "post": {
@@ -4415,14 +4420,14 @@
                 "parameters": [
                     {
                         "required": false,
-                        "items": {
-                            "type": "string"
-                        },
                         "in": "query",
                         "name": "features",
                         "description": "List of features for which status is to be retrieved.",
                         "schema": {
-                            "type": "array"
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         }
                     }
                 ],
@@ -12274,6 +12279,24 @@
         }
     },
     "components": {
+        "securitySchemes": {
+            "sessionIdAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "vmware-api-session-id",
+                "description": "vSphere Automation API session token. Not a static key: obtained by POSTing HTTP Basic credentials to the vCenter session-creation endpoint (POST /rest/com/vmware/cis/session or POST /api/session), which returns a short-lived token (default ~30 min idle timeout, server-configurable). Configure this integration's dynamicRetrieval against that endpoint so Itential Platform fetches and refreshes the token automatically instead of requiring a static value.",
+                "x-itential-parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "x-itential-use-in": [
+                            "key"
+                        ],
+                        "x-itential-variable": "vcenterBasicAuthHeader"
+                    }
+                ]
+            }
+        },
         "requestBodies": {
             "vcenter.VM_create": {
                 "content": {
