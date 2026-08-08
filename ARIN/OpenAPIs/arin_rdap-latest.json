@@ -1,0 +1,1755 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "ARIN RDAP",
+    "description": "Registration Data Access Protocol (RDAP) service for American Registry for Internet Numbers (ARIN) -- the IETF-standardized (RFC 7480+) successor to legacy WHOIS, used to look up IP network, ASN, and organization/contact registration data. Public read-only service; no authentication required.",
+    "version": "latest",
+    "x-vendor-api-version": "RFC 7480-7484, 9082, 9083 (IETF RDAP standard)",
+    "x-itential-curated": "Reviewed against the repo's common-CRUD-for-automation policy: covers every get-by-identifier and search operation ARIN's RDAP service implements (domain search returns 501 Not Implemented on ARIN's server and is excluded). No larger vendor spec exists to trim from -- RDAP is an IETF standard with a fixed, small object model, not a large proprietary API surface."
+  },
+  "servers": [
+    {
+      "url": "https://rdap.arin.net"
+    }
+  ],
+  "paths": {
+    "/registry/ip/{ipAddress}": {
+      "get": {
+        "tags": [
+          "networks"
+        ],
+        "operationId": "getRdapNetworkByIp",
+        "summary": "Get network by IP address",
+        "description": "Returns the network registration that contains the given IPv4 or IPv6 address.",
+        "parameters": [
+          {
+            "name": "ipAddress",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "An IPv4 or IPv6 address, e.g. 192.149.252.75."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get network by IP address",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RdapNetwork"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/registry/ip/{cidrAddress}/{prefixLength}": {
+      "get": {
+        "tags": [
+          "networks"
+        ],
+        "operationId": "getRdapNetworkByCidr",
+        "summary": "Get network by CIDR block",
+        "description": "Returns the network registration for the given CIDR block.",
+        "parameters": [
+          {
+            "name": "cidrAddress",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network address, e.g. 192.149.252.0."
+          },
+          {
+            "name": "prefixLength",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "CIDR prefix length, e.g. 24."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get network by CIDR block",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RdapNetwork"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/registry/autnum/{asnNumber}": {
+      "get": {
+        "tags": [
+          "asns"
+        ],
+        "operationId": "getRdapAutnum",
+        "summary": "Get ASN by number",
+        "description": "Returns the Autonomous System Number registration for the given ASN.",
+        "parameters": [
+          {
+            "name": "asnNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ASN as a plain number (no AS prefix), e.g. 63218."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get ASN by number",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RdapAutnum"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/registry/entity/{handle}": {
+      "get": {
+        "tags": [
+          "entities"
+        ],
+        "operationId": "getRdapEntity",
+        "summary": "Get entity by handle",
+        "description": "Returns an organization, point of contact, or customer record by its ARIN handle. RDAP unifies orgs, POCs, and customers into a single entity object distinguished by roles.",
+        "parameters": [
+          {
+            "name": "handle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The entity's ARIN handle, e.g. ARIN or ARIN-HOSTMASTER."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get entity by handle",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RdapEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/registry/domain/{reverseZone}": {
+      "get": {
+        "tags": [
+          "domains"
+        ],
+        "operationId": "getRdapDomain",
+        "summary": "Get reverse DNS delegation",
+        "description": "Returns the reverse DNS delegation (nameservers and DNSSEC records) for the given in-addr.arpa or ip6.arpa zone.",
+        "parameters": [
+          {
+            "name": "reverseZone",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Reverse DNS zone name, e.g. 252.149.192.in-addr.arpa."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get reverse DNS delegation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RdapDomain"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/registry/entities": {
+      "get": {
+        "tags": [
+          "entities"
+        ],
+        "operationId": "searchRdapEntities",
+        "summary": "Search entities by name",
+        "description": "Searches organizations, points of contact, and customers by name. Supports trailing wildcard (*).",
+        "parameters": [
+          {
+            "name": "fn",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Full or partial entity name, e.g. \"ARIN*\"."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search entities by name",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RdapEntitySearchResults"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/registry/autnums": {
+      "get": {
+        "tags": [
+          "asns"
+        ],
+        "operationId": "searchRdapAutnums",
+        "summary": "Search ASNs by name",
+        "description": "Searches Autonomous System Number registrations by name. Supports trailing wildcard (*).",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Full or partial ASN name, e.g. \"ARIN*\"."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search ASNs by name",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RdapAutnumSearchResults"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RdapNetwork": {
+        "type": "object",
+        "properties": {
+          "handle": {
+            "type": "string"
+          },
+          "startAddress": {
+            "type": "string"
+          },
+          "endAddress": {
+            "type": "string"
+          },
+          "ipVersion": {
+            "type": "string",
+            "description": "v4 or v6."
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "e.g. DIRECT ALLOCATION, REASSIGNED."
+          },
+          "country": {
+            "type": "string"
+          },
+          "parentHandle": {
+            "type": "string"
+          },
+          "status": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cidr0_cidrs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "v4prefix": {
+                  "type": "string"
+                },
+                "v6prefix": {
+                  "type": "string"
+                },
+                "length": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "entities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "An entity (organization, point of contact, or customer) associated with this record.",
+              "properties": {
+                "handle": {
+                  "type": "string"
+                },
+                "roles": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "e.g. registrant, administrative, technical, abuse."
+                },
+                "status": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "vcardArray": {
+                  "type": "array",
+                  "description": "jCard-format contact information (name, org, address, email, phone)."
+                },
+                "entities": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Nested sub-entities."
+                },
+                "networks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Networks registered to this entity (present for customer-type entities)."
+                },
+                "autnums": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "events": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "eventAction": {
+                        "type": "string"
+                      },
+                      "eventDate": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "links": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "href": {
+                        "type": "string"
+                      },
+                      "rel": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "eventAction": {
+                  "type": "string"
+                },
+                "eventDate": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "rel": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "RdapAutnum": {
+        "type": "object",
+        "properties": {
+          "handle": {
+            "type": "string"
+          },
+          "startAutnum": {
+            "type": "integer"
+          },
+          "endAutnum": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "status": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "entities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "An entity (organization, point of contact, or customer) associated with this record.",
+              "properties": {
+                "handle": {
+                  "type": "string"
+                },
+                "roles": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "e.g. registrant, administrative, technical, abuse."
+                },
+                "status": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "vcardArray": {
+                  "type": "array",
+                  "description": "jCard-format contact information (name, org, address, email, phone)."
+                },
+                "entities": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Nested sub-entities."
+                },
+                "networks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Networks registered to this entity (present for customer-type entities)."
+                },
+                "autnums": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "events": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "eventAction": {
+                        "type": "string"
+                      },
+                      "eventDate": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "links": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "href": {
+                        "type": "string"
+                      },
+                      "rel": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "eventAction": {
+                  "type": "string"
+                },
+                "eventDate": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "rel": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "RdapEntity": {
+        "type": "object",
+        "properties": {
+          "handle": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "vcardArray": {
+            "type": "array",
+            "description": "jCard-format contact information (name, org, address, email, phone)."
+          },
+          "entities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "An entity (organization, point of contact, or customer) associated with this record.",
+              "properties": {
+                "handle": {
+                  "type": "string"
+                },
+                "roles": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "e.g. registrant, administrative, technical, abuse."
+                },
+                "status": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "vcardArray": {
+                  "type": "array",
+                  "description": "jCard-format contact information (name, org, address, email, phone)."
+                },
+                "entities": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Nested sub-entities."
+                },
+                "networks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Networks registered to this entity (present for customer-type entities)."
+                },
+                "autnums": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "events": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "eventAction": {
+                        "type": "string"
+                      },
+                      "eventDate": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "links": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "href": {
+                        "type": "string"
+                      },
+                      "rel": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "networks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "handle": {
+                  "type": "string"
+                },
+                "startAddress": {
+                  "type": "string"
+                },
+                "endAddress": {
+                  "type": "string"
+                },
+                "ipVersion": {
+                  "type": "string",
+                  "description": "v4 or v6."
+                },
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "e.g. DIRECT ALLOCATION, REASSIGNED."
+                },
+                "country": {
+                  "type": "string"
+                },
+                "parentHandle": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "cidr0_cidrs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "v4prefix": {
+                        "type": "string"
+                      },
+                      "v6prefix": {
+                        "type": "string"
+                      },
+                      "length": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "entities": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "An entity (organization, point of contact, or customer) associated with this record.",
+                    "properties": {
+                      "handle": {
+                        "type": "string"
+                      },
+                      "roles": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "e.g. registrant, administrative, technical, abuse."
+                      },
+                      "status": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "vcardArray": {
+                        "type": "array",
+                        "description": "jCard-format contact information (name, org, address, email, phone)."
+                      },
+                      "entities": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "Nested sub-entities."
+                      },
+                      "networks": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "Networks registered to this entity (present for customer-type entities)."
+                      },
+                      "autnums": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        }
+                      },
+                      "events": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "eventAction": {
+                              "type": "string"
+                            },
+                            "eventDate": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "links": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "href": {
+                              "type": "string"
+                            },
+                            "rel": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "events": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "eventAction": {
+                        "type": "string"
+                      },
+                      "eventDate": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "links": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "href": {
+                        "type": "string"
+                      },
+                      "rel": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Networks registered to this entity -- populated for customer-type entities."
+          },
+          "autnums": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "handle": {
+                  "type": "string"
+                },
+                "startAutnum": {
+                  "type": "integer"
+                },
+                "endAutnum": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "country": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "entities": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "An entity (organization, point of contact, or customer) associated with this record.",
+                    "properties": {
+                      "handle": {
+                        "type": "string"
+                      },
+                      "roles": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "e.g. registrant, administrative, technical, abuse."
+                      },
+                      "status": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "vcardArray": {
+                        "type": "array",
+                        "description": "jCard-format contact information (name, org, address, email, phone)."
+                      },
+                      "entities": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "Nested sub-entities."
+                      },
+                      "networks": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "Networks registered to this entity (present for customer-type entities)."
+                      },
+                      "autnums": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        }
+                      },
+                      "events": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "eventAction": {
+                              "type": "string"
+                            },
+                            "eventDate": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "links": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "href": {
+                              "type": "string"
+                            },
+                            "rel": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "events": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "eventAction": {
+                        "type": "string"
+                      },
+                      "eventDate": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "links": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "href": {
+                        "type": "string"
+                      },
+                      "rel": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "eventAction": {
+                  "type": "string"
+                },
+                "eventDate": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "rel": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "RdapDomain": {
+        "type": "object",
+        "description": "Reverse DNS delegation (in-addr.arpa / ip6.arpa zone).",
+        "properties": {
+          "handle": {
+            "type": "string"
+          },
+          "ldhName": {
+            "type": "string",
+            "description": "The reverse-DNS zone name."
+          },
+          "nameservers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "ldhName": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "secureDNS": {
+            "type": "object",
+            "description": "DNSSEC delegation signer records, if present."
+          },
+          "entities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "An entity (organization, point of contact, or customer) associated with this record.",
+              "properties": {
+                "handle": {
+                  "type": "string"
+                },
+                "roles": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "e.g. registrant, administrative, technical, abuse."
+                },
+                "status": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "vcardArray": {
+                  "type": "array",
+                  "description": "jCard-format contact information (name, org, address, email, phone)."
+                },
+                "entities": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Nested sub-entities."
+                },
+                "networks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Networks registered to this entity (present for customer-type entities)."
+                },
+                "autnums": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "events": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "eventAction": {
+                        "type": "string"
+                      },
+                      "eventDate": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "links": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "href": {
+                        "type": "string"
+                      },
+                      "rel": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "eventAction": {
+                  "type": "string"
+                },
+                "eventDate": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "rel": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "RdapEntitySearchResults": {
+        "type": "object",
+        "properties": {
+          "entitySearchResults": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "handle": {
+                  "type": "string"
+                },
+                "roles": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "status": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "vcardArray": {
+                  "type": "array",
+                  "description": "jCard-format contact information (name, org, address, email, phone)."
+                },
+                "entities": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "An entity (organization, point of contact, or customer) associated with this record.",
+                    "properties": {
+                      "handle": {
+                        "type": "string"
+                      },
+                      "roles": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "e.g. registrant, administrative, technical, abuse."
+                      },
+                      "status": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "vcardArray": {
+                        "type": "array",
+                        "description": "jCard-format contact information (name, org, address, email, phone)."
+                      },
+                      "entities": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "Nested sub-entities."
+                      },
+                      "networks": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "Networks registered to this entity (present for customer-type entities)."
+                      },
+                      "autnums": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        }
+                      },
+                      "events": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "eventAction": {
+                              "type": "string"
+                            },
+                            "eventDate": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "links": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "href": {
+                              "type": "string"
+                            },
+                            "rel": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "networks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "handle": {
+                        "type": "string"
+                      },
+                      "startAddress": {
+                        "type": "string"
+                      },
+                      "endAddress": {
+                        "type": "string"
+                      },
+                      "ipVersion": {
+                        "type": "string",
+                        "description": "v4 or v6."
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "e.g. DIRECT ALLOCATION, REASSIGNED."
+                      },
+                      "country": {
+                        "type": "string"
+                      },
+                      "parentHandle": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "cidr0_cidrs": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "v4prefix": {
+                              "type": "string"
+                            },
+                            "v6prefix": {
+                              "type": "string"
+                            },
+                            "length": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      },
+                      "entities": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "description": "An entity (organization, point of contact, or customer) associated with this record.",
+                          "properties": {
+                            "handle": {
+                              "type": "string"
+                            },
+                            "roles": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              },
+                              "description": "e.g. registrant, administrative, technical, abuse."
+                            },
+                            "status": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "vcardArray": {
+                              "type": "array",
+                              "description": "jCard-format contact information (name, org, address, email, phone)."
+                            },
+                            "entities": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              },
+                              "description": "Nested sub-entities."
+                            },
+                            "networks": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              },
+                              "description": "Networks registered to this entity (present for customer-type entities)."
+                            },
+                            "autnums": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              }
+                            },
+                            "events": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "eventAction": {
+                                    "type": "string"
+                                  },
+                                  "eventDate": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "links": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "href": {
+                                    "type": "string"
+                                  },
+                                  "rel": {
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "events": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "eventAction": {
+                              "type": "string"
+                            },
+                            "eventDate": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "links": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "href": {
+                              "type": "string"
+                            },
+                            "rel": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "description": "Networks registered to this entity -- populated for customer-type entities."
+                },
+                "autnums": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "handle": {
+                        "type": "string"
+                      },
+                      "startAutnum": {
+                        "type": "integer"
+                      },
+                      "endAutnum": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "country": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "entities": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "description": "An entity (organization, point of contact, or customer) associated with this record.",
+                          "properties": {
+                            "handle": {
+                              "type": "string"
+                            },
+                            "roles": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              },
+                              "description": "e.g. registrant, administrative, technical, abuse."
+                            },
+                            "status": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "vcardArray": {
+                              "type": "array",
+                              "description": "jCard-format contact information (name, org, address, email, phone)."
+                            },
+                            "entities": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              },
+                              "description": "Nested sub-entities."
+                            },
+                            "networks": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              },
+                              "description": "Networks registered to this entity (present for customer-type entities)."
+                            },
+                            "autnums": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              }
+                            },
+                            "events": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "eventAction": {
+                                    "type": "string"
+                                  },
+                                  "eventDate": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "links": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "href": {
+                                    "type": "string"
+                                  },
+                                  "rel": {
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "events": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "eventAction": {
+                              "type": "string"
+                            },
+                            "eventDate": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "links": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "href": {
+                              "type": "string"
+                            },
+                            "rel": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "events": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "eventAction": {
+                        "type": "string"
+                      },
+                      "eventDate": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "links": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "href": {
+                        "type": "string"
+                      },
+                      "rel": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "RdapAutnumSearchResults": {
+        "type": "object",
+        "properties": {
+          "autnumSearchResults": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "handle": {
+                  "type": "string"
+                },
+                "startAutnum": {
+                  "type": "integer"
+                },
+                "endAutnum": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "country": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "entities": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "An entity (organization, point of contact, or customer) associated with this record.",
+                    "properties": {
+                      "handle": {
+                        "type": "string"
+                      },
+                      "roles": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "e.g. registrant, administrative, technical, abuse."
+                      },
+                      "status": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "vcardArray": {
+                        "type": "array",
+                        "description": "jCard-format contact information (name, org, address, email, phone)."
+                      },
+                      "entities": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "Nested sub-entities."
+                      },
+                      "networks": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "Networks registered to this entity (present for customer-type entities)."
+                      },
+                      "autnums": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        }
+                      },
+                      "events": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "eventAction": {
+                              "type": "string"
+                            },
+                            "eventDate": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "links": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "href": {
+                              "type": "string"
+                            },
+                            "rel": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "events": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "eventAction": {
+                        "type": "string"
+                      },
+                      "eventDate": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "links": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "href": {
+                        "type": "string"
+                      },
+                      "rel": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,444 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "ARIN Whois-RWS Search",
+    "description": "ARIN's legacy Whois RESTful Web Service (Whois-RWS), scoped to search/list-by-criteria operations only. Get-by-identifier operations are covered by the cleaner arin_rdap-latest.json spec instead -- see that spec's README for why. Public read-only service; no authentication required.",
+    "version": "latest",
+    "x-itential-curated": "Scoped to only the 8 search operations that ARIN's RDAP service can't match (multi-field POC/org/net/customer search) -- every get-by-identifier operation is intentionally left to the cleaner RDAP spec instead of duplicated here with uglier XML-derived JSON. See the product README for the full rationale."
+  },
+  "servers": [
+    {
+      "url": "https://whois.arin.net"
+    }
+  ],
+  "paths": {
+    "/rest/pocs;last={lastName}": {
+      "get": {
+        "tags": [
+          "poc"
+        ],
+        "operationId": "searchPocsByLastName",
+        "summary": "Search POCs by last name",
+        "description": "Search POCs by last name. Returns lightweight reference stubs (handle, name, URL) -- fetch the full record separately if needed.",
+        "parameters": [
+          {
+            "name": "lastName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Point of contact last name, e.g. Smith."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search POCs by last name",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PocsSearchResults"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/pocs;first={firstName}": {
+      "get": {
+        "tags": [
+          "poc"
+        ],
+        "operationId": "searchPocsByFirstName",
+        "summary": "Search POCs by first name",
+        "description": "Search POCs by first name. Returns lightweight reference stubs (handle, name, URL) -- fetch the full record separately if needed.",
+        "parameters": [
+          {
+            "name": "firstName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Point of contact first name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search POCs by first name",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PocsSearchResults"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/pocs;company={company}": {
+      "get": {
+        "tags": [
+          "poc"
+        ],
+        "operationId": "searchPocsByCompany",
+        "summary": "Search POCs by company",
+        "description": "Search POCs by company. Returns lightweight reference stubs (handle, name, URL) -- fetch the full record separately if needed.",
+        "parameters": [
+          {
+            "name": "company",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Point of contact company name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search POCs by company",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PocsSearchResults"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/pocs;city={city}": {
+      "get": {
+        "tags": [
+          "poc"
+        ],
+        "operationId": "searchPocsByCity",
+        "summary": "Search POCs by city",
+        "description": "Search POCs by city. Returns lightweight reference stubs (handle, name, URL) -- fetch the full record separately if needed.",
+        "parameters": [
+          {
+            "name": "city",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Point of contact city."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search POCs by city",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PocsSearchResults"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/orgs;name={name}": {
+      "get": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "searchOrgsByName",
+        "summary": "Search organizations by name",
+        "description": "Search organizations by name. Returns lightweight reference stubs (handle, name, URL) -- fetch the full record separately if needed.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Organization name, supports trailing wildcard (*)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search organizations by name",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgsSearchResults"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/orgs;dba={dba}": {
+      "get": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "searchOrgsByDba",
+        "summary": "Search organizations by DBA",
+        "description": "Search organizations by DBA. Returns lightweight reference stubs (handle, name, URL) -- fetch the full record separately if needed.",
+        "parameters": [
+          {
+            "name": "dba",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Organization \"doing business as\" name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search organizations by DBA",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgsSearchResults"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/nets;name={name}": {
+      "get": {
+        "tags": [
+          "net"
+        ],
+        "operationId": "searchNetsByName",
+        "summary": "Search networks by name",
+        "description": "Search networks by name. Returns lightweight reference stubs (handle, name, URL) -- fetch the full record separately if needed.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network name, supports trailing wildcard (*)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search networks by name",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetsSearchResults"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/customers;name={name}": {
+      "get": {
+        "tags": [
+          "customer"
+        ],
+        "operationId": "searchCustomersByName",
+        "summary": "Search customers by name",
+        "description": "Search customers by name. Returns lightweight reference stubs (handle, name, URL) -- fetch the full record separately if needed.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Customer name, supports trailing wildcard (*)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search customers by name",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomersSearchResults"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PocsSearchResults": {
+        "type": "object",
+        "properties": {
+          "pocs": {
+            "type": "object",
+            "properties": {
+              "pocRef": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "description": "A single search-result reference (XML-derived JSON). ARIN's raw JSON key for the record URL is a literal '$', which Itential Platform can't store as-is and renames inconsistently (seen as both 'dollarSign$' and 'dollarSign*') -- check the raw response if the 'url' field below doesn't match what you see.",
+                  "properties": {
+                    "@handle": {
+                      "type": "string"
+                    },
+                    "@name": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "URL to the full record. Corresponds to ARIN's raw '$' JSON key."
+                    }
+                  }
+                }
+              },
+              "limitExceeded": {
+                "type": "object",
+                "properties": {
+                  "@limit": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "OrgsSearchResults": {
+        "type": "object",
+        "properties": {
+          "orgs": {
+            "type": "object",
+            "properties": {
+              "orgRef": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "description": "A single search-result reference (XML-derived JSON). ARIN's raw JSON key for the record URL is a literal '$', which Itential Platform can't store as-is and renames inconsistently (seen as both 'dollarSign$' and 'dollarSign*') -- check the raw response if the 'url' field below doesn't match what you see.",
+                  "properties": {
+                    "@handle": {
+                      "type": "string"
+                    },
+                    "@name": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "URL to the full record. Corresponds to ARIN's raw '$' JSON key."
+                    }
+                  }
+                }
+              },
+              "limitExceeded": {
+                "type": "object",
+                "properties": {
+                  "@limit": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "NetsSearchResults": {
+        "type": "object",
+        "properties": {
+          "nets": {
+            "type": "object",
+            "properties": {
+              "netRef": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "description": "A single search-result reference (XML-derived JSON). ARIN's raw JSON key for the record URL is a literal '$', which Itential Platform can't store as-is and renames inconsistently (seen as both 'dollarSign$' and 'dollarSign*') -- check the raw response if the 'url' field below doesn't match what you see.",
+                  "properties": {
+                    "@handle": {
+                      "type": "string"
+                    },
+                    "@name": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "URL to the full record. Corresponds to ARIN's raw '$' JSON key."
+                    }
+                  }
+                }
+              },
+              "limitExceeded": {
+                "type": "object",
+                "properties": {
+                  "@limit": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "CustomersSearchResults": {
+        "type": "object",
+        "properties": {
+          "customers": {
+            "type": "object",
+            "properties": {
+              "customerRef": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "description": "A single search-result reference (XML-derived JSON). ARIN's raw JSON key for the record URL is a literal '$', which Itential Platform can't store as-is and renames inconsistently (seen as both 'dollarSign$' and 'dollarSign*') -- check the raw response if the 'url' field below doesn't match what you see.",
+                  "properties": {
+                    "@handle": {
+                      "type": "string"
+                    },
+                    "@name": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "URL to the full record. Corresponds to ARIN's raw '$' JSON key."
+                    }
+                  }
+                }
+              },
+              "limitExceeded": {
+                "type": "object",
+                "properties": {
+                  "@limit": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
