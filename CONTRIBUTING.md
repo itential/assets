@@ -29,7 +29,7 @@ Using an AI coding tool to contribute? Start with [`AGENTS.md`](./AGENTS.md) —
 
 ## Contribution Standards
 
-Every asset type in this repo — Studio Projects, Automations, Golden Configurations, OpenAPIs, LCM Resource Models — has its own naming, versioning, and structural rules, plus a set of requirements that apply repo-wide (branding, README structure, no sensitive data, etc.). These all live in [`STANDARDS.md`](./STANDARDS.md).
+Every asset type in this repo — Studio Projects, Golden Configurations, OpenAPIs — has its own naming, versioning, and structural rules, plus a set of requirements that apply repo-wide (branding, README structure, no sensitive data, etc.). These all live in [`STANDARDS.md`](./STANDARDS.md).
 
 **Read it before opening a PR** — most review feedback traces back to one of these rules.
 
@@ -51,7 +51,7 @@ Title your PR (and its commits) as `<type>(<scope>): <summary>`.
 
   | Type | Use for |
   |---|---|
-  | `feat` | A new asset: a new vendor, product, or asset (OpenAPI spec, Studio Project, Automation, Golden Configuration) |
+  | `feat` | A new asset: a new vendor, product, or asset (OpenAPI spec, Studio Project, Golden Configuration) |
   | `fix` | A correction to an existing asset (bad workflow task, wrong variable reference, invalid operationId, broken spec field, etc.) |
   | `chore` | Non-functional maintenance (renaming, removing duplicates, reorganizing folders, metadata-only edits) |
   | `docs` | Changes to `README.md`, `CONTRIBUTING.md`, `STANDARDS.md`, or a product's own `README.md` only |

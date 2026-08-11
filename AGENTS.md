@@ -1,6 +1,6 @@
 # Working in this repo
 
-This is `itential/assets` — community-contributed Studio Projects, Automations, Golden Configurations, OpenAPI specs, and LCM Resource Models for the Itential Platform and Itential Gateway.
+This is `itential/assets` — community-contributed Studio Projects, Golden Configurations, and OpenAPI specs for the Itential Platform and Itential Gateway.
 
 Before touching any asset, read [`CONTRIBUTING.md`](./CONTRIBUTING.md) (contribution process, PR naming) and [`STANDARDS.md`](./STANDARDS.md) (the actual content rules per asset type). Those two files are the source of truth — this file only adds the mechanical gotchas that are easy to get wrong even after reading them, because they only show up once you're hand-building the JSON.
 

@@ -14,7 +14,6 @@ This project provides two complementary ways to automate against Meraki:
   - [Integration Model (OpenAPI-based automation)](#integration-model-openapi-based-automation)
 - [Studio Projects](#studio-projects)
   - [Meraki Project](#meraki-project)
-- [Automations](#automations)
 - [OpenAPIs](#openapis)
   - [`cisco_meraki_dashboard-latest.json`](#cisco_meraki_dashboard-latestjson)
   - [`cisco_meraki_dashboard-1.48.0.json`](#cisco_meraki_dashboard-1480json)
@@ -25,7 +24,6 @@ This project provides two complementary ways to automate against Meraki:
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Meraki Dashboard API OpenAPI specs — curated `-latest` plus the full dated spec |
 | [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing network/device workflows |
-| [Automations/](./Automations/) | Standalone exported sample-use-case workflows |
 
 ## Requirements
 
@@ -70,11 +68,6 @@ Generate an API key in the Meraki Dashboard under your user profile → **My Pro
 | Dependency | Notes |
 |---|---|
 | [Meraki Adapter](https://gitlab.com/itentialopensource/adapters/adapter-meraki) | Required for the Studio Project workflows. Update `adapterId` in each workflow task to match your instance name. |
-
-## Automations
-
-- [Create Network and Claim Devices](./Automations/Create%20Network%20and%20Claim%20Devices.json)
-- [Create Network and Claim Devices - Reset](./Automations/Create%20Network%20and%20Claim%20Devices%20-%20Reset.json)
 
 ## OpenAPIs
 
