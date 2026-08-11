@@ -43,6 +43,21 @@ Authorization: Bearer <your-meraki-api-key>
 
 Generate an API key in the Meraki Dashboard under your user profile → **My Profile** → **API access**.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "bearerAuth": "<your-meraki-api-key>"
+  },
+  "server": {
+    "protocol": "https",
+    "host": "api.meraki.com",
+    "base_path": "/api/v1"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |
