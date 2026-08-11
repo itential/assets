@@ -74,7 +74,7 @@ The instance's `authentication`/`server` properties should look like this once c
 Create an integration from `atlassian_jira_cloud_oauth2_3lo-latest.json`. OAuth 2.0 (3LO) needs a bit more setup than Basic Auth, on both the Atlassian and Itential Platform sides — follow the steps below in order. Once set up, the platform refreshes the access token automatically going forward, with no further manual steps.
 
 **Atlassian side:**
-1. Register an OAuth 2.0 (3LO) app at developer.atlassian.com, Resource-level access.
+1. Register an OAuth 2.0 (3LO) app at [developer.atlassian.com/console/myapps](https://developer.atlassian.com/console/myapps), Resource-level access.
 2. Add the Jira API permission with scopes `read:jira-work`, `write:jira-work`, `read:jira-user`, and `offline_access` — the last one is mandatory; without it Atlassian never issues a refresh token.
 3. Add a callback URL under Authorization (any value works — you'll be reading the authorization code from the browser's address bar after redirect, not hosting anything at that URL).
 4. Note the app's Client ID and Client Secret.
