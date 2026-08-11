@@ -8,10 +8,8 @@ All asset types below live at `{Vendor}/[{Product}/]{AssetType}/`. The `{Product
 
 - [General Principles](#general-principles)
 - [Studio Projects](#studio-projects-vendorproductstudio-projects)
-- [Automations](#automations-vendorproductautomations)
 - [Golden Configurations](#golden-configurations-vendorproductgolden-configurations)
 - [OpenAPIs](#openapis-vendorproductopenapis)
-- [LCM Resource Models](#lcm-resource-models-vendorproductlcm-resource-models)
 - [Repo-Wide Requirements](#repo-wide-requirements)
 
 ## General Principles
@@ -26,10 +24,6 @@ All asset types below live at `{Vendor}/[{Product}/]{AssetType}/`. The `{Product
 - Examples - Examples of how to perform reusable generic tasks.
 - Files are exported Studio projects in `.project.json` format.
 - **Target the `-latest` Integration Model**: when building or updating a project against an OpenAPI-backed integration, wire its tasks to the `-latest` spec's Integration Model, not a pinned dated version — so projects automatically pick up the curated, actively-maintained spec rather than drifting to a version that will eventually be superseded.
-
-## Automations (`{Vendor}/[{Product}/]Automations/`)
-- Exported automation definitions that correspond to a Studio Project submission.
-- Should be paired with a Trigger where applicable.
 
 ## Golden Configurations (`{Vendor}/[{Product}/]Golden Configurations/`)
 - Template examples that illustrate an OS or the consumption of JSON returned from an API call (in the case of JSON Compliance).
@@ -59,14 +53,11 @@ Imported into Itential Platform as Integration Models.
 - **Supported auth method**: The `securityScheme` must use an auth type supported by Itential Platform. See the [Itential Platform Security Schemes documentation](https://docs.itential.com/itential-platform/admin-essentials/integrations/auth/security-schemes) for the full list of supported methods.
 - **No duplicate specs**: Don't leave an old, differently-named spec in the same folder once a renamed/enriched replacement exists — update the product's `README.md` links and remove the superseded file in the same contribution.
 
-## LCM Resource Models (`{Vendor}/[{Product}/]LCM Resource Models/`)
-- Examples of Use Cases resource models.
-
 ## Repo-Wide Requirements
 
 - **No Sensitive Data**: Ensure your contribution does not contain any sensitive or private data (e.g., API keys, passwords, personal information).
 - **Product README structure**: Each product folder's `README.md` should keep a plain `# {Product}` title but skip a separate `## Overview` heading and any "Assets for the Itential Platform" boilerplate — the description paragraph(s) flow directly under the title. Keep that intro **product-agnostic**: describe the vendor/product itself, not the specifics of any one asset it ships with. Detail that's specific to one asset (e.g. a Studio Project's workflow count, folder count, or category breakdown) belongs under that asset's own heading (e.g. `## Studio Projects`), not in the top-level intro. Avoid superlative/marketing language ("the premier...", "industry-leading...") since competing vendors coexist in this repo. See NetBox's or GitHub's `README.md` for the pattern.
-- **No generic import instructions**: Don't restate how to import a Studio Project, OpenAPI spec, Golden Configuration, LCM Resource Model, or device driver in a product's own README (e.g. "Import via Automation Studio > Projects > Import") — those generic click-paths already live once in the root [`README.md`](./README.md)'s Getting Started section. A product README's asset sections should only cover what's specific to that product: which Integration instance name a workflow expects, what an Automation's trigger needs, credential/config setup, etc.
+- **No generic import instructions**: Don't restate how to import a Studio Project, OpenAPI spec, Golden Configuration, or device driver in a product's own README (e.g. "Import via Automation Studio > Projects > Import") — those generic click-paths already live once in the root [`README.md`](./README.md)'s Getting Started section. A product README's asset sections should only cover what's specific to that product: which Integration instance name a workflow expects, credential/config setup, etc.
 - **Branding**: Refer to the products as "Itential Platform" and "Itential Gateway" (or "Platform"/"Gateway" for brevity once already introduced, or a specific version like "P6" or "IG5" when relevant) — never the retired abbreviations "IAP" or "IAG".
 - **Table of Contents**: Every product `README.md` needs a `## Table of Contents` section right after the intro paragraph(s), before `## Contents`. Before writing it, check that the document's heading levels are actually correct — a section that documents a sibling section's content (e.g. a "Workflow Input Reference" section for a specific Studio Project's workflows) should be nested as that section's child, not left as a same-level sibling; fix the heading levels first, then build the TOC to match. List every `##` heading as a top-level bullet, and every genuine `###` child nested one level under its real parent — but don't go deeper than that (skip `####` and beyond) to avoid fragile GitHub-generated anchors on headings with special characters, duplicate text, or repeated leaf headings (e.g. several "List"/"Create"/"Delete" subsections across different resource types). Give both the curated `-latest` spec and the dated/full spec their own `###` heading under `## OpenAPIs` (even if the full spec's is a single sentence pointing back at the curated one), so both are reachable from the TOC. See GitHub's or Palo Alto Panorama's `README.md` for the pattern.
 - **Proper Spelling and Grammar**: Proofread your contribution to make sure it is free of spelling and grammar errors.

@@ -24,7 +24,6 @@ This project provides a Studio Project of pre-built workflows plus OpenAPI specs
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Panorama REST API OpenAPI specs — curated `-latest` plus the full dated spec |
 | [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing all 47 workflows in 12 folders |
-| [Automations/](./Automations/) | Automation pairing for the Create Security Rule workflow |
 
 ## Requirements
 

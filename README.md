@@ -17,8 +17,6 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Golden Configurations** | Config Manager compliance trees for auditing device configuration drift |
 | **device-drivers** | Netmiko-based drivers for connecting Itential Gateway to physical and virtual devices |
 | **Configuration Parsers** | Scripts for parsing structured output from device CLI commands |
-| **Automations** | Standalone automation scripts |
-| **LCM Resource Models** | JSON Schema definitions that specify which properties Lifecycle Manager tracks for an infrastructure entity over time |
 
 ---
 
@@ -79,12 +77,10 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 ```
 Vendor/
 └── Product/
-    ├── Automations/
     ├── Configuration Parsers/
     ├── device-drivers/
     ├── Golden Configurations/
     ├── OpenAPIs/
-    ├── LCM Resource Models/
     ├── Studio Projects/
     └── README.md
 ```
@@ -116,12 +112,6 @@ See [Golden Configuration overview](https://docs.itential.com/itential-platform/
 2. Click the **Search** (🔍) button to open the Collection modal.
 3. Click the **Golden Configurations** tab, then click **Import** in the toolbar.
 4. After importing, bind the tree to your devices.
-
-### Import an LCM Resource Model
-See [Manage Lifecycle Manager resources](https://docs.itential.com/itential-platform/6/lifecycle-manager/manage-resources) for full details.
-1. In Itential Platform, go to **Lifecycle Manager**.
-2. Click **Create Resource +** and enter a name.
-3. On the **Model** tab, paste the JSON Schema from the file and click **Save**.
 
 ### Install a Device Driver (Gateway)
 Follow the instructions in the driver's `README.md`. Drivers typically require copying files to your Itential Gateway host and restarting the Itential Gateway service.
