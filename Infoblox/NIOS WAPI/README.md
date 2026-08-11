@@ -1,19 +1,12 @@
 Infoblox NIOS is a DNS, DHCP, and IP address management (DDI) appliance platform. The NIOS Web API (WAPI) is its REST interface, exposing DNS zones and records, DHCP ranges and leases, IPAM networks and addresses, and Grid/member configuration as reference-based objects that can be created, read, updated, and deleted over HTTPS.
 
-This project provides two complementary ways to automate against NIOS WAPI:
-
-- **Studio Project workflows** built on the **Infoblox NIOS DDI Adapter** — network and DNS record CRUD workflows (assign the next available IP, create/modify/delete networks, network containers, and A/CNAME/NS/PTR/fixed-address DNS records).
-- **OpenAPI specs** for building new automation directly against the WAPI REST endpoints via an Integration Model. Five `-latest` specs are provided — one general-purpose spec plus four object-domain specs (DHCP, DNS, Grid, IPAM) — each a curated subset covering common CRUD for automation. See **OpenAPIs** below.
+This project provides OpenAPI specs for automating against NIOS WAPI's REST endpoints via Integration Models, plus a Studio Project of ready-to-import CRUD workflows built on four of those models. Five `-latest` specs are provided — one general-purpose spec plus four object-domain specs (DHCP, DNS, Grid, IPAM) — each a curated subset covering common CRUD for automation. See **OpenAPIs** below.
 
 ## Table of Contents
 
 - [Contents](#contents)
 - [Requirements](#requirements)
 - [Integration Configuration](#integration-configuration)
-  - [Adapter (Studio Project workflows)](#adapter-studio-project-workflows)
-  - [Integration Model (OpenAPI-based automation)](#integration-model-openapi-based-automation)
-- [Studio Projects](#studio-projects)
-  - [Infoblox NIOS DDI Project](#infoblox-nios-ddi-project)
 - [OpenAPIs](#openapis)
   - [`infoblox_nios_wapi-latest.json`](#infoblox_nios_wapi-latestjson)
   - [`infoblox_nios_wapi-1.0.1.json`](#infoblox_nios_wapi-101json)
@@ -25,32 +18,31 @@ This project provides two complementary ways to automate against NIOS WAPI:
   - [`infoblox_nios_wapi_grid-2.14.json`](#infoblox_nios_wapi_grid-214json)
   - [`infoblox_nios_wapi_ipam-latest.json`](#infoblox_nios_wapi_ipam-latestjson)
   - [`infoblox_nios_wapi_ipam-2.14.json`](#infoblox_nios_wapi_ipam-214json)
+- [Studio Projects](#studio-projects)
+  - [Infoblox NIOS WAPI Project](#infoblox-nios-wapi-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | NIOS WAPI OpenAPI specs — curated `-latest` plus the full dated spec, for the general API and each of the DHCP, DNS, Grid, and IPAM domains |
-| [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing the network/DNS record CRUD workflows |
+| [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing all 199 workflows in 4 folders (DNS, IPAM, DHCP, Grid) |
 
 ## Requirements
 
 | Requirement | Version |
 |---|---|
 | Itential Platform | 6.x |
-| Infoblox NIOS DDI Adapter | Required for the Studio Project workflows below |
-| Infoblox NIOS WAPI Integration Model | Required only if building new automation directly against the OpenAPI specs |
+| `Infoblox NIOS WAPI — DNS:latest`, `— IPAM:latest`, `— DHCP:latest`, `— Grid:latest` Integration Models | Required to run the Studio Project below |
 | Infoblox NIOS | 8.6 (WAPI 2.14) — general spec targets WAPI 1.0.1 for backward compatibility |
+
+> **Note:** This project does not require Itential Gateway. All API calls are made directly from Itential Platform to your Grid Master or member's WAPI endpoint.
 
 ## Integration Configuration
 
-### Adapter (Studio Project workflows)
-
-Install the [Infoblox NIOS DDI Adapter](https://gitlab.com/itentialopensource/adapters/adapter-infoblox) and configure an instance in **Admin > Adapters**, then update the `adapterId` job variable referenced by each workflow task to match your instance name before importing.
-
-### Integration Model (OpenAPI-based automation)
-
-To build automation directly against the REST API instead, import one of the OpenAPI specs from `OpenAPIs/` as an Integration Model in **Admin > Integrations**, then create an integration pointing at your Grid Master or member's hostname or IP.
+Import the OpenAPI specs from `OpenAPIs/` as Integration Models in **Admin > Integrations**, then create one integration per domain spec you need, each pointing at your Grid Master or member's hostname or IP.
 
 Authentication is HTTP Basic — a NIOS administrator username and password:
 
@@ -60,32 +52,23 @@ Authorization: Basic <base64(username:password)>
 
 Enable API access for the account under **Grid → Grid Manager → Members → API Settings** in the NIOS UI.
 
----
+The instance's `authentication`/`server` properties should look like this once configured (the same credentials work across all four domain integrations, since they authenticate against the same Grid Master):
 
-## Studio Projects
-
-### Infoblox NIOS DDI Project
-
-| Folder | Workflows | Scope |
-|---|---|---|
-| (root) | Assign Next IP | Allocate the next available IP address from a network |
-| Network | Create Network, Delete Network | IPAM network CRUD |
-| Network Container | Create Network Container, Delete Network Container | IPAM network container CRUD |
-| DNS A Record | Create, Modify, Delete DNS A Record | A record CRUD |
-| DNS CNAME Record | Create, Modify, Delete DNS CNAME Record | CNAME record CRUD |
-| DNS NS Record | Create, Modify, Delete DNS NS Record | NS record CRUD |
-| DNS PTR Record | Create, Modify, Delete DNS PTR Record | PTR record CRUD |
-| DNS Fixed Address Record | Create, Modify, Delete DNS Fixed Address Record | DHCP fixed address CRUD |
-
-All workflows read the adapter instance name from the `adapterId` job variable — set this input when running or calling each workflow.
-
-#### Dependencies
-
-| Dependency | Notes |
-|---|---|
-| [Infoblox NIOS DDI Adapter](https://gitlab.com/itentialopensource/adapters/adapter-infoblox) | Required for the Studio Project workflows. Update the `adapterId` job variable to match your instance name. |
-
----
+```json
+{
+  "authentication": {
+    "basicAuth": {
+      "username": "<nios-admin-username>",
+      "password": "<nios-admin-password>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "<grid-master-hostname-or-ip>",
+    "base_path": "/wapi/v2.14"
+  }
+}
+```
 
 ## OpenAPIs
 
@@ -102,6 +85,8 @@ All workflows read the adapter instance name from the `adapterId` job variable �
 | [`infoblox_nios_wapi_grid-2.14.json`](./OpenAPIs/infoblox_nios_wapi_grid-2.14.json) | 2.14 | 183 | Full Grid domain spec for WAPI 2.14 (183 operations). |
 | [`infoblox_nios_wapi_ipam-2.14.json`](./OpenAPIs/infoblox_nios_wapi_ipam-2.14.json) | 2.14 | 104 | Full IPAM domain spec for WAPI 2.14 (104 operations). |
 
+**Platform compatibility note:** the four curated domain specs originally included WAPI's `_return_fields+` query parameter (an "add to the default field set" variant of `_return_fields`) on every List/Get operation. Itential Platform rejects any task input name containing a `+` character, which broke every workflow built on that parameter — confirmed against a real NIOS Grid. Removed from all four curated specs; `_return_fields` (no `+`) is still available for requesting specific fields.
+
 ### `infoblox_nios_wapi-latest.json`
 
 General-purpose spec (`x-vendor-api-version: 1.0.1`). Trimmed to 102 of 321 upstream operations covering common CRUD for automation.
@@ -115,6 +100,8 @@ Resources included, by category:
 - **Grid**: Grid, Grid DNS Properties, Members
 - **Extensible Attributes**: Extensible Attribute Definitions
 - **Generic**: Reference-based get/update/delete endpoints used by WAPI for objects without a dedicated single-object path
+
+Not used by the Studio Project below — its resources overlap with the four domain-specific specs, which cover the same ground with a cleaner, more complete operation set. Import it directly if you want a single general-purpose model instead of four domain-specific ones.
 
 ### `infoblox_nios_wapi-1.0.1.json`
 
@@ -180,3 +167,29 @@ Resources included, by category:
 Full, unmodified vendor spec for the IPAM domain, WAPI 2.14 (104 operations) — the vendor's complete API surface, preserved as-is. See `infoblox_nios_wapi_ipam-latest.json` above for the curated subset if you just need common CRUD automation.
 
 ---
+
+## Studio Projects
+
+### Infoblox NIOS WAPI Project
+
+Backed by the four domain-specific Integration Models above (`— DNS:latest`, `— IPAM:latest`, `— DHCP:latest`, `— Grid:latest`). The project contains **199 workflows** organized into **4 folders**, one workflow per curated operation across all four domain specs. All workflows follow the naming convention `<Operation> <Resource>` (e.g. `List DNS A Records`, `Get Next Available IP`).
+
+Two IPAM resources are qualified with the domain name in their workflow titles (`IPAM Network`, `IPAM VLAN`) to avoid colliding with identically-named workflows from other vendors' Studio Projects in this repo — Itential Platform workflow names must be unique platform-wide, not just within a project, so if you're importing multiple projects from this repo into the same platform, watch for this class of collision.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| DNS | 71 | A, AAAA, CNAME, HOST (+ HOST_IPV4ADDR/HOST_IPV6ADDR sub-records), MX, NS, PTR, SRV, TXT records; DNS View; Authoritative/Delegated/Forward Zones |
+| IPAM | 63 | IPAM Network (+ expand/next-IP/next-network/next-VLAN/resize/split), Network Container, IPv6 Network (+ actions), IPv6 Network Container, Network View, IPv4/IPv6 Address, IPAM VLAN, VLAN Range (+ next-VLAN-ID), VLAN View |
+| DHCP | 40 | Fixed Address (v4/v6), Range (+ next-available-IP), IPv6 Range (+ next-available-IP), Shared Network (v4/v6), Lease (list/read/delete), DHCP Failover Association |
+| Grid | 25 | Grid, Grid DNS/DHCP Properties, Member, Member DNS/DHCP Properties, Extensible Attribute Definition |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Infoblox NIOS WAPI — DNS:latest`, `— IPAM:latest`, `— DHCP:latest`, `— Grid:latest` Integration Models | Import each from its respective spec above before importing the project |
+| `Infoblox DNS`, `Infoblox IPAM`, `Infoblox DHCP`, `Infoblox Grid` integration instances | Create in **Admin > Integrations** with the connection properties above, one per domain. Workflows are wired to these instance names — update the `adapter_id` value in each workflow task if yours are named differently |
+
+**Testing status:** all 199 workflows were created and schema-validated against a running Itential Platform instance. A representative sample across all four domains — `List DNS A Records`, `List IPAM Networks`, `List Ranges`, `List Grids`, `List Grid DHCP Properties`, and `List Member DNS Properties` — was executed against a real Infoblox NIOS Grid and confirmed returning live data. The remaining workflows have not been individually executed.
