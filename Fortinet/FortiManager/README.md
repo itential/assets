@@ -2,7 +2,9 @@
 
 FortiManager is Fortinet's centralized management platform for FortiGate devices, providing policy and object configuration, device provisioning, firmware management, and centralized logging/reporting across a FortiGate fleet.
 
-This project provides an OpenAPI spec covering FortiManager's JSON-RPC API for building automation via an Integration Model — see **OpenAPIs** below.
+This project provides an OpenAPI spec covering FortiManager's JSON-RPC API for building automation via an Integration Model, plus a Studio Project of example workflows built on it — see **OpenAPIs** and **Studio Projects** below.
+
+> **Not yet live-tested.** Unlike this repo's other Studio Projects, the workflows here were hand-authored against the OpenAPI spec's request/response schemas rather than built and run against a live FortiManager. Verify each workflow against a real (or sandboxed) FortiManager before relying on it — see [Before You Submit](../../CONTRIBUTING.md#before-you-submit).
 
 **Requirements:** Itential Platform >= 6.4 · FortiManager >= 7.2.2 (for Bearer-token API authentication)
 
@@ -14,12 +16,15 @@ This project provides an OpenAPI spec covering FortiManager's JSON-RPC API for b
 - [OpenAPIs](#openapis)
   - [`fortimanager_json_api-latest.json`](#fortimanager_json_api-latestjson)
   - [Why One Operation, and Why Bearer-Only](#why-one-operation-and-why-bearer-only)
+- [Studio Projects](#studio-projects)
+  - [FortiManager Project](#fortimanager-project)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/fortimanager_json_api-latest.json](./OpenAPIs/fortimanager_json_api-latest.json) | Single-endpoint Integration Model spec covering FortiManager's JSON-RPC API |
+| [Studio Projects/FortiManager](./Studio%20Projects/FortiManager.project.json) | 7 example workflows, one per common JSON-RPC pattern (status, inventory, object CRUD, device onboarding, install) |
 
 ## Integration Configuration
 
@@ -75,3 +80,18 @@ See Fortinet's FortiManager JSON API documentation (FNDN) for the full set of `u
 Itential Platform's OpenAPI-based Integration Models make literal HTTP calls matching a spec's path and method, so a faithful OpenAPI representation of a single real endpoint can only define one operation — synthetic per-resource paths would just fail at runtime, since FortiManager doesn't expose them as real HTTP routes. This is the Integration Model equivalent of `fortigate-rest-call` on the IG5 side (see the FortiGate product README): one generic passthrough, with workflows supplying the addressing.
 
 Bearer-token auth (FortiManager >= 7.2.2) was chosen deliberately over the older session-based JSON-RPC login — a session token returned by an initial login call, then threaded through every subsequent request body — since that pattern isn't representable as an OpenAPI `securityScheme`, which models auth as a header, query parameter, cookie, or OAuth2 flow, not a value the caller embeds in the request body itself.
+
+## Studio Projects
+
+### FortiManager Project
+
+Backed by the Integration Model above. The project contains **7 workflows** in a single folder, one per request-body example from the OpenAPI spec: Get System Status, Get ADOM List, Get Managed Devices, Add Firewall Address, Get Firewall Policies, Add Managed Device, and Install Device Config.
+
+Every workflow is the same two-task shape — `workflow_start` → `jsonRpcCall` (the Integration Model's one operation) → `workflow_end` — differing only in the job input's default `method`/`params`. Each workflow's input schema mirrors the OpenAPI request body directly (`id`, `method`, `params`), pre-filled with that workflow's example so it runs unmodified out of the box, but every field can be overridden at job start to target any other FortiManager JSON-RPC call without editing the canvas — the same generic-passthrough model as the OpenAPI spec itself, one level up.
+
+**Dependencies:**
+
+| Dependency | Notes |
+|---|---|
+| `FortiManager JSON API:latest` Integration Model | Import from [`fortimanager_json_api-latest.json`](./OpenAPIs/fortimanager_json_api-latest.json) before importing the project |
+| `FortiManager` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an instance named `FortiManager` — update `adapter_id` in each task if yours is named differently |
