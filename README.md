@@ -38,6 +38,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Datadog** | Observability |
 | **Docker** | Docker Engine · Docker Hub |
 | **F5** | BIG-IP · BIG-IQ |
+| **Fortinet** | FortiGate |
 | **GitHub** | GitHub |
 | **GitLab** | GitLab |
 | **GoDaddy** | Domain management |

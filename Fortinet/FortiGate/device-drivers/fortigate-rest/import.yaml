@@ -1,0 +1,61 @@
+---
+repositories:
+  - name: itential-assets
+    description: Itential community assets repository
+    url: https://github.com/itential/assets.git
+    reference: devel
+
+decorators:
+  - name: fortigate-rest-call-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: fortigate-rest-call inputs
+      type: object
+      properties:
+        verb:
+          description: HTTP method
+          type: string
+          enum: [GET, POST, PUT, DELETE]
+        route:
+          description: FortiOS REST route (e.g. /api/v2/cmdb/firewall/policy)
+          type: string
+        body:
+          description: JSON request body (optional)
+          type: string
+      required: [verb, route]
+      additionalProperties: false
+
+services:
+  - name: fortigate-rest-is-alive
+    type: python-script
+    description: Fortinet FortiGate REST API — verify reachability via GET /api/v2/monitor/system/status
+    repository: itential-assets
+    working-directory: Fortinet/FortiGate/device-drivers/fortigate-rest
+    filename: main.py
+    runtime:
+      env:
+        FORTIGATE_REST_OP: is-alive
+    tags: [driver, fortigate, fortios, rest]
+
+  - name: fortigate-rest-get-config
+    type: python-script
+    description: Fortinet FortiGate REST API — retrieve full configuration via GET /api/v2/monitor/system/config/backup
+    repository: itential-assets
+    working-directory: Fortinet/FortiGate/device-drivers/fortigate-rest
+    filename: main.py
+    runtime:
+      env:
+        FORTIGATE_REST_OP: get-config
+    tags: [driver, fortigate, fortios, rest]
+
+  - name: fortigate-rest-call
+    type: python-script
+    description: Fortinet FortiGate REST API — generic REST passthrough (workflow task, not a broker action)
+    repository: itential-assets
+    working-directory: Fortinet/FortiGate/device-drivers/fortigate-rest
+    filename: main.py
+    decorator: fortigate-rest-call-input
+    runtime:
+      env:
+        FORTIGATE_REST_OP: rest-call
+    tags: [driver, fortigate, fortios, rest]
