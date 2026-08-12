@@ -44,7 +44,9 @@ Generate an access key ID and secret access key for an IAM principal with the ap
 | Spec | Version | Operations | Description |
 |---|---|---|---|
 | [`aws_organizations-latest.json`](./OpenAPIs/aws_organizations-latest.json) | latest (curated) | 55 | Actively-maintained spec, all operations are genuine CRUD/provisioning actions — see breakdown below |
-| [`aws_organizations-2016-11-28.json`](./OpenAPIs/aws_organizations-2016-11-28.json) | 2016-11-28 | 55 | Full, unmodified vendor spec |
+| [`aws_organizations-2016-11-28.json`](./OpenAPIs/aws_organizations-2016-11-28.json) | 2016-11-28 | 55 | Full spec, converted in-house from AWS's official service model |
+
+Both specs are converted in-house from **AWS's own official AWS Organizations service model** (`organizations-2016-11-28.normal.json`, published by AWS at [`github.com/aws/aws-sdk-js`](https://github.com/aws/aws-sdk-js/blob/master/apis/organizations-2016-11-28.normal.json) — the same machine-readable definition AWS uses to generate its own SDKs), not from a third-party OpenAPI conversion. AWS does not publish a ready-made OpenAPI/Swagger document for this service directly.
 
 ### `aws_organizations-latest.json`
 
@@ -64,4 +66,4 @@ Operations included, by category:
 
 ### `aws_organizations-2016-11-28.json`
 
-Full, unmodified vendor spec for AWS Organizations API version 2016-11-28 (55 operations) — the vendor's complete API surface, preserved as-is. See `aws_organizations-latest.json` above for the curated subset if you just need common CRUD automation.
+Full spec, converted in-house from AWS's official service model, for AWS Organizations API version 2016-11-28 (55 operations) — the entire upstream API surface as AWS defines it. See `aws_organizations-latest.json` above for the curated subset if you just need common CRUD automation.

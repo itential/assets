@@ -42,11 +42,13 @@ Generate an access key ID and secret access key for an IAM user or role with the
 | Spec | Version | Operations | Description |
 |---|---|---|---|
 | [`aws_lambda-latest.json`](./OpenAPIs/aws_lambda-latest.json) | latest (curated) | 54 | Actively-maintained, curated for common CRUD automation — see breakdown below |
-| [`aws_lambda-2015-03-31.json`](./OpenAPIs/aws_lambda-2015-03-31.json) | 2015-03-31 | 66 | Full spec for the AWS Lambda API (2015-03-31). |
+| [`aws_lambda-2015-03-31.json`](./OpenAPIs/aws_lambda-2015-03-31.json) | 2015-03-31 | 68 | Full spec for the AWS Lambda API (2015-03-31). |
+
+Both specs are converted in-house from **AWS's own official AWS Lambda service model** (`lambda-2015-03-31.normal.json`, published by AWS at [`github.com/aws/aws-sdk-js`](https://github.com/aws/aws-sdk-js/blob/master/apis/lambda-2015-03-31.normal.json) — the same machine-readable definition AWS uses to generate its own SDKs), not from a third-party OpenAPI conversion. AWS does not publish a ready-made OpenAPI/Swagger document for this service directly.
 
 ### `aws_lambda-latest.json`
 
-Actively-maintained spec (`x-vendor-api-version: 2015-03-31`). Trimmed to 54 of 66 upstream operations covering common CRUD for automation.
+Actively-maintained spec (`x-vendor-api-version: 2015-03-31`). Trimmed to 54 of 68 upstream operations covering common CRUD for automation.
 
 Resources included, by category:
 
@@ -66,4 +68,4 @@ Not included: code signing configs (create/describe/update/delete config plus fu
 
 ### `aws_lambda-2015-03-31.json`
 
-Full, unmodified vendor spec for the AWS Lambda API (2015-03-31) — the vendor's complete API surface, preserved as-is. See `aws_lambda-latest.json` above for the curated subset if you just need common CRUD automation.
+Full spec, converted in-house from AWS's official service model, for the AWS Lambda API (2015-03-31) — the entire upstream API surface as AWS defines it. See `aws_lambda-latest.json` above for the curated subset if you just need common CRUD automation.

@@ -41,12 +41,14 @@ Generate an access key ID and secret access key in the AWS IAM console under you
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
-| [`amazon_s3-latest.json`](./OpenAPIs/amazon_s3-latest.json) | latest (curated) | 54 | Trimmed to 54 of 97 upstream operations covering common CRUD for automation — see breakdown below |
-| [`amazon_s3-2006-03-01.json`](./OpenAPIs/amazon_s3-2006-03-01.json) | 2006-03-01 | 97 | Full spec for the Amazon S3 API (2006-03-01). |
+| [`amazon_s3-latest.json`](./OpenAPIs/amazon_s3-latest.json) | latest (curated) | 54 | Trimmed to 54 of 99 upstream operations covering common CRUD for automation — see breakdown below |
+| [`amazon_s3-2006-03-01.json`](./OpenAPIs/amazon_s3-2006-03-01.json) | 2006-03-01 | 99 | Full spec for the Amazon S3 API (2006-03-01). |
+
+Both specs are converted in-house from **AWS's own official Amazon S3 service model** (`s3-2006-03-01.normal.json`, published by AWS at [`github.com/aws/aws-sdk-js`](https://github.com/aws/aws-sdk-js/blob/master/apis/s3-2006-03-01.normal.json) — the same machine-readable definition AWS uses to generate its own SDKs), not from a third-party OpenAPI conversion. AWS does not publish a ready-made OpenAPI/Swagger document for this service directly.
 
 ### `amazon_s3-latest.json`
 
-Actively-maintained spec (`x-vendor-api-version: 2006-03-01`). Trimmed to 54 of 97 upstream operations covering common CRUD for automation.
+Actively-maintained spec (`x-vendor-api-version: 2006-03-01`). Trimmed to 54 of 99 upstream operations covering common CRUD for automation.
 
 Resources included, by category:
 
@@ -61,4 +63,4 @@ Not included: bucket analytics/inventory/metrics/intelligent-tiering configurati
 
 ### `amazon_s3-2006-03-01.json`
 
-Full, unmodified vendor spec for the Amazon S3 API (2006-03-01) (97 operations) — the vendor's complete API surface, preserved as-is. See `amazon_s3-latest.json` above for the curated subset if you just need common CRUD automation.
+Full spec, converted in-house from AWS's official service model, for the Amazon S3 API (2006-03-01) (99 operations) — the entire upstream API surface as AWS defines it. See `amazon_s3-latest.json` above for the curated subset if you just need common CRUD automation.

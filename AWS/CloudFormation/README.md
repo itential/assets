@@ -41,12 +41,14 @@ Generate an access key ID and secret access key in the AWS Console under **IAM >
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
-| [`aws_cloudformation-latest.json`](./OpenAPIs/aws_cloudformation-latest.json) | latest (curated) | 74 | Trimmed to 74 of 132 upstream operations — see breakdown below |
-| [`aws_cloudformation-2010-05-15.json`](./OpenAPIs/aws_cloudformation-2010-05-15.json) | 2010-05-15 | 132 | Full spec for the CloudFormation 2010-05-15 API (132 operations). |
+| [`aws_cloudformation-latest.json`](./OpenAPIs/aws_cloudformation-latest.json) | latest (curated) | 74 | Trimmed to 74 of 164 upstream operations — see breakdown below |
+| [`aws_cloudformation-2010-05-15.json`](./OpenAPIs/aws_cloudformation-2010-05-15.json) | 2010-05-15 | 164 | Full spec for the CloudFormation 2010-05-15 API (164 operations). |
+
+Both specs are converted in-house from **AWS's own official AWS CloudFormation service model** (`cloudformation-2010-05-15.normal.json`, published by AWS at [`github.com/aws/aws-sdk-js`](https://github.com/aws/aws-sdk-js/blob/master/apis/cloudformation-2010-05-15.normal.json) — the same machine-readable definition AWS uses to generate its own SDKs), not from a third-party OpenAPI conversion. AWS does not publish a ready-made OpenAPI/Swagger document for this service directly.
 
 ### `aws_cloudformation-latest.json`
 
-Actively-maintained spec (`x-vendor-api-version: 2010-05-15`). Trimmed to 74 of 132 upstream operations covering common CRUD for automation.
+Actively-maintained spec (`x-vendor-api-version: 2010-05-15`). Trimmed to 74 of 164 upstream operations covering common CRUD for automation.
 
 Resources included, by category:
 
@@ -58,4 +60,4 @@ Not included: type/extension registry management (`RegisterType`, `PublishType`,
 
 ### `aws_cloudformation-2010-05-15.json`
 
-Full, unmodified vendor spec for the CloudFormation 2010-05-15 API (132 operations) — the vendor's complete API surface, preserved as-is. See `aws_cloudformation-latest.json` above for the curated subset if you just need common CRUD automation.
+Full spec, converted in-house from AWS's official service model, for the CloudFormation 2010-05-15 API (164 operations) — the entire upstream API surface as AWS defines it. See `aws_cloudformation-latest.json` above for the curated subset if you just need common CRUD automation.
