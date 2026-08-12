@@ -7,7 +7,7 @@ intentionally NOT implemented as CLI passthrough (see below) -- they
 return a structured "not supported" error instead of pretending to work.
 
 FortiOS's REST API only supports static API-token (Bearer) authentication --
-there is no username/password login flow like F5's iControl REST. A token is
+there is no username/password login flow to obtain a session token. A token is
 generated once via an "API Administrator" account in FortiOS (GUI or the
 `execute api-user generate-key` CLI command) and never expires unless
 revoked, so there is no refresh logic in this driver.
@@ -30,9 +30,9 @@ Per-device configuration in Inventory Manager attributes:
                   "global" (default) or "vdom"
 
 IMPORTANT — no CLI passthrough exists on FortiOS's REST API:
-FortiOS's REST API has no equivalent of F5's /mgmt/tm/util/bash. Fortinet's
-own support guidance is explicit that arbitrary CLI commands cannot be sent
-over the API. Because of that:
+FortiOS's REST API has no endpoint that executes arbitrary CLI commands.
+Fortinet's own support guidance is explicit that arbitrary CLI commands
+cannot be sent over the API. Because of that:
   - run-command  returns {"success": false, "error": "..."} explaining the
                  limitation and pointing to rest-call instead.
   - set-config   (the Config Manager remediation broker entry point) returns
@@ -86,10 +86,11 @@ def _vdom_params(conn: dict) -> dict:
 
 _UNSUPPORTED_CLI = (
     "FortiOS's REST API does not support arbitrary CLI command execution -- "
-    "there is no bash/CLI passthrough endpoint (unlike F5's /mgmt/tm/util/bash). "
+    "there is no bash/CLI passthrough endpoint. "
     "Use rest-call to perform structured operations against /api/v2/cmdb/* or "
-    "/api/v2/monitor/* endpoints instead, or use a CLI/SSH-based driver "
-    "(e.g. netsdk) if raw CLI access is genuinely required."
+    "/api/v2/monitor/* endpoints instead, or use the platform's built-in "
+    "netmiko driver (itential_platform: fortinet) if raw CLI access is "
+    "genuinely required."
 )
 
 

@@ -2,14 +2,16 @@
 
 FortiGate is Fortinet's network security appliance line, providing firewall, VPN, and routing functionality configured either via CLI (SSH) or the FortiOS REST API.
 
-Itential Platform ships no built-in driver for FortiGate. This project provides a custom IG5 device driver over the FortiOS REST API for HTTP-based access — see **Inventory Manager Configuration** below.
+This project provides two ways to automate against FortiGate: netmiko over SSH/CLI (the same pattern used for Cisco IOS and Arista EOS), or a custom IG5 device driver over the FortiOS REST API for HTTP-based access — see **Inventory Manager Configuration** below.
 
-**Requirements:** Itential Platform >= 6.4 · Itential Gateway >= 5.0
+**Requirements:** Itential Platform >= 6.4 · Itential Gateway >= 5.0 (only if using the `fortigate-rest` device driver)
 
 ## Table of Contents
 
 - [Contents](#contents)
 - [Inventory Manager Configuration](#inventory-manager-configuration)
+  - [Option 1: netmiko (SSH/CLI)](#option-1-netmiko-sshcli)
+  - [Option 2: fortigate-rest (FortiOS REST API over HTTP)](#option-2-fortigate-rest-fortios-rest-api-over-http)
 - [Device Drivers](#device-drivers)
   - [fortigate-rest](#fortigate-rest)
 
@@ -21,7 +23,40 @@ Itential Platform ships no built-in driver for FortiGate. This project provides 
 
 ## Inventory Manager Configuration
 
-FortiOS's REST API authenticates with a static API token (Bearer), not a username/password login, and has no CLI passthrough endpoint — so `run-command` and `set-config` aren't implemented by this driver. See [device-drivers/fortigate-rest/README.md](./device-drivers/fortigate-rest/README.md) for the full attribute reference, the reasoning behind the CLI-passthrough gap, and the generic REST passthrough (`fortigate-rest-call`) for calling any FortiOS REST endpoint directly from a workflow.
+FortiGate devices can be automated two ways. Pick per device based on whether you want CLI (SSH) or REST (FortiOS API) access — both can coexist across different nodes in the same inventory.
+
+### Option 1: netmiko (SSH/CLI)
+
+Itential Platform ships with a netmiko driver for FortiGate out of the box — no additional driver install required. Broker actions (`is-alive`, `run-command`, `get-config`, `set-config`) are wired automatically when the inventory is created with `createBrokerActions: true`, the same as Cisco IOS and Arista EOS.
+
+```json
+{
+  "name": "my-fortigate-device",
+  "attributes": {
+    "itential_host": "192.0.2.200",
+    "itential_port": 22,
+    "itential_driver": "netmiko",
+    "itential_platform": "fortinet",
+    "itential_user": "admin",
+    "itential_password": "changeme"
+  }
+}
+```
+
+| Attribute | Type | Description |
+|---|---|---|
+| `itential_host` | string | Management IP or hostname of the device |
+| `itential_port` | integer | SSH port (default: `22`) |
+| `itential_driver` | string | Driver to use — must be `netmiko` |
+| `itential_platform` | string | Netmiko device type — `fortinet` for FortiOS |
+| `itential_user` | string | SSH username |
+| `itential_password` | string | SSH password |
+
+### Option 2: fortigate-rest (FortiOS REST API over HTTP)
+
+Use this instead of netmiko when you want HTTP-based access to FortiGate's REST API rather than SSH/CLI — no SSH access required, and all operations go over HTTPS to the management interface. Requires the `fortigate-rest` device driver registered in Itential Gateway 5.x.
+
+See [device-drivers/fortigate-rest/README.md](./device-drivers/fortigate-rest/README.md) for full setup details, the API-token authentication model, and a generic REST passthrough (`fortigate-rest-call`) for calling any FortiOS REST endpoint directly from a workflow.
 
 **Node attributes:**
 
@@ -74,7 +109,7 @@ FortiOS's REST API authenticates with a static API token (Bearer), not a usernam
 
 ### fortigate-rest
 
-A native Python FortiOS REST driver for IG5. Use this for HTTP-based FortiGate automation — no SSH access to the management interface required.
+A native Python FortiOS REST driver for IG5. Use this for HTTP-based FortiGate automation instead of SSH/CLI — useful when SSH access to the management interface isn't available, or when you'd rather work directly against FortiOS REST endpoints from a workflow.
 
 See [device-drivers/fortigate-rest/README.md](./device-drivers/fortigate-rest/README.md) for full documentation including all operations, the API-token authentication model, and local testing. That README also has the Inventory Manager action mapping JSON needed to wire the broker contracts (`is-alive`, `get-config`) to this driver's IG5 services.
 

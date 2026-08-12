@@ -5,12 +5,11 @@ operations go over HTTPS to the FortiGate management interface. Credential
 resolution is handled by IG5's built-in mechanism; no vault integration in
 this driver.
 
-Modeled on [`f5-rest`](../f5-rest/), but FortiOS's REST API has real
-capability differences from F5's iControl REST — see
+FortiOS's REST API has real capability limits compared to CLI access — see
 [No CLI passthrough](#no-cli-passthrough-run-command--set-config) below
-before assuming this behaves identically.
+before assuming this behaves identically to a CLI-based driver.
 
-Use the platform's built-in netsdk driver if you need SSH/CLI access instead.
+Use the platform's built-in netmiko driver (`itential_platform: fortinet`) if you need SSH/CLI access instead.
 
 ## Operations
 
@@ -24,17 +23,18 @@ Use the platform's built-in netsdk driver if you need SSH/CLI access instead.
 
 ## No CLI passthrough (`run-command` / `set-config`)
 
-Unlike F5's iControl REST (`/mgmt/tm/util/bash`), **FortiOS's REST API has no
-endpoint that executes arbitrary CLI commands** — Fortinet's own support
-guidance is explicit that CLI commands cannot be sent over the API. This
-isn't a gap in this driver; it's a real limitation of the platform.
+**FortiOS's REST API has no endpoint that executes arbitrary CLI commands** —
+Fortinet's own support guidance is explicit that CLI commands cannot be sent
+over the API. This isn't a gap in this driver; it's a real limitation of the
+platform.
 
 Because of that, `run-command` and `set-config` both return a structured
 `{"success": false, "error": "..."}` explaining the limitation, rather than
 silently doing nothing or faking success. Use `fortigate-rest-call` instead
 for anything that needs to change configuration — it can reach any
 `/api/v2/cmdb/*` object (FortiOS's structured config model), just not via
-raw CLI-style `set`/`config`/`end` text the way F5 or Junos accept.
+raw CLI-style `set`/`config`/`end` text. Use the netmiko option (see the
+product README) if you need genuine CLI-style config application.
 
 ## Authentication
 
@@ -151,7 +151,7 @@ as a query param unless the route already includes one.
 
 ## Known limitations
 
-- **No CLI passthrough** — see above. This is the main behavioral difference from `f5-rest`.
+- **No CLI passthrough** — see above. Use the netmiko option (see the product README) if genuine CLI-style config application is required.
 - **`get-config` may return a truncated config on very large or heavily-VDOM'd appliances.** Fortinet customers have reported the `/api/v2/monitor/system/config/backup` endpoint returning a partial config (vs. the full CLI-equivalent backup) in some cases. Verify output completeness against a CLI-based backup if this matters for your use case.
 
 ## Local testing
