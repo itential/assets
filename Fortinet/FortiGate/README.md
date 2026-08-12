@@ -12,6 +12,7 @@ This project provides two ways to automate against FortiGate: netmiko over SSH/C
 - [Inventory Manager Configuration](#inventory-manager-configuration)
   - [Option 1: netmiko (SSH/CLI)](#option-1-netmiko-sshcli)
   - [Option 2: fortigate-rest (FortiOS REST API over HTTP)](#option-2-fortigate-rest-fortios-rest-api-over-http)
+  - [Choosing API vs SSH — and a Hybrid Setup](#choosing-api-vs-ssh--and-a-hybrid-setup)
 - [Device Drivers](#device-drivers)
   - [fortigate-rest](#fortigate-rest)
 
@@ -105,6 +106,28 @@ See [device-drivers/fortigate-rest/README.md](./device-drivers/fortigate-rest/RE
 ]
 ```
 
+### Choosing API vs SSH — and a Hybrid Setup
+
+FortiOS's REST API is a structured, object-model interface (`/api/v2/cmdb/*`, `/api/v2/monitor/*`) — Fortinet's own support guidance is explicit that it isn't a CLI replacement, so it has no endpoint for executing arbitrary commands. That's a deliberate product design choice, not a driver limitation: `fortigate-rest` implements `is-alive` and `get-config` faithfully, but can't offer real `run-command`/`set-config` broker actions. Only SSH/CLI gives you those.
+
+**Use `fortigate-rest` (REST/API) when:**
+- SSH access to the management interface isn't available or is restricted by policy.
+- You want structured JSON responses instead of parsing CLI text output.
+- You're doing targeted object-level changes — firewall policies, addresses, and similar `cmdb` objects — via `fortigate-rest-call`.
+- You want a lighter-weight reachability check or config snapshot without opening a CLI session.
+
+**Use netmiko (SSH/CLI) when:**
+- You need arbitrary operational commands (`run-command`) or Config Manager CLI-diff remediation (`set-config`).
+- You need CLI-only functionality that has no `cmdb` REST equivalent.
+
+**Hybrid (recommended for most deployments):** because each broker contract (`is-alive`, `run-command`, `get-config`, `set-config`) is mapped independently in a node's `actions` array, you don't have to pick one driver for all four. A common pattern:
+
+1. Create the node with `itential_driver: netmiko` / `itential_platform: fortinet` (Option 1) so Itential Platform auto-wires all four broker actions via `createBrokerActions: true`.
+2. In Inventory Manager, edit just the `is-alive` and `get-config` action entries to override their `action_config` to `fortigate-rest-is-alive` / `fortigate-rest-get-config` (Option 2's services) instead.
+3. Leave `run-command` and `set-config` on their auto-generated netmiko mapping, since those need CLI access anyway.
+
+This keeps read/reachability checks off the CLI session entirely while still supporting full CLI-based command execution and remediation where the REST API can't reach.
+
 ## Device Drivers
 
 ### fortigate-rest
@@ -113,12 +136,14 @@ A native Python FortiOS REST driver for IG5. Use this for HTTP-based FortiGate a
 
 See [device-drivers/fortigate-rest/README.md](./device-drivers/fortigate-rest/README.md) for full documentation including all operations, the API-token authentication model, and local testing. That README also has the Inventory Manager action mapping JSON needed to wire the broker contracts (`is-alive`, `get-config`) to this driver's IG5 services.
 
-**Quick start — register services in IG5:**
+**Deploying this driver:** copy `device-drivers/fortigate-rest/` into your own automation repo — the one Itential Gateway already tracks, or a new one dedicated to your drivers. Don't add this repo (`itential/assets`) as an Itential Gateway `repositories` source just to pull one driver; that clones the entire community assets repo, which is unnecessarily large for a single driver.
+
+After copying, update the `repositories` entry and `working-directory` paths in [import.yaml](./device-drivers/fortigate-rest/import.yaml) to point at your own repo, then either:
 
 ```bash
-iagctl db import device-drivers/fortigate-rest/import.yaml --force
+iagctl db import import.yaml --force
 ```
 
-Or copy the `services` and `decorators` blocks from [import.yaml](./device-drivers/fortigate-rest/import.yaml) into your own `import.yml`.
+or copy just the `services`/`decorators` blocks into your Itential Gateway's existing `import.yaml`.
 
 **Dependencies:** `requests>=2.28.0`
