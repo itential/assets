@@ -120,13 +120,38 @@ FortiOS's REST API is a structured, object-model interface (`/api/v2/cmdb/*`, `/
 - You need arbitrary operational commands (`run-command`) or Config Manager CLI-diff remediation (`set-config`).
 - You need CLI-only functionality that has no `cmdb` REST equivalent.
 
-**Hybrid (recommended for most deployments):** because each broker contract (`is-alive`, `run-command`, `get-config`, `set-config`) is mapped independently in a node's `actions` array, you don't have to pick one driver for all four. A common pattern:
+**Hybrid — no broker override needed (recommended for most deployments):** `fortigate-rest`'s connection resolution (`main.py`) reads `itential_host`, `itential_password`, and `itential_driver_options.fortigate-rest.*` directly off the node — it never looks at the node's top-level `itential_driver` or its `actions` array. That means a single node can be set up as Option 1 (`itential_driver: netmiko`, broker actions auto-wired for Config Manager/generic device operations) and *also* carry an `itential_driver_options.fortigate-rest` block for the REST token/settings:
+
+```json
+{
+  "name": "fortigate-01",
+  "attributes": {
+    "itential_host": "192.0.2.200",
+    "itential_port": 22,
+    "itential_driver": "netmiko",
+    "itential_platform": "fortinet",
+    "itential_user": "admin",
+    "itential_password": "changeme",
+    "itential_driver_options": {
+      "fortigate-rest": {
+        "api_token": "<FortiOS API token>",
+        "vdom": "root",
+        "verify_ssl": false
+      }
+    }
+  }
+}
+```
+
+Note the `api_token` override here — `itential_password` is already doing double duty as the SSH password for netmiko, so the REST token (a separate credential in FortiOS) goes in `itential_driver_options.fortigate-rest.api_token` instead. With this in place, a Studio Project workflow can call `fortigate-rest-is-alive`, `fortigate-rest-get-config`, or `fortigate-rest-call` as an Automation Gateway task against this same node at any time, resolving host/token from these attributes — independent of whatever the node's broker actions are wired to. No changes to the `actions` array, and no second node needed.
+
+**Hybrid — broker-level override:** only reach for this if you specifically want the platform's own broker-driven features (Config Manager compliance/backup, generic device `get-config`/`is-alive` calls) to use REST instead of CLI, rather than just calling the service directly from a workflow:
 
 1. Create the node with `itential_driver: netmiko` / `itential_platform: fortinet` (Option 1) so Itential Platform auto-wires all four broker actions via `createBrokerActions: true`.
 2. In Inventory Manager, edit just the `is-alive` and `get-config` action entries to override their `action_config` to `fortigate-rest-is-alive` / `fortigate-rest-get-config` (Option 2's services) instead.
 3. Leave `run-command` and `set-config` on their auto-generated netmiko mapping, since those need CLI access anyway.
 
-This keeps read/reachability checks off the CLI session entirely while still supporting full CLI-based command execution and remediation where the REST API can't reach.
+This still requires the same `itential_driver_options.fortigate-rest` block as above.
 
 ## Device Drivers
 
