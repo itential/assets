@@ -47,7 +47,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **EfficientIP** | SOLIDserver (DDI) |
 | **F5** | BIG-IP · BIG-IQ · Insight |
 | **ForeScout** | Web API (CounterACT / eyeSight) |
-| **Fortinet** | FortiGate |
+| **Fortinet** | FortiGate · FortiManager |
 | **GitHub** | GitHub |
 | **GitLab** | GitLab |
 | **GoDaddy** | Domain management |
