@@ -15,12 +15,18 @@ This project provides two ways to automate against FortiGate: netmiko over SSH/C
   - [Choosing API vs SSH — and a Hybrid Setup](#choosing-api-vs-ssh--and-a-hybrid-setup)
 - [Device Drivers](#device-drivers)
   - [fortigate-rest](#fortigate-rest)
+- [Configuration Parsers](#configuration-parsers)
+  - [fortios](#fortios)
+- [Golden Configurations](#golden-configurations)
+  - [FortiGate - Simple](#fortigate---simple)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [device-drivers/fortigate-rest](./device-drivers/fortigate-rest/) | IG5 Python FortiOS REST driver — is-alive, get-config, plus a generic REST passthrough |
+| [Configuration Parsers/fortios.json](./Configuration%20Parsers/fortios.json) | Config Manager parser defining the `fortios` device type |
+| [Golden Configurations/FortiGate - Simple](./Golden%20Configurations/FortiGate%20-%20Simple.json) | Golden config tree covering admin access, password policy, NTP, syslog, and interface hardening — requires the `fortios` parser |
 
 ## Inventory Manager Configuration
 
@@ -172,3 +178,42 @@ iagctl db import import.yaml --force
 or copy just the `services`/`decorators` blocks into your Itential Gateway's existing `import.yaml`.
 
 **Dependencies:** `requests>=2.28.0`
+
+## Configuration Parsers
+
+### fortios
+
+Defines the `fortios` device type in Config Manager. This parser must be imported
+before the **FortiGate - Simple** golden configuration tree can be created or used. It
+tokenizes FortiOS CLI configuration (`config` / `edit` / `set` / `next` / `end` blocks)
+using the `cisco-ios` lexer template, treating each line as a sequence of words
+delimited by whitespace, with quoted strings preserved as single tokens. It adds a `#`
+comment rule on top of the base `cisco-ios` rules to correctly skip the `#`-prefixed
+metadata header lines (`#config-version=...`, `#buildno=...`) that FortiOS always
+emits at the top of a configuration export.
+
+Import via Config Manager → Configuration Parsers → Import.
+
+---
+
+## Golden Configurations
+
+One golden configuration tree is provided. It ships with no device bindings — bind it
+to your devices in Config Manager after importing.
+
+### FortiGate - Simple
+
+Device type: `fortios`
+
+Baseline configuration using literal matching. Covers admin session timeout, password
+policy (status + minimum length), NTP sync to a named server, syslog forwarding, and a
+handful of security-hardening checks: disallows disabling the HTTPS admin redirect,
+disallows a wide-open `trusthost1 0.0.0.0 0.0.0.0` management ACL, and disallows
+telnet/HTTP management access on `port1`. Use this as a starting point when all devices
+in a group are expected to share identical configuration values with no variation.
+
+> **Before importing:** The `fortios` parser must be registered in Config Manager first
+> (see Configuration Parsers above). Then bind the root node's `devices` to match your
+> Inventory Manager device name(s).
+
+**Dependencies:** `fortios` parser
