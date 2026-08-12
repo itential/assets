@@ -42,7 +42,9 @@ Generate an access key ID and secret access key for an IAM user or role with `ne
 | Spec | Version | Operations | Description |
 |---|---|---|---|
 | [`aws_network_firewall-latest.json`](./OpenAPIs/aws_network_firewall-latest.json) | latest (curated) | 36 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`aws_network_firewall-2020-11-12.json`](./OpenAPIs/aws_network_firewall-2020-11-12.json) | 2020-11-12 | 36 | Full, unmodified vendor spec |
+| [`aws_network_firewall-2020-11-12.json`](./OpenAPIs/aws_network_firewall-2020-11-12.json) | 2020-11-12 | 36 | Full spec, converted in-house from AWS's official service model |
+
+Both specs are converted in-house from **AWS's own official AWS Network Firewall service model** (`network-firewall-2020-11-12.normal.json`, published by AWS at [`github.com/aws/aws-sdk-js`](https://github.com/aws/aws-sdk-js/blob/master/apis/network-firewall-2020-11-12.normal.json) — the same machine-readable definition AWS uses to generate its own SDKs), not from a third-party OpenAPI conversion. AWS does not publish a ready-made OpenAPI/Swagger document for this service directly.
 
 ### `aws_network_firewall-latest.json`
 
@@ -60,4 +62,4 @@ Operations included, by category:
 
 ### `aws_network_firewall-2020-11-12.json`
 
-Full, unmodified vendor spec for API version 2020-11-12 (36 operations) — the vendor's complete API surface, preserved as-is. See `aws_network_firewall-latest.json` above for the curated `-latest` copy; per the review noted there, no operations were excluded, so both specs cover the same operation set.
+Full spec, converted in-house from AWS's official service model, for API version 2020-11-12 (36 operations) — the entire upstream API surface as AWS defines it. See `aws_network_firewall-latest.json` above for the curated `-latest` copy; per the review noted there, no operations were excluded, so both specs cover the same operation set.

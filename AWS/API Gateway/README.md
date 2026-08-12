@@ -44,6 +44,8 @@ Sign requests with an AWS access key ID and secret access key belonging to an IA
 | [`amazon_api_gateway-latest.json`](./OpenAPIs/amazon_api_gateway-latest.json) | latest (curated) | 104 | Trimmed to 104 of 120 upstream operations covering common CRUD for automation — see breakdown below |
 | [`amazon_api_gateway-2015-07-09.json`](./OpenAPIs/amazon_api_gateway-2015-07-09.json) | 2015-07-09 | 120 | Full spec for the Amazon API Gateway `2015-07-09` management API (120 operations). |
 
+Both specs are converted in-house from **AWS's own official Amazon API Gateway service model** (`apigateway-2015-07-09.normal.json`, published by AWS at [`github.com/aws/aws-sdk-js`](https://github.com/aws/aws-sdk-js/blob/master/apis/apigateway-2015-07-09.normal.json) — the same machine-readable definition AWS uses to generate its own SDKs), not from a third-party OpenAPI conversion. AWS does not publish a ready-made OpenAPI/Swagger document for this service directly.
+
 ### `amazon_api_gateway-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2015-07-09`). Trimmed to 104 of 120 upstream operations covering common CRUD for automation.
@@ -61,4 +63,4 @@ Excluded as niche developer-tooling/reporting add-ons not core to REST API lifec
 
 ### `amazon_api_gateway-2015-07-09.json`
 
-Full, unmodified vendor spec for the Amazon API Gateway `2015-07-09` management API (120 operations) — the vendor's complete API surface, preserved as-is. See `amazon_api_gateway-latest.json` above for the curated subset if you just need common CRUD automation.
+Full spec, converted in-house from AWS's official service model, for the Amazon API Gateway `2015-07-09` management API (120 operations) — the entire upstream API surface as AWS defines it. See `amazon_api_gateway-latest.json` above for the curated subset if you just need common CRUD automation.

@@ -42,7 +42,9 @@ Sign requests with an AWS access key ID and secret access key that has IAM permi
 | Spec | Version | Operations | Description |
 |---|---|---|---|
 | [`aws_direct_connect-latest.json`](./OpenAPIs/aws_direct_connect-latest.json) | latest (curated) | 63 | Actively-maintained, curated for common CRUD automation — see breakdown below |
-| [`aws_direct_connect-2012-10-25.json`](./OpenAPIs/aws_direct_connect-2012-10-25.json) | 2012-10-25 | 63 | Full, unmodified vendor spec (63 operations) |
+| [`aws_direct_connect-2012-10-25.json`](./OpenAPIs/aws_direct_connect-2012-10-25.json) | 2012-10-25 | 63 | Full spec, converted in-house from AWS's official service model (63 operations) |
+
+Both specs are converted in-house from **AWS's own official AWS Direct Connect service model** (`directconnect-2012-10-25.normal.json`, published by AWS at [`github.com/aws/aws-sdk-js`](https://github.com/aws/aws-sdk-js/blob/master/apis/directconnect-2012-10-25.normal.json) — the same machine-readable definition AWS uses to generate its own SDKs), not from a third-party OpenAPI conversion. AWS does not publish a ready-made OpenAPI/Swagger document for this service directly.
 
 ### `aws_direct_connect-latest.json`
 
@@ -64,4 +66,4 @@ Operations included, by category:
 
 ### `aws_direct_connect-2012-10-25.json`
 
-Full, unmodified vendor spec for AWS Direct Connect API version 2012-10-25 (63 operations) — the vendor's complete API surface, preserved as-is. See `aws_direct_connect-latest.json` above for the curated subset if you just need common CRUD automation.
+Full spec, converted in-house from AWS's official service model, for AWS Direct Connect API version 2012-10-25 (63 operations) — the entire upstream API surface as AWS defines it. See `aws_direct_connect-latest.json` above for the curated subset if you just need common CRUD automation.

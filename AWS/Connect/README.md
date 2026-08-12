@@ -41,12 +41,14 @@ Generate an access key ID and secret access key for an IAM user or role with the
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
-| [`amazon_connect-latest.json`](./OpenAPIs/amazon_connect-latest.json) | latest (curated) | 96 | Actively-maintained, trimmed to 96 of 171 upstream operations covering common CRUD for automation — see breakdown below |
-| [`amazon_connect-2017-08-08.json`](./OpenAPIs/amazon_connect-2017-08-08.json) | 2017-08-08 | 171 | Full spec for Amazon Connect API version 2017-08-08 (171 operations). |
+| [`amazon_connect-latest.json`](./OpenAPIs/amazon_connect-latest.json) | latest (curated) | 96 | Actively-maintained, trimmed to 96 of 255 upstream operations covering common CRUD for automation — see breakdown below |
+| [`amazon_connect-2017-08-08.json`](./OpenAPIs/amazon_connect-2017-08-08.json) | 2017-08-08 | 255 | Full spec for Amazon Connect API version 2017-08-08 (255 operations). |
+
+Both specs are converted in-house from **AWS's own official Amazon Connect service model** (`connect-2017-08-08.normal.json`, published by AWS at [`github.com/aws/aws-sdk-js`](https://github.com/aws/aws-sdk-js/blob/master/apis/connect-2017-08-08.normal.json) — the same machine-readable definition AWS uses to generate its own SDKs), not from a third-party OpenAPI conversion. AWS does not publish a ready-made OpenAPI/Swagger document for this service directly.
 
 ### `amazon_connect-latest.json`
 
-Actively-maintained spec (`x-vendor-api-version: 2017-08-08`). Trimmed to 96 of 171 upstream operations covering common CRUD for automation.
+Actively-maintained spec (`x-vendor-api-version: 2017-08-08`). Trimmed to 96 of 255 upstream operations covering common CRUD for automation.
 
 Resources included, by category:
 
@@ -69,4 +71,4 @@ Not included: real-time and historical metrics/reporting, custom vocabularies (C
 
 ### `amazon_connect-2017-08-08.json`
 
-Full, unmodified vendor spec for Amazon Connect API version 2017-08-08 (171 operations) — the vendor's complete API surface, preserved as-is. See `amazon_connect-latest.json` above for the curated subset if you just need common CRUD automation.
+Full spec, converted in-house from AWS's official service model, for Amazon Connect API version 2017-08-08 (255 operations) — the entire upstream API surface as AWS defines it. See `amazon_connect-latest.json` above for the curated subset if you just need common CRUD automation.

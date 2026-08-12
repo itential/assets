@@ -39,12 +39,14 @@ Generate an AWS access key ID and secret access key for an IAM principal with `e
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
-| [`amazon_eks-latest.json`](./OpenAPIs/amazon_eks-latest.json) | latest (curated) | 35 | Actively-maintained, full spec kept as-is (no trimming needed) — see breakdown below |
-| [`amazon_eks-2017-11-01.json`](./OpenAPIs/amazon_eks-2017-11-01.json) | 2017-11-01 | 35 | Full spec for the Amazon EKS 2017-11-01 API. |
+| [`amazon_eks-latest.json`](./OpenAPIs/amazon_eks-latest.json) | latest (curated) | 35 | Trimmed to 35 of 56 upstream operations — see breakdown below |
+| [`amazon_eks-2017-11-01.json`](./OpenAPIs/amazon_eks-2017-11-01.json) | 2017-11-01 | 56 | Full spec for the Amazon EKS 2017-11-01 API. |
+
+Both specs are converted in-house from **AWS's own official Amazon EKS service model** (`eks-2017-11-01.normal.json`, published by AWS at [`github.com/aws/aws-sdk-js`](https://github.com/aws/aws-sdk-js/blob/master/apis/eks-2017-11-01.normal.json) — the same machine-readable definition AWS uses to generate its own SDKs), not from a third-party OpenAPI conversion. AWS does not publish a ready-made OpenAPI/Swagger document for this service directly.
 
 ### `amazon_eks-latest.json`
 
-Actively-maintained spec (`x-vendor-api-version: 2017-11-01`, 35 operations). Audited operation-by-operation: every operation manages an EKS cluster or one of its direct sub-resources (add-ons, managed node groups, Fargate profiles, identity provider configs, updates, tags, connected-cluster registrations). There is no health/heartbeat/metrics endpoint, no API self-introspection or version-info endpoint, and no vendor-internal admin tooling to trim, so the full spec is kept as-is.
+Actively-maintained spec (`x-vendor-api-version: 2017-11-01`). Trimmed to 35 of 56 upstream operations: every included operation manages an EKS cluster or one of its direct sub-resources (add-ons, managed node groups, Fargate profiles, identity provider configs, updates, tags, connected-cluster registrations). The 21 upstream operations added since this spec was last reviewed — Access Entries, Access Policies, Pod Identity Associations, EKS Anywhere Subscriptions, and cluster Insights — are not yet reviewed for inclusion; see the full spec if you need one of those areas in the meantime.
 
 Operations included, by category:
 
@@ -59,4 +61,4 @@ Operations included, by category:
 
 ### `amazon_eks-2017-11-01.json`
 
-Full, unmodified vendor spec for the Amazon EKS 2017-11-01 API (35 operations) — the vendor's complete API surface, preserved as-is. See `amazon_eks-latest.json` above for the curated subset if you just need common CRUD automation.
+Full spec, converted in-house from AWS's official service model, for the Amazon EKS 2017-11-01 API (35 operations) — the entire upstream API surface as AWS defines it. See `amazon_eks-latest.json` above for the curated subset if you just need common CRUD automation.

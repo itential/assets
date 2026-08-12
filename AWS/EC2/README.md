@@ -77,12 +77,14 @@ Authentication is AWS Signature Version 4 — sign requests with an AWS access k
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
-| [`amazon_ec2-latest.json`](./OpenAPIs/amazon_ec2-latest.json) | latest (curated) | 212 | Trimmed to 212 of 1182 upstream operations covering common CRUD for compute and networking automation — see breakdown below |
-| [`amazon_ec2-2016-11-15.json`](./OpenAPIs/amazon_ec2-2016-11-15.json) | 2016-11-15 | 1182 | Full spec for the EC2 API version 2016-11-15. |
+| [`amazon_ec2-latest.json`](./OpenAPIs/amazon_ec2-latest.json) | latest (curated) | 212 | Trimmed to 212 of 1254 upstream operations covering common CRUD for compute and networking automation — see breakdown below |
+| [`amazon_ec2-2016-11-15.json`](./OpenAPIs/amazon_ec2-2016-11-15.json) | 2016-11-15 | 1254 | Full spec for the EC2 API version 2016-11-15. |
+
+Both specs are converted in-house from **AWS's own official EC2 service model** (`ec2-2016-11-15.normal.json`, published by AWS at [`github.com/aws/aws-sdk-js`](https://github.com/aws/aws-sdk-js/blob/master/apis/ec2-2016-11-15.normal.json) — the same machine-readable definition AWS uses to generate its own SDKs), not from a third-party OpenAPI conversion. AWS does not publish a ready-made OpenAPI/Swagger document for EC2 directly.
 
 ### `amazon_ec2-latest.json`
 
-Actively-maintained spec (`x-vendor-api-version: 2016-11-15`). Trimmed to 212 of 1182 upstream operations covering common CRUD for compute and networking automation. The full upstream spec models the entire EC2 API surface, including Transit Gateway, Client VPN, IPAM, Spot Fleet, Reserved Instances, Capacity Reservations, Outposts, and dozens of other specialized areas — none of those are included here. Pull the full spec from [AWS's official EC2 API reference](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/) if you need one of the excluded areas.
+Actively-maintained spec (`x-vendor-api-version: 2016-11-15`). Trimmed to 212 of 1254 upstream operations (106 of 627 actions) covering common CRUD for compute and networking automation. The full upstream service model covers the entire EC2 API surface, including Transit Gateway, Client VPN, IPAM, Spot Fleet, Reserved Instances, Capacity Reservations, Outposts, and dozens of other specialized areas — none of those are included here. Pull the full spec from `amazon_ec2-2016-11-15.json` below, or see [AWS's official EC2 API reference](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/), if you need one of the excluded areas.
 
 Resources included, by category:
 
@@ -108,4 +110,4 @@ Resources included, by category:
 
 ### `amazon_ec2-2016-11-15.json`
 
-Full, unmodified vendor spec for EC2 API version 2016-11-15 (1,773 operations) — the vendor's complete API surface, preserved as-is. See `amazon_ec2-latest.json` above for the curated subset if you just need common CRUD automation.
+Full spec for EC2 API version 2016-11-15 (627 actions, 1,254 GET/POST operations) — converted in-house from AWS's official service model, covering the entire upstream API surface as AWS defines it. See `amazon_ec2-latest.json` above for the curated subset if you just need common CRUD automation.
