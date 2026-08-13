@@ -1,0 +1,6078 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "latest",
+    "x-vendor-api-version": "v8.1.0",
+    "title": "F5 BIG-IQ API",
+    "description": "F5 BIG-IQ API provides programmatic access to BIG-IQ's centralized management of BIG-IP devices: device discovery, trust, and import; device templates; device management IP pools; license management (purchased-pool and RegKey licensing, utility billing); and device-reference/machine-ID lookup helpers.\n\nAuthentication: HTTP Basic (username/password of a BIG-IQ user). BIG-IQ also supports a token-exchange login flow (POST /mgmt/shared/authn/login), but Basic auth is used here for simplicity, matching this repo's convention for Integration Models.\n\nF5 does not publish a downloadable OpenAPI/Swagger spec for BIG-IQ. This spec was hand-built from F5's official per-endpoint API reference documentation at clouddocs.f5.com, independently verified path-by-path and field-by-field against the live documentation before inclusion -- endpoints with no official documentation anywhere in F5's reference tree (checked across multiple platform versions) were excluded, as were BIG-IP-device-configuration endpoints reached through BIG-IQ's proxy mechanisms (out of scope; see this repo's F5/BIG-IP folder for direct BIG-IP device management).\n\nSource: https://clouddocs.f5.com/products/big-iq/mgmt-api/latest/ApiReferences/bigiq_public_api_ref/",
+    "x-itential-curated": "Scoped to BIG-IQ's own device-fleet-management capabilities: device discovery/trust/import lifecycle, device and service-catalog templates, device management IP pools, purchased-pool and RegKey license management, and device-reference/machine-ID lookup helpers -- 68 operations, each independently verified against F5's official documentation. Excludes BIG-IP device configuration reached through BIG-IQ's working-config and rest-proxy mechanisms (LTM pools/virtual-servers/nodes, network interfaces, etc.) -- that's BIG-IP's own configuration surface, out of scope for a BIG-IQ management-plane model. Also excludes iHealth, software upgrade, script execution, device backup/restore, and DSC group management, none of which have any official F5 documentation despite being implemented by the legacy F5 BIG-IQ Adapter -- checked across BIG-IQ API reference versions v0.0 through v8.0.0."
+  },
+  "servers": [
+    {
+      "url": "https://HOSTNAME/mgmt"
+    }
+  ],
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "paths": {
+    "/cm/device/ip-pool/pools": {
+      "get": {
+        "operationId": "listDeviceIPPools",
+        "summary": "List device IP pools",
+        "description": "Returns all device management IP pools.",
+        "responses": {
+          "200": {
+            "description": "List device IP pools",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "address": {
+                            "type": "string"
+                          },
+                          "addressFamily": {
+                            "type": "string",
+                            "enum": [
+                              "ipv4",
+                              "ipv6"
+                            ]
+                          },
+                          "gateway": {
+                            "type": "string"
+                          },
+                          "totalAddressCount": {
+                            "type": "integer"
+                          },
+                          "addressRanges": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "firstAddress": {
+                                  "type": "string"
+                                },
+                                "lastAddress": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "selfLink": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "postDeviceIPPool",
+        "summary": "Create a device IP pool",
+        "description": "Creates a new device management IP pool.",
+        "responses": {
+          "200": {
+            "description": "Create a device IP pool",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "addressFamily": {
+                      "type": "string",
+                      "enum": [
+                        "ipv4",
+                        "ipv6"
+                      ]
+                    },
+                    "gateway": {
+                      "type": "string"
+                    },
+                    "totalAddressCount": {
+                      "type": "integer"
+                    },
+                    "addressRanges": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "firstAddress": {
+                            "type": "string"
+                          },
+                          "lastAddress": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "addressRanges": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "firstAddress": {
+                          "type": "string"
+                        },
+                        "lastAddress": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "addressFamily": {
+                    "type": "string",
+                    "enum": [
+                      "ipv4",
+                      "ipv6"
+                    ]
+                  },
+                  "gateway": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "address",
+                  "addressRanges"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/device/ip-pool/pools/{id}": {
+      "get": {
+        "operationId": "getDeviceIPPool",
+        "summary": "Get a device IP pool",
+        "description": "Returns a single device management IP pool.",
+        "responses": {
+          "200": {
+            "description": "Get a device IP pool",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "addressFamily": {
+                      "type": "string",
+                      "enum": [
+                        "ipv4",
+                        "ipv6"
+                      ]
+                    },
+                    "gateway": {
+                      "type": "string"
+                    },
+                    "totalAddressCount": {
+                      "type": "integer"
+                    },
+                    "addressRanges": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "firstAddress": {
+                            "type": "string"
+                          },
+                          "lastAddress": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "patchDeviceIPPool",
+        "summary": "Update a device IP pool",
+        "description": "Updates a device management IP pool. Only description, gateway, and addressRanges are patchable.",
+        "responses": {
+          "200": {
+            "description": "Update a device IP pool",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "addressFamily": {
+                      "type": "string",
+                      "enum": [
+                        "ipv4",
+                        "ipv6"
+                      ]
+                    },
+                    "gateway": {
+                      "type": "string"
+                    },
+                    "totalAddressCount": {
+                      "type": "integer"
+                    },
+                    "addressRanges": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "firstAddress": {
+                            "type": "string"
+                          },
+                          "lastAddress": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string"
+                  },
+                  "gateway": {
+                    "type": "string"
+                  },
+                  "addressRanges": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "firstAddress": {
+                          "type": "string"
+                        },
+                        "lastAddress": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteDeviceIPPool",
+        "summary": "Delete a device IP pool",
+        "description": "Deletes a device management IP pool.",
+        "responses": {
+          "200": {
+            "description": "Delete a device IP pool",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "addressFamily": {
+                      "type": "string",
+                      "enum": [
+                        "ipv4",
+                        "ipv6"
+                      ]
+                    },
+                    "gateway": {
+                      "type": "string"
+                    },
+                    "totalAddressCount": {
+                      "type": "integer"
+                    },
+                    "addressRanges": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "firstAddress": {
+                            "type": "string"
+                          },
+                          "lastAddress": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/cm/device/licensing/assignments": {
+      "get": {
+        "operationId": "viewOutstandingAssignments",
+        "summary": "List outstanding license assignments",
+        "description": "Returns license pool member assignments, e.g. for unmanaged/unreachable devices, from the assign/revoke workflow.",
+        "responses": {
+          "200": {
+            "description": "List outstanding license assignments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "totalItems": {
+                      "type": "integer"
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "assignmentType": {
+                            "type": "string"
+                          },
+                          "auditRecordReference": {
+                            "type": "object",
+                            "properties": {
+                              "link": {
+                                "type": "string",
+                                "format": "uri"
+                              }
+                            }
+                          },
+                          "deviceAddress": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/device/licensing/license-reports-download/{report}": {
+      "get": {
+        "operationId": "downloadUtilityBillingReport",
+        "summary": "Download a utility billing report",
+        "description": "Downloads a completed utility billing report by its report ID (from a report task's reportUri).",
+        "responses": {
+          "200": {
+            "description": "Download a utility billing report",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "reportType": {
+                      "type": "string"
+                    },
+                    "poolType": {
+                      "type": "string"
+                    },
+                    "regkey": {
+                      "type": "string"
+                    },
+                    "poolRegkey": {
+                      "type": "string"
+                    },
+                    "poolName": {
+                      "type": "string"
+                    },
+                    "periodStarted": {
+                      "type": "string"
+                    },
+                    "periodEnded": {
+                      "type": "string"
+                    },
+                    "records": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "report",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/cm/device/licensing/pool/initial-activation": {
+      "post": {
+        "operationId": "initialLicenseActivation",
+        "summary": "Start initial license activation",
+        "description": "Starts activating a standalone (non-pooled) BIG-IP license using a registration key.",
+        "responses": {
+          "200": {
+            "description": "Start initial license activation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "regKey": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "dossier": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "regKey": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "ACTIVATING_AUTOMATIC",
+                      "ACTIVATING_MANUAL"
+                    ]
+                  }
+                },
+                "required": [
+                  "name",
+                  "regKey",
+                  "status"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/device/licensing/pool/initial-activation/{regKey}": {
+      "get": {
+        "operationId": "pollInitialLicenseActivation",
+        "summary": "Poll initial license activation status",
+        "description": "Polls the status of an initial license activation until it reaches READY or ACTIVATION_FAILED.",
+        "responses": {
+          "200": {
+            "description": "Poll initial license activation status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "eulaText": {
+                      "type": "string"
+                    },
+                    "licenseReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "regKey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "completeInitialActivation",
+        "summary": "Complete initial license activation",
+        "description": "Accepts the EULA or supplies manual license text to complete an initial license activation.",
+        "responses": {
+          "200": {
+            "description": "Complete initial license activation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "regKey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string"
+                  },
+                  "eulaText": {
+                    "type": "string"
+                  },
+                  "licenseText": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "removeFailedInitialActivation",
+        "summary": "Remove a failed initial license activation",
+        "description": "Removes a failed or abandoned initial license activation record.",
+        "responses": {
+          "200": {
+            "description": "Remove a failed initial license activation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "regKey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/cm/device/licensing/pool/purchased-pool/licenses": {
+      "get": {
+        "operationId": "queryExistingPurchasedLicenses",
+        "summary": "List purchased license pools",
+        "description": "Returns all purchased license pools.",
+        "responses": {
+          "200": {
+            "description": "List purchased license pools",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "uuid": {
+                            "type": "string"
+                          },
+                          "baseRegKey": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "method": {
+                            "type": "string",
+                            "enum": [
+                              "AUTOMATIC",
+                              "MANUAL"
+                            ]
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "eulaText": {
+                            "type": "string"
+                          },
+                          "licenseText": {
+                            "type": "string"
+                          },
+                          "totalDeviceLicenses": {
+                            "type": "integer"
+                          },
+                          "freeDeviceLicenses": {
+                            "type": "integer"
+                          },
+                          "licenseState": {
+                            "type": "object"
+                          },
+                          "dossier": {
+                            "type": "string"
+                          },
+                          "sortName": {
+                            "type": "string"
+                          },
+                          "selfLink": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "activateNewPurchasedPoolLicense",
+        "summary": "Activate a purchased license pool",
+        "description": "Activates a new purchased license pool using a base registration key.",
+        "responses": {
+          "200": {
+            "description": "Activate a purchased license pool",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "uuid": {
+                      "type": "string"
+                    },
+                    "baseRegKey": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "method": {
+                      "type": "string",
+                      "enum": [
+                        "AUTOMATIC",
+                        "MANUAL"
+                      ]
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "eulaText": {
+                      "type": "string"
+                    },
+                    "licenseText": {
+                      "type": "string"
+                    },
+                    "totalDeviceLicenses": {
+                      "type": "integer"
+                    },
+                    "freeDeviceLicenses": {
+                      "type": "integer"
+                    },
+                    "licenseState": {
+                      "type": "object"
+                    },
+                    "dossier": {
+                      "type": "string"
+                    },
+                    "sortName": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "baseRegKey": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "AUTOMATIC",
+                      "MANUAL"
+                    ]
+                  }
+                },
+                "required": [
+                  "baseRegKey",
+                  "name",
+                  "method"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/device/licensing/pool/purchased-pool/licenses/{uuid}": {
+      "get": {
+        "operationId": "getLicenseReference",
+        "summary": "Get a purchased license pool",
+        "description": "Returns a single purchased license pool.",
+        "responses": {
+          "200": {
+            "description": "Get a purchased license pool",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "uuid": {
+                      "type": "string"
+                    },
+                    "baseRegKey": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "method": {
+                      "type": "string",
+                      "enum": [
+                        "AUTOMATIC",
+                        "MANUAL"
+                      ]
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "eulaText": {
+                      "type": "string"
+                    },
+                    "licenseText": {
+                      "type": "string"
+                    },
+                    "totalDeviceLicenses": {
+                      "type": "integer"
+                    },
+                    "freeDeviceLicenses": {
+                      "type": "integer"
+                    },
+                    "licenseState": {
+                      "type": "object"
+                    },
+                    "dossier": {
+                      "type": "string"
+                    },
+                    "sortName": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "reactivateLicense",
+        "summary": "Reactivate a purchased license pool",
+        "description": "Reactivates or accepts a EULA for an existing purchased license pool.",
+        "responses": {
+          "200": {
+            "description": "Reactivate a purchased license pool",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "uuid": {
+                      "type": "string"
+                    },
+                    "baseRegKey": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "method": {
+                      "type": "string",
+                      "enum": [
+                        "AUTOMATIC",
+                        "MANUAL"
+                      ]
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "eulaText": {
+                      "type": "string"
+                    },
+                    "licenseText": {
+                      "type": "string"
+                    },
+                    "totalDeviceLicenses": {
+                      "type": "integer"
+                    },
+                    "freeDeviceLicenses": {
+                      "type": "integer"
+                    },
+                    "licenseState": {
+                      "type": "object"
+                    },
+                    "dossier": {
+                      "type": "string"
+                    },
+                    "sortName": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "state": {
+                    "type": "string",
+                    "enum": [
+                      "RELICENSE",
+                      "ACCEPTED_EULA"
+                    ]
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "AUTOMATIC",
+                      "MANUAL"
+                    ]
+                  },
+                  "eulaText": {
+                    "type": "string"
+                  },
+                  "licenseText": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "state"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deletePurchasedPoolLicense",
+        "summary": "Deactivate a purchased license pool",
+        "description": "Deactivates and removes a purchased license pool.",
+        "responses": {
+          "200": {
+            "description": "Deactivate a purchased license pool",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "uuid": {
+                      "type": "string"
+                    },
+                    "baseRegKey": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "method": {
+                      "type": "string",
+                      "enum": [
+                        "AUTOMATIC",
+                        "MANUAL"
+                      ]
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "eulaText": {
+                      "type": "string"
+                    },
+                    "licenseText": {
+                      "type": "string"
+                    },
+                    "totalDeviceLicenses": {
+                      "type": "integer"
+                    },
+                    "freeDeviceLicenses": {
+                      "type": "integer"
+                    },
+                    "licenseState": {
+                      "type": "object"
+                    },
+                    "dossier": {
+                      "type": "string"
+                    },
+                    "sortName": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/cm/device/licensing/pool/purchased-pool/licenses/{uuid}/members": {
+      "get": {
+        "operationId": "queryPurchasedPoolLicenseAssignments",
+        "summary": "List purchased-pool license assignments",
+        "description": "Returns all device license assignments for a purchased license pool.",
+        "responses": {
+          "200": {
+            "description": "List purchased-pool license assignments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "deviceAddress": {
+                            "type": "string"
+                          },
+                          "deviceMachineId": {
+                            "type": "string"
+                          },
+                          "deviceName": {
+                            "type": "string"
+                          },
+                          "deviceReference": {
+                            "type": "object",
+                            "properties": {
+                              "link": {
+                                "type": "string",
+                                "format": "uri"
+                              }
+                            }
+                          },
+                          "healthCheckFailureCount": {
+                            "type": "integer"
+                          },
+                          "lastGoodHealthCheckDateTime": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "uuid": {
+                            "type": "string"
+                          },
+                          "selfLink": {
+                            "type": "string"
+                          },
+                          "auditRecordReference": {
+                            "type": "object",
+                            "properties": {
+                              "link": {
+                                "type": "string",
+                                "format": "uri"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      },
+      "post": {
+        "operationId": "assignPurchasedPoolLicenseMembers",
+        "summary": "Assign a purchased-pool license to a device",
+        "description": "Assigns a license from a purchased pool to a managed device (deviceReference) or an unmanaged one (deviceAddress + credentials).",
+        "responses": {
+          "200": {
+            "description": "Assign a purchased-pool license to a device",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "deviceAddress": {
+                      "type": "string"
+                    },
+                    "deviceMachineId": {
+                      "type": "string"
+                    },
+                    "deviceName": {
+                      "type": "string"
+                    },
+                    "deviceReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    },
+                    "healthCheckFailureCount": {
+                      "type": "integer"
+                    },
+                    "lastGoodHealthCheckDateTime": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "uuid": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "auditRecordReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "deviceReference": {
+                    "type": "object",
+                    "properties": {
+                      "link": {
+                        "type": "string",
+                        "format": "uri"
+                      }
+                    }
+                  },
+                  "deviceAddress": {
+                    "type": "string"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "httpsPort": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/device/licensing/pool/purchased-pool/licenses/{uuid}/members/{memberUuid}": {
+      "get": {
+        "operationId": "queryPurchasedPoolLicenseAssignmentStatus",
+        "summary": "Get a purchased-pool license assignment",
+        "description": "Returns the status of a single license assignment.",
+        "responses": {
+          "200": {
+            "description": "Get a purchased-pool license assignment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "deviceAddress": {
+                      "type": "string"
+                    },
+                    "deviceMachineId": {
+                      "type": "string"
+                    },
+                    "deviceName": {
+                      "type": "string"
+                    },
+                    "deviceReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    },
+                    "healthCheckFailureCount": {
+                      "type": "integer"
+                    },
+                    "lastGoodHealthCheckDateTime": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "uuid": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "auditRecordReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "memberUuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "refreshPurchasedPoolLicenseOnBigIPDevice",
+        "summary": "Refresh a purchased-pool license assignment",
+        "description": "Refreshes/re-installs a purchased-pool license on the assigned device (state=INSTALL).",
+        "responses": {
+          "200": {
+            "description": "Refresh a purchased-pool license assignment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "deviceAddress": {
+                      "type": "string"
+                    },
+                    "deviceMachineId": {
+                      "type": "string"
+                    },
+                    "deviceName": {
+                      "type": "string"
+                    },
+                    "deviceReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    },
+                    "healthCheckFailureCount": {
+                      "type": "integer"
+                    },
+                    "lastGoodHealthCheckDateTime": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "uuid": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "auditRecordReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "memberUuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "state": {
+                    "type": "string"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "httpsPort": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "state"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "revokeAPurchasedPoolLicense",
+        "summary": "Revoke a purchased-pool license assignment",
+        "description": "Revokes a license assignment, freeing the license back into the pool.",
+        "responses": {
+          "200": {
+            "description": "Revoke a purchased-pool license assignment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "deviceAddress": {
+                      "type": "string"
+                    },
+                    "deviceMachineId": {
+                      "type": "string"
+                    },
+                    "deviceName": {
+                      "type": "string"
+                    },
+                    "deviceReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    },
+                    "healthCheckFailureCount": {
+                      "type": "integer"
+                    },
+                    "lastGoodHealthCheckDateTime": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "uuid": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "auditRecordReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "memberUuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "uuid": {
+                    "type": "string"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "httpsPort": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/device/licensing/pool/regkey/licenses": {
+      "get": {
+        "operationId": "queryExistingRegKeyPools",
+        "summary": "List RegKey license pools",
+        "description": "Returns all RegKey (per-device registration key) license pools.",
+        "responses": {
+          "200": {
+            "description": "List RegKey license pools",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "sortName": {
+                            "type": "string"
+                          },
+                          "selfLink": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createRegKeyPool",
+        "summary": "Create a RegKey license pool",
+        "description": "Creates a new RegKey license pool.",
+        "responses": {
+          "200": {
+            "description": "Create a RegKey license pool",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "sortName": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "description"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/device/licensing/pool/regkey/licenses/{id}": {
+      "patch": {
+        "operationId": "updateRegKeyPool",
+        "summary": "Update a RegKey license pool",
+        "description": "Updates a RegKey license pool's name/description.",
+        "responses": {
+          "200": {
+            "description": "Update a RegKey license pool",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "sortName": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "removeRegKeyPool",
+        "summary": "Delete a RegKey license pool",
+        "description": "Deletes a RegKey license pool. Fails if any registration key in the pool is still assigned to a device.",
+        "responses": {
+          "200": {
+            "description": "Delete a RegKey license pool",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "sortName": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/cm/device/licensing/pool/regkey/licenses/{id}/offerings": {
+      "get": {
+        "operationId": "queryExistingLicenseKeysForRegKeyPool",
+        "summary": "List registration keys in a RegKey pool",
+        "description": "Returns all registration keys added to a RegKey pool.",
+        "responses": {
+          "200": {
+            "description": "List registration keys in a RegKey pool",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "regKey": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "dossier": {
+                            "type": "string"
+                          },
+                          "eulaText": {
+                            "type": "string"
+                          },
+                          "licenseState": {
+                            "type": "object"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      },
+      "post": {
+        "operationId": "addLicenseKey",
+        "summary": "Add a registration key to a RegKey pool",
+        "description": "Adds a new registration key (offering) to a RegKey pool.",
+        "responses": {
+          "200": {
+            "description": "Add a registration key to a RegKey pool",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "regKey": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "dossier": {
+                      "type": "string"
+                    },
+                    "eulaText": {
+                      "type": "string"
+                    },
+                    "licenseState": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "regKey": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "ACTIVATING_AUTOMATIC",
+                      "ACTIVATING_MANUAL"
+                    ]
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "eulaText": {
+                    "type": "string"
+                  },
+                  "licenseText": {
+                    "type": "string"
+                  },
+                  "addOnKeys": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "regKey",
+                  "status"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/device/licensing/pool/regkey/licenses/{id}/offerings/{regKey}": {
+      "get": {
+        "operationId": "pollForRegKeyActivationStatus",
+        "summary": "Poll a RegKey offering activation status",
+        "description": "Polls a registration key's activation status until READY or ACTIVATION_FAILED.",
+        "responses": {
+          "200": {
+            "description": "Poll a RegKey offering activation status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "regKey": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "dossier": {
+                      "type": "string"
+                    },
+                    "eulaText": {
+                      "type": "string"
+                    },
+                    "licenseState": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "regKey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "completeRegKeyActivation",
+        "summary": "Complete a RegKey offering activation",
+        "description": "Accepts EULA / supplies manual license text / retries or reactivates a registration key.",
+        "responses": {
+          "200": {
+            "description": "Complete a RegKey offering activation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "regKey": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "dossier": {
+                      "type": "string"
+                    },
+                    "eulaText": {
+                      "type": "string"
+                    },
+                    "licenseState": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "regKey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string"
+                  },
+                  "eulaText": {
+                    "type": "string"
+                  },
+                  "licenseText": {
+                    "type": "string"
+                  },
+                  "addOnKeys": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteRegistrationKey",
+        "summary": "Delete a registration key from a RegKey pool",
+        "description": "Removes a registration key. Fails if the key is still assigned to a device.",
+        "responses": {
+          "200": {
+            "description": "Delete a registration key from a RegKey pool",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "regKey": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "dossier": {
+                      "type": "string"
+                    },
+                    "eulaText": {
+                      "type": "string"
+                    },
+                    "licenseState": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "regKey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/cm/device/licensing/pool/regkey/licenses/{id}/offerings/{regKey}/members": {
+      "get": {
+        "operationId": "getRegistrationKeyAssignment",
+        "summary": "List a RegKey offering's device assignments",
+        "description": "Returns all device assignments for a registration key.",
+        "responses": {
+          "200": {
+            "description": "List a RegKey offering's device assignments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "deviceAddress": {
+                            "type": "string"
+                          },
+                          "deviceMachineId": {
+                            "type": "string"
+                          },
+                          "deviceName": {
+                            "type": "string"
+                          },
+                          "deviceReference": {
+                            "type": "object",
+                            "properties": {
+                              "link": {
+                                "type": "string",
+                                "format": "uri"
+                              }
+                            }
+                          },
+                          "auditRecordReference": {
+                            "type": "object",
+                            "properties": {
+                              "link": {
+                                "type": "string",
+                                "format": "uri"
+                              }
+                            }
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          },
+                          "selfLink": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "regKey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      },
+      "post": {
+        "operationId": "assignRegistrationKeyToDevice",
+        "summary": "Assign a registration key to a device",
+        "description": "Assigns a registration key to a managed device (deviceReference) or an unmanaged one (deviceAddress + credentials).",
+        "responses": {
+          "200": {
+            "description": "Assign a registration key to a device",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "deviceAddress": {
+                      "type": "string"
+                    },
+                    "deviceMachineId": {
+                      "type": "string"
+                    },
+                    "deviceName": {
+                      "type": "string"
+                    },
+                    "deviceReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    },
+                    "auditRecordReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "regKey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "deviceAddress": {
+                    "type": "string"
+                  },
+                  "deviceReference": {
+                    "type": "object",
+                    "properties": {
+                      "link": {
+                        "type": "string",
+                        "format": "uri"
+                      }
+                    }
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "httpsPort": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/device/licensing/pool/regkey/licenses/{id}/offerings/{regKey}/members/{memberUuid}": {
+      "get": {
+        "operationId": "getRegistrationKeyAssignmentStatus",
+        "summary": "Get a RegKey device assignment",
+        "description": "Returns the status of a single registration-key device assignment.",
+        "responses": {
+          "200": {
+            "description": "Get a RegKey device assignment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "deviceAddress": {
+                      "type": "string"
+                    },
+                    "deviceMachineId": {
+                      "type": "string"
+                    },
+                    "deviceName": {
+                      "type": "string"
+                    },
+                    "deviceReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    },
+                    "auditRecordReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "regKey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "memberUuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "revokeRegistrationKeyFromDevice",
+        "summary": "Revoke a registration key from a device",
+        "description": "Revokes a registration key assignment from a device.",
+        "responses": {
+          "200": {
+            "description": "Revoke a registration key from a device",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "deviceAddress": {
+                      "type": "string"
+                    },
+                    "deviceMachineId": {
+                      "type": "string"
+                    },
+                    "deviceName": {
+                      "type": "string"
+                    },
+                    "deviceReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    },
+                    "auditRecordReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "regKey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "memberUuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "httpsPort": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/device/tasks/licensing/pool/member-management": {
+      "post": {
+        "operationId": "assignOrRevokeLicense",
+        "summary": "Assign or revoke a license by address",
+        "description": "Assigns or revokes a license pool member by discovery address rather than by device/member UUID -- useful for unreachable, unmanaged, or utility-billing (BYOL) devices.",
+        "responses": {
+          "200": {
+            "description": "Assign or revoke a license by address",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "command": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "licensePoolName": {
+                      "type": "string"
+                    },
+                    "licenseAssignmentReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "command": {
+                    "type": "string",
+                    "enum": [
+                      "assign",
+                      "revoke"
+                    ]
+                  },
+                  "licensePoolName": {
+                    "type": "string"
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "assignmentType": {
+                    "type": "string",
+                    "enum": [
+                      "UNREACHABLE",
+                      "UNMANAGED",
+                      "MANAGED"
+                    ]
+                  },
+                  "user": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "macAddress": {
+                    "type": "string"
+                  },
+                  "hypervisor": {
+                    "type": "string"
+                  },
+                  "skuKeyword1": {
+                    "type": "string"
+                  },
+                  "skuKeyword2": {
+                    "type": "string"
+                  },
+                  "unitOfMeasure": {
+                    "type": "string"
+                  },
+                  "tenant": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "command",
+                  "licensePoolName",
+                  "address"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/device/tasks/licensing/pool/member-management/{id}": {
+      "get": {
+        "operationId": "pollTaskForCompletion",
+        "summary": "Poll an assign/revoke-by-address task",
+        "description": "Polls the status of an assign-or-revoke-license-by-address task.",
+        "responses": {
+          "200": {
+            "description": "Poll an assign/revoke-by-address task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "command": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "licenseAssignmentReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/cm/device/tasks/licensing/utility-billing-reports": {
+      "post": {
+        "operationId": "createUtilityBillingLicenseReport",
+        "summary": "Create a utility billing report",
+        "description": "Generates a utility (usage-based) billing report for a RegKey pool.",
+        "responses": {
+          "200": {
+            "description": "Create a utility billing report",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "regKey": {
+                      "type": "string"
+                    },
+                    "reportUri": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "regKey": {
+                    "type": "string"
+                  },
+                  "submissionMethod": {
+                    "type": "string",
+                    "enum": [
+                      "Automatic",
+                      "Manual"
+                    ]
+                  },
+                  "reportStartDateTime": {
+                    "type": "string"
+                  },
+                  "reportEndDateTime": {
+                    "type": "string"
+                  },
+                  "obfuscateDeviceInfo": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                },
+                "required": [
+                  "regKey",
+                  "submissionMethod"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/device/tasks/licensing/utility-billing-reports/{id}": {
+      "get": {
+        "operationId": "getUtilityBillingReportStatus",
+        "summary": "Get a utility billing report task",
+        "description": "Returns the status of a utility billing report task; reportUri is populated once status is FINISHED.",
+        "responses": {
+          "200": {
+            "description": "Get a utility billing report task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "regKey": {
+                      "type": "string"
+                    },
+                    "reportUri": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/cm/device/templates": {
+      "post": {
+        "operationId": "postDeviceTemplate",
+        "summary": "Create a device template",
+        "description": "Creates a device onboarding template used during discovery/import.",
+        "responses": {
+          "200": {
+            "description": "Create a device template",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "hostnameComponents": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "lookupServerList": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "ntpServerList": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "timeZone": {
+                      "type": "string"
+                    },
+                    "userAccountList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "username": {
+                            "type": "string"
+                          },
+                          "password": {
+                            "type": "string",
+                            "format": "password"
+                          },
+                          "confirmPassword": {
+                            "type": "string",
+                            "format": "password"
+                          },
+                          "role": {
+                            "type": "string"
+                          },
+                          "shell": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "license": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "keyword": {
+                          "type": "string"
+                        },
+                        "unitOfMeasure": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "rootPassword": {
+                      "type": "string",
+                      "format": "password"
+                    },
+                    "provisionedModuleList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "module": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "defaultRoute": {
+                      "type": "string"
+                    },
+                    "networkRouteList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "selfIpList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "vlanList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "managementSslPort": {
+                      "type": "integer"
+                    },
+                    "managementIp": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "hostnameComponents": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "lookupServerList": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "ntpServerList": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "timeZone": {
+                    "type": "string"
+                  },
+                  "userAccountList": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "username": {
+                          "type": "string"
+                        },
+                        "password": {
+                          "type": "string",
+                          "format": "password"
+                        },
+                        "confirmPassword": {
+                          "type": "string",
+                          "format": "password"
+                        },
+                        "role": {
+                          "type": "string"
+                        },
+                        "shell": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "license": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "keyword": {
+                        "type": "string"
+                      },
+                      "unitOfMeasure": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "rootPassword": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "provisionedModuleList": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "module": {
+                          "type": "string"
+                        },
+                        "level": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "defaultRoute": {
+                    "type": "string"
+                  },
+                  "networkRouteList": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "selfIpList": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "vlanList": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "managementSslPort": {
+                    "type": "integer"
+                  },
+                  "managementIp": {
+                    "type": "string"
+                  },
+                  "selfLink": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/device/templates/{id}": {
+      "get": {
+        "operationId": "getDeviceTemplate",
+        "summary": "Get a device template",
+        "description": "Returns a single device onboarding template.",
+        "responses": {
+          "200": {
+            "description": "Get a device template",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "hostnameComponents": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "lookupServerList": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "ntpServerList": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "timeZone": {
+                      "type": "string"
+                    },
+                    "userAccountList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "username": {
+                            "type": "string"
+                          },
+                          "password": {
+                            "type": "string",
+                            "format": "password"
+                          },
+                          "confirmPassword": {
+                            "type": "string",
+                            "format": "password"
+                          },
+                          "role": {
+                            "type": "string"
+                          },
+                          "shell": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "license": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "keyword": {
+                          "type": "string"
+                        },
+                        "unitOfMeasure": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "rootPassword": {
+                      "type": "string",
+                      "format": "password"
+                    },
+                    "provisionedModuleList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "module": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "defaultRoute": {
+                      "type": "string"
+                    },
+                    "networkRouteList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "selfIpList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "vlanList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "managementSslPort": {
+                      "type": "integer"
+                    },
+                    "managementIp": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "patchDeviceTemplate",
+        "summary": "Update a device template",
+        "description": "Updates a device onboarding template.",
+        "responses": {
+          "200": {
+            "description": "Update a device template",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "hostnameComponents": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "lookupServerList": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "ntpServerList": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "timeZone": {
+                      "type": "string"
+                    },
+                    "userAccountList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "username": {
+                            "type": "string"
+                          },
+                          "password": {
+                            "type": "string",
+                            "format": "password"
+                          },
+                          "confirmPassword": {
+                            "type": "string",
+                            "format": "password"
+                          },
+                          "role": {
+                            "type": "string"
+                          },
+                          "shell": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "license": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "keyword": {
+                          "type": "string"
+                        },
+                        "unitOfMeasure": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "rootPassword": {
+                      "type": "string",
+                      "format": "password"
+                    },
+                    "provisionedModuleList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "module": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "defaultRoute": {
+                      "type": "string"
+                    },
+                    "networkRouteList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "selfIpList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "vlanList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "managementSslPort": {
+                      "type": "integer"
+                    },
+                    "managementIp": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "hostnameComponents": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "lookupServerList": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "ntpServerList": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "timeZone": {
+                    "type": "string"
+                  },
+                  "userAccountList": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "username": {
+                          "type": "string"
+                        },
+                        "password": {
+                          "type": "string",
+                          "format": "password"
+                        },
+                        "confirmPassword": {
+                          "type": "string",
+                          "format": "password"
+                        },
+                        "role": {
+                          "type": "string"
+                        },
+                        "shell": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "license": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "keyword": {
+                        "type": "string"
+                      },
+                      "unitOfMeasure": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "rootPassword": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "provisionedModuleList": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "module": {
+                          "type": "string"
+                        },
+                        "level": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "defaultRoute": {
+                    "type": "string"
+                  },
+                  "networkRouteList": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "selfIpList": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "vlanList": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "managementSslPort": {
+                    "type": "integer"
+                  },
+                  "managementIp": {
+                    "type": "string"
+                  },
+                  "selfLink": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteDeviceTemplate",
+        "summary": "Delete a device template",
+        "description": "Deletes a device onboarding template.",
+        "responses": {
+          "200": {
+            "description": "Delete a device template",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "hostnameComponents": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "lookupServerList": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "ntpServerList": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "timeZone": {
+                      "type": "string"
+                    },
+                    "userAccountList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "username": {
+                            "type": "string"
+                          },
+                          "password": {
+                            "type": "string",
+                            "format": "password"
+                          },
+                          "confirmPassword": {
+                            "type": "string",
+                            "format": "password"
+                          },
+                          "role": {
+                            "type": "string"
+                          },
+                          "shell": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "license": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "keyword": {
+                          "type": "string"
+                        },
+                        "unitOfMeasure": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "rootPassword": {
+                      "type": "string",
+                      "format": "password"
+                    },
+                    "provisionedModuleList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "module": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "defaultRoute": {
+                      "type": "string"
+                    },
+                    "networkRouteList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "selfIpList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "vlanList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "managementSslPort": {
+                      "type": "integer"
+                    },
+                    "managementIp": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/cm/global/config-sets/{id}": {
+      "get": {
+        "operationId": "getConfigSet",
+        "summary": "Get an application config set",
+        "description": "Returns a deployed application config set (created via apply-template).",
+        "responses": {
+          "200": {
+            "description": "Get an application config set",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "configSetName": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "subPath": {
+                      "type": "string"
+                    },
+                    "partition": {
+                      "type": "string"
+                    },
+                    "deviceReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    },
+                    "templateReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    },
+                    "ssgReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    },
+                    "appDeployConfigTaskReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    },
+                    "createDateTime": {
+                      "type": "string"
+                    },
+                    "lastDeploymentTime": {
+                      "type": "string"
+                    },
+                    "lastConfigTime": {
+                      "type": "string"
+                    },
+                    "domains": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "protectionMode": {
+                      "type": "string"
+                    },
+                    "analyticsMode": {
+                      "type": "string",
+                      "enum": [
+                        "NORMAL",
+                        "ENHANCED"
+                      ]
+                    },
+                    "resources": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/cm/global/tasks/apply-template": {
+      "post": {
+        "operationId": "postApplyTemplate",
+        "summary": "Apply, update, or remove a template-based application config",
+        "description": "Creates a new application config set from a template (mode=CREATE, default), updates an existing one (mode=UPDATE), or removes one (mode=DELETE) -- there is no separate PATCH for updates, use mode=UPDATE here instead.",
+        "responses": {
+          "200": {
+            "description": "Apply, update, or remove a template-based application config",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "configSetReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    },
+                    "configSetName": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "configSetName": {
+                    "type": "string"
+                  },
+                  "templateReference": {
+                    "type": "object",
+                    "properties": {
+                      "link": {
+                        "type": "string",
+                        "format": "uri"
+                      }
+                    }
+                  },
+                  "defaultDeviceReference": {
+                    "type": "object",
+                    "properties": {
+                      "link": {
+                        "type": "string",
+                        "format": "uri"
+                      }
+                    }
+                  },
+                  "ssgReference": {
+                    "type": "object",
+                    "properties": {
+                      "link": {
+                        "type": "string",
+                        "format": "uri"
+                      }
+                    }
+                  },
+                  "partition": {
+                    "type": "string"
+                  },
+                  "subPath": {
+                    "type": "string"
+                  },
+                  "deploy": {
+                    "type": "boolean"
+                  },
+                  "addAnalytics": {
+                    "type": "boolean"
+                  },
+                  "resources": {
+                    "type": "object"
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "CREATE",
+                      "UPDATE",
+                      "DELETE"
+                    ],
+                    "default": "CREATE"
+                  }
+                },
+                "required": [
+                  "configSetName"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/global/tasks/apply-template/{id}": {
+      "get": {
+        "operationId": "getApplyTemplate",
+        "summary": "Get an apply-template task",
+        "description": "Returns the status of an apply-template task.",
+        "responses": {
+          "200": {
+            "description": "Get an apply-template task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "configSetReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    },
+                    "configSetName": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/cm/global/tasks/device-discovery": {
+      "post": {
+        "operationId": "postDeviceDiscovery",
+        "summary": "Start a device discovery task",
+        "description": "Discovers a BIG-IP device and its module configuration so it can later be imported.",
+        "responses": {
+          "200": {
+            "description": "Start a device discovery task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "moduleList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "deviceReference": {
+                    "type": "object",
+                    "properties": {
+                      "link": {
+                        "type": "string",
+                        "format": "uri"
+                      }
+                    }
+                  },
+                  "moduleList": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "module": {
+                          "type": "string",
+                          "enum": [
+                            "firewall",
+                            "security_shared",
+                            "asm",
+                            "adc_core",
+                            "access",
+                            "dns",
+                            "fps",
+                            "sslo"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "deviceReference",
+                  "moduleList"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/global/tasks/device-discovery-import-controller": {
+      "post": {
+        "operationId": "postDeviceDiscoveryImportController",
+        "summary": "Discover and import a device in one step",
+        "description": "Combined discover+import super-task spanning modules. Accepts either newDevice credentials or an existing deviceReference per device.",
+        "responses": {
+          "200": {
+            "description": "Discover and import a device in one step",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "deviceDetails": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "deviceStatus": {
+                            "type": "string",
+                            "enum": [
+                              "TRUST_STAGE",
+                              "DISCOVERY_STAGE",
+                              "IMPORT_STAGE",
+                              "FINISHED",
+                              "FAILED"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "deviceDetails": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "newDevice": {
+                          "type": "object",
+                          "properties": {
+                            "address": {
+                              "type": "string"
+                            },
+                            "userName": {
+                              "type": "string"
+                            },
+                            "password": {
+                              "type": "string",
+                              "format": "password"
+                            },
+                            "httpsPort": {
+                              "type": "integer"
+                            }
+                          }
+                        },
+                        "deviceReference": {
+                          "type": "object",
+                          "properties": {
+                            "link": {
+                              "type": "string",
+                              "format": "uri"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "conflictPolicy": {
+                    "type": "string"
+                  },
+                  "deviceConflictPolicy": {
+                    "type": "string"
+                  },
+                  "versionedConflictPolicy": {
+                    "type": "string"
+                  },
+                  "failImportOnConflict": {
+                    "type": "boolean"
+                  },
+                  "snapshotWorkingConfig": {
+                    "type": "boolean"
+                  },
+                  "accessGroupName": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "deviceDetails"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/global/tasks/device-discovery-import-controller/{id}": {
+      "get": {
+        "operationId": "getDeviceDiscoveryImportController",
+        "summary": "Get a discover+import task",
+        "description": "Returns the status of a combined discover+import task.",
+        "responses": {
+          "200": {
+            "description": "Get a discover+import task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "deviceDetails": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "username": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "deleteDeviceDiscoveryImportController",
+        "summary": "Delete a discover+import task",
+        "description": "Deletes a combined discover+import task record.",
+        "responses": {
+          "200": {
+            "description": "Delete a discover+import task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/cm/global/tasks/device-discovery/{objectId}": {
+      "get": {
+        "operationId": "getDeviceDiscoveryTask",
+        "summary": "Get a device discovery task",
+        "description": "Returns the status of a device discovery task.",
+        "responses": {
+          "200": {
+            "description": "Get a device discovery task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "moduleList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "objectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "performDeviceDiscoveryTask",
+        "summary": "Cancel or restart a device discovery task",
+        "description": "Cancels a running discovery task (status=CANCEL_REQUESTED) or restarts it (status=STARTED), optionally with a revised moduleList.",
+        "responses": {
+          "200": {
+            "description": "Cancel or restart a device discovery task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "objectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "CANCEL_REQUESTED",
+                      "STARTED"
+                    ]
+                  },
+                  "moduleList": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/global/tasks/device-import": {
+      "post": {
+        "operationId": "performBIGIPDeviceImportusingmachineId",
+        "summary": "Import a discovered BIG-IP device",
+        "description": "Imports a device's module configuration into BIG-IQ. Target the device via deviceReference.link (commonly resolved from a machineId via GET /mgmt/cm/system/machineid-resolver/{machineId}).",
+        "responses": {
+          "200": {
+            "description": "Import a discovered BIG-IP device",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "moduleList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "deviceReference": {
+                    "type": "object",
+                    "properties": {
+                      "link": {
+                        "type": "string",
+                        "format": "uri"
+                      }
+                    }
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "conflictPolicy": {
+                    "type": "string"
+                  },
+                  "deviceConflictPolicy": {
+                    "type": "string"
+                  },
+                  "versionedConflictPolicy": {
+                    "type": "string"
+                  },
+                  "failOnConflict": {
+                    "type": "boolean"
+                  },
+                  "moduleList": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "module": {
+                          "type": "string"
+                        },
+                        "properties": {
+                          "type": "object"
+                        },
+                        "snapshotWorkingConfig": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "deviceReference",
+                  "moduleList"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/global/tasks/device-import/{deviceImportId}": {
+      "patch": {
+        "operationId": "performBIGIPDeviceImportusingImportTask",
+        "summary": "Cancel or restart a device import task",
+        "description": "Cancels a running import task (status=CANCEL_REQUESTED) or restarts a finished/failed one (status=STARTED), optionally with a revised moduleList.",
+        "responses": {
+          "200": {
+            "description": "Cancel or restart a device import task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "deviceImportId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "CANCEL_REQUESTED",
+                      "STARTED"
+                    ]
+                  },
+                  "moduleList": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "monitorImportTask",
+        "summary": "Get a device import task",
+        "description": "Returns the status of a device import task, including per-module progress.",
+        "responses": {
+          "200": {
+            "description": "Get a device import task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "moduleList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "deviceImportId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/cm/global/tasks/device-remove-mgmt-authority": {
+      "post": {
+        "operationId": "removeDeviceServices",
+        "summary": "Remove BIG-IQ management authority from a device (RMA)",
+        "description": "Removes one or more module objects (e.g. adc_core, access) from BIG-IQ's working-config for a device, without removing device trust. Must complete before device-remove-trust will succeed.",
+        "responses": {
+          "200": {
+            "description": "Remove BIG-IQ management authority from a device (RMA)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "deviceReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    },
+                    "moduleList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "deviceReference": {
+                    "type": "object",
+                    "properties": {
+                      "link": {
+                        "type": "string",
+                        "format": "uri"
+                      }
+                    }
+                  },
+                  "moduleList": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "module": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "deviceReference"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/global/tasks/device-remove-mgmt-authority/{id}": {
+      "get": {
+        "operationId": "getRemoveDeviceServicesStatusById",
+        "summary": "Get a remove-management-authority task",
+        "description": "Returns the status of a remove-management-authority (Device RMA) task.",
+        "responses": {
+          "200": {
+            "description": "Get a remove-management-authority task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "deviceReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    },
+                    "moduleList": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/cm/global/tasks/device-remove-trust": {
+      "post": {
+        "operationId": "removeDeviceTrust",
+        "summary": "Remove trust with a BIG-IP device",
+        "description": "Removes device trust between BIG-IQ and a BIG-IP. All module management authority (device-remove-mgmt-authority) must already be removed, or this fails with an error indicating remaining services.",
+        "responses": {
+          "200": {
+            "description": "Remove trust with a BIG-IP device",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "deviceReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "deviceReference": {
+                    "type": "object",
+                    "properties": {
+                      "link": {
+                        "type": "string",
+                        "format": "uri"
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "deviceReference"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/global/tasks/device-remove-trust/{id}": {
+      "get": {
+        "operationId": "getRemoveDeviceTrustStatusById",
+        "summary": "Get a remove-trust task",
+        "description": "Returns the status of a remove-trust task.",
+        "responses": {
+          "200": {
+            "description": "Get a remove-trust task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "deviceReference": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/cm/global/tasks/device-trust": {
+      "post": {
+        "operationId": "postDeviceTrustTask",
+        "summary": "Establish trust with a BIG-IP device",
+        "description": "Establishes device trust between BIG-IQ and a BIG-IP so it can be managed.",
+        "responses": {
+          "200": {
+            "description": "Establish trust with a BIG-IP device",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "clusterName": {
+                      "type": "string"
+                    },
+                    "machineId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "address": {
+                    "type": "string"
+                  },
+                  "userName": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "checkMinSupportedBigIpVersion": {
+                    "type": "boolean"
+                  },
+                  "clusterName": {
+                    "type": "string"
+                  },
+                  "deployWhenDscChangesPending": {
+                    "type": "boolean"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "httpsPort": {
+                    "type": "integer",
+                    "default": 443
+                  },
+                  "silo": {
+                    "type": "string"
+                  },
+                  "useBigiqSync": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "address",
+                  "userName",
+                  "password",
+                  "checkMinSupportedBigIpVersion"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getAllDeviceTrustTasks",
+        "summary": "List device trust tasks",
+        "description": "Returns all device trust tasks.",
+        "responses": {
+          "200": {
+            "description": "List device trust tasks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "currentStep": {
+                            "type": "string"
+                          },
+                          "errorMessage": {
+                            "type": "string"
+                          },
+                          "selfLink": {
+                            "type": "string"
+                          },
+                          "startDateTime": {
+                            "type": "string"
+                          },
+                          "endDateTime": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/global/tasks/device-trust/{objectId}": {
+      "get": {
+        "operationId": "getDeviceTrustTask",
+        "summary": "Get a device trust task",
+        "description": "Returns the status of a device trust task.",
+        "responses": {
+          "200": {
+            "description": "Get a device trust task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentStep": {
+                      "type": "string"
+                    },
+                    "errorMessage": {
+                      "type": "string"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    },
+                    "startDateTime": {
+                      "type": "string"
+                    },
+                    "endDateTime": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "clusterName": {
+                      "type": "string"
+                    },
+                    "machineId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "objectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/cm/global/templates": {
+      "post": {
+        "operationId": "postGlobalTemplate",
+        "summary": "Create a service catalog template",
+        "description": "Creates a reusable application service catalog template.",
+        "responses": {
+          "200": {
+            "description": "Create a service catalog template",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "resources": {
+                      "type": "object"
+                    },
+                    "userScripts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "isDefault": {
+                      "type": "boolean"
+                    },
+                    "addressSharing": {
+                      "type": "boolean"
+                    },
+                    "published": {
+                      "type": "boolean"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "resources": {
+                    "type": "object"
+                  },
+                  "userScripts": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "isDefault": {
+                    "type": "boolean"
+                  },
+                  "addressSharing": {
+                    "type": "boolean"
+                  },
+                  "published": {
+                    "type": "boolean"
+                  },
+                  "selfLink": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/global/templates/{id}": {
+      "get": {
+        "operationId": "getGlobalTemplate",
+        "summary": "Get a service catalog template",
+        "description": "Returns a single service catalog template.",
+        "responses": {
+          "200": {
+            "description": "Get a service catalog template",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "resources": {
+                      "type": "object"
+                    },
+                    "userScripts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "isDefault": {
+                      "type": "boolean"
+                    },
+                    "addressSharing": {
+                      "type": "boolean"
+                    },
+                    "published": {
+                      "type": "boolean"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "patchGlobalTemplate",
+        "summary": "Update a service catalog template",
+        "description": "Updates a service catalog template. name is immutable; description/resources/userScripts/addressSharing/published are patchable.",
+        "responses": {
+          "200": {
+            "description": "Update a service catalog template",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "resources": {
+                      "type": "object"
+                    },
+                    "userScripts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "isDefault": {
+                      "type": "boolean"
+                    },
+                    "addressSharing": {
+                      "type": "boolean"
+                    },
+                    "published": {
+                      "type": "boolean"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "resources": {
+                    "type": "object"
+                  },
+                  "userScripts": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "isDefault": {
+                    "type": "boolean"
+                  },
+                  "addressSharing": {
+                    "type": "boolean"
+                  },
+                  "published": {
+                    "type": "boolean"
+                  },
+                  "selfLink": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteGlobalTemplate",
+        "summary": "Delete a service catalog template",
+        "description": "Deletes a service catalog template.",
+        "responses": {
+          "200": {
+            "description": "Delete a service catalog template",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "resources": {
+                      "type": "object"
+                    },
+                    "userScripts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "isDefault": {
+                      "type": "boolean"
+                    },
+                    "addressSharing": {
+                      "type": "boolean"
+                    },
+                    "published": {
+                      "type": "boolean"
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/cm/shared/device-reference-query": {
+      "post": {
+        "operationId": "postDeviceReferenceQuery",
+        "summary": "Resolve a device reference",
+        "description": "Resolves the deviceReference link needed by many other BIG-IQ APIs, given a hostname, address, or machineId plus the target module. Call this first rather than constructing deviceReference links manually.",
+        "responses": {
+          "200": {
+            "description": "Resolve a device reference",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "link": {
+                      "type": "string",
+                      "format": "uri"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "machineId": {
+                    "type": "string"
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "hostname": {
+                    "type": "string"
+                  },
+                  "module": {
+                    "type": "string",
+                    "default": "global"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/system/machineid-resolver": {
+      "get": {
+        "operationId": "getResolveMachineId",
+        "summary": "List trusted BIG-IP devices",
+        "description": "Returns all BIG-IP devices trusted by BIG-IQ.",
+        "responses": {
+          "200": {
+            "description": "List trusted BIG-IP devices",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "uuid": {
+                            "type": "string"
+                          },
+                          "machineId": {
+                            "type": "string"
+                          },
+                          "address": {
+                            "type": "string"
+                          },
+                          "hostname": {
+                            "type": "string"
+                          },
+                          "deviceUri": {
+                            "type": "string"
+                          },
+                          "version": {
+                            "type": "string"
+                          },
+                          "build": {
+                            "type": "string"
+                          },
+                          "edition": {
+                            "type": "string"
+                          },
+                          "product": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "isClustered": {
+                            "type": "boolean"
+                          },
+                          "isVirtual": {
+                            "type": "boolean"
+                          },
+                          "isLicenseExpired": {
+                            "type": "boolean"
+                          },
+                          "httpsPort": {
+                            "type": "integer"
+                          },
+                          "restFrameworkVersion": {
+                            "type": "string"
+                          },
+                          "managementAddress": {
+                            "type": "string"
+                          },
+                          "mcpDeviceName": {
+                            "type": "string"
+                          },
+                          "trustDomainGuid": {
+                            "type": "string"
+                          },
+                          "slots": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "volume": {
+                                  "type": "string"
+                                },
+                                "product": {
+                                  "type": "string"
+                                },
+                                "version": {
+                                  "type": "string"
+                                },
+                                "build": {
+                                  "type": "string"
+                                },
+                                "isActive": {
+                                  "type": "boolean"
+                                }
+                              }
+                            }
+                          },
+                          "selfLink": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cm/system/machineid-resolver/{machineId}": {
+      "get": {
+        "operationId": "getResolveMachineIdById",
+        "summary": "Get a trusted BIG-IP device by machine ID",
+        "description": "Returns a single trusted BIG-IP device by its machineId.",
+        "responses": {
+          "200": {
+            "description": "Get a trusted BIG-IP device by machine ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "uuid": {
+                      "type": "string"
+                    },
+                    "machineId": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "hostname": {
+                      "type": "string"
+                    },
+                    "deviceUri": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "build": {
+                      "type": "string"
+                    },
+                    "edition": {
+                      "type": "string"
+                    },
+                    "product": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "isClustered": {
+                      "type": "boolean"
+                    },
+                    "isVirtual": {
+                      "type": "boolean"
+                    },
+                    "isLicenseExpired": {
+                      "type": "boolean"
+                    },
+                    "httpsPort": {
+                      "type": "integer"
+                    },
+                    "restFrameworkVersion": {
+                      "type": "string"
+                    },
+                    "managementAddress": {
+                      "type": "string"
+                    },
+                    "mcpDeviceName": {
+                      "type": "string"
+                    },
+                    "trustDomainGuid": {
+                      "type": "string"
+                    },
+                    "slots": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "volume": {
+                            "type": "string"
+                          },
+                          "product": {
+                            "type": "string"
+                          },
+                          "version": {
+                            "type": "string"
+                          },
+                          "build": {
+                            "type": "string"
+                          },
+                          "isActive": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "selfLink": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "machineId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  }
+}
