@@ -19,6 +19,8 @@ This project provides two ways to automate against FortiGate: netmiko over SSH/C
   - [fortios](#fortios)
 - [Golden Configurations](#golden-configurations)
   - [FortiGate - Simple](#fortigate---simple)
+- [Studio Projects](#studio-projects)
+  - [FortiGate Project](#fortigate-project)
 
 ## Contents
 
@@ -27,6 +29,7 @@ This project provides two ways to automate against FortiGate: netmiko over SSH/C
 | [device-drivers/fortigate-rest](./device-drivers/fortigate-rest/) | IG5 Python FortiOS REST driver — is-alive, get-config, plus a generic REST passthrough |
 | [Configuration Parsers/fortios.json](./Configuration%20Parsers/fortios.json) | Config Manager parser defining the `fortios` device type |
 | [Golden Configurations/FortiGate - Simple](./Golden%20Configurations/FortiGate%20-%20Simple.json) | Golden config tree covering admin access, password policy, NTP, syslog, and interface hardening — requires the `fortios` parser |
+| [Studio Projects/FortiGate](./Studio%20Projects/FortiGate.project.json) | 4 workflows — golden config compliance, interface configuration (with pre/post checks and diff), interface reset, and backup/config snapshot |
 
 ## Inventory Manager Configuration
 
@@ -217,3 +220,30 @@ in a group are expected to share identical configuration values with no variatio
 > Inventory Manager device name(s).
 
 **Dependencies:** `fortios` parser
+
+## Studio Projects
+
+### FortiGate Project
+
+A **netmiko-based** automation showcase — every workflow here uses Config Manager and Gateway Manager's generic device operations (`backUpDevice`, `getDeviceConfig`, `runComplianceForDevice`, `sendConfig`), which need a device wired to Option 1 (netmiko) since `sendConfig` requires real `set-config` support. `fortigate-rest` alone (Option 2) can't run these workflows as-is — see [Choosing API vs SSH — and a Hybrid Setup](#choosing-api-vs-ssh--and-a-hybrid-setup) if you want to mix in REST calls elsewhere.
+
+The project contains **4 workflows** across 3 folders:
+
+| Folder | Workflow | What it does |
+|---|---|---|
+| Golden Configuration | FortiGate - Run Compliance | Runs a golden config compliance check against a device and returns the graded report |
+| Interface Configuration | FortiGate - Interface Configuration | Renders and pushes an interface config (IP, management access, description) with a manual approval gate, pre/post checks, and a diff |
+| Interface Configuration | FortiGate - Delete Interface Configuration | Resets an interface back to unconfigured, with the same approval gate |
+| Backup Configuration | FortiGate - Backup Configuration | Backs up a device's running configuration into Config Manager and returns the live config text |
+
+Each workflow starts with a JSON form collecting a device name (`Itential::fortigate1` — replace with your own `Inventory::NodeName`) plus, for the interface workflows, the interface/IP/mask/access/description values. The interface workflows also carry two Jinja2 templates (`FortiGate Interface Config`, `FortiGate Interface Delete`) and a MOP command template (`FortiGate Interface Check`) used for both the pre- and post-push checks.
+
+**`FortiGate - Run Compliance` and the golden config tree above are already wired together** — its `runComplianceForDevice` task targets the exact `treeId` that `Golden Configurations/FortiGate - Simple.json` ships with, and Config Manager's golden config import preserves that ID verbatim. Import the `fortios` parser and the `FortiGate - Simple` tree (see above) *before* this project, bind the tree to your device, and the compliance workflow resolves with no manual editing.
+
+**Dependencies:**
+
+| Dependency | Notes |
+|---|---|
+| A netmiko-wired FortiGate node | See [Option 1](#option-1-netmiko-sshcli) above. Update the device-name default in each JSON form (or just type your own at run time) |
+| `cluster_1` Itential Gateway cluster | The interface workflows' `sendConfig` tasks target a cluster named `cluster_1` — update this in the canvas if yours is named differently |
+| `fortios` parser + `FortiGate - Simple` golden config tree | Import both (see Configuration Parsers / Golden Configurations above) and bind the tree to your device before running `FortiGate - Run Compliance` |
