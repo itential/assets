@@ -1,6 +1,6 @@
 IP Fabric is a network assurance platform for automated network discovery, inventory, and verification.
 
-This project provides an OpenAPI spec for automating against IP Fabric's REST API via an Integration Model, plus workflows built on that model. It also retains a set of pre-existing workflows built on the legacy IP Fabric adapter (snapshot creation, snapshot inventory comparison, network route comparison, service path analysis).
+This project provides an OpenAPI spec for automating against IP Fabric's REST API via an Integration Model, plus a Studio Project of workflows built on that model.
 
 ## Table of Contents
 
@@ -19,17 +19,16 @@ This project provides an OpenAPI spec for automating against IP Fabric's REST AP
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | IP Fabric API OpenAPI spec, built from IP Fabric's official Postman collection and API reference docs |
-| [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing 48 new Integration Model workflows plus the pre-existing legacy adapter workflows |
+| [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing all 48 workflows in 4 folders |
 
 ## Requirements
 
 | Requirement | Version |
 |---|---|
 | Itential Platform | 6.x |
-| `IP Fabric API:latest` Integration Model | Required to run the Tables/Snapshots/Path Lookup/Jobs folders |
-| [IP Fabric Adapter](https://gitlab.com/itentialopensource/adapters/adapter-ipfabric) | Required to run the Create Network Snapshot/Compare Snapshot Inventory/Analyze Service Path folders (legacy, unmigrated) |
+| `IP Fabric API:latest` Integration Model | Required to build automation against the OpenAPI spec, and to run the Studio Project below |
 
-> **Note:** This project does not require Itential Gateway for the Integration Model-backed folders. All API calls are made directly from Itential Platform to IP Fabric's REST API.
+> **Note:** This project does not require Itential Gateway. All API calls are made directly from Itential Platform to IP Fabric's REST API.
 
 ## Integration Configuration
 
@@ -68,14 +67,6 @@ The instance's `authentication`/`server` properties should look like this once c
 
 ### `ip_fabric_api-latest.json`
 
-**Important context on sourcing:** IP Fabric does not publish a standalone official OpenAPI/Swagger file anywhere. Each live instance self-generates a complete `openapi.json` from its own backend, viewable via RapiDoc at `/api/rapidoc` — but that requires access to a real instance. The next-best official artifact is IP Fabric's own [public Postman collection](https://gitlab.com/ip-fabric/integrations/postman) (vendor-maintained, versioned per platform release; this spec was built from the `v7.8` collection), cross-referenced against [IP Fabric's official API reference docs](https://docs.ipfabric.io/latest/IP_Fabric_API/) for endpoints the collection didn't fully document (notably path lookup's request schema).
-
-This spec was also cross-validated against the legacy [IP Fabric Adapter](https://gitlab.com/itentialopensource/adapters/adapter-ipfabric)'s full operation set (268 operations, recovered from its auto-generated OpenAPI export) to confirm coverage and catch renamed/removed endpoints. Of note: the legacy adapter's `deviceDiff` task now maps to `POST /tables/management/changes/devices` — the old `/deviceDiff` endpoint no longer exists in the current API.
-
-**On the "tables" API surface:** IP Fabric's REST API has 200+ near-identical "tables" endpoints — one per data category (routing, addressing, interfaces, security, multicast, MPLS, wireless, and more), all sharing the exact same request shape (`columns`/`filters`/`attributeFilters`/`pagination`/`sort`/`snapshot`). Rather than modeling all 200+ 1:1, this spec groups them into 32 category-and-depth operations — one per top-level category (matching IP Fabric's own path taxonomy: `aci`, `addressing`, `fhrp`, `interfaces`, `inventory`, `management`, `mpls`, `multicast`, `neighbors`, `networks`, `platforms`, `qos`, `routing`, `security`, `spanning-tree`, `vlan`, `vrf`, `vxlan`, `wireless`), with a separate operation per path depth within a category where the category has tables at more than one depth (most tables are 1-3 path segments deep beyond the category name). Each operation takes the table's remaining path segments as **individual path parameters** (`seg1`, `seg2`, `seg3`) rather than one embedded-slash parameter — Itential Platform's OpenAPI adapter URL-encodes slashes within a single path parameter value, which would silently send the wrong URL to IP Fabric for any multi-segment table.
-
-Adds the 12-operation snapshot lifecycle, the consolidated path-lookup (`graphs`) endpoint, and 3 job-control operations. Excludes appliance administration (`os/*`, `auth/*`, `settings/*`, `users/*`) as out of scope for network automation.
-
 Operations included, by category:
 
 - **Tables**: Query any table under `ACI`, `Addressing`, `FHRP`, `Interfaces`, `Inventory`, `Management`, `MPLS`, `Multicast`, `Neighbors`, `Networks`, `Platforms`, `QoS`, `Routing`, `Security`, `Spanning Tree`, `VLAN`, `VRF`, `VXLAN`, or `Wireless` — 32 operations across those 19 categories
@@ -87,20 +78,16 @@ Operations included, by category:
 
 ### IP Fabric Project
 
-Backed by the **`IP Fabric API:latest`** Integration Model (see [`ip_fabric_api-latest.json`](./OpenAPIs/ip_fabric_api-latest.json) above) for the new folders, plus the pre-existing legacy adapter folders.
+Backed by the **`IP Fabric API:latest`** Integration Model (see [`ip_fabric_api-latest.json`](./OpenAPIs/ip_fabric_api-latest.json) above). The project contains **48 workflows** organized into **4 folders**.
 
 #### Folder Structure
 
-| Folder | Workflows | Scope | Backing |
-|---|---|---|---|
-| Tables | 32 | Query any table across 19 categories (see above) | `IP Fabric API:latest` Integration Model |
-| Snapshots | 12 | Snapshot lifecycle management | `IP Fabric API:latest` Integration Model |
-| Path Lookup | 1 | Unicast/multicast path simulation | `IP Fabric API:latest` Integration Model |
-| Jobs | 3 | Async job control | `IP Fabric API:latest` Integration Model |
-| Create Network Snapshot | 1 | Create a snapshot (legacy) | IP Fabric Adapter |
-| Compare Snapshot Inventory | 2 | Diff device inventory between two snapshots (legacy) | IP Fabric Adapter |
-| Analyze Service Path | 2 | Path lookup between two endpoints (legacy) | IP Fabric Adapter |
-| (root) | 2 | Create Network Snapshot, Compare Network Routes From Snapshots (legacy) | IP Fabric Adapter |
+| Folder | Workflows | Scope |
+|---|---|---|
+| Tables | 32 | Query any table across 19 categories (see above) |
+| Snapshots | 12 | Snapshot lifecycle management |
+| Path Lookup | 1 | Unicast/multicast path simulation |
+| Jobs | 3 | Async job control |
 
 The `Cancel IP Fabric Job` workflow is prefixed to avoid colliding with an identically-named workflow already published for another product — workflow names are unique across the whole Itential Platform instance, not scoped per-project.
 
@@ -108,8 +95,7 @@ The `Cancel IP Fabric Job` workflow is prefixed to avoid colliding with an ident
 
 | Dependency | Notes |
 |---|---|
-| `IP Fabric API:latest` Integration Model | Import from [`ip_fabric_api-latest.json`](./OpenAPIs/ip_fabric_api-latest.json) before importing the project. Backs the Tables, Snapshots, Path Lookup, and Jobs folders. |
+| `IP Fabric API:latest` Integration Model | Import from [`ip_fabric_api-latest.json`](./OpenAPIs/ip_fabric_api-latest.json) before importing the project |
 | `IP Fabric` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `IP Fabric` — update the `adapter_id` value in each workflow task if yours is named differently |
-| [IP Fabric Adapter](https://gitlab.com/itentialopensource/adapters/adapter-ipfabric) | Required for the legacy folders (unmigrated) |
 
-**Testing status:** all 48 new workflows were created and schema-validated against a running Itential Platform instance. The multi-segment path-parameter approach was verified against a live HTTP echo endpoint to confirm segments are sent unencoded. No IP Fabric test instance was available for this pass, so none have been executed against a real account.
+**Testing status:** all 48 workflows were created and schema-validated against a running Itential Platform instance. The multi-segment path-parameter approach was verified against a live HTTP echo endpoint to confirm segments are sent unencoded. No IP Fabric test instance was available for this pass, so none have been executed against a real account.
