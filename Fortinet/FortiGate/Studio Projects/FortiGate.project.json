@@ -1,0 +1,1885 @@
+{
+  "_id": "6d97b1626debcbf68608a50d",
+  "name": "FortiGate",
+  "description": "FortiGate automation showcase: golden config compliance, interface configuration, and backup/config snapshot.",
+  "components": [
+    {
+      "iid": 4,
+      "reference": "6a7cf8544ffc74c70fe78992",
+      "type": "template",
+      "folder": "/Interface Configuration",
+      "document": {
+        "_id": "6a7cf8544ffc74c70fe78992",
+        "name": "FortiGate Interface Config",
+        "type": "jinja2",
+        "command": "config system interface",
+        "template": "config system interface\n    edit \"{{ interface }}\"\n        set ip {{ ip_address }} {{ subnet_mask }}\n        set allowaccess {{ allowaccess }}\n        set description \"{{ description }}\"\n    next\nend",
+        "tags": [],
+        "data": "{\"interface\": \"port2\", \"ip_address\": \"192.168.50.1\", \"subnet_mask\": \"255.255.255.0\", \"allowaccess\": \"ping https ssh\", \"description\": \"Demo Interface - Itential\"}",
+        "group": "Fortinet FortiOS",
+        "description": "Renders a FortiGate interface configuration block (IP, allowed management access, description).",
+        "version": 1,
+        "created": "2026-08-12T22:00:00.000Z",
+        "lastUpdated": "2026-08-12T22:48:52.904Z",
+        "createdBy": {
+          "_id": "6a74d2ec429a5ac0051834b8",
+          "provenance": "CloudAAA",
+          "username": "mike.elrom@itential.com",
+          "firstname": "Mike",
+          "inactive": false,
+          "email": "mike.elrom@itential.com"
+        },
+        "lastUpdatedBy": {
+          "_id": "6a74d2ec429a5ac0051834b8",
+          "provenance": "CloudAAA",
+          "username": "mike.elrom@itential.com",
+          "firstname": "Mike",
+          "inactive": false,
+          "email": "mike.elrom@itential.com"
+        }
+      }
+    },
+    {
+      "iid": 5,
+      "reference": "@6d97b1626debcbf68608a50d: FortiGate Interface Check",
+      "type": "mopCommandTemplate",
+      "folder": "/Interface Configuration",
+      "document": {
+        "tags": [],
+        "name": "FortiGate Interface Check",
+        "description": "Checks a FortiGate interface's existence and configured IP/description. Used as both pre-check (before push) and post-check (after push).",
+        "os": "",
+        "passRule": true,
+        "ignoreWarnings": false,
+        "commands": [
+          {
+            "command": "show system interface <!interface!>",
+            "passRule": true,
+            "rules": [
+              {
+                "rule": "edit \"<!interface!>\"",
+                "eval": "contains",
+                "severity": "error"
+              },
+              {
+                "rule": "set ip <!ip_address!> <!subnet_mask!>",
+                "eval": "contains",
+                "severity": "warning"
+              },
+              {
+                "rule": "set description \"<!description!>\"",
+                "eval": "contains",
+                "severity": "info"
+              }
+            ]
+          }
+        ],
+        "created": 1786590000000,
+        "createdBy": "mike.elrom@itential.com",
+        "lastUpdated": 1786574933097,
+        "lastUpdatedBy": "mike.elrom@itential.com"
+      }
+    },
+    {
+      "iid": 6,
+      "type": "workflow",
+      "reference": "d7164c81-e163-46f6-8b8f-e0c02d3fea6a",
+      "folder": "/Golden Configuration",
+      "document": {
+        "name": "FortiGate - Run Compliance",
+        "description": "Runs the FortiGate - Simple golden configuration compliance check against a device and returns the graded report.",
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "a1a1": {
+            "name": "runComplianceForDevice",
+            "canvasName": "runComplianceForDevice",
+            "summary": "Run Compliance",
+            "description": "Runs the FortiGate golden config compliance check for the device",
+            "location": "Application",
+            "locationType": null,
+            "app": "ConfigurationManager",
+            "type": "automatic",
+            "displayName": "ConfigurationManager",
+            "variables": {
+              "incoming": {
+                "treeId": "6a7ce68cbcc938f9b48e6737",
+                "version": "initial",
+                "deviceName": "$var.f001.export#/deviceName",
+                "variables": {},
+                "grading": {}
+              },
+              "outgoing": {
+                "runComplianceBatchResult": null
+              },
+              "error": "",
+              "decorators": [
+                {
+                  "type": "query",
+                  "pointer": "/incoming/deviceName",
+                  "displayPath": ".deviceName"
+                }
+              ]
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 216
+            }
+          },
+          "c3c3": {
+            "name": "getComplianceReportDetail",
+            "canvasName": "getComplianceReportDetail",
+            "summary": "Get Report Detail",
+            "description": "Fetches the full compliance report (score, grade, issues)",
+            "location": "Application",
+            "locationType": null,
+            "app": "ConfigurationManager",
+            "type": "automatic",
+            "displayName": "ConfigurationManager",
+            "variables": {
+              "incoming": {
+                "reportId": "$var.a1a1.runComplianceBatchResult#/reports/0/reportId"
+              },
+              "outgoing": {
+                "complianceReportDetail": "$var.job.complianceReportDetail"
+              },
+              "error": "",
+              "decorators": [
+                {
+                  "type": "query",
+                  "pointer": "/incoming/reportId",
+                  "displayPath": ".reports.0.reportId"
+                }
+              ]
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 324
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 0,
+              "y": 432
+            }
+          },
+          "f001": {
+            "name": "ShowJsonForm",
+            "canvasName": "ShowJsonForm",
+            "summary": "Collect Inputs",
+            "description": "Presents the input form to the operator and collects the submitted values",
+            "location": "Application",
+            "locationType": null,
+            "app": "JsonForms",
+            "type": "manual",
+            "displayName": "JsonForms",
+            "view": "/json-forms/task/ShowJsonForm",
+            "variables": {
+              "incoming": {
+                "form_id": "6a7cf8dd230c96cc6b65fa0e",
+                "instance_data": {}
+              },
+              "outgoing": {
+                "export": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 108
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "f001": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a1a1": {
+            "c3c3": {
+              "state": "success",
+              "type": "standard"
+            }
+          },
+          "c3c3": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {},
+          "f001": {
+            "a1a1": {
+              "state": "success",
+              "type": "standard"
+            }
+          }
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{24}$"
+            },
+            "initiator": {
+              "type": "string"
+            },
+            "complianceReportDetail": {
+              "type": [
+                "array",
+                "boolean",
+                "null",
+                "number",
+                "object",
+                "string"
+              ]
+            }
+          }
+        },
+        "scenarios": [],
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "last_updated": "2026-08-12T23:40:41.237Z",
+        "last_updated_by": {
+          "provenance": "CloudAAA",
+          "username": "mike.elrom@itential.com",
+          "firstname": "Mike",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "created": "1970-01-01T00:00:00.000Z",
+        "createdVersion": "5.55.5",
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 7,
+      "type": "workflow",
+      "reference": "90baf5a3-def6-4d2c-b6be-eb3f1ac0f607",
+      "folder": "/Interface Configuration",
+      "document": {
+        "name": "FortiGate - Interface Configuration",
+        "description": "Renders and pushes a FortiGate interface configuration (IP, management access, description) with dry-run approval, pre/post checks, and a diff.",
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 0,
+              "y": 108
+            }
+          },
+          "b2b2": {
+            "name": "RunCommandTemplate",
+            "canvasName": "RunCommandTemplate",
+            "summary": "Pre-Check Interface",
+            "description": "Captures the interface's current state before pushing config",
+            "location": "Application",
+            "locationType": null,
+            "app": "MOP",
+            "type": "automatic",
+            "displayName": "MOP",
+            "variables": {
+              "incoming": {
+                "template": "@6d97b1626debcbf68608a50d: FortiGate Interface Check",
+                "variables": "$var.f001.export",
+                "devices": "$var.f001.export#/deviceName"
+              },
+              "outgoing": {
+                "mop_template_results": null
+              },
+              "error": "",
+              "decorators": [
+                {
+                  "type": "query",
+                  "pointer": "/incoming/devices",
+                  "displayPath": ".deviceName"
+                }
+              ]
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 408
+            }
+          },
+          "c3c3": {
+            "name": "renderJinjaTemplate",
+            "canvasName": "renderJinjaTemplate",
+            "summary": "Render Interface Config",
+            "description": "Renders the FortiGate interface configuration block",
+            "location": "Application",
+            "locationType": null,
+            "app": "TemplateBuilder",
+            "type": "automatic",
+            "displayName": "TemplateBuilder",
+            "variables": {
+              "incoming": {
+                "name": "@6d97b1626debcbf68608a50d: FortiGate Interface Config",
+                "context": "$var.f001.export"
+              },
+              "outgoing": {
+                "renderedTemplate": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 520
+            }
+          },
+          "d4d4": {
+            "name": "ViewData",
+            "canvasName": "ViewData",
+            "summary": "Review Configuration",
+            "description": "Manual approval gate before pushing the rendered config to the device",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "manual",
+            "displayName": "WorkFlowEngine",
+            "view": "/workflow_engine/task/ViewData",
+            "variables": {
+              "incoming": {
+                "header": "Review FortiGate Interface Configuration",
+                "message": "Review the rendered configuration below before pushing it to the device.",
+                "body": "$var.c3c3.renderedTemplate#/renderedTemplate",
+                "btn_success": "Approve & Push",
+                "btn_failure": "Reject",
+                "variables": {}
+              },
+              "outgoing": {},
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 650
+            }
+          },
+          "e5e5": {
+            "name": "sendConfig",
+            "canvasName": "sendConfig",
+            "summary": "Push Configuration",
+            "description": "Sends the rendered configuration to the device via Itential Gateway",
+            "location": "Application",
+            "locationType": null,
+            "app": "GatewayManager",
+            "type": "automatic",
+            "displayName": "GatewayManager",
+            "variables": {
+              "incoming": {
+                "clusterId": "cluster_1",
+                "config": "$var.c3c3.renderedTemplate#/renderedTemplate",
+                "inventory": "$var.42af.renderedTemplate"
+              },
+              "outgoing": {
+                "result": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 780
+            }
+          },
+          "f6f6": {
+            "name": "RunCommandTemplate",
+            "canvasName": "RunCommandTemplate",
+            "summary": "Post-Check Interface",
+            "description": "Captures the interface's state after pushing config",
+            "location": "Application",
+            "locationType": null,
+            "app": "MOP",
+            "type": "automatic",
+            "displayName": "MOP",
+            "variables": {
+              "incoming": {
+                "template": "@6d97b1626debcbf68608a50d: FortiGate Interface Check",
+                "variables": "$var.f001.export",
+                "devices": "$var.f001.export#/deviceName"
+              },
+              "outgoing": {
+                "mop_template_results": null
+              },
+              "error": "",
+              "decorators": [
+                {
+                  "type": "query",
+                  "pointer": "/incoming/devices",
+                  "displayPath": ".deviceName"
+                }
+              ]
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 910
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 660,
+              "y": 1690
+            }
+          },
+          "f001": {
+            "name": "ShowJsonForm",
+            "canvasName": "ShowJsonForm",
+            "summary": "Collect Inputs",
+            "description": "Presents the input form to the operator and collects the submitted values",
+            "location": "Application",
+            "locationType": null,
+            "app": "JsonForms",
+            "type": "manual",
+            "displayName": "JsonForms",
+            "view": "/json-forms/task/ShowJsonForm",
+            "variables": {
+              "incoming": {
+                "form_id": "6a7cf8dd230c96cc6b65fa0f",
+                "instance_data": {}
+              },
+              "outgoing": {
+                "export": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 216
+            }
+          },
+          "1a01": {
+            "name": "newVariable",
+            "canvasName": "newVariable",
+            "summary": "Mark Rejected",
+            "description": "Records that the operator rejected the config",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "name": "taskStatus",
+                "value": "rejected"
+              },
+              "outgoing": {
+                "value": "$var.job.taskStatus"
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 672,
+              "y": 648
+            }
+          },
+          "3c03": {
+            "name": "evaluation",
+            "canvasName": "evaluation",
+            "summary": "Post-Check Passed?",
+            "description": "Branches based on whether the post-check fully passed",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "all_true_flag": true,
+                "evaluation_groups": [
+                  {
+                    "all_true_flag": true,
+                    "evaluations": [
+                      {
+                        "operand_1": {
+                          "task": "f6f6",
+                          "variable": "mop_template_results"
+                        },
+                        "operator": "==",
+                        "operand_2": {
+                          "task": "static",
+                          "variable": true
+                        },
+                        "query": "result"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "outgoing": {
+                "return_value": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 1032
+            }
+          },
+          "4d04": {
+            "name": "newVariable",
+            "canvasName": "newVariable",
+            "summary": "Mark Success",
+            "description": "Records that the push and post-check succeeded",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "name": "taskStatus",
+                "value": "success"
+              },
+              "outgoing": {
+                "value": "$var.job.taskStatus"
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 1152
+            }
+          },
+          "5e05": {
+            "name": "newVariable",
+            "canvasName": "newVariable",
+            "summary": "Mark Review Needed",
+            "description": "Records that the post-check did not fully pass and needs review",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "name": "taskStatus",
+                "value": "review_needed"
+              },
+              "outgoing": {
+                "value": "$var.job.taskStatus"
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 408,
+              "y": 1032
+            }
+          },
+          "6f06": {
+            "name": "runTemplatesDiff",
+            "canvasName": "runTemplatesDiff",
+            "summary": "View Pre/Post Diff",
+            "description": "Shows the operator the before/after interface state",
+            "location": "Application",
+            "locationType": null,
+            "app": "MOP",
+            "type": "manual",
+            "displayName": "MOP",
+            "view": "/mop/task/runTemplatesDiff",
+            "variables": {
+              "incoming": {
+                "pre": "$var.b2b2.mop_template_results",
+                "post": "$var.f6f6.mop_template_results"
+              },
+              "outgoing": {},
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 192,
+              "y": 1320
+            }
+          },
+          "42af": {
+            "name": "renderJinja2ContextWithCast",
+            "canvasName": "renderJinja2ContextWithCast",
+            "summary": "Render Inventory List",
+            "description": "Renders jinja2 Context output with data cast.",
+            "location": "Application",
+            "locationType": null,
+            "app": "TemplateBuilder",
+            "type": "automatic",
+            "displayName": "TemplateBuilder",
+            "variables": {
+              "incoming": {
+                "template": "[\n  {\n    \"inventory\": \"{{deviceName.split('::')[0]}}\",\n    \"nodeNames\": [\n      \"{{deviceName.split('::')[1]}}\"\n    ]\n  }\n]",
+                "variables": "$var.f001.export",
+                "castDataType": "object"
+              },
+              "outgoing": {
+                "renderedTemplate": ""
+              }
+            },
+            "actor": "Pronghorn",
+            "groups": [],
+            "nodeLocation": {
+              "x": 0,
+              "y": 312
+            }
+          },
+          "7c08": {
+            "name": "renderJinjaTemplate",
+            "canvasName": "renderJinjaTemplate",
+            "summary": "Render Cleanup Reset",
+            "description": "",
+            "location": "Application",
+            "locationType": null,
+            "app": "TemplateBuilder",
+            "type": "automatic",
+            "displayName": "TemplateBuilder",
+            "variables": {
+              "incoming": {
+                "name": "@6d97b1626debcbf68608a50d: FortiGate Interface Delete",
+                "context": "$var.f001.export"
+              },
+              "outgoing": {
+                "renderedTemplate": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 1440
+            }
+          },
+          "8d09": {
+            "name": "sendConfig",
+            "canvasName": "sendConfig",
+            "summary": "Cleanup: Reset Interface",
+            "description": "",
+            "location": "Application",
+            "locationType": null,
+            "app": "GatewayManager",
+            "type": "automatic",
+            "displayName": "GatewayManager",
+            "variables": {
+              "incoming": {
+                "clusterId": "cluster_1",
+                "config": "$var.7c08.renderedTemplate#/renderedTemplate",
+                "inventory": "$var.42af.renderedTemplate"
+              },
+              "outgoing": {
+                "result": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 1560
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "f001": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "b2b2": {
+            "c3c3": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "c3c3": {
+            "d4d4": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "d4d4": {
+            "e5e5": {
+              "type": "standard",
+              "state": "success"
+            },
+            "1a01": {
+              "type": "standard",
+              "state": "failure"
+            }
+          },
+          "e5e5": {
+            "f6f6": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "f6f6": {
+            "3c03": {
+              "state": "success",
+              "type": "standard"
+            }
+          },
+          "workflow_end": {},
+          "f001": {
+            "42af": {
+              "state": "success",
+              "type": "standard"
+            }
+          },
+          "1a01": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "3c03": {
+            "4d04": {
+              "type": "standard",
+              "state": "success"
+            },
+            "5e05": {
+              "type": "standard",
+              "state": "failure"
+            }
+          },
+          "4d04": {
+            "6f06": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "5e05": {
+            "6f06": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "6f06": {
+            "7c08": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "42af": {
+            "b2b2": {
+              "state": "success",
+              "type": "standard"
+            }
+          },
+          "7c08": {
+            "8d09": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "8d09": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          }
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{24}$"
+            },
+            "initiator": {
+              "type": "string"
+            },
+            "taskStatus": {
+              "type": "string"
+            }
+          }
+        },
+        "scenarios": [],
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "last_updated": "2026-08-13T00:53:26.857Z",
+        "last_updated_by": {
+          "provenance": "CloudAAA",
+          "username": "mike.elrom@itential.com",
+          "firstname": "Mike",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "created": "1970-01-01T00:00:00.000Z",
+        "createdVersion": "5.55.5",
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 8,
+      "type": "workflow",
+      "reference": "4fcb76e3-241f-4ff7-905b-e7bb9802f3d8",
+      "folder": "/Backup Configuration",
+      "document": {
+        "name": "FortiGate - Backup Configuration",
+        "description": "Backs up a FortiGate device's running configuration into Config Manager and returns the live config text.",
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 0,
+              "y": 132
+            }
+          },
+          "a1a1": {
+            "name": "backUpDevice",
+            "canvasName": "backUpDevice",
+            "summary": "Backup Device",
+            "description": "Backs up the device's running configuration in Config Manager",
+            "location": "Application",
+            "locationType": null,
+            "app": "ConfigurationManager",
+            "type": "automatic",
+            "displayName": "ConfigurationManager",
+            "variables": {
+              "incoming": {
+                "name": "$var.f001.export#/deviceName",
+                "options": {
+                  "description": "FortiGate Studio Project - automated backup"
+                }
+              },
+              "outgoing": {
+                "status": "$var.job.backupStatus"
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 390
+            }
+          },
+          "b2b2": {
+            "name": "getDeviceConfig",
+            "canvasName": "getDeviceConfig",
+            "summary": "Get Live Config",
+            "description": "Retrieves the device's current configuration text",
+            "location": "Application",
+            "locationType": null,
+            "app": "ConfigurationManager",
+            "type": "automatic",
+            "displayName": "ConfigurationManager",
+            "variables": {
+              "incoming": {
+                "name": "$var.f001.export#/deviceName"
+              },
+              "outgoing": {
+                "config": "$var.job.deviceConfig"
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 520
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 0,
+              "y": 650
+            }
+          },
+          "f001": {
+            "name": "ShowJsonForm",
+            "canvasName": "ShowJsonForm",
+            "summary": "Collect Inputs",
+            "description": "Presents the input form to the operator and collects the submitted values",
+            "location": "Application",
+            "locationType": null,
+            "app": "JsonForms",
+            "type": "manual",
+            "displayName": "JsonForms",
+            "view": "/json-forms/task/ShowJsonForm",
+            "variables": {
+              "incoming": {
+                "form_id": "6a7cf8dd230c96cc6b65fa10",
+                "instance_data": {}
+              },
+              "outgoing": {
+                "export": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 276
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "f001": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a1a1": {
+            "b2b2": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "b2b2": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {},
+          "f001": {
+            "a1a1": {
+              "type": "standard",
+              "state": "success"
+            }
+          }
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{24}$"
+            },
+            "initiator": {
+              "type": "string"
+            },
+            "backupStatus": {
+              "title": "status",
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "const": "success"
+                },
+                "message": {
+                  "type": "string",
+                  "examples": [
+                    "Device {deviceName} backed up successfully"
+                  ]
+                }
+              }
+            },
+            "deviceConfig": {
+              "title": "config",
+              "type": "object",
+              "properties": {
+                "device": {
+                  "examples": [
+                    "ios0"
+                  ],
+                  "type": "string",
+                  "title": "name"
+                },
+                "config": {
+                  "type": "string",
+                  "examples": [
+                    "hostname ios0\nno service password-encryption\n..."
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "scenarios": [],
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "last_updated": "2026-08-12T23:47:48.458Z",
+        "last_updated_by": {
+          "provenance": "CloudAAA",
+          "username": "mike.elrom@itential.com",
+          "firstname": "Mike",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "created": "1970-01-01T00:00:00.000Z",
+        "createdVersion": "5.55.5",
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 9,
+      "type": "jsonForm",
+      "reference": "6a7cf8dd230c96cc6b65fa0e",
+      "folder": "/Golden Configuration",
+      "document": {
+        "id": "6a7cf8dd230c96cc6b65fa0e",
+        "created": "2026-08-12T22:51:09.053Z",
+        "createdBy": "mike.elrom@itential.com",
+        "lastUpdated": "2026-08-12T22:51:27.961Z",
+        "lastUpdatedBy": "mike.elrom@itential.com",
+        "name": "FortiGate Compliance Form",
+        "description": "Runs the FortiGate - Simple golden configuration compliance check against a device.",
+        "struct": {
+          "type": "array",
+          "items": [
+            {
+              "nodeId": "a7a32921-7834-4e54-902b-7144c8fdcf7d",
+              "type": "string",
+              "title": "Device Name",
+              "description": "Inventory-qualified device name (Inventory::NodeName)",
+              "placeholder": "Enter device name",
+              "required": true,
+              "customKey": "deviceName",
+              "default": "Itential::fortigate1"
+            }
+          ]
+        },
+        "schema": {
+          "title": "FortiGate Compliance Form",
+          "description": "Runs the FortiGate - Simple golden configuration compliance check against a device.",
+          "type": "object",
+          "required": [
+            "deviceName"
+          ],
+          "properties": {
+            "deviceName": {
+              "type": "string",
+              "title": "Device Name",
+              "description": "Inventory-qualified device name (Inventory::NodeName)",
+              "default": "Itential::fortigate1"
+            }
+          }
+        },
+        "uiSchema": {
+          "deviceName": {
+            "ui:placeholder": "Enter device name"
+          },
+          "ui:order": [
+            "deviceName",
+            "*"
+          ]
+        },
+        "bindingSchema": {},
+        "validationSchema": {},
+        "version": "2020.1"
+      }
+    },
+    {
+      "iid": 10,
+      "type": "jsonForm",
+      "reference": "6a7cf8dd230c96cc6b65fa0f",
+      "folder": "/Interface Configuration",
+      "document": {
+        "id": "6a7cf8dd230c96cc6b65fa0f",
+        "created": "2026-08-12T22:51:09.451Z",
+        "createdBy": "mike.elrom@itential.com",
+        "lastUpdated": "2026-08-13T00:15:48.833Z",
+        "lastUpdatedBy": "mike.elrom@itential.com",
+        "name": "FortiGate Interface Configuration Form",
+        "description": "Renders and pushes a FortiGate interface configuration with dry-run approval, pre/post checks, and a diff.",
+        "struct": {
+          "type": "array",
+          "items": [
+            {
+              "nodeId": "1f3d6acb-33b5-4a2a-859a-213a011d0fcb",
+              "type": "string",
+              "title": "Device Name",
+              "description": "Inventory-qualified device name (Inventory::NodeName)",
+              "placeholder": "Enter device name",
+              "required": true,
+              "customKey": "deviceName",
+              "default": "Itential::fortigate1"
+            },
+            {
+              "nodeId": "d00f606e-c157-4cbf-9580-df9d987307b3",
+              "type": "string",
+              "title": "Interface",
+              "description": "FortiGate interface/port name",
+              "placeholder": "Enter interface",
+              "required": true,
+              "customKey": "interface",
+              "default": "port2"
+            },
+            {
+              "nodeId": "c869f027-e3a1-4ad9-848c-87baac6fd4c2",
+              "type": "string",
+              "title": "IP Address",
+              "description": "Interface IP address",
+              "placeholder": "Enter ip address",
+              "required": true,
+              "customKey": "ip_address",
+              "default": "192.168.50.1"
+            },
+            {
+              "nodeId": "ccf465c7-14b1-4de1-a6e1-fe8c51616d50",
+              "type": "string",
+              "title": "Subnet Mask",
+              "description": "Interface subnet mask",
+              "placeholder": "Enter subnet mask",
+              "required": true,
+              "customKey": "subnet_mask",
+              "default": "255.255.255.0"
+            },
+            {
+              "nodeId": "2d7032c4-5d6f-4c07-bd27-70522cbdaefa",
+              "type": "string",
+              "title": "Allowed Management Access",
+              "description": "Space-separated allowaccess methods (e.g. ping https ssh)",
+              "placeholder": "Enter allowed management access",
+              "required": true,
+              "customKey": "allowaccess",
+              "default": "ping https ssh"
+            },
+            {
+              "nodeId": "53de9e94-fc51-41f2-ac7e-8bfb3fb513a4",
+              "type": "string",
+              "title": "Description",
+              "description": "Interface description",
+              "placeholder": "Enter description",
+              "required": true,
+              "customKey": "description",
+              "default": "Demo Interface - Itential"
+            }
+          ]
+        },
+        "schema": {
+          "title": "FortiGate Interface Configuration Form",
+          "description": "Renders and pushes a FortiGate interface configuration with dry-run approval, pre/post checks, and a diff.",
+          "type": "object",
+          "required": [
+            "deviceName",
+            "interface",
+            "ip_address",
+            "subnet_mask",
+            "allowaccess",
+            "description"
+          ],
+          "properties": {
+            "deviceName": {
+              "type": "string",
+              "title": "Device Name",
+              "description": "Inventory-qualified device name (Inventory::NodeName)",
+              "default": "Itential::fortigate1"
+            },
+            "interface": {
+              "type": "string",
+              "title": "Interface",
+              "description": "FortiGate interface/port name",
+              "default": "port2"
+            },
+            "ip_address": {
+              "type": "string",
+              "title": "IP Address",
+              "description": "Interface IP address",
+              "default": "192.168.50.1"
+            },
+            "subnet_mask": {
+              "type": "string",
+              "title": "Subnet Mask",
+              "description": "Interface subnet mask",
+              "default": "255.255.255.0"
+            },
+            "allowaccess": {
+              "type": "string",
+              "title": "Allowed Management Access",
+              "description": "Space-separated allowaccess methods (e.g. ping https ssh)",
+              "default": "ping https ssh"
+            },
+            "description": {
+              "type": "string",
+              "title": "Description",
+              "description": "Interface description",
+              "default": "Demo Interface - Itential"
+            }
+          }
+        },
+        "uiSchema": {
+          "interface": {
+            "ui:placeholder": "Enter interface"
+          },
+          "ip_address": {
+            "ui:placeholder": "Enter ip address"
+          },
+          "subnet_mask": {
+            "ui:placeholder": "Enter subnet mask"
+          },
+          "allowaccess": {
+            "ui:placeholder": "Enter allowed management access"
+          },
+          "description": {
+            "ui:placeholder": "Enter description"
+          },
+          "deviceName": {
+            "ui:placeholder": "Enter device name"
+          },
+          "ui:order": [
+            "deviceName",
+            "interface",
+            "ip_address",
+            "subnet_mask",
+            "allowaccess",
+            "description",
+            "*"
+          ]
+        },
+        "bindingSchema": {},
+        "validationSchema": {},
+        "version": "2020.1"
+      }
+    },
+    {
+      "iid": 11,
+      "type": "jsonForm",
+      "reference": "6a7cf8dd230c96cc6b65fa10",
+      "folder": "/Backup Configuration",
+      "document": {
+        "id": "6a7cf8dd230c96cc6b65fa10",
+        "created": "2026-08-12T22:51:09.840Z",
+        "createdBy": "mike.elrom@itential.com",
+        "lastUpdated": "2026-08-12T22:51:27.961Z",
+        "lastUpdatedBy": "mike.elrom@itential.com",
+        "name": "FortiGate Backup Form",
+        "description": "Backs up a FortiGate device's running configuration into Config Manager and returns the live config text.",
+        "struct": {
+          "type": "array",
+          "items": [
+            {
+              "nodeId": "63763252-4e51-44d0-95ab-8927a65be47e",
+              "type": "string",
+              "title": "Device Name",
+              "description": "Inventory-qualified device name (Inventory::NodeName)",
+              "placeholder": "Enter device name",
+              "required": true,
+              "customKey": "deviceName",
+              "default": "Itential::fortigate1"
+            }
+          ]
+        },
+        "schema": {
+          "title": "FortiGate Backup Form",
+          "description": "Backs up a FortiGate device configuration into Config Manager.",
+          "type": "object",
+          "required": [
+            "deviceName"
+          ],
+          "properties": {
+            "deviceName": {
+              "type": "string",
+              "title": "Device Name",
+              "description": "Inventory-qualified device name (Inventory::NodeName)",
+              "default": "Itential::fortigate1"
+            }
+          }
+        },
+        "uiSchema": {
+          "deviceName": {
+            "ui:placeholder": "Enter device name"
+          },
+          "ui:order": [
+            "deviceName",
+            "*"
+          ]
+        },
+        "bindingSchema": {},
+        "validationSchema": {},
+        "version": "2020.1"
+      }
+    },
+    {
+      "iid": 12,
+      "type": "template",
+      "reference": "6a7d138b4ffc74c70fe78993",
+      "folder": "/Interface Configuration",
+      "document": {
+        "_id": "6a7d138b4ffc74c70fe78993",
+        "name": "FortiGate Interface Delete",
+        "type": "jinja2",
+        "group": "Fortinet FortiOS",
+        "command": "config system interface",
+        "description": "Resets a FortiGate interface's IP, allowed management access, and description back to unconfigured.",
+        "template": "config system interface\n    edit \"{{ interface }}\"\n        unset ip\n        unset allowaccess\n        unset description\n    next\nend",
+        "data": "{\"interface\": \"port2\"}",
+        "created": "2026-08-13T00:44:59.807Z",
+        "lastUpdated": "2026-08-13T00:46:48.028Z",
+        "createdBy": {
+          "_id": "6a74d2ec429a5ac0051834b8",
+          "provenance": "CloudAAA",
+          "username": "mike.elrom@itential.com",
+          "firstname": "Mike",
+          "inactive": false,
+          "email": "mike.elrom@itential.com"
+        },
+        "lastUpdatedBy": {
+          "_id": "6a74d2ec429a5ac0051834b8",
+          "provenance": "CloudAAA",
+          "username": "mike.elrom@itential.com",
+          "firstname": "Mike",
+          "inactive": false,
+          "email": "mike.elrom@itential.com"
+        }
+      }
+    },
+    {
+      "iid": 13,
+      "type": "jsonForm",
+      "reference": "6a7d13b4230c96cc6b65fa11",
+      "folder": "/Interface Configuration",
+      "document": {
+        "id": "6a7d13b4230c96cc6b65fa11",
+        "created": "2026-08-13T00:45:40.454Z",
+        "createdBy": "mike.elrom@itential.com",
+        "lastUpdated": "2026-08-13T00:46:48.034Z",
+        "lastUpdatedBy": "mike.elrom@itential.com",
+        "name": "FortiGate Delete Interface Form",
+        "description": "Resets a FortiGate interface's IP, allowed management access, and description back to unconfigured.",
+        "struct": {
+          "type": "array",
+          "items": [
+            {
+              "nodeId": "4864e19c-1a6c-4fa9-a473-e8ea2834562f",
+              "type": "string",
+              "title": "Device Name",
+              "description": "Inventory-qualified device name (Inventory::NodeName)",
+              "placeholder": "Enter device name",
+              "required": true,
+              "customKey": "deviceName",
+              "default": "Itential::fortigate1"
+            },
+            {
+              "nodeId": "2bc73917-0577-459c-89ca-2260a4c19754",
+              "type": "string",
+              "title": "Interface",
+              "description": "FortiGate interface/port name to reset",
+              "placeholder": "Enter interface",
+              "required": true,
+              "customKey": "interface",
+              "default": "port2"
+            }
+          ]
+        },
+        "schema": {
+          "title": "FortiGate Delete Interface Form",
+          "description": "Resets a FortiGate interface's IP, allowed management access, and description back to unconfigured.",
+          "type": "object",
+          "required": [
+            "deviceName",
+            "interface"
+          ],
+          "properties": {
+            "deviceName": {
+              "type": "string",
+              "title": "Device Name",
+              "description": "Inventory-qualified device name (Inventory::NodeName)",
+              "default": "Itential::fortigate1"
+            },
+            "interface": {
+              "type": "string",
+              "title": "Interface",
+              "description": "FortiGate interface/port name to reset",
+              "default": "port2"
+            }
+          }
+        },
+        "uiSchema": {
+          "deviceName": {
+            "ui:placeholder": "Enter device name"
+          },
+          "interface": {
+            "ui:placeholder": "Enter interface"
+          },
+          "ui:order": [
+            "deviceName",
+            "interface",
+            "*"
+          ]
+        },
+        "bindingSchema": {},
+        "validationSchema": {},
+        "version": "2020.1"
+      }
+    },
+    {
+      "iid": 14,
+      "type": "workflow",
+      "reference": "31dbbb0a-5fff-4b5e-8fc0-17a844b77f5d",
+      "folder": "/Interface Configuration",
+      "document": {
+        "name": "FortiGate - Delete Interface Configuration",
+        "description": "Resets a FortiGate interface's IP, allowed management access, and description back to unconfigured, with dry-run approval.",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "f001": {
+            "name": "ShowJsonForm",
+            "canvasName": "ShowJsonForm",
+            "summary": "Collect Inputs",
+            "description": "Presents the input form to the operator and collects the submitted values",
+            "location": "Application",
+            "locationType": null,
+            "app": "JsonForms",
+            "type": "manual",
+            "displayName": "JsonForms",
+            "view": "/json-forms/task/ShowJsonForm",
+            "variables": {
+              "incoming": {
+                "form_id": "6a7d13b4230c96cc6b65fa11",
+                "instance_data": {}
+              },
+              "outgoing": {
+                "export": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 130
+            }
+          },
+          "a1a1": {
+            "name": "renderJinja2ContextWithCast",
+            "canvasName": "renderJinja2ContextWithCast",
+            "summary": "Render Inventory List",
+            "description": "Renders jinja2 Context output with data cast.",
+            "location": "Application",
+            "locationType": null,
+            "app": "TemplateBuilder",
+            "type": "automatic",
+            "displayName": "TemplateBuilder",
+            "variables": {
+              "incoming": {
+                "template": "[\n  {\n    \"inventory\": \"{{deviceName.split('::')[0]}}\",\n    \"nodeNames\": [\n      \"{{deviceName.split('::')[1]}}\"\n    ]\n  }\n]",
+                "variables": "$var.f001.export",
+                "castDataType": "object"
+              },
+              "outgoing": {
+                "renderedTemplate": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 260
+            }
+          },
+          "b2b2": {
+            "name": "renderJinjaTemplate",
+            "canvasName": "renderJinjaTemplate",
+            "summary": "Render Reset Config",
+            "description": "Renders the FortiGate interface reset (unset) block",
+            "location": "Application",
+            "locationType": null,
+            "app": "TemplateBuilder",
+            "type": "automatic",
+            "displayName": "TemplateBuilder",
+            "variables": {
+              "incoming": {
+                "name": "@6d97b1626debcbf68608a50d: FortiGate Interface Delete",
+                "context": "$var.f001.export"
+              },
+              "outgoing": {
+                "renderedTemplate": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 390
+            }
+          },
+          "c3c3": {
+            "name": "ViewData",
+            "canvasName": "ViewData",
+            "summary": "Review Reset",
+            "description": "Manual approval gate before resetting the interface",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "manual",
+            "displayName": "WorkFlowEngine",
+            "view": "/workflow_engine/task/ViewData",
+            "variables": {
+              "incoming": {
+                "header": "Review FortiGate Interface Reset",
+                "message": "Review the config below before resetting the interface to unconfigured.",
+                "body": "$var.b2b2.renderedTemplate#/renderedTemplate",
+                "variables": {},
+                "btn_success": "Approve & Reset",
+                "btn_failure": "Reject"
+              },
+              "outgoing": {},
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 520
+            }
+          },
+          "d4d4": {
+            "name": "newVariable",
+            "canvasName": "newVariable",
+            "summary": "Mark Rejected",
+            "description": "Records that the operator rejected the reset",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "name": "taskStatus",
+                "value": "rejected"
+              },
+              "outgoing": {
+                "value": "$var.job.taskStatus"
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 300,
+              "y": 520
+            }
+          },
+          "e5e5": {
+            "name": "sendConfig",
+            "canvasName": "sendConfig",
+            "summary": "Reset Configuration",
+            "description": "Sends the reset (unset) configuration to the device via Itential Gateway",
+            "location": "Application",
+            "locationType": null,
+            "app": "GatewayManager",
+            "type": "automatic",
+            "displayName": "GatewayManager",
+            "variables": {
+              "incoming": {
+                "clusterId": "cluster_1",
+                "config": "$var.b2b2.renderedTemplate#/renderedTemplate",
+                "inventory": "$var.a1a1.renderedTemplate"
+              },
+              "outgoing": {
+                "result": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 0,
+              "y": 650
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 0,
+              "y": 780
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "f001": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "f001": {
+            "a1a1": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a1a1": {
+            "b2b2": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "b2b2": {
+            "c3c3": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "c3c3": {
+            "e5e5": {
+              "type": "standard",
+              "state": "success"
+            },
+            "d4d4": {
+              "type": "standard",
+              "state": "failure"
+            }
+          },
+          "d4d4": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "e5e5": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{24}$"
+            },
+            "initiator": {
+              "type": "string"
+            },
+            "taskStatus": {
+              "type": "string"
+            }
+          }
+        },
+        "last_updated": "2026-08-13T00:47:32.210Z",
+        "last_updated_by": {
+          "provenance": "CloudAAA",
+          "username": "mike.elrom@itential.com",
+          "firstname": "Mike",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "1b032bbd-316c-479d-8fe4-18eda8e6b5f3",
+        "created": "2026-08-13T00:46:27.120Z",
+        "created_by": {
+          "provenance": "CloudAAA",
+          "username": "mike.elrom@itential.com",
+          "firstname": "Mike",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    }
+  ],
+  "folders": [
+    {
+      "nodeType": "folder",
+      "name": "Golden Configuration",
+      "children": [
+        {
+          "iid": 6,
+          "nodeType": "component"
+        },
+        {
+          "iid": 9,
+          "nodeType": "component"
+        }
+      ]
+    },
+    {
+      "nodeType": "folder",
+      "name": "Interface Configuration",
+      "children": [
+        {
+          "iid": 7,
+          "nodeType": "component"
+        },
+        {
+          "iid": 4,
+          "nodeType": "component"
+        },
+        {
+          "iid": 5,
+          "nodeType": "component"
+        },
+        {
+          "iid": 10,
+          "nodeType": "component"
+        },
+        {
+          "iid": 12,
+          "nodeType": "component"
+        },
+        {
+          "iid": 13,
+          "nodeType": "component"
+        },
+        {
+          "iid": 14,
+          "nodeType": "component"
+        }
+      ]
+    },
+    {
+      "nodeType": "folder",
+      "name": "Backup Configuration",
+      "children": [
+        {
+          "iid": 8,
+          "nodeType": "component"
+        },
+        {
+          "iid": 11,
+          "nodeType": "component"
+        }
+      ]
+    }
+  ],
+  "created": "2026-08-12T22:00:00.000Z",
+  "createdBy": {
+    "_id": "6a74d2ec429a5ac0051834b8",
+    "provenance": "CloudAAA",
+    "username": "mike.elrom@itential.com"
+  },
+  "lastUpdated": "2026-08-13T12:57:46.073Z",
+  "lastUpdatedBy": {
+    "_id": "6a74d2ec429a5ac0051834b8",
+    "provenance": "CloudAAA",
+    "username": "mike.elrom@itential.com"
+  },
+  "iid": 11,
+  "thumbnail": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAAUElEQVR42u3PQQkAAAgEsAtjAPuHMoMRfAuDFVim67UICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICFwWRWMhLW31Y8cAAAAASUVORK5CYII=",
+  "backgroundColor": "#FFFFFF",
+  "referencedComponentHashes": [
+    {
+      "type": "goldenConfig",
+      "reference": "6a7ce68cbcc938f9b48e6737",
+      "name": "FortiGate - Simple (initial)",
+      "query": {
+        "version": "initial",
+        "treeId": "6a7ce68cbcc938f9b48e6737"
+      },
+      "hash": "5bcaf2dc40d63c2ad4bc965cf98079fcf74dbeb4"
+    }
+  ]
+}
