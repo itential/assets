@@ -1,0 +1,4545 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "latest",
+    "x-vendor-api-version": "v7.8",
+    "title": "IP Fabric API",
+    "description": "IP Fabric API provides programmatic access to network discovery, inventory, and assurance data collected by the IP Fabric platform: technology tables (routing, addressing, interfaces, security, multicast, MPLS, wireless, and more), snapshot lifecycle management, and path simulation (path lookup).\n\nAuthentication: static API token in the X-API-Token header. Generate one at Settings -> API Tokens on your IP Fabric instance.\n\nIP Fabric does not publish a standalone downloadable OpenAPI file; each instance self-generates one from its own backend (via RapiDoc at /api/rapidoc). This spec was built from IP Fabric's official public Postman collection (gitlab.com/ip-fabric/integrations/postman, version v7.8) and official API reference docs (docs.ipfabric.io), cross-validated against the legacy IP Fabric Adapter's operation set to confirm coverage and catch renamed/removed endpoints (e.g. the legacy adapter's deviceDiff now maps to /tables/management/changes/devices).\n\nSource: https://gitlab.com/ip-fabric/integrations/postman, https://docs.ipfabric.io/latest/",
+    "x-itential-curated": "IP Fabric's REST API has 200+ near-identical \"tables\" endpoints (one per data category, all sharing the same columns/filters/pagination/sort request shape) plus snapshot lifecycle, path simulation, and job management. Rather than modeling all 200+ tables 1:1, this spec groups them into 32 category-and-depth operations: one per top-level path segment (aci, addressing, fhrp, interfaces, inventory, management, mpls, multicast, neighbors, networks, platforms, qos, routing, security, spanning-tree, vlan, vrf, vxlan, wireless), with a separate operation per path depth within a category where needed (most tables are 1-3 segments deep beyond the category). Each operation takes the table's remaining path segments as individual path parameters (not one embedded-slash parameter, which Itential Platform's OpenAPI adapter URL-encodes and breaks) -- covering the full tables surface through a manageable, discoverable set of operations. Adds the 12-operation snapshot lifecycle, the consolidated path-lookup (graphs) endpoint, and 3 job-control operations. Excludes appliance administration (os/*, auth/*, settings/*, users/*) as out of scope for network automation, matching this repo's convention of excluding platform-admin surfaces."
+  },
+  "servers": [
+    {
+      "url": "https://HOSTNAME/api/v7.8"
+    }
+  ],
+  "security": [
+    {
+      "apiToken": []
+    }
+  ],
+  "paths": {
+    "/graphs": {
+      "post": {
+        "operationId": "pathLookup",
+        "summary": "Simulate a unicast or multicast path lookup",
+        "description": "Consolidated endpoint for all graph requests. For path simulation, set parameters.type to \"pathLookup\" and parameters.pathLookupType to \"unicast\" or \"multicast\", along with startingPoint/destinationPoint and related fields. See docs.ipfabric.io/latest/IP_Fabric_API/Path_Lookup/ for the full parameter reference.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "snapshot": {
+                    "type": "string"
+                  },
+                  "parameters": {
+                    "type": "object",
+                    "description": "Path lookup parameters. See docs.ipfabric.io/latest/IP_Fabric_API/Path_Lookup/ for the full schema.",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "pathLookup"
+                        ]
+                      },
+                      "pathLookupType": {
+                        "type": "string",
+                        "enum": [
+                          "unicast",
+                          "multicast"
+                        ]
+                      },
+                      "protocol": {
+                        "type": "string",
+                        "enum": [
+                          "tcp",
+                          "udp",
+                          "icmp"
+                        ]
+                      },
+                      "startingPoint": {
+                        "type": "string"
+                      },
+                      "destinationPoint": {
+                        "type": "string"
+                      },
+                      "groupBy": {
+                        "type": "string",
+                        "enum": [
+                          "siteName",
+                          "routingDomain",
+                          "stpDomain"
+                        ]
+                      },
+                      "networkMode": {
+                        "type": "boolean"
+                      },
+                      "securedPath": {
+                        "type": "boolean"
+                      },
+                      "ttl": {
+                        "type": "integer"
+                      },
+                      "l4Options": {
+                        "type": "object",
+                        "properties": {
+                          "srcPorts": {
+                            "type": "string"
+                          },
+                          "dstPorts": {
+                            "type": "string"
+                          },
+                          "flags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "ack",
+                                "fin",
+                                "psh",
+                                "rst",
+                                "syn",
+                                "urg"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "pathLookupType",
+                      "startingPoint",
+                      "destinationPoint"
+                    ]
+                  }
+                },
+                "required": [
+                  "parameters"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Graph data (nodes/edges) for the simulated path"
+          }
+        }
+      }
+    },
+    "/jobs/{jobId}/cancel": {
+      "post": {
+        "operationId": "cancelJob",
+        "summary": "Cancel Job",
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cancel Job"
+          }
+        }
+      }
+    },
+    "/jobs/{jobId}/download": {
+      "get": {
+        "operationId": "downloadJob",
+        "summary": "Download Job Result",
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Download Job Result"
+          }
+        }
+      }
+    },
+    "/jobs/{jobId}/stop": {
+      "post": {
+        "operationId": "stopJob",
+        "summary": "Stop Job",
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stop Job"
+          }
+        }
+      }
+    },
+    "/snapshots": {
+      "get": {
+        "operationId": "listSnapshots",
+        "summary": "List Snapshots",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List Snapshots"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createSnapshot",
+        "summary": "Create Snapshot",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Create Snapshot"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "discoveryTaskId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/snapshots/{snapshotId}": {
+      "patch": {
+        "operationId": "renameSnapshot",
+        "summary": "Rename Snapshot",
+        "parameters": [
+          {
+            "name": "snapshotId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rename Snapshot"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "note": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteSnapshot",
+        "summary": "Delete Snapshot",
+        "parameters": [
+          {
+            "name": "snapshotId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete Snapshot"
+          }
+        }
+      }
+    },
+    "/snapshots/{snapshotId}/clone": {
+      "post": {
+        "operationId": "cloneSnapshot",
+        "summary": "Clone Snapshot",
+        "parameters": [
+          {
+            "name": "snapshotId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Clone Snapshot"
+          }
+        }
+      }
+    },
+    "/snapshots/{snapshotId}/download": {
+      "get": {
+        "operationId": "downloadSnapshot",
+        "summary": "Download Snapshot",
+        "parameters": [
+          {
+            "name": "snapshotId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Download Snapshot"
+          }
+        }
+      }
+    },
+    "/snapshots/{snapshotId}/load": {
+      "post": {
+        "operationId": "loadSnapshot",
+        "summary": "Load Snapshot",
+        "parameters": [
+          {
+            "name": "snapshotId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Load Snapshot"
+          }
+        }
+      }
+    },
+    "/snapshots/{snapshotId}/lock": {
+      "post": {
+        "operationId": "lockSnapshot",
+        "summary": "Lock Snapshot",
+        "parameters": [
+          {
+            "name": "snapshotId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lock Snapshot"
+          }
+        }
+      }
+    },
+    "/snapshots/{snapshotId}/settings": {
+      "get": {
+        "operationId": "getSnapshotSettings",
+        "summary": "Get Snapshot Settings",
+        "parameters": [
+          {
+            "name": "snapshotId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get Snapshot Settings"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateSnapshotSettings",
+        "summary": "Update Snapshot Settings",
+        "parameters": [
+          {
+            "name": "snapshotId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Update Snapshot Settings"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/snapshots/{snapshotId}/unload": {
+      "post": {
+        "operationId": "unloadSnapshot",
+        "summary": "Unload Snapshot",
+        "parameters": [
+          {
+            "name": "snapshotId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Unload Snapshot"
+          }
+        }
+      }
+    },
+    "/snapshots/{snapshotId}/unlock": {
+      "post": {
+        "operationId": "unlockSnapshot",
+        "summary": "Unlock Snapshot",
+        "parameters": [
+          {
+            "name": "snapshotId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Unlock Snapshot"
+          }
+        }
+      }
+    },
+    "/tables/aci/{seg1}": {
+      "post": {
+        "operationId": "queryACITable",
+        "summary": "Query a ACI table",
+        "description": "Query a ACI table under /tables/aci/ with a 1-segment path. Known tables at this depth include: endpoints, vlan, vrf. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/aci/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ACI table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/addressing/{seg1}": {
+      "post": {
+        "operationId": "queryAddressingTable",
+        "summary": "Query a Addressing table (1-segment path)",
+        "description": "Query a Addressing table under /tables/addressing/ with a 1-segment path. Known tables at this depth include: arp, duplicate-ip, hosts, mac, managed-devs. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/addressing/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Addressing table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/addressing/{seg1}/{seg2}": {
+      "post": {
+        "operationId": "queryAddressingTable2",
+        "summary": "Query a Addressing table (2-segment path)",
+        "description": "Query a Addressing table under /tables/addressing/ with a 2-segment path. Known tables at this depth include: nat/pools, nat/rules. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/addressing/."
+          },
+          {
+            "name": "seg2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 2 of the table path after /tables/addressing/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Addressing table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/fhrp/{seg1}": {
+      "post": {
+        "operationId": "queryFHRPTable",
+        "summary": "Query a FHRP table",
+        "description": "Query a FHRP table under /tables/fhrp/ with a 1-segment path. Known tables at this depth include: balancing, glbp-forwarders, group-members, group-state, stproot-alignment. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/fhrp/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "FHRP table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/interfaces/{seg1}": {
+      "post": {
+        "operationId": "queryInterfacesTable",
+        "summary": "Query a Interfaces table (1-segment path)",
+        "description": "Query a Interfaces table under /tables/interfaces/ with a 1-segment path. Known tables at this depth include: duplex, load, mtu, switchports. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/interfaces/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Interfaces table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/interfaces/{seg1}/{seg2}": {
+      "post": {
+        "operationId": "queryInterfacesTable2",
+        "summary": "Query a Interfaces table (2-segment path)",
+        "description": "Query a Interfaces table under /tables/interfaces/ with a 2-segment path. Known tables at this depth include: drops/bidirectional, drops/bidirectional-device, drops/inbound, drops/inbound-device, drops/outbound, and others. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/interfaces/."
+          },
+          {
+            "name": "seg2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 2 of the table path after /tables/interfaces/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Interfaces table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/interfaces/{seg1}/{seg2}/{seg3}": {
+      "post": {
+        "operationId": "queryInterfacesTable3",
+        "summary": "Query a Interfaces table (3-segment path)",
+        "description": "Query a Interfaces table under /tables/interfaces/ with a 3-segment path. Known tables at this depth include: connectivity-matrix/unmanaged-neighbors/detail, connectivity-matrix/unmanaged-neighbors/summary, port-channel/balance/inbound, port-channel/balance/outbound. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/interfaces/."
+          },
+          {
+            "name": "seg2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 2 of the table path after /tables/interfaces/."
+          },
+          {
+            "name": "seg3",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 3 of the table path after /tables/interfaces/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Interfaces table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/inventory/{seg1}": {
+      "post": {
+        "operationId": "queryInventoryTable",
+        "summary": "Query a Inventory table (1-segment path)",
+        "description": "Query a Inventory table under /tables/inventory/ with a 1-segment path. Known tables at this depth include: devices, fans, interfaces, modules, phones, and others. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/inventory/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Inventory table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/inventory/{seg1}/{seg2}": {
+      "post": {
+        "operationId": "queryInventoryTable2",
+        "summary": "Query a Inventory table (2-segment path)",
+        "description": "Query a Inventory table under /tables/inventory/ with a 2-segment path. Known tables at this depth include: summary/families, summary/models, summary/platforms, summary/vendors. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/inventory/."
+          },
+          {
+            "name": "seg2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 2 of the table path after /tables/inventory/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Inventory table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/management/{seg1}": {
+      "post": {
+        "operationId": "queryManagementTable",
+        "summary": "Query a Management table (1-segment path)",
+        "description": "Query a Management table under /tables/management/ with a 1-segment path. Known tables at this depth include: changes, discovery-runs, osver-consistency, port-mirroring. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/management/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Management table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/management/{seg1}/{seg2}": {
+      "post": {
+        "operationId": "queryManagementTable2",
+        "summary": "Query a Management table (2-segment path)",
+        "description": "Query a Management table under /tables/management/ with a 2-segment path. Known tables at this depth include: changes/devices, configuration/saved, flow/overview, logging/local, logging/remote, and others. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/management/."
+          },
+          {
+            "name": "seg2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 2 of the table path after /tables/management/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Management table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/management/{seg1}/{seg2}/{seg3}": {
+      "post": {
+        "operationId": "queryManagementTable3",
+        "summary": "Query a Management table (3-segment path)",
+        "description": "Query a Management table under /tables/management/ with a 3-segment path. Known tables at this depth include: flow/netflow/collectors, flow/netflow/devices, flow/netflow/interfaces, flow/sflow/collectors, flow/sflow/devices, and others. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/management/."
+          },
+          {
+            "name": "seg2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 2 of the table path after /tables/management/."
+          },
+          {
+            "name": "seg3",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 3 of the table path after /tables/management/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Management table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/mpls/{seg1}": {
+      "post": {
+        "operationId": "queryMPLSTable",
+        "summary": "Query a MPLS table (1-segment path)",
+        "description": "Query a MPLS table under /tables/mpls/ with a 1-segment path. Known tables at this depth include: forwarding. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/mpls/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "MPLS table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/mpls/{seg1}/{seg2}": {
+      "post": {
+        "operationId": "queryMPLSTable2",
+        "summary": "Query a MPLS table (2-segment path)",
+        "description": "Query a MPLS table under /tables/mpls/ with a 2-segment path. Known tables at this depth include: l2-vpn/curcit-cross-connect, l2-vpn/point-to-multipoint, l2-vpn/point-to-point-vpws, l2-vpn/pseudowires, l3-vpn/pe-routers, and others. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/mpls/."
+          },
+          {
+            "name": "seg2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 2 of the table path after /tables/mpls/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "MPLS table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/multicast/{seg1}": {
+      "post": {
+        "operationId": "queryMulticastTable",
+        "summary": "Query a Multicast table (1-segment path)",
+        "description": "Query a Multicast table under /tables/multicast/ with a 1-segment path. Known tables at this depth include: mac. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/multicast/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Multicast table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/multicast/{seg1}/{seg2}": {
+      "post": {
+        "operationId": "queryMulticastTable2",
+        "summary": "Query a Multicast table (2-segment path)",
+        "description": "Query a Multicast table under /tables/multicast/ with a 2-segment path. Known tables at this depth include: igmp/groups, igmp/interfaces, pim/interfaces, pim/neighbors, routes/counters, and others. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/multicast/."
+          },
+          {
+            "name": "seg2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 2 of the table path after /tables/multicast/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Multicast table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/multicast/{seg1}/{seg2}/{seg3}": {
+      "post": {
+        "operationId": "queryMulticastTable3",
+        "summary": "Query a Multicast table (3-segment path)",
+        "description": "Query a Multicast table under /tables/multicast/ with a 3-segment path. Known tables at this depth include: igmp/snooping/global, igmp/snooping/groups, igmp/snooping/vlans, pim/rp/bsr, pim/rp/mappings, and others. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/multicast/."
+          },
+          {
+            "name": "seg2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 2 of the table path after /tables/multicast/."
+          },
+          {
+            "name": "seg3",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 3 of the table path after /tables/multicast/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Multicast table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/neighbors/{seg1}": {
+      "post": {
+        "operationId": "queryNeighborsTable",
+        "summary": "Query a Neighbors table",
+        "description": "Query a Neighbors table under /tables/neighbors/ with a 1-segment path. Known tables at this depth include: all, unidirectional, unmanaged. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/neighbors/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Neighbors table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/networks/{seg1}": {
+      "post": {
+        "operationId": "queryNetworksTable",
+        "summary": "Query a Networks table (1-segment path)",
+        "description": "Query a Networks table under /tables/networks/ with a 1-segment path. Known tables at this depth include: domain, path-lookup-checks, route-stability, routes. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/networks/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Networks table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/networks/{seg1}/{seg2}/{seg3}": {
+      "post": {
+        "operationId": "queryNetworksTable3",
+        "summary": "Query a Networks table (3-segment path)",
+        "description": "Query a Networks table under /tables/networks/ with a 3-segment path. Known tables at this depth include: summary/protocols/bgp, summary/protocols/isis, summary/protocols/ospf, summary/protocols/ospfv3. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/networks/."
+          },
+          {
+            "name": "seg2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 2 of the table path after /tables/networks/."
+          },
+          {
+            "name": "seg3",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 3 of the table path after /tables/networks/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Networks table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/platforms/{seg1}": {
+      "post": {
+        "operationId": "queryPlatformsTable",
+        "summary": "Query a Platforms table (1-segment path)",
+        "description": "Query a Platforms table under /tables/platforms/ with a 1-segment path. Known tables at this depth include: stack. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/platforms/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Platforms table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/platforms/{seg1}/{seg2}": {
+      "post": {
+        "operationId": "queryPlatformsTable2",
+        "summary": "Query a Platforms table (2-segment path)",
+        "description": "Query a Platforms table under /tables/platforms/ with a 2-segment path. Known tables at this depth include: cluster/srx, fex/interfaces, fex/modules, poe/devices, poe/interfaces, and others. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/platforms/."
+          },
+          {
+            "name": "seg2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 2 of the table path after /tables/platforms/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Platforms table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/qos/{seg1}": {
+      "post": {
+        "operationId": "queryQoSTable",
+        "summary": "Query a QoS table",
+        "description": "Query a QoS table under /tables/qos/ with a 1-segment path. Known tables at this depth include: marking, policing, policy-maps, priority-queuing, queuing, and others. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/qos/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "QoS table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/routing/{seg1}/{seg2}/{seg3}": {
+      "post": {
+        "operationId": "queryRoutingTable3",
+        "summary": "Query a Routing table",
+        "description": "Query a Routing table under /tables/routing/ with a 3-segment path. Known tables at this depth include: protocols/bgp/address-families, protocols/bgp/neighbors, protocols/eigrp/interfaces, protocols/eigrp/neighbors, protocols/is-is/interfaces, and others. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/routing/."
+          },
+          {
+            "name": "seg2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 2 of the table path after /tables/routing/."
+          },
+          {
+            "name": "seg3",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 3 of the table path after /tables/routing/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Routing table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/security/{seg1}": {
+      "post": {
+        "operationId": "querySecurityTable",
+        "summary": "Query a Security table (1-segment path)",
+        "description": "Query a Security table under /tables/security/ with a 1-segment path. Known tables at this depth include: dmvpn, enabled-telnet. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/security/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Security table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/security/{seg1}/{seg2}": {
+      "post": {
+        "operationId": "querySecurityTable2",
+        "summary": "Query a Security table (2-segment path)",
+        "description": "Query a Security table under /tables/security/ with a 2-segment path. Known tables at this depth include: aaa/accounting, aaa/authentication, aaa/authorization, aaa/lines, aaa/servers, and others. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/security/."
+          },
+          {
+            "name": "seg2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 2 of the table path after /tables/security/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Security table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/spanning-tree/{seg1}": {
+      "post": {
+        "operationId": "querySpanningTreeTable",
+        "summary": "Query a Spanning Tree table (1-segment path)",
+        "description": "Query a Spanning Tree table under /tables/spanning-tree/ with a 1-segment path. Known tables at this depth include: bridges, guards, instances, neighbors, ports, and others. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/spanning-tree/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Spanning Tree table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/spanning-tree/{seg1}/{seg2}": {
+      "post": {
+        "operationId": "querySpanningTreeTable2",
+        "summary": "Query a Spanning Tree table (2-segment path)",
+        "description": "Query a Spanning Tree table under /tables/spanning-tree/ with a 2-segment path. Known tables at this depth include: inconsistencies/multiple-stp, inconsistencies/neighbor-ports-vlan-mismatch, inconsistencies/ports-multiple-neighbors, inconsistencies/stp-cdp-ports-mismatch. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/spanning-tree/."
+          },
+          {
+            "name": "seg2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 2 of the table path after /tables/spanning-tree/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Spanning Tree table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/vlan/{seg1}": {
+      "post": {
+        "operationId": "queryVLANTable",
+        "summary": "Query a VLAN table",
+        "description": "Query a VLAN table under /tables/vlan/ with a 1-segment path. Known tables at this depth include: device, device-summary, l3-gateways, network-summary, site-summary. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/vlan/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "VLAN table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/vrf/{seg1}": {
+      "post": {
+        "operationId": "queryVRFTable",
+        "summary": "Query a VRF table",
+        "description": "Query a VRF table under /tables/vrf/ with a 1-segment path. Known tables at this depth include: detail, interfaces, summary. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/vrf/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "VRF table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/vxlan/{seg1}": {
+      "post": {
+        "operationId": "queryVXLANTable",
+        "summary": "Query a VXLAN table",
+        "description": "Query a VXLAN table under /tables/vxlan/ with a 1-segment path. Known tables at this depth include: interfaces, peers, vni, vtep. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/vxlan/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "VXLAN table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tables/wireless/{seg1}": {
+      "post": {
+        "operationId": "queryWirelessTable",
+        "summary": "Query a Wireless table",
+        "description": "Query a Wireless table under /tables/wireless/ with a 1-segment path. Known tables at this depth include: access-points, clients, controllers, radio, ssid-summary. See docs.ipfabric.io for the full table reference and valid columns per table.",
+        "parameters": [
+          {
+            "name": "seg1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Segment 1 of the table path after /tables/wireless/."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Column names to return. Valid values vary per table; see the IP Fabric API reference for the specific table."
+                  },
+                  "filters": {
+                    "type": "object",
+                    "description": "Column filter expressions, e.g. {\"hostname\": [\"eq\", \"value\"]}."
+                  },
+                  "attributeFilters": {
+                    "type": "object",
+                    "description": "Attribute-based filters, e.g. {\"siteName\": [\"SiteName\"]}."
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "integer"
+                      },
+                      "limit": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "sort": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    }
+                  },
+                  "snapshot": {
+                    "type": "string",
+                    "description": "Snapshot ID, or \"$last\"/\"$prev\"/\"$lastLocked\"."
+                  },
+                  "reports": {
+                    "type": "string",
+                    "description": "GUI report path this table corresponds to, for reference (optional)."
+                  }
+                },
+                "required": [
+                  "columns"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Wireless table data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_meta": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "snapshot": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiToken": {
+        "type": "apiKey",
+        "name": "X-API-Token",
+        "in": "header"
+      }
+    }
+  }
+}
