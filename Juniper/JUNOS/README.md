@@ -8,20 +8,22 @@ This project provides a NETCONF-based device driver, a Studio Project covering s
 
 ## Table of Contents
 
-- [Contents](#contents)
-- [Inventory Manager Configuration](#inventory-manager-configuration)
-  - [Action Configuration](#action-configuration)
-  - [Node Attributes](#node-attributes)
-- [Device Drivers](#device-drivers)
-  - [netconf-python](#netconf-python)
-- [Projects](#projects)
-  - [Juniper JUNOS](#juniper-junos-1)
-- [Configuration Parsers](#configuration-parsers)
-  - [juniper-junos-set](#juniper-junos-set)
-- [Golden Configurations](#golden-configurations)
-  - [Juniper JUNOS set](#juniper-junos-set-1)
-  - [Juniper JUNOS text - Jinja2](#juniper-junos-text---jinja2)
-  - [Juniper JUNOS text - Simple](#juniper-junos-text---simple)
+- [Juniper JUNOS](#juniper-junos)
+  - [Table of Contents](#table-of-contents)
+  - [Contents](#contents)
+  - [Inventory Manager Configuration](#inventory-manager-configuration)
+    - [Action Configuration](#action-configuration)
+    - [Node Attributes](#node-attributes)
+  - [Device Drivers](#device-drivers)
+    - [netconf-python](#netconf-python)
+  - [Projects](#projects)
+    - [Juniper JUNOS](#juniper-junos-1)
+  - [Configuration Parsers](#configuration-parsers)
+    - [juniper-junos-set](#juniper-junos-set)
+  - [Golden Configurations](#golden-configurations)
+    - [Juniper JUNOS set](#juniper-junos-set-1)
+    - [Juniper JUNOS text - Jinja2](#juniper-junos-text---jinja2)
+    - [Juniper JUNOS text - Simple](#juniper-junos-text---simple)
 
 ## Contents
 
@@ -159,7 +161,7 @@ Or copy the `services` and `decorators` blocks from
 **Registered services:**
 
 Four services implement the IG5 device broker input/output contracts and are called
-directly by the gateway adapter (is-alive checks, Config Manager remediation, etc.):
+directly by the device broker (is-alive checks, Config Manager remediation, etc.):
 
 | Service | Broker contract | Notes |
 |---|---|---|
