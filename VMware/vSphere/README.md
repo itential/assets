@@ -1,8 +1,8 @@
 # vSphere
 
-VMware vSphere is VMware's virtualization platform for datacenter and cloud infrastructure, built on the ESXi hypervisor and vCenter Server. vCenter Server provides centralized management of hosts, clusters, virtual machines, datastores, and networking across an environment, and exposes the vSphere Automation API — a REST interface — for programmatic access to that inventory.
+VMware vSphere is VMware's virtualization platform for datacenter and cloud infrastructure, built on the ESXi hypervisor and vCenter Server. vCenter Server provides centralized management of hosts, clusters, virtual machines, datastores, and networking across an environment, and exposes two generations of REST API for programmatic access to that inventory: the legacy `/rest` API (vSphere 6.5+) and the modern `/api`-based **vSphere Automation API** (7.0 U2+, Broadcom's current official name and recommended direction — `/rest` is deprecated, though still functional). This repo provides both, as two independent Integration Models and Studio Projects — see **Choosing /rest vs /api** below.
 
-This project provides a Studio Project of workflows covering the vCenter REST API operations most useful for infrastructure automation — so you don't have to dig through the full API surface to find them — plus OpenAPI specs for building your own automation via an Integration Model. See **Studio Projects** and **OpenAPIs** below.
+This project provides Studio Projects of workflows covering the vCenter REST API operations most useful for infrastructure automation — so you don't have to dig through the full API surface to find them — plus OpenAPI specs for building your own automation via an Integration Model. See **Studio Projects** and **OpenAPIs** below.
 
 ## Table of Contents
 
@@ -10,39 +10,60 @@ This project provides a Studio Project of workflows covering the vCenter REST AP
   - [Table of Contents](#table-of-contents)
   - [Contents](#contents)
   - [Requirements](#requirements)
-  - [Integration Configuration](#integration-configuration)
+  - [Choosing /rest vs /api](#choosing-rest-vs-api)
+  - [Integration Configuration — VMware vSphere vCenter (/rest)](#integration-configuration--vmware-vsphere-vcenter-rest)
     - [Connection Properties](#connection-properties)
     - [Session Authentication](#session-authentication)
     - [Generating the Basic Auth Header](#generating-the-basic-auth-header)
+  - [Integration Configuration — VMware vSphere Automation (/api)](#integration-configuration--vmware-vsphere-automation-api)
+    - [Connection Properties](#connection-properties-1)
+    - [Why /rest for Auth Bootstrap](#why-rest-for-auth-bootstrap)
   - [OpenAPIs](#openapis)
     - [`vmware_vsphere_vcenter-latest.json`](#vmware_vsphere_vcenter-latestjson)
     - [`vmware_vsphere_vcenter-2.0.0.json`](#vmware_vsphere_vcenter-200json)
+    - [`vmware_vsphere_automation-latest.json`](#vmware_vsphere_automation-latestjson)
+    - [`vmware_vsphere_automation-9.1.0.0.json`](#vmware_vsphere_automation-9100json)
   - [Studio Projects](#studio-projects)
     - [VMware vSphere vCenter Project](#vmware-vsphere-vcenter-project)
       - [Folder Structure](#folder-structure)
       - [Dependencies](#dependencies)
       - [Known Limitations](#known-limitations)
+    - [VMware vSphere Automation Project](#vmware-vsphere-automation-project)
+      - [Folder Structure](#folder-structure-1)
+      - [Dependencies](#dependencies-1)
+      - [Known Limitations](#known-limitations-1)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
-| [OpenAPIs/](./OpenAPIs/) | vCenter REST API OpenAPI specs — curated `-latest` plus the full generated spec |
-| [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing all 22 workflows in 2 folders |
+| [OpenAPIs/](./OpenAPIs/) | Two independent pairs of specs — curated `-latest` plus the full spec, for both the `/rest` and `/api` generations |
+| [Studio Projects/VMware vSphere vCenter](./Studio%20Projects/VMware%20vSphere%20vCenter.project.json) | 22 workflows on the legacy `/rest` API |
+| [Studio Projects/VMware vSphere Automation](./Studio%20Projects/VMware%20vSphere%20Automation.project.json) | The same 22 workflows, rebuilt on the modern `/api` surface |
 
 ## Requirements
 
 | Requirement | Version |
 |---|---|
 | Itential Platform | P6+ |
-| VMware vCenter Server | 7.0+ (generated against 9.1; the included VM/host/cluster/datastore operations are stable across 7.0–9.x) |
-| `VMware vSphere vCenter:latest` Integration Model | Required to build automation against the OpenAPI specs |
+| VMware vCenter Server | 6.5+ for `/rest` (7.0 U2+ if you want `/api` instead — see below) |
+| `VMware vSphere vCenter:latest` Integration Model | Required for the `/rest`-based project |
+| `VMware vSphere Automation:latest` Integration Model | Required for the `/api`-based project |
 
-> **Note:** This project does not require Itential Gateway. All API calls are made directly from Itential Platform to the vCenter REST API.
+> **Note:** Neither project requires Itential Gateway for its actual business API calls — those go directly from Itential Platform to vCenter. The `/api` project's dynamic auth retrieval, however, is routed through Gateway if your integration instance is gateway-configured (see **Why /rest for Auth Bootstrap** below) — a platform limitation in that path is why its auth bootstrap deliberately targets the `/rest` session endpoint rather than `/api/session`.
 
-## Integration Configuration
+## Choosing /rest vs /api
 
-Import one of the OpenAPI specs from `OpenAPIs/` as an Integration Model in **Admin > Integrations**, then create an integration pointing at your vCenter Server.
+Both projects cover the identical 22 workflows (inventory listing, VM lifecycle, hardware CRUD) — same automation, same scope, different transport underneath. Pick based on your vCenter version:
+
+- **Use `VMware vSphere vCenter` (`/rest`)** if your vCenter is older than 7.0 U2, or you just need the proven, already-validated option.
+- **Use `VMware vSphere Automation` (`/api`)** if your vCenter is 7.0 U2+ — it's Broadcom's current recommended direction (`/rest` is deprecated, though not yet removed), and gives access to a much larger operation surface (1300+ operations in the full spec) beyond what's curated into this project's 22 workflows, if you need to extend it yourself.
+
+**Run both in parallel** if you manage vCenters on different versions, or want both available: import both Integration Models and create two separate integration instances — `vSphere vCenter` and `vSphere Automation` — each project's workflows are wired to its own instance name, so they don't collide. The two API generations use genuinely different operations under the hood (not just different auth on the same calls), so there's no single project or instance that works interchangeably against either — you need the matching project for whichever model(s) you have imported.
+
+## Integration Configuration — VMware vSphere vCenter (/rest)
+
+Import `vmware_vsphere_vcenter-latest.json` as an Integration Model in **Admin > Integrations**, then create an integration pointing at your vCenter Server.
 
 ### Connection Properties
 
@@ -90,12 +111,57 @@ echo -n '<username>:<password>' | base64
 
 Prefix the output with `Basic ` (e.g. `Basic dXNlcjpwYXNz`) and use that full string as `parameters.Authorization` above.
 
+## Integration Configuration — VMware vSphere Automation (/api)
+
+Import `vmware_vsphere_automation-latest.json` as an Integration Model in **Admin > Integrations**, then create an integration pointing at your vCenter Server.
+
+### Connection Properties
+
+```json
+{
+  "server": {
+    "protocol": "https",
+    "host": "<vcenter-hostname-or-ip>",
+    "base_path": "/api"
+  },
+  "authentication": {
+    "sessionIdAuth": {
+      "dynamicRetrieval": {
+        "method": "POST",
+        "url": "https://<vcenter-hostname-or-ip>/rest/com/vmware/cis/session",
+        "responsePointer": "/value"
+      },
+      "parameters": {
+        "Authorization": "Basic <base64(username:password)>"
+      }
+    }
+  },
+  "tls": {
+    "enabled": true,
+    "rejectUnauthorized": false
+  },
+  "variables": {},
+  "version": "latest"
+}
+```
+
+Same session-based dynamic retrieval as the `/rest` project (see **Session Authentication** above — the idle timeout, auto-refresh-on-401, and Basic-header generation steps are identical), with two differences specific to `/api`:
+
+1. **`server.base_path` must be `/api`**, not empty. This spec's `servers.url` template (`https://{host}/api`) doesn't cleanly split into Itential Platform's `host`/`base_path` fields on its own — `host` should be the bare hostname, and `/api` goes in `base_path` explicitly, or business calls will 404 on the missing prefix.
+2. **`dynamicRetrieval.url` deliberately targets the legacy `/rest` session endpoint**, not `/api/session` — see below for why.
+
+### Why /rest for Auth Bootstrap
+
+`vmware-api-session-id` is a single, unified session token shared by both the legacy `/rest` API and the modern `/api` surface — whichever endpoint issues it, the other accepts it. This spec uses that to route around a confirmed Itential Platform bug: when a dynamic-retrieval auth request is routed through an Automation Gateway (the normal setup for cloud-hosted/trial platforms) and the target endpoint's response body is a bare JSON string rather than an object, `Gateway.js` unconditionally attempts to `JSON.parse()` an already-decoded string a second time, which throws whenever that string isn't itself valid JSON syntax (e.g. a session token starting with a digit). `/api/session`'s response is exactly that — a bare string (`type: string` in the vendor's own spec) — while `/rest/com/vmware/cis/session`'s response is an object (`{"value": "<token>"}`), which sidesteps the bug entirely (an object-typed body skips the erroneous re-parse). Confirmed live: a token minted via `/rest` works identically against `/api/*` endpoints, so bootstrapping auth through `/rest` while every actual business call still targets `/api` is a clean, permanent fix — not a workaround — for gateway-routed integrations. This is a platform-level gap, not specific to vSphere — any Integration Model with dynamic API key retrieval, routed through a Gateway, against an endpoint whose session response is a bare JSON string rather than an object, will hit the same failure. Worth checking for an object-shaped alternate auth endpoint (as this spec does) before assuming dynamic retrieval simply doesn't work.
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
-| [`vmware_vsphere_vcenter-latest.json`](./OpenAPIs/vmware_vsphere_vcenter-latest.json) | latest (curated) | 91 | Actively-maintained, trimmed to 91 of 178 upstream operations covering common CRUD for infrastructure automation — see breakdown below |
-| [`vmware_vsphere_vcenter-2.0.0.json`](./OpenAPIs/vmware_vsphere_vcenter-2.0.0.json) | 2.0.0 | 178 | Full spec generated from a live vCenter instance |
+| [`vmware_vsphere_vcenter-latest.json`](./OpenAPIs/vmware_vsphere_vcenter-latest.json) | latest (curated) | 91 | Actively-maintained, trimmed to 91 of 178 upstream `/rest` operations covering common CRUD for infrastructure automation — see breakdown below |
+| [`vmware_vsphere_vcenter-2.0.0.json`](./OpenAPIs/vmware_vsphere_vcenter-2.0.0.json) | 2.0.0 | 178 | Full `/rest` spec generated from a live vCenter instance |
+| [`vmware_vsphere_automation-latest.json`](./OpenAPIs/vmware_vsphere_automation-latest.json) | latest (curated) | 22 | Actively-maintained, trimmed to 22 of 1363 upstream `/api` operations — matches the `/rest` project's scope 1:1, see breakdown below |
+| [`vmware_vsphere_automation-9.1.0.0.json`](./OpenAPIs/vmware_vsphere_automation-9.1.0.0.json) | 9.1.0.0 | 1363 | Full `/api` spec, officially published by Broadcom |
 
 ### `vmware_vsphere_vcenter-latest.json`
 
@@ -113,9 +179,25 @@ Resources included, by category:
 
 ### `vmware_vsphere_vcenter-2.0.0.json`
 
-Full spec (178 operations), generated directly from a live vCenter 9.1 instance using VMware's [`vmware-openapi-generator`](https://github.com/vmware/vmware-openapi-generator). VMware doesn't publish a static OpenAPI/Swagger file for the vSphere Automation API, so this is captured from a running server's metamodel rather than preserved from an official vendor download — regenerate against your own vCenter if you need an exact match to a different version. See `vmware_vsphere_vcenter-latest.json` above for the curated subset if you just need common CRUD automation.
+Full spec (178 operations), generated directly from a live vCenter 9.1 instance using VMware's [`vmware-openapi-generator`](https://github.com/vmware/vmware-openapi-generator), which only picked up `/rest`-style bindings on this instance despite it being well past the `/api` cutover — see `vmware_vsphere_automation-9.1.0.0.json` below for the modern surface, which turned out to have an official published source instead of needing generation. Regenerate against your own vCenter if you need an exact `/rest` match to a different version. See `vmware_vsphere_vcenter-latest.json` above for the curated subset if you just need common CRUD automation.
 
-vSphere's REST API uses dot-notation query parameter names for list filters (e.g. `filter.names`, `filter.clusters`), which Itential Platform's naming convention doesn't allow — these optional filter parameters are omitted here too, for the same reason. See Known Limitations below.
+vSphere's `/rest` API uses dot-notation query parameter names for list filters (e.g. `filter.names`, `filter.clusters`), which Itential Platform's naming convention doesn't allow — these optional filter parameters are omitted here too, for the same reason. See Known Limitations below.
+
+### `vmware_vsphere_automation-latest.json`
+
+Actively-maintained spec (`x-vendor-api-version: 9.1.0.0`). Trimmed to 22 of 1363 upstream `/api` operations, deliberately matching the `/rest` project's scope 1:1 — same automation coverage, modern transport. The full upstream spec covers vastly more: ESX host lifecycle/settings management, Content Library, Appliance self-administration, Supervisor/Namespace Management (Kubernetes), vAPI introspection, and CIS session/task management, none of which are included here — see `vmware_vsphere_automation-9.1.0.0.json` below if you need any of that.
+
+Resources included, by category:
+
+- **Inventory**: Datacenters, Clusters, Hosts, Datastores (list + get), Networks, Folders, Resource Pools
+- **Virtual Machines**: List/get/delete, power on/off, create from Content Library template
+- **VM Hardware**: CPU and memory update, disk create/update/delete, Ethernet adapter create/update/delete
+
+Only `Vcenter.VM_list` has been individually confirmed live against a real vCenter (7.0.3) during development — the rest follow the identical incoming-field pattern Itential Platform generates for every OpenAPI operation (path parameters as flat fields, JSON request bodies as a `requestBodyPayload`/`bodyContentType` pair) and validated structurally, but haven't each been individually exercised. Worth a validation pass against your own vCenter before relying on the less-common ones (hardware CRUD, template deploy) in production.
+
+### `vmware_vsphere_automation-9.1.0.0.json`
+
+Full spec (1363 operations), sourced directly from Broadcom's official [`vmware/vcf-api-specs`](https://github.com/vmware/vcf-api-specs) GitHub repository (`specifications/vsphere/openapi/automation/vcenter.yaml`) — unlike the `/rest` spec above, this one has a genuine vendor-published source, not something generated from a live instance. Preserved as published except for the `sessionIdAuth` security scheme, which was adapted from the vendor's three alternative auth methods (`basic_auth`, `api_key_auth`, `federated_identity_auth`) down to one dynamic-retrieval scheme — see **Why /rest for Auth Bootstrap** above for why it targets the legacy `/rest` session endpoint instead of `/api/session`, and why `basic_auth`/`federated_identity_auth` aren't usable here (Basic auth only works for session bootstrap, confirmed `401` against real business endpoints; federated/SSO auth isn't expressible as an Itential securityScheme). The one operation that structurally required `federated_identity_auth` (`Vcenter.Authentication.Token_issue`) and the `/session` path itself (absorbed into the security scheme) are excluded from both this file and the curated one, for the same reason.
 
 ---
 
@@ -139,9 +221,33 @@ CRUD is only built out where vCenter's REST API actually supports it. Inventory 
 | Dependency | Notes |
 |---|---|
 | `VMware vSphere vCenter:latest` Integration Model | Import from [`vmware_vsphere_vcenter-latest.json`](./OpenAPIs/vmware_vsphere_vcenter-latest.json) before importing the project |
-| `vSphere` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `vSphere` — update the `adapter_id` value in each workflow task if yours is named differently |
+| `vSphere vCenter` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `vSphere vCenter` — update the `adapter_id` value in each workflow task if yours is named differently. Named to distinguish it from the `/api` project's `vSphere Automation` instance if running both in parallel — see **Choosing /rest vs /api** above |
 
 #### Known Limitations
 
 - **No server-side filtering**: every `List` workflow returns the full unfiltered inventory. Filter client-side if you need a subset.
 - **No cluster/host/resource-pool capacity data**: vCenter's REST API doesn't expose CPU or memory utilization for clusters, hosts, or resource pools — that data lives in the older SOAP-based Performance Manager API, which isn't part of this Integration Model. `Get Datastore` is the only workflow with a real capacity number (`free_space`); there's no equivalent for compute capacity.
+
+### VMware vSphere Automation Project
+
+Backed by the **`VMware vSphere Automation:latest`** Integration Model (see [`vmware_vsphere_automation-latest.json`](./OpenAPIs/vmware_vsphere_automation-latest.json) above). The project contains the same **22 workflows** in the same **2 folders** as the `/rest` project above, rebuilt on the modern `/api` operations — same names, same scope, same `<Operation> <Resource>` convention, so migrating between the two (or running both side by side) doesn't change how you think about the automation, only which Integration Model and instance backs it.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Inventory | List Clusters, List Hosts, List Datastores, List Networks, List Folders, List Resource Pools, List Datacenters, Get Datastore | Read-only inventory lookups |
+| Virtual Machines | List Virtual Machines, Get Virtual Machine, Create Virtual Machine (from Template), Update Virtual Machine CPU, Update Virtual Machine Memory, Add/Update/Delete Virtual Machine Disk, Add/Update/Delete Virtual Machine Network Adapter, Power On/Off Virtual Machine, Delete Virtual Machine | Full VM lifecycle |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `VMware vSphere Automation:latest` Integration Model | Import from [`vmware_vsphere_automation-latest.json`](./OpenAPIs/vmware_vsphere_automation-latest.json) before importing the project |
+| `vSphere Automation` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `vSphere Automation` — update the `adapter_id` value in each workflow task if yours is named differently. Named to run in parallel alongside the `/rest` project's `vSphere vCenter` instance without colliding |
+
+#### Known Limitations
+
+- **Only `List Virtual Machines` has been individually live-tested** against a real vCenter (7.0.3) — see the `vmware_vsphere_automation-latest.json` spec section above. The rest follow the same platform-generated task pattern but haven't each been individually exercised; validate against your own vCenter before relying on the less-common workflows (hardware CRUD, template deploy) in production.
+- **No server-side filtering**: every `List` workflow returns the full unfiltered inventory, same as the `/rest` project.
+- **No cluster/host/resource-pool capacity data**: same gap as `/rest` — that data lives outside both REST API generations, in the older SOAP-based Performance Manager API.
