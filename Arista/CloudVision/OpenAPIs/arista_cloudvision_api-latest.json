@@ -1,0 +1,1294 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "latest",
+    "x-vendor-api-version": "CloudVision Resource APIs (workspace.v1, studio.v1, changecontrol.v1)",
+    "title": "Arista CloudVision",
+    "description": "Arista CloudVision-as-a-Service (CVaaS) Resource APIs for the modern Workspace/Studio provisioning model: create a workspace, push configuration into a Studio (e.g. the Static Configlet Studio), build and validate the workspace, submit it (which creates a Change Control), then approve and execute that Change Control.\n\nAuthentication: bearer service-account token. Send Authorization: Bearer <token> on every request.\n\nCloudVision's Resource APIs are gRPC-native; this spec describes Arista's own generated REST/JSON gateway over those same services (introduced in CVP 2021.1.0, still actively maintained), converted from the vendor's published Swagger 2.0 documents to OpenAPI 3.0.\n\nSource: https://github.com/aristanetworks/cloudvision-apis",
+    "x-itential-curated": "Scoped to exactly the resources needed for the Workspace/Studio/Change Control provisioning flow: Workspace config and status, workspace build status (overall and per-device), Studio input configuration, and Change Control config/status/approval -- 15 operations across 3 of CloudVision's many resource packages. Deliberately excludes: every other studio.v1 resource (AssignedTags, AutofillAction, SecretInput, Studio/StudioConfig, StudioSummary) and changecontrol.v1's ChangeControlSummary, since they aren't part of this flow; the \"list all\" (GetAll) and \"get several\" (GetSome) operations on every resource, since those are long-lived streaming (chunked NDJSON) responses rather than a single JSON object and don't fit a request/response workflow task; and the dozens of other CloudVision resource packages (inventory, tags, image, telemetry, etc.) entirely, since they're outside this workflow. Several nested vendor structures (build diagnostics, change control stages) are preserved as opaque objects rather than fully typed, since they're deep, vendor-internal detail not needed to drive this flow -- the top-level state/status fields that matter (BuildState, ChangeControlStatus, etc.) are fully typed enums."
+  },
+  "servers": [
+    {
+      "url": "https://CVAAS-TENANT-HOST",
+      "description": "Per-tenant CVaaS host, e.g. www.cv-prod-us-central1-b.arista.io -- replace with your tenant's host."
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/resources/changecontrol/v1/ApproveConfig": {
+      "post": {
+        "operationId": "changeControl_SetApproval",
+        "summary": "Approve (or unapprove) a Change Control. Requires version to be set to the Change Control's current change.time (from changeControl_Get) when approving.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApproveConfigResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApproveConfig"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/resources/changecontrol/v1/ChangeControl": {
+      "get": {
+        "operationId": "changeControl_Get",
+        "summary": "Get a Change Control's full status -- approval, execution status, devices, and change/stage detail",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeControlResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.id",
+            "in": "query",
+            "required": true,
+            "description": "ID of the Change Control.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/changecontrol/v1/ChangeControlConfig": {
+      "post": {
+        "operationId": "changeControl_Set",
+        "summary": "Create/update a Change Control, or flag it to start/stop/schedule execution",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeControlConfigResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeControlConfig"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "changeControl_GetConfig",
+        "summary": "Get a Change Control's configuration",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeControlConfigResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.id",
+            "in": "query",
+            "required": true,
+            "description": "ID of the Change Control.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "changeControl_Delete",
+        "summary": "Delete a Change Control",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeControlConfigDeleteResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.id",
+            "in": "query",
+            "required": true,
+            "description": "ID of the Change Control.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/studio/v1/Inputs": {
+      "get": {
+        "operationId": "studio_GetResolvedInputs",
+        "summary": "Get the resolved input value at a path in a studio",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InputsResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.studioId",
+            "in": "query",
+            "required": true,
+            "description": "ID of the studio.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.workspaceId",
+            "in": "query",
+            "required": true,
+            "description": "ID of the workspace the studio inputs live in.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.path.values",
+            "in": "query",
+            "required": false,
+            "description": "Path segments to the input field.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/studio/v1/InputsConfig": {
+      "post": {
+        "operationId": "studio_SetInputs",
+        "summary": "Set a studio's input value at a path, e.g. push configuration into the Static Configlet Studio",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InputsConfigResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InputsConfig"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "studio_GetInputsConfig",
+        "summary": "Get the configured input value at a path in a studio",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InputsConfigResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.studioId",
+            "in": "query",
+            "required": true,
+            "description": "ID of the studio.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.workspaceId",
+            "in": "query",
+            "required": true,
+            "description": "ID of the workspace the studio inputs live in.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.path.values",
+            "in": "query",
+            "required": false,
+            "description": "Path segments to the input field.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "studio_DeleteInputs",
+        "summary": "Remove a studio's input value at a path",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InputsConfigDeleteResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.studioId",
+            "in": "query",
+            "required": true,
+            "description": "ID of the studio.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.workspaceId",
+            "in": "query",
+            "required": true,
+            "description": "ID of the workspace the studio inputs live in.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.path.values",
+            "in": "query",
+            "required": false,
+            "description": "Path segments to the input field.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/workspace/v1/Workspace": {
+      "get": {
+        "operationId": "workspace_GetStatus",
+        "summary": "Get a workspace's status -- state, build/submit request responses, and any Change Control IDs created on submit",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.workspaceId",
+            "in": "query",
+            "required": true,
+            "description": "Unique ID of the workspace.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/workspace/v1/WorkspaceBuild": {
+      "get": {
+        "operationId": "workspace_GetBuild",
+        "summary": "Get the overall status of a workspace build",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceBuildResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.workspaceId",
+            "in": "query",
+            "required": true,
+            "description": "ID of the workspace.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.buildId",
+            "in": "query",
+            "required": true,
+            "description": "ID of the build (Workspace.lastBuildId).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/workspace/v1/WorkspaceBuildDetails": {
+      "get": {
+        "operationId": "workspace_GetBuildDetails",
+        "summary": "Get per-device, per-stage build/validation detail for a workspace build",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceBuildDetailsResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.workspaceId",
+            "in": "query",
+            "required": true,
+            "description": "ID of the workspace.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.buildId",
+            "in": "query",
+            "required": true,
+            "description": "ID of the build (Workspace.lastBuildId).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.deviceId",
+            "in": "query",
+            "required": true,
+            "description": "ID of the device.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/workspace/v1/WorkspaceConfig": {
+      "post": {
+        "operationId": "workspace_Set",
+        "summary": "Create/update a workspace, or kick off an async request (build, submit, etc.) on it via the request field",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceConfigResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkspaceConfig"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "workspace_Get",
+        "summary": "Get a workspace's configuration",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceConfigResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.workspaceId",
+            "in": "query",
+            "required": true,
+            "description": "Unique ID of the workspace.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "workspace_Delete",
+        "summary": "Delete a workspace",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceConfigDeleteResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.workspaceId",
+            "in": "query",
+            "required": true,
+            "description": "Unique ID of the workspace.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "StringList": {
+        "type": "object",
+        "properties": {
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "WorkspaceKey": {
+        "type": "object",
+        "properties": {
+          "workspaceId": {
+            "type": "string",
+            "description": "Unique ID of the workspace."
+          }
+        },
+        "required": [
+          "workspaceId"
+        ]
+      },
+      "WorkspaceRequest": {
+        "type": "string",
+        "enum": [
+          "REQUEST_UNSPECIFIED",
+          "REQUEST_START_BUILD",
+          "REQUEST_CANCEL_BUILD",
+          "REQUEST_SUBMIT",
+          "REQUEST_ABANDON",
+          "REQUEST_ROLLBACK",
+          "REQUEST_SUBMIT_FORCE",
+          "REQUEST_REBASE"
+        ],
+        "description": "Asynchronous operation to kick off on the workspace. REQUEST_START_BUILD compiles and validates the workspace's changes (this single call covers build and validate). REQUEST_SUBMIT submits the workspace to the mainline, creating Change Controls as needed."
+      },
+      "WorkspaceRequestParams": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "Unique ID of this request, used to look up its Response in Workspace.responses."
+          }
+        }
+      },
+      "WorkspaceConfig": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/WorkspaceKey"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "User-defined name of the workspace."
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of the workspace."
+          },
+          "request": {
+            "$ref": "#/components/schemas/WorkspaceRequest",
+            "description": "Set to kick off an asynchronous operation (build, submit, etc.) on the workspace."
+          },
+          "requestParams": {
+            "$ref": "#/components/schemas/WorkspaceRequestParams"
+          },
+          "excludeNetworkProvisioning": {
+            "type": "boolean",
+            "description": "Used only during Network-Provisioning-to-Studios migration; leave unset otherwise."
+          }
+        },
+        "required": [
+          "key"
+        ]
+      },
+      "WorkspaceConfigResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/WorkspaceConfig"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "WorkspaceConfigDeleteResponse": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/WorkspaceKey"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "WorkspaceState": {
+        "type": "string",
+        "enum": [
+          "WORKSPACE_STATE_UNSPECIFIED",
+          "WORKSPACE_STATE_PENDING",
+          "WORKSPACE_STATE_SUBMITTED",
+          "WORKSPACE_STATE_ABANDONED",
+          "WORKSPACE_STATE_CONFLICTS",
+          "WORKSPACE_STATE_ROLLED_BACK"
+        ]
+      },
+      "ResponseStatus": {
+        "type": "string",
+        "enum": [
+          "RESPONSE_STATUS_UNSPECIFIED",
+          "RESPONSE_STATUS_SUCCESS",
+          "RESPONSE_STATUS_FAIL"
+        ]
+      },
+      "ResponseCode": {
+        "type": "string",
+        "enum": [
+          "RESPONSE_CODE_UNSPECIFIED",
+          "RESPONSE_CODE_INACTIVE_DEVICES_EXIST",
+          "RESPONSE_CODE_DECOMMISSION_DEVICES_INCOMPLETE",
+          "RESPONSE_CODE_SYNCHRONIZATION_REQUIRED"
+        ]
+      },
+      "WorkspaceOpResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/ResponseStatus"
+          },
+          "message": {
+            "type": "string"
+          },
+          "code": {
+            "$ref": "#/components/schemas/ResponseCode"
+          }
+        }
+      },
+      "WorkspaceResponses": {
+        "type": "object",
+        "properties": {
+          "values": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/WorkspaceOpResponse"
+            },
+            "description": "Map from request ID (see WorkspaceRequestParams.requestId) to its Response."
+          }
+        }
+      },
+      "Workspace": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/WorkspaceKey"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "lastModifiedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifiedBy": {
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/WorkspaceState"
+          },
+          "lastBuildId": {
+            "type": "string",
+            "description": "ID of the last build for this workspace -- use with workspace_GetBuild / workspace_GetBuildDetails."
+          },
+          "responses": {
+            "$ref": "#/components/schemas/WorkspaceResponses",
+            "description": "Responses for every request executed so far on this workspace; check the entry keyed by your requestId to see if a build/submit succeeded."
+          },
+          "ccIds": {
+            "$ref": "#/components/schemas/StringList",
+            "description": "Change Control IDs created as a result of submitting this workspace."
+          },
+          "needsBuild": {
+            "type": "boolean"
+          },
+          "lastRebasedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "needsRebase": {
+            "type": "boolean"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "excludeNetworkProvisioning": {
+            "type": "boolean"
+          },
+          "decommissionRequestIds": {
+            "type": "object",
+            "description": "Map of device ID to decommission request UUID, for devices staged for decommission in this workspace."
+          }
+        }
+      },
+      "WorkspaceResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/Workspace"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "WorkspaceBuildKey": {
+        "type": "object",
+        "properties": {
+          "workspaceId": {
+            "type": "string"
+          },
+          "buildId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspaceId",
+          "buildId"
+        ]
+      },
+      "BuildState": {
+        "type": "string",
+        "enum": [
+          "BUILD_STATE_UNSPECIFIED",
+          "BUILD_STATE_IN_PROGRESS",
+          "BUILD_STATE_CANCELED",
+          "BUILD_STATE_SUCCESS",
+          "BUILD_STATE_FAIL",
+          "BUILD_STATE_SKIPPED"
+        ]
+      },
+      "WorkspaceBuild": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/WorkspaceBuildKey"
+          },
+          "state": {
+            "$ref": "#/components/schemas/BuildState",
+            "description": "Overall build execution status -- BUILD_STATE_SUCCESS means the workspace built and validated cleanly."
+          },
+          "error": {
+            "type": "string",
+            "description": "Set if the build failed early, before per-device results were computed."
+          },
+          "builtBy": {
+            "type": "string"
+          },
+          "authzResult": {
+            "type": "object",
+            "description": "Authorization check result; vendor-defined nested structure preserved as-is."
+          },
+          "studioBuildDetails": {
+            "type": "object",
+            "description": "Per-studio build results not specific to a device; vendor-defined nested structure preserved as-is."
+          },
+          "hierarchyBuildStatus": {
+            "type": "object",
+            "description": "Hierarchy build results; vendor-defined nested structure preserved as-is."
+          }
+        }
+      },
+      "WorkspaceBuildResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/WorkspaceBuild"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "WorkspaceBuildDetailsKey": {
+        "type": "object",
+        "properties": {
+          "workspaceId": {
+            "type": "string"
+          },
+          "buildId": {
+            "type": "string"
+          },
+          "deviceId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspaceId",
+          "buildId",
+          "deviceId"
+        ]
+      },
+      "BuildStage": {
+        "type": "string",
+        "enum": [
+          "BUILD_STAGE_UNSPECIFIED",
+          "BUILD_STAGE_INPUT_VALIDATION",
+          "BUILD_STAGE_CONFIGLET_BUILD",
+          "BUILD_STAGE_CONFIG_VALIDATION",
+          "BUILD_STAGE_IMAGE_VALIDATION"
+        ]
+      },
+      "WorkspaceBuildDetails": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/WorkspaceBuildDetailsKey"
+          },
+          "state": {
+            "$ref": "#/components/schemas/BuildState"
+          },
+          "stage": {
+            "$ref": "#/components/schemas/BuildStage"
+          },
+          "inputValidationResults": {
+            "type": "object",
+            "description": "Results of the input validation stage; vendor-defined nested structure preserved as-is."
+          },
+          "configletBuildResults": {
+            "type": "object",
+            "description": "Results of the configlet build stage; vendor-defined nested structure preserved as-is."
+          },
+          "configValidationResult": {
+            "type": "object",
+            "description": "Result of the config validation stage; vendor-defined nested structure preserved as-is."
+          },
+          "imageValidationResult": {
+            "type": "object",
+            "description": "Result of the image validation stage; vendor-defined nested structure preserved as-is."
+          },
+          "configValidationSkipCause": {
+            "type": "string"
+          },
+          "imageValidationSkipCause": {
+            "type": "string"
+          },
+          "buildStageState": {
+            "type": "object",
+            "description": "State for each build stage; vendor-defined nested structure preserved as-is."
+          },
+          "authzStatus": {
+            "type": "string"
+          },
+          "configSyncResult": {
+            "type": "object",
+            "description": "Result of the config sync; vendor-defined nested structure preserved as-is."
+          },
+          "configSyncSkipCause": {
+            "type": "string"
+          }
+        }
+      },
+      "WorkspaceBuildDetailsResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/WorkspaceBuildDetails"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "InputsKey": {
+        "type": "object",
+        "properties": {
+          "studioId": {
+            "type": "string",
+            "description": "ID of the studio, e.g. \"studio-static-configlet\" for the Static Configlet Studio."
+          },
+          "workspaceId": {
+            "type": "string"
+          },
+          "path": {
+            "$ref": "#/components/schemas/StringList",
+            "description": "Path to the input field being set, e.g. [] for the studio's entire root input."
+          }
+        },
+        "required": [
+          "studioId",
+          "workspaceId",
+          "path"
+        ]
+      },
+      "InputsConfig": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/InputsKey"
+          },
+          "remove": {
+            "type": "boolean",
+            "description": "Set true to remove the inputs at this path instead of adding/setting them."
+          },
+          "inputs": {
+            "type": "string",
+            "description": "Value of the input field at this path, encoded as a JSON string."
+          }
+        },
+        "required": [
+          "key"
+        ]
+      },
+      "InputsConfigResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/InputsConfig"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "InputsConfigDeleteResponse": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/InputsKey"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Inputs": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/InputsKey"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "lastModifiedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifiedBy": {
+            "type": "string"
+          },
+          "inputs": {
+            "type": "string",
+            "description": "Resolved value of the input field at this path, as a JSON string."
+          }
+        }
+      },
+      "InputsResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/Inputs"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ChangeControlKey": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the Change Control."
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "FlagConfig": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "boolean"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "Flag": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "boolean"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user": {
+            "type": "string"
+          }
+        }
+      },
+      "TimestampFlagConfig": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Set to a timestamp to schedule, or omit/null to unschedule."
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "TimestampFlag": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user": {
+            "type": "string"
+          }
+        }
+      },
+      "ChangeConfig": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "rootStageId": {
+            "type": "string",
+            "description": "ID of the root stage, i.e. the stage that executes first."
+          },
+          "stages": {
+            "type": "object",
+            "description": "Map of stage ID to stage configuration; vendor-defined nested structure preserved as-is."
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "Change": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "rootStageId": {
+            "type": "string"
+          },
+          "stages": {
+            "type": "object",
+            "description": "Map of stage ID to stage configuration and status; vendor-defined nested structure preserved as-is."
+          },
+          "notes": {
+            "type": "string"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user": {
+            "type": "string"
+          }
+        }
+      },
+      "ChangeControlStatus": {
+        "type": "string",
+        "enum": [
+          "CHANGE_CONTROL_STATUS_UNSPECIFIED",
+          "CHANGE_CONTROL_STATUS_RUNNING",
+          "CHANGE_CONTROL_STATUS_COMPLETED",
+          "CHANGE_CONTROL_STATUS_SCHEDULED",
+          "CHANGE_CONTROL_STATUS_NOT_STARTED"
+        ]
+      },
+      "ChangeControlConfig": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/ChangeControlKey"
+          },
+          "change": {
+            "$ref": "#/components/schemas/ChangeConfig"
+          },
+          "start": {
+            "$ref": "#/components/schemas/FlagConfig",
+            "description": "Set start.value=true to execute the Change Control, false to stop it."
+          },
+          "schedule": {
+            "$ref": "#/components/schemas/TimestampFlagConfig",
+            "description": "Set schedule.value to a timestamp to schedule execution."
+          }
+        },
+        "required": [
+          "key"
+        ]
+      },
+      "ChangeControlConfigResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/ChangeControlConfig"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ChangeControlConfigDeleteResponse": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/ChangeControlKey"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ChangeControl": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/ChangeControlKey"
+          },
+          "change": {
+            "$ref": "#/components/schemas/Change"
+          },
+          "approve": {
+            "$ref": "#/components/schemas/Flag",
+            "description": "Whether the Change Control has been approved."
+          },
+          "start": {
+            "$ref": "#/components/schemas/Flag",
+            "description": "Whether the Change Control has been flagged to start/stop execution."
+          },
+          "status": {
+            "$ref": "#/components/schemas/ChangeControlStatus"
+          },
+          "error": {
+            "type": "string",
+            "description": "Error from execution, if any. No error implies success once status is COMPLETED."
+          },
+          "schedule": {
+            "$ref": "#/components/schemas/TimestampFlag"
+          },
+          "deviceIds": {
+            "$ref": "#/components/schemas/StringList",
+            "description": "Device IDs this Change Control operates on."
+          },
+          "deviceIdToStageIds": {
+            "type": "object",
+            "description": "Map of device ID to the stages that apply to it; vendor-defined nested structure preserved as-is."
+          },
+          "creation": {
+            "type": "object",
+            "description": "Who/when created this Change Control; vendor-defined nested structure preserved as-is."
+          }
+        }
+      },
+      "ChangeControlResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/ChangeControl"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ApproveConfig": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/ChangeControlKey"
+          },
+          "approve": {
+            "$ref": "#/components/schemas/FlagConfig",
+            "description": "Set approve.value=true to approve, false to unapprove."
+          },
+          "version": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of the Change Control being approved (from changeControl_Get's change.time), required when approve.value=true -- guards against approving a stale/updated Change Control."
+          },
+          "overrideReason": {
+            "type": "object",
+            "description": "User-provided reason to override Change Control validation, if applicable."
+          }
+        },
+        "required": [
+          "key"
+        ]
+      },
+      "ApproveConfigResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/ApproveConfig"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Service-account bearer token. Value format: \"Bearer <token>\". Generate a service account and token in CVaaS under Settings > Service Accounts."
+      }
+    }
+  }
+}
