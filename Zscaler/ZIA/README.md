@@ -27,7 +27,7 @@ This project provides OpenAPI specs for automating against ZIA's REST API via an
 | Requirement | Version |
 |---|---|
 | Itential Platform | 6.x |
-| `Zscaler Internet Access (ZIA) API:latest` Integration Model | Required to build automation against the OpenAPI spec, and to run the Studio Project below |
+| `Zscaler Internet Access:latest` Integration Model | Required to build automation against the OpenAPI spec, and to run the Studio Project below |
 | Zscaler OneAPI access enabled for your organization | Required — not self-service; contact your Zscaler account team |
 
 ## Integration Configuration
@@ -94,7 +94,7 @@ Full spec extracted from `zscaler-sdk-go` release `v3.8.46` (479 operations) —
 
 ### Zscaler ZIA Project
 
-Backed by the **`Zscaler Internet Access (ZIA) API:latest`** Integration Model (see [`zscaler_zia_api-latest.json`](./OpenAPIs/zscaler_zia_api-latest.json) above). The project contains **111 workflows** organized into **9 folders**.
+Backed by the **`Zscaler Internet Access:latest`** Integration Model (see [`zscaler_zia_api-latest.json`](./OpenAPIs/zscaler_zia_api-latest.json) above). The project contains **111 workflows** organized into **9 folders**.
 
 #### Folder Structure
 
@@ -114,5 +114,5 @@ Backed by the **`Zscaler Internet Access (ZIA) API:latest`** Integration Model (
 
 | Dependency | Notes |
 |---|---|
-| `Zscaler Internet Access (ZIA) API:latest` Integration Model | Import from [`zscaler_zia_api-latest.json`](./OpenAPIs/zscaler_zia_api-latest.json) before importing the project |
+| `Zscaler Internet Access:latest` Integration Model | Import from [`zscaler_zia_api-latest.json`](./OpenAPIs/zscaler_zia_api-latest.json) before importing the project |
 | `Zscaler` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Zscaler` — update the `adapter_id` value in each workflow task if yours is named differently |
