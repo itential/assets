@@ -64,8 +64,6 @@ The instance's `authentication`/`server` properties should look like this once c
 |---|---|---|---|
 | [`akamai_guardicore_segmentation_api-latest.json`](./OpenAPIs/akamai_guardicore_segmentation_api-latest.json) | latest | 55 | Covers every resource category the provider manages — see breakdown below |
 
-Built directly from Akamai's official, actively-maintained [`terraform-provider-guardicore-segmentation`](https://github.com/akamai/terraform-provider-guardicore-segmentation) — endpoint paths, HTTP verbs, and field-level request/response schemas were extracted from the provider's Go API client and its Terraform resource schemas.
-
 Resources included, by category:
 
 - **Labels**: Bulk create/update, bulk delete, get, update, delete, update dynamic criteria, list
