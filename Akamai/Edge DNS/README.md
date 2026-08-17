@@ -8,8 +8,8 @@ This project provides an OpenAPI spec for automating against the Edge DNS REST A
 - [Requirements](#requirements)
 - [Integration Configuration](#integration-configuration)
 - [OpenAPIs](#openapis)
-  - [`akamai_apis-latest.json`](#akamai_apis-latestjson)
-  - [`akamai_apis-v2.json`](#akamai_apis-v2json)
+  - [`akamai_edge_dns_api-latest.json`](#akamai_edge_dns_api-latestjson)
+  - [`akamai_edge_dns_api-v2.json`](#akamai_edge_dns_api-v2json)
 
 ## Contents
 
@@ -41,10 +41,10 @@ Generate EdgeGrid credentials in Akamai Control Center (Identity and Access Mana
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
-| [`akamai_apis-latest.json`](./OpenAPIs/akamai_apis-latest.json) | latest (curated) | 60 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`akamai_apis-v2.json`](./OpenAPIs/akamai_apis-v2.json) | v2 | 60 | Full spec for the Akamai Edge DNS API, version v2. |
+| [`akamai_edge_dns_api-latest.json`](./OpenAPIs/akamai_edge_dns_api-latest.json) | latest (curated) | 60 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
+| [`akamai_edge_dns_api-v2.json`](./OpenAPIs/akamai_edge_dns_api-v2.json) | v2 | 60 | Full spec for the Akamai Edge DNS API, version v2. |
 
-### `akamai_apis-latest.json`
+### `akamai_edge_dns_api-latest.json`
 
 Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: v2`, 60 operations). Every operation is CRUD or a provisioning action on the Edge DNS domain model (zones, versions, record sets, change lists, TSIG keys) or reference data those actions require (contracts, groups, nameservers, algorithms) — there is no separate admin, telemetry, or self-introspection surface to exclude, so nothing was removed.
 
@@ -59,6 +59,6 @@ Operations included, by category:
 - **Zone status checks**: Get DNSSEC status for zones; get secondary-zone transfer status
 - **DNS reference data** (inputs required by the operations above, e.g. contract/group IDs for zone creation): Authoritative nameservers, contracts, groups, edge hostnames, record set types, DNSSEC algorithms, TSIG algorithms
 
-### `akamai_apis-v2.json`
+### `akamai_edge_dns_api-v2.json`
 
-Full, unmodified vendor spec for the Akamai Edge DNS API, version v2 — the vendor's complete API surface, preserved as-is. See `akamai_apis-latest.json` above for the curated subset if you just need common CRUD automation.
+Full, unmodified vendor spec for the Akamai Edge DNS API, version v2 — the vendor's complete API surface, preserved as-is. See `akamai_edge_dns_api-latest.json` above for the curated subset if you just need common CRUD automation.
