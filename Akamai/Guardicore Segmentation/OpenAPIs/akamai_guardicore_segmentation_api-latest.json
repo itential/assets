@@ -1,0 +1,3896 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "latest",
+    "x-vendor-api-version": "Guardicore Segmentation Management API v3.0/v4.0",
+    "title": "Akamai Guardicore Segmentation API",
+    "description": "Akamai Guardicore Segmentation (formerly Guardicore Centra) management API for microsegmentation policy and visibility: labels and label groups, policy groups, segmentation policy rules, DNS security blocklists, assets, worksites, user groups, incidents, and agent/collector visibility.\n\nAuthentication: bearer token issued by the management console's own login endpoint (not Akamai's EdgeGrid signing used by most other Akamai products). See the accessTokenAuth security scheme below for how to obtain a token.\n\nThis spec was built directly from Akamai's official, actively-maintained Terraform provider (github.com/akamai/terraform-provider-guardicore-segmentation) -- endpoint paths, HTTP verbs, and field-level request/response schemas were extracted from the provider's Go API client and its Terraform resource schemas.\n\nSource: https://github.com/akamai/terraform-provider-guardicore-segmentation",
+    "x-itential-curated": "Covers every resource category the Terraform provider manages: Labels, Label Groups, Policy Groups, Policy Rules, DNS Security, Assets, Worksites, User Groups, Incidents, and Agent Aggregators. Several operations honestly reflect real API asymmetries rather than inventing symmetric CRUD that doesn't exist: Assets/Worksites/User Groups/Policy Groups/DNS Security have no dedicated single-item GET (fetched via list + ID filter instead), Incidents are create-only (no update or delete API), Agent Aggregators is read-only (list only, no single-item GET), and Assets' \"delete\" is a soft deactivate. The provider itself is a young, actively-developed surface and does not cover reputation, network maps, or collector/connector management -- those are out of scope here."
+  },
+  "servers": [
+    {
+      "url": "https://GUARDICORE-INSTANCE-HOSTNAME",
+      "description": "Per-tenant, self-hosted management console -- replace with your instance's hostname."
+    }
+  ],
+  "security": [
+    {
+      "accessTokenAuth": []
+    }
+  ],
+  "paths": {
+    "/api/v3.0/agent_aggregators": {
+      "get": {
+        "operationId": "agentAggregators_List",
+        "summary": "List agent aggregators (agents/collectors), optionally filtered by hostname. Read-only -- there is no single-item GET, create, update, or delete endpoint; filter the list client-side by ID.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListAgentAggregatorsResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "gc_filter",
+            "in": "query",
+            "required": false,
+            "description": "Filter by hostname.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "description": "Pagination offset.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Max results per page.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v3.0/generic-incidents": {
+      "get": {
+        "operationId": "incidents_List",
+        "summary": "List incidents in a time range. Pass id to fetch a single incident -- there is no dedicated single-item GET or any update/delete endpoint; incidents are immutable once created.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListIncidentsResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "from_time",
+            "in": "query",
+            "required": true,
+            "description": "Range start, epoch milliseconds.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to_time",
+            "in": "query",
+            "required": true,
+            "description": "Range end, epoch milliseconds.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "description": "Filter to a single incident ID.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "description": "Pagination offset.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Max results per page.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v3.0/visibility/labels/{id}/dynamic-criteria/changes": {
+      "post": {
+        "operationId": "labels_UpdateDynamicCriteria",
+        "summary": "Apply add/modify/delete changes to a label's dynamic criteria",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Label ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelDynamicCriteriaChangesRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3.0/visibility/policy/rules-bulk/worksite/move/{worksite_id}": {
+      "post": {
+        "operationId": "policyRules_BulkMoveToWorksite",
+        "summary": "Move policy rules to a worksite in bulk",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyRuleBulkWorksiteMoveResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "worksite_id",
+            "in": "path",
+            "required": true,
+            "description": "Destination worksite ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyRuleBulkWorksiteMoveRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3.0/visibility/user-groups/revisions": {
+      "post": {
+        "operationId": "userGroups_Publish",
+        "summary": "Publish draft user group changes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserGroupRevisionRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v4.0/assets": {
+      "get": {
+        "operationId": "assets_List",
+        "summary": "List assets, optionally filtered by name. Pass id with max_results=1 to fetch a single asset by ID -- there is no dedicated single-item GET endpoint.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListAssetsResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "description": "Filter to a single asset ID.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "description": "Filter by name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "start_at",
+            "in": "query",
+            "required": false,
+            "description": "Pagination offset.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "max_results",
+            "in": "query",
+            "required": false,
+            "description": "Max results per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "expand",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated related fields to expand, e.g. \"labels\".",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v4.0/assets/bulk": {
+      "post": {
+        "operationId": "assets_BulkCreate",
+        "summary": "Create assets in bulk",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkCreateAssetsResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/AssetCreate"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "assets_BulkUpdate",
+        "summary": "Update assets in bulk",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkUpdateAssetsResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/AssetBulkUpdateItem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v4.0/assets/bulk/deactivate": {
+      "post": {
+        "operationId": "assets_BulkDeactivate",
+        "summary": "Deactivate assets in bulk",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/BulkDeactivateAssetItem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v4.0/assets/{id}": {
+      "delete": {
+        "operationId": "assets_Deactivate",
+        "summary": "Deactivate an asset. This is the API's real \"delete\" -- assets are soft-deactivated, not permanently removed.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Asset ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v4.0/dns_security": {
+      "post": {
+        "operationId": "dnsSecurity_Create",
+        "summary": "Create a DNS blocklist. Requires the DNS Security feature to be enabled on the target instance.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DnsBlocklistCreate"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "dnsSecurity_List",
+        "summary": "List DNS blocklists. Pass ids to fetch specific blocklists by ID -- there is no dedicated single-item GET endpoint.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListDnsBlocklistsResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated blocklist IDs to fetch.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "description": "Filter by name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "description": "Filter by type.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "domains_limit",
+            "in": "query",
+            "required": false,
+            "description": "Max domains to return per blocklist; -1 for unlimited.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v4.0/dns_security/bulk": {
+      "post": {
+        "operationId": "dnsSecurity_BulkCreate",
+        "summary": "Create DNS blocklists in bulk",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkCreateDnsBlocklistResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkCreateDnsBlocklistRequest"
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "dnsSecurity_BulkUpdate",
+        "summary": "Edit DNS blocklists in bulk",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkEditDnsBlocklistResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkEditDnsBlocklistRequest"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "dnsSecurity_BulkDelete",
+        "summary": "Delete DNS blocklists in bulk",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": true,
+            "description": "Comma-separated blocklist IDs to delete.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v4.0/dns_security/{id}": {
+      "patch": {
+        "operationId": "dnsSecurity_Update",
+        "summary": "Partially update a DNS blocklist",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Blocklist ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DnsBlocklistEdit"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "dnsSecurity_Delete",
+        "summary": "Delete a DNS blocklist",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Blocklist ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v4.0/dns_security/{id}/hits": {
+      "delete": {
+        "operationId": "dnsSecurity_ResetHitCount",
+        "summary": "Reset a DNS blocklist's hit count",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Blocklist ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v4.0/incidents": {
+      "post": {
+        "operationId": "incidents_Create",
+        "summary": "Create an incident",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateIncidentResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncidentCreate"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v4.0/incidents/bulk": {
+      "post": {
+        "operationId": "incidents_BulkCreate",
+        "summary": "Create incidents in bulk",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkCreateIncidentResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkCreateIncidentRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v4.0/label-groups": {
+      "post": {
+        "operationId": "labelGroups_Create",
+        "summary": "Create a label group",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelGroupCreate"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "labelGroups_List",
+        "summary": "List label groups, optionally filtered by key/value",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListLabelGroupsResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "required": false,
+            "description": "Filter by label group key.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "required": false,
+            "description": "Filter by label group value.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v4.0/label-groups/publish": {
+      "post": {
+        "operationId": "labelGroups_Publish",
+        "summary": "Publish draft label group changes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v4.0/label-groups/{id}": {
+      "get": {
+        "operationId": "labelGroups_Get",
+        "summary": "Get a label group by ID",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabelGroup"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Label group ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "put": {
+        "operationId": "labelGroups_Update",
+        "summary": "Update a label group",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Label group ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelGroupCreate"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "labelGroups_Delete",
+        "summary": "Delete a label group",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Label group ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v4.0/labels": {
+      "get": {
+        "operationId": "labels_List",
+        "summary": "List labels, optionally filtered by key/value",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListLabelsResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "required": false,
+            "description": "Filter by label key.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "required": false,
+            "description": "Filter by label value.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v4.0/labels/bulk": {
+      "post": {
+        "operationId": "labels_BulkUpsert",
+        "summary": "Create or update labels in bulk",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabelBulkResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "override",
+            "in": "query",
+            "required": false,
+            "description": "Set true together with append=false to update existing labels by key/value instead of creating new ones.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "append",
+            "in": "query",
+            "required": false,
+            "description": "Whether new criteria append to existing ones on update (used with override=true).",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/LabelCreate"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v4.0/labels/bulk_delete": {
+      "delete": {
+        "operationId": "labels_BulkDelete",
+        "summary": "Delete labels in bulk",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabelBulkResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/LabelBulkDeleteItem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v4.0/labels/{id}": {
+      "get": {
+        "operationId": "labels_Get",
+        "summary": "Get a label by ID",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListLabelsResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Label ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "put": {
+        "operationId": "labels_Update",
+        "summary": "Update a label's key/value (use labels_UpdateDynamicCriteria for criteria changes)",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Label ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelUpdate"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "labels_Delete",
+        "summary": "Delete a label",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Label ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v4.0/policy-groups": {
+      "post": {
+        "operationId": "policyGroups_Create",
+        "summary": "Create a policy group. Requires the Policy Groups feature to be enabled on the target instance.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyGroupCreate"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "policyGroups_List",
+        "summary": "List policy groups. Pass id with limit=1 to fetch a single policy group by ID -- there is no dedicated single-item GET endpoint.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListPolicyGroupsResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "description": "Filter to a single policy group ID.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "description": "Filter by name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "description": "Filter by type (LABEL, FQDN, IP_ADDRESS).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Max results per page.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v4.0/policy-groups/publish": {
+      "post": {
+        "operationId": "policyGroups_Publish",
+        "summary": "Publish draft policy group changes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v4.0/policy-groups/{id}": {
+      "put": {
+        "operationId": "policyGroups_Update",
+        "summary": "Update a policy group",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Policy group ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyGroupCreate"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "policyGroups_Delete",
+        "summary": "Delete a policy group",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Policy group ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v4.0/visibility/policy/revisions": {
+      "post": {
+        "operationId": "policyRules_Publish",
+        "summary": "Publish draft policy rule changes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyRevisionRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v4.0/visibility/policy/rules": {
+      "post": {
+        "operationId": "policyRules_Create",
+        "summary": "Create a policy rule",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyRuleSpec"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "policyRules_List",
+        "summary": "List policy rules",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListPolicyRulesResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "description": "Pagination offset.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Max results per page.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v4.0/visibility/policy/rules/bulk": {
+      "post": {
+        "operationId": "policyRules_BulkCreate",
+        "summary": "Create policy rules in bulk",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyRulesBulkCreateResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PolicyRuleSpec"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "policyRules_BulkUpdate",
+        "summary": "Update policy rules in bulk",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyRulesBulkCreateResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PolicyRuleBulkUpdateItem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v4.0/visibility/policy/rules/delete/bulk": {
+      "post": {
+        "operationId": "policyRules_BulkDelete",
+        "summary": "Delete policy rules in bulk",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyRulesBulkCreateResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PolicyRuleBulkDeleteItem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v4.0/visibility/policy/rules/delete/{id}": {
+      "post": {
+        "operationId": "policyRules_Delete",
+        "summary": "Delete a policy rule (the API uses POST to a /delete/{id} path rather than the DELETE verb)",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Policy rule ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v4.0/visibility/policy/rules/{id}": {
+      "get": {
+        "operationId": "policyRules_Get",
+        "summary": "Get a policy rule by ID",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyRule"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Policy rule ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "put": {
+        "operationId": "policyRules_Update",
+        "summary": "Update a policy rule",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Policy rule ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyRuleSpec"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v4.0/visibility/user-groups": {
+      "post": {
+        "operationId": "userGroups_Create",
+        "summary": "Create a user group. Requires Active Directory orchestration to be configured on the target instance.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserGroupCreate"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "userGroups_List",
+        "summary": "List user groups, optionally filtered by search text. There is no dedicated single-item GET endpoint -- filter the list client-side by ID.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListUserGroupsResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "description": "Free-text search filter.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v4.0/visibility/user-groups/{id}": {
+      "put": {
+        "operationId": "userGroups_Update",
+        "summary": "Update a user group",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "User group ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserGroupCreate"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "userGroups_Delete",
+        "summary": "Delete a user group",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "User group ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v4.0/worksites": {
+      "post": {
+        "operationId": "worksites_Create",
+        "summary": "Create a worksite. Requires the Worksites feature to be enabled on the target instance.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorksiteCreate"
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "worksites_Update",
+        "summary": "Update a worksite (ID is supplied in the request body, not the URL)",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorksiteUpdate"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "worksites_List",
+        "summary": "List worksites, optionally filtered by name. There is no dedicated single-item GET endpoint -- filter the list client-side by ID.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListWorksitesResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "description": "Filter by name.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v4.0/worksites/assign": {
+      "post": {
+        "operationId": "worksites_Assign",
+        "summary": "Assign entities (e.g. assets) to a worksite",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorksiteAssignRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v4.0/worksites/delete_worksites": {
+      "post": {
+        "operationId": "worksites_BulkDelete",
+        "summary": "Delete worksites in bulk",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteWorksitesResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteWorksitesRequest"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LabelCriteria": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Criterion ID (read-only, present when read back from the API)."
+          },
+          "field": {
+            "type": "string",
+            "description": "The asset field this criterion matches against, e.g. \"os\", \"ip\", or a custom orchestration field."
+          },
+          "op": {
+            "type": "string",
+            "description": "Comparison operator, e.g. \"equals\", \"contains\"."
+          },
+          "argument": {
+            "type": "string",
+            "description": "The value compared against."
+          },
+          "compound_criteria": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LabelCriteria"
+            },
+            "description": "Nested criteria for AND/OR compound matching."
+          },
+          "source": {
+            "type": "string",
+            "description": "Origin of the criterion, e.g. \"Worksite\" for API-generated scoping criteria."
+          },
+          "read_only": {
+            "type": "boolean",
+            "description": "True if this criterion is system-managed and cannot be edited directly."
+          }
+        },
+        "required": [
+          "field",
+          "op",
+          "argument"
+        ]
+      },
+      "LabelCreate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Label ID (omit on create)."
+          },
+          "key": {
+            "type": "string",
+            "description": "Label key, e.g. \"env\"."
+          },
+          "value": {
+            "type": "string",
+            "description": "Label value, e.g. \"production\"."
+          },
+          "criteria": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LabelCriteria"
+            },
+            "description": "Dynamic-assignment criteria for this label."
+          }
+        },
+        "required": [
+          "key",
+          "value"
+        ]
+      },
+      "LabelUpdate": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Label key."
+          },
+          "value": {
+            "type": "string",
+            "description": "Label value."
+          },
+          "criteria": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LabelCriteria"
+            },
+            "description": "Dynamic-assignment criteria for this label."
+          }
+        },
+        "required": [
+          "key",
+          "value"
+        ]
+      },
+      "Label": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Label ID."
+          },
+          "key": {
+            "type": "string",
+            "description": "Label key."
+          },
+          "value": {
+            "type": "string",
+            "description": "Label value."
+          },
+          "origin": {
+            "type": "string",
+            "description": "Where this label came from, e.g. an orchestration integration."
+          },
+          "read_only": {
+            "type": "boolean",
+            "description": "True if this label is system-managed."
+          },
+          "dynamic_criteria": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LabelCriteria"
+            },
+            "description": "Criteria that dynamically assign this label to matching assets."
+          },
+          "static_criteria": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LabelCriteria"
+            },
+            "description": "Criteria representing static (manual) assignment."
+          }
+        }
+      },
+      "LabelBulkResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "description": "Overall result of the bulk operation."
+          },
+          "succeeded": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "IDs that succeeded."
+          },
+          "failed": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "IDs that failed."
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "IDs that were not found."
+          }
+        }
+      },
+      "LabelBulkDeleteItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Label ID to delete."
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "LabelDynamicCompoundCriterion": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "Asset field to match."
+          },
+          "op": {
+            "type": "string",
+            "description": "Comparison operator."
+          },
+          "argument": {
+            "type": "string",
+            "description": "Value compared against."
+          }
+        },
+        "required": [
+          "field",
+          "op",
+          "argument"
+        ]
+      },
+      "LabelDynamicCriterionChange": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Criterion ID (for modify/delete) or a new ID to assign (for add)."
+          },
+          "source": {
+            "type": "string",
+            "description": "Source of the criterion."
+          },
+          "field": {
+            "type": "string",
+            "description": "Asset field to match (flat criterion)."
+          },
+          "op": {
+            "type": "string",
+            "description": "Comparison operator (flat criterion)."
+          },
+          "argument": {
+            "type": "string",
+            "description": "Value compared against (flat criterion)."
+          },
+          "compound_criteria": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LabelDynamicCompoundCriterion"
+            },
+            "description": "Inner AND members (compound criterion, mutually exclusive with field/op/argument)."
+          }
+        },
+        "required": [
+          "id",
+          "source"
+        ]
+      },
+      "LabelDynamicCriteriaChangesRequest": {
+        "type": "object",
+        "properties": {
+          "added": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LabelDynamicCriterionChange"
+            },
+            "description": "Criteria to add."
+          },
+          "modified": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LabelDynamicCriterionChange"
+            },
+            "description": "Criteria to modify."
+          },
+          "deleted": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "IDs of criteria to delete."
+          }
+        },
+        "required": [
+          "added",
+          "modified",
+          "deleted"
+        ]
+      },
+      "ListLabelsResponse": {
+        "type": "object",
+        "properties": {
+          "objects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Label"
+            }
+          },
+          "total_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "AndLabelsCreate": {
+        "type": "object",
+        "properties": {
+          "and_labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Label IDs that must all match (AND)."
+          }
+        },
+        "required": [
+          "and_labels"
+        ]
+      },
+      "OrLabelsCreate": {
+        "type": "object",
+        "properties": {
+          "or_labels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AndLabelsCreate"
+            },
+            "description": "Groups of AND-matched labels, OR-combined."
+          }
+        },
+        "required": [
+          "or_labels"
+        ]
+      },
+      "LabelInGroup": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name, \"key: value\"."
+          },
+          "color_index": {
+            "type": "integer",
+            "description": "UI color index."
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "value"
+        ]
+      },
+      "AndLabelsRead": {
+        "type": "object",
+        "properties": {
+          "and_labels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LabelInGroup"
+            }
+          }
+        },
+        "required": [
+          "and_labels"
+        ]
+      },
+      "OrLabelsRead": {
+        "type": "object",
+        "properties": {
+          "or_labels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AndLabelsRead"
+            }
+          }
+        },
+        "required": [
+          "or_labels"
+        ]
+      },
+      "LabelGroupCreate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Label group ID (omit on create)."
+          },
+          "key": {
+            "type": "string",
+            "description": "Label group key."
+          },
+          "value": {
+            "type": "string",
+            "description": "Label group value."
+          },
+          "comments": {
+            "type": "string"
+          },
+          "include_labels": {
+            "$ref": "#/components/schemas/OrLabelsCreate"
+          },
+          "exclude_labels": {
+            "$ref": "#/components/schemas/OrLabelsCreate"
+          }
+        },
+        "required": [
+          "key",
+          "value",
+          "comments"
+        ]
+      },
+      "LabelGroup": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "comments": {
+            "type": "string"
+          },
+          "include_labels": {
+            "$ref": "#/components/schemas/OrLabelsRead"
+          },
+          "exclude_labels": {
+            "$ref": "#/components/schemas/OrLabelsRead"
+          }
+        }
+      },
+      "ListLabelGroupsResponse": {
+        "type": "object",
+        "properties": {
+          "objects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LabelGroup"
+            }
+          },
+          "total_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "PolicyGroupCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "LABEL",
+              "FQDN",
+              "IP_ADDRESS"
+            ],
+            "description": "Kind of members this policy group contains."
+          },
+          "comments": {
+            "type": "string"
+          },
+          "include_members": {
+            "type": "object",
+            "description": "Members to include; shape depends on type (e.g. label IDs, FQDNs, or IP addresses/CIDRs)."
+          },
+          "exclude_members": {
+            "type": "object",
+            "description": "Members to exclude (LABEL type only)."
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "include_members"
+        ]
+      },
+      "PolicyGroup": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "comments": {
+            "type": "string"
+          },
+          "include_members": {
+            "type": "object"
+          },
+          "exclude_members": {
+            "type": "object"
+          },
+          "state": {
+            "type": "string",
+            "description": "Draft/published state."
+          },
+          "author_id": {
+            "type": "string"
+          },
+          "creation_time": {
+            "type": "integer",
+            "description": "Epoch milliseconds."
+          },
+          "last_change_time": {
+            "type": "integer",
+            "description": "Epoch milliseconds."
+          },
+          "matching_rules_count": {
+            "type": "integer"
+          },
+          "matching_assets_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "ListPolicyGroupsResponse": {
+        "type": "object",
+        "properties": {
+          "objects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PolicyGroup"
+            }
+          },
+          "total_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "DnsBlocklistCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "Blocklist type, e.g. \"BLOCK\"."
+          },
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ]
+      },
+      "DnsBlocklistEdit": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DnsBlocklist": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "enabled"
+        ]
+      },
+      "ListDnsBlocklistsResponse": {
+        "type": "object",
+        "properties": {
+          "objects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DnsBlocklist"
+            }
+          },
+          "total_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "BulkCreateDnsBlocklistRequest": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DnsBlocklistCreate"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
+      "BulkCreateDnsBlocklistResponse": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "BulkEditDnsBlocklistItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "BulkEditDnsBlocklistRequest": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BulkEditDnsBlocklistItem"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
+      "BulkEditDnsBlocklistResponse": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "IncidentCreate": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "affected_assets": {
+            "type": "object",
+            "description": "Affected asset identifiers; vendor-defined shape."
+          },
+          "time": {
+            "type": "integer",
+            "description": "Epoch milliseconds when the incident occurred."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "origin": {
+            "type": "string"
+          },
+          "mitigation": {
+            "type": "string"
+          },
+          "cef_extensions": {
+            "type": "object",
+            "description": "Common Event Format extension fields."
+          },
+          "attached_files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "map_details": {
+            "type": "object"
+          },
+          "custom_defined_objects": {
+            "type": "object"
+          },
+          "properties": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "type",
+          "severity",
+          "affected_assets",
+          "time",
+          "tags",
+          "description",
+          "summary"
+        ]
+      },
+      "CreateIncidentResponse": {
+        "type": "object",
+        "properties": {
+          "incident_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "incident_id"
+        ]
+      },
+      "BulkCreateIncidentRequest": {
+        "type": "object",
+        "properties": {
+          "incidents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IncidentCreate"
+            }
+          }
+        },
+        "required": [
+          "incidents"
+        ]
+      },
+      "BulkCreateIncidentResponse": {
+        "type": "object",
+        "properties": {
+          "incident_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ListIncidentsResponse": {
+        "type": "object",
+        "properties": {
+          "objects": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Incident records. The read schema is asymmetric with IncidentCreate -- there is no update/delete API for incidents."
+          },
+          "total_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "WorksiteCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "comment": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "WorksiteUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "comment": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "Worksite": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "comment": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "ListWorksitesResponse": {
+        "type": "object",
+        "properties": {
+          "objects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Worksite"
+            }
+          },
+          "total_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "DeleteWorksitesNegate": {
+        "type": "object",
+        "properties": {
+          "unselected": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "filters": {
+            "type": "object"
+          },
+          "quantity": {
+            "type": "integer"
+          }
+        }
+      },
+      "DeleteWorksitesRequest": {
+        "type": "object",
+        "properties": {
+          "component_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Worksite IDs to delete."
+          },
+          "negate_args": {
+            "$ref": "#/components/schemas/DeleteWorksitesNegate"
+          }
+        },
+        "required": [
+          "component_ids"
+        ]
+      },
+      "DeleteWorksitesResponse": {
+        "type": "object",
+        "properties": {
+          "assigned_details": {
+            "type": "string"
+          },
+          "assigned_worksites": {
+            "type": "integer"
+          },
+          "details": {
+            "type": "string"
+          },
+          "failures": {
+            "type": "integer"
+          },
+          "skips": {
+            "type": "integer"
+          },
+          "successes": {
+            "type": "integer"
+          }
+        }
+      },
+      "WorksiteAssignRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Worksite ID to assign entities to."
+          },
+          "entity_type": {
+            "type": "string",
+            "description": "Type of entity being assigned, e.g. \"asset\"."
+          },
+          "entity_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "entity_type",
+          "entity_ids"
+        ]
+      },
+      "OrchestrationGroup": {
+        "type": "object",
+        "properties": {
+          "orchestration_id": {
+            "type": "string"
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "AD group names/DNs from this orchestration."
+          }
+        },
+        "required": [
+          "orchestration_id",
+          "groups"
+        ]
+      },
+      "UserGroupCreate": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "orchestrations_groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrchestrationGroup"
+            }
+          }
+        },
+        "required": [
+          "title",
+          "orchestrations_groups"
+        ]
+      },
+      "DomainGroup": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "DomainGroupInfo": {
+        "type": "object",
+        "properties": {
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DomainGroup"
+            }
+          },
+          "orchestration_id": {
+            "type": "string"
+          }
+        }
+      },
+      "UserGroup": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "orchestrations_groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrchestrationGroup"
+            }
+          },
+          "groups_by_domain_name": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DomainGroupInfo"
+            },
+            "description": "Read-only, keyed by AD domain name."
+          }
+        }
+      },
+      "ListUserGroupsResponse": {
+        "type": "object",
+        "properties": {
+          "objects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserGroup"
+            }
+          },
+          "total_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "UserGroupRevisionRequest": {
+        "type": "object",
+        "properties": {
+          "comments": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "comments"
+        ]
+      },
+      "AssetNIC": {
+        "type": "object",
+        "properties": {
+          "vif_id": {
+            "type": "string"
+          },
+          "mac_address": {
+            "type": "string"
+          },
+          "network_id": {
+            "type": "string"
+          },
+          "network_name": {
+            "type": "string"
+          },
+          "is_cloud_public": {
+            "type": "boolean"
+          },
+          "is_corporate_interface": {
+            "type": "boolean"
+          },
+          "switch_id": {
+            "type": "string"
+          },
+          "ip_addresses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AssetLabelRef": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "origin": {
+            "type": "string"
+          },
+          "read_only": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AssetCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "nics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetNIC"
+            }
+          },
+          "orchestration_obj_id": {
+            "type": "string",
+            "description": "ID of this asset within its source orchestration/integration."
+          },
+          "status": {
+            "type": "string"
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetLabelRef"
+            }
+          },
+          "comments": {
+            "type": "string"
+          },
+          "orchestration_metadata": {
+            "type": "object",
+            "description": "Opaque, orchestration-specific metadata blob."
+          },
+          "worksite": {
+            "type": "string"
+          },
+          "instance_id": {
+            "type": "string"
+          },
+          "hw_uuid": {
+            "type": "string"
+          },
+          "bios_uuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "nics",
+          "orchestration_obj_id"
+        ]
+      },
+      "OrchestrationDetail": {
+        "type": "object",
+        "properties": {
+          "orchestration_id": {
+            "type": "string"
+          },
+          "orchestration_name": {
+            "type": "string"
+          },
+          "orchestration_obj_id": {
+            "type": "string"
+          },
+          "orchestration_type": {
+            "type": "string"
+          },
+          "revision_id": {
+            "type": "object",
+            "description": "Revision marker; type varies by orchestration."
+          }
+        }
+      },
+      "AssetWorksiteInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "modified": {
+            "type": "integer",
+            "description": "Epoch milliseconds."
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "AssetScopingDetails": {
+        "type": "object",
+        "properties": {
+          "worksite": {
+            "$ref": "#/components/schemas/AssetWorksiteInfo"
+          }
+        }
+      },
+      "Asset": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "first_seen": {
+            "type": "object",
+            "description": "Epoch milliseconds or null; vendor-typed as a loose value."
+          },
+          "last_seen": {
+            "type": "object",
+            "description": "Epoch milliseconds or null; vendor-typed as a loose value."
+          },
+          "nics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetNIC"
+            }
+          },
+          "bios_uuid": {
+            "type": "string"
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetLabelRef"
+            }
+          },
+          "comments": {
+            "type": "string"
+          },
+          "orchestration_metadata": {
+            "type": "object"
+          },
+          "orchestration_obj_id": {
+            "type": "string"
+          },
+          "orchestration_details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrchestrationDetail"
+            }
+          },
+          "instance_id": {
+            "type": "string"
+          },
+          "hw_uuid": {
+            "type": "string"
+          },
+          "scoping_details": {
+            "$ref": "#/components/schemas/AssetScopingDetails"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "ListAssetsResponse": {
+        "type": "object",
+        "properties": {
+          "objects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Asset"
+            }
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "Note: wire field is \"total\", not \"total_count\"."
+          }
+        }
+      },
+      "AssetBulkUpdateItem": {
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetNIC"
+            }
+          },
+          "status": {
+            "type": "string"
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetLabelRef"
+            }
+          },
+          "comments": {
+            "type": "string"
+          },
+          "orchestration_metadata": {
+            "type": "object"
+          },
+          "worksite": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset_id"
+        ]
+      },
+      "BulkDeactivateAssetItem": {
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset_id"
+        ]
+      },
+      "BulkAssetError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "orchestration_obj_id": {
+            "type": "string"
+          },
+          "asset_id": {
+            "type": "string"
+          }
+        }
+      },
+      "BulkCreateAssetsResponse": {
+        "type": "object",
+        "properties": {
+          "number_of_succeeded": {
+            "type": "integer"
+          },
+          "number_of_failed": {
+            "type": "integer"
+          },
+          "total_number": {
+            "type": "integer"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BulkAssetError"
+            }
+          },
+          "created_asset_ids": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Keyed by orchestration_obj_id."
+          }
+        }
+      },
+      "BulkUpdateAssetsResponse": {
+        "type": "object",
+        "properties": {
+          "number_of_succeeded": {
+            "type": "integer"
+          },
+          "number_of_failed": {
+            "type": "integer"
+          },
+          "total_number": {
+            "type": "integer"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BulkAssetError"
+            }
+          }
+        }
+      },
+      "PolicyRuleRange": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "integer"
+          },
+          "end": {
+            "type": "integer"
+          }
+        }
+      },
+      "PolicyRuleICMPMatch": {
+        "type": "object",
+        "properties": {
+          "icmp_type": {
+            "type": "integer"
+          },
+          "icmp_codes": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "version": {
+            "type": "string",
+            "description": "\"IPV4\" or \"IPV6\"."
+          }
+        }
+      },
+      "PolicyRuleWindowsService": {
+        "type": "object",
+        "properties": {
+          "allowed_image_names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "service_name": {
+            "type": "string"
+          }
+        }
+      },
+      "PolicyRuleAndLabels": {
+        "type": "object",
+        "properties": {
+          "and_labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Label IDs, AND-combined."
+          }
+        }
+      },
+      "PolicyRuleLabels": {
+        "type": "object",
+        "properties": {
+          "or_labels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PolicyRuleAndLabels"
+            },
+            "description": "Groups of AND-matched labels, OR-combined."
+          }
+        }
+      },
+      "PolicyRuleEndpoint": {
+        "type": "object",
+        "properties": {
+          "address_classification": {
+            "type": "string",
+            "description": "Special endpoint match, e.g. \"internet\" or \"any\". Mutually exclusive with every other field on this object."
+          },
+          "subnets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "processes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "windows_services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PolicyRuleWindowsService"
+            }
+          },
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "label_group_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "user_group_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "asset_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "policy_groups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Policy group IDs."
+          },
+          "labels": {
+            "$ref": "#/components/schemas/PolicyRuleLabels"
+          }
+        }
+      },
+      "PolicyRuleSpec": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "ALLOW",
+              "BLOCK",
+              "ALERT"
+            ],
+            "description": "Required."
+          },
+          "section_position": {
+            "type": "string",
+            "description": "Required. Ruleset section this rule belongs to, e.g. \"security\"."
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Required."
+          },
+          "comments": {
+            "type": "string"
+          },
+          "ruleset_name": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "ip_protocols": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "e.g. [\"TCP\", \"UDP\", \"ICMP\"]."
+          },
+          "ports": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Individual destination ports."
+          },
+          "exclude_ports": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "port_ranges": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PolicyRuleRange"
+            }
+          },
+          "exclude_port_ranges": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PolicyRuleRange"
+            }
+          },
+          "icmp_matches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PolicyRuleICMPMatch"
+            }
+          },
+          "network_profile": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Label/label-group IDs the rule is scoped to."
+          },
+          "schedule": {
+            "type": "object",
+            "properties": {
+              "recurrence": {
+                "type": "string",
+                "description": "Cron-like recurrence expression."
+              },
+              "end_time": {
+                "type": "integer",
+                "description": "Epoch milliseconds the schedule ends."
+              }
+            }
+          },
+          "source": {
+            "$ref": "#/components/schemas/PolicyRuleEndpoint"
+          },
+          "destination": {
+            "$ref": "#/components/schemas/PolicyRuleEndpoint"
+          }
+        },
+        "required": [
+          "action",
+          "section_position",
+          "enabled"
+        ],
+        "additionalProperties": true
+      },
+      "PolicyRule": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Policy rule ID (read-only)."
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "ALLOW",
+              "BLOCK",
+              "ALERT"
+            ],
+            "description": "Required."
+          },
+          "section_position": {
+            "type": "string",
+            "description": "Required. Ruleset section this rule belongs to, e.g. \"security\"."
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Required."
+          },
+          "comments": {
+            "type": "string"
+          },
+          "ruleset_name": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "ip_protocols": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "e.g. [\"TCP\", \"UDP\", \"ICMP\"]."
+          },
+          "ports": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Individual destination ports."
+          },
+          "exclude_ports": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "port_ranges": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PolicyRuleRange"
+            }
+          },
+          "exclude_port_ranges": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PolicyRuleRange"
+            }
+          },
+          "icmp_matches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PolicyRuleICMPMatch"
+            }
+          },
+          "network_profile": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Label/label-group IDs the rule is scoped to."
+          },
+          "schedule": {
+            "type": "object",
+            "properties": {
+              "recurrence": {
+                "type": "string",
+                "description": "Cron-like recurrence expression."
+              },
+              "end_time": {
+                "type": "integer",
+                "description": "Epoch milliseconds the schedule ends."
+              }
+            }
+          },
+          "source": {
+            "$ref": "#/components/schemas/PolicyRuleEndpoint"
+          },
+          "destination": {
+            "$ref": "#/components/schemas/PolicyRuleEndpoint"
+          }
+        },
+        "additionalProperties": true
+      },
+      "PolicyRuleBulkUpdateItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "rule": {
+            "$ref": "#/components/schemas/PolicyRuleSpec"
+          }
+        },
+        "required": [
+          "id",
+          "rule"
+        ]
+      },
+      "PolicyRuleBulkDeleteItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "PolicyRulesBulkCreateResponse": {
+        "type": "object",
+        "properties": {
+          "number_of_failed": {
+            "type": "integer"
+          },
+          "number_of_succeeded": {
+            "type": "integer"
+          },
+          "result": {
+            "type": "string"
+          },
+          "succeeded": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "total_number": {
+            "type": "integer"
+          }
+        }
+      },
+      "ListPolicyRulesResponse": {
+        "type": "object",
+        "properties": {
+          "objects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PolicyRule"
+            }
+          },
+          "total_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "PolicyRevisionRequest": {
+        "type": "object",
+        "properties": {
+          "comments": {
+            "type": "string"
+          },
+          "ruleset_name": {
+            "type": "string"
+          },
+          "rulesets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reset_hit_count": {
+            "type": "boolean"
+          },
+          "reset_hit_count_for_ruleset": {
+            "type": "boolean"
+          },
+          "origin": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "comments"
+        ]
+      },
+      "PolicyRuleBulkWorksiteMoveNegate": {
+        "type": "object",
+        "properties": {
+          "filters": {
+            "type": "object"
+          }
+        }
+      },
+      "PolicyRuleBulkWorksiteMoveRequest": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Policy rule IDs to move."
+          },
+          "negate_args": {
+            "$ref": "#/components/schemas/PolicyRuleBulkWorksiteMoveNegate"
+          }
+        },
+        "required": [
+          "ids"
+        ]
+      },
+      "PolicyRuleBulkWorksiteMoveResponse": {
+        "type": "object",
+        "properties": {
+          "inserted_count": {
+            "type": "integer"
+          },
+          "modified_count": {
+            "type": "integer"
+          },
+          "worksite": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "AgentAggregatorFullVersion": {
+        "type": "object",
+        "properties": {
+          "major": {
+            "type": "string"
+          },
+          "minor": {
+            "type": "string"
+          },
+          "tag": {
+            "type": "string"
+          }
+        }
+      },
+      "AgentAggregatorInterface": {
+        "type": "object",
+        "properties": {
+          "interface": {
+            "type": "string"
+          },
+          "ip_address": {
+            "type": "string"
+          },
+          "netmask": {
+            "type": "string"
+          }
+        }
+      },
+      "AgentAggregator": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "component_id": {
+            "type": "string"
+          },
+          "agent_id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "full_version": {
+            "$ref": "#/components/schemas/AgentAggregatorFullVersion"
+          },
+          "build_commit": {
+            "type": "string"
+          },
+          "build_date": {
+            "type": "object",
+            "description": "Epoch value or null; vendor-typed as a loose value."
+          },
+          "install_date": {
+            "type": "object",
+            "description": "Epoch value or null; vendor-typed as a loose value."
+          },
+          "ip_address": {
+            "type": "string"
+          },
+          "hostname": {
+            "type": "string"
+          },
+          "interfaces": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAggregatorInterface"
+            }
+          },
+          "first_seen": {
+            "type": "object",
+            "description": "Epoch value or null; vendor-typed as a loose value."
+          },
+          "doc_version": {
+            "type": "integer"
+          },
+          "last_seen": {
+            "type": "object",
+            "description": "Epoch value or null; vendor-typed as a loose value."
+          },
+          "display_status": {
+            "type": "string"
+          },
+          "is_missing": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string"
+          },
+          "aggregator_type": {
+            "type": "string",
+            "description": "e.g. \"agent\" or \"collector\"."
+          },
+          "aggregator_features": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cluster_id": {
+            "type": "string"
+          },
+          "sub_components": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "management_hosts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "external_fqdn_addresses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "collector_type": {
+            "type": "string"
+          },
+          "host_ips": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "internal-address": {
+            "type": "string"
+          },
+          "external-address": {
+            "type": "string"
+          },
+          "management_host": {
+            "type": "string"
+          },
+          "system-uptime": {
+            "type": "string"
+          },
+          "tenant_name": {
+            "type": "string"
+          },
+          "is_configuration_dirty": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "agent_id",
+          "hostname"
+        ]
+      },
+      "ListAgentAggregatorsResponse": {
+        "type": "object",
+        "properties": {
+          "objects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentAggregator"
+            }
+          },
+          "total_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "APIError": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "error_code": {
+            "type": "string"
+          },
+          "error_dump": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "accessTokenAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Bearer access token issued by the management console. Obtain one with POST {base_url}/api/v3.0/authenticate ({\"username\", \"password\"}), which returns {\"access_token\", \"refresh_token\"}; send subsequent requests with Authorization: Bearer <access_token>. Access tokens expire -- refresh with POST {base_url}/api/v3.0/authenticate/refresh sending Authorization: Bearer <refresh_token> (no body), which returns a new access_token. Accounts with MFA enabled cannot use username/password at all and must obtain access_token/refresh_token out of band. Configure this integration with a valid access_token; refresh it manually (or via a scheduled job) when it expires, since this token/refresh shape doesn't fit Itential Platform's dynamic credential retrieval for a body-based POST login."
+      }
+    }
+  }
+}
