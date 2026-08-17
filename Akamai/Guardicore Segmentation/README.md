@@ -109,4 +109,4 @@ Backed by the **`Akamai Guardicore Segmentation API:latest`** Integration Model 
 | Dependency | Notes |
 |---|---|
 | `Akamai Guardicore Segmentation API:latest` Integration Model | Import from [`akamai_guardicore_segmentation_api-latest.json`](./OpenAPIs/akamai_guardicore_segmentation_api-latest.json) before importing the project |
-| `Guardicore` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Guardicore` — update the `adapter_id` value in each workflow task if yours is named differently |
+| `Akamai Guardicore` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Akamai Guardicore` — update the `adapter_id` value in each workflow task if yours is named differently |
