@@ -1,6 +1,6 @@
 Arista CloudVision-as-a-Service (CVaaS) is Arista's cloud-hosted network management platform, providing fleet-wide visibility and configuration management for Arista devices through a state-based, resource-oriented API.
 
-This project provides an OpenAPI spec for automating against CVaaS's modern Workspace/Studio provisioning model via an Integration Model, plus a Studio Project of ready-to-import workflows built on that model.
+This project provides an OpenAPI spec for automating against CVaaS's Resource APIs via an Integration Model, plus a Studio Project of ready-to-import workflows built on that model.
 
 ## Table of Contents
 
@@ -17,8 +17,8 @@ This project provides an OpenAPI spec for automating against CVaaS's modern Work
 
 | Asset | Description |
 |---|---|
-| [OpenAPIs/](./OpenAPIs/) | Arista CloudVision Workspace/Studio/Change Control OpenAPI spec |
-| [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing all 15 workflows in 3 folders |
+| [OpenAPIs/](./OpenAPIs/) | Arista CloudVision Resource API OpenAPI spec |
+| [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing all 40 workflows in 6 folders |
 
 ## Requirements
 
@@ -55,7 +55,7 @@ The instance's `authentication`/`server` properties should look like this once c
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
-| [`arista_cloudvision_api-latest.json`](./OpenAPIs/arista_cloudvision_api-latest.json) | latest | 15 | Scoped to the Workspace/Studio/Change Control provisioning flow — see breakdown below |
+| [`arista_cloudvision_api-latest.json`](./OpenAPIs/arista_cloudvision_api-latest.json) | latest | 40 | Workspace/Studio/Change Control provisioning, device onboarding/decommissioning, tags, and software management — see breakdown below |
 
 CloudVision's Resource APIs are gRPC-native; this spec describes Arista's own generated REST/JSON gateway over those same services (introduced in CVP 2021.1.0, still actively maintained), converted from the vendor's published Swagger 2.0 documents to OpenAPI 3.0.
 
@@ -64,21 +64,29 @@ Resources included, by category:
 - **Workspace**: Create/update (including issuing build, submit, cancel, abandon, or rollback requests), get, delete, get status, get build status, get per-device build detail
 - **Studio**: Set/get/delete a studio's input configuration at a path (e.g. push configuration into the Static Configlet Studio), get the resolved input value
 - **Change Control**: Create/update (including flagging start/stop/schedule), get configuration, delete, get full status, approve
+- **Inventory**: Onboard a device, get/delete an onboarding request, get onboarding status, decommission a device, get/delete a decommissioning request, get decommissioning status, get an inventoried device, get a provisioned device
+- **Tags**: Set/get/delete a tag, get a tag's merge-preview or merged state, set/get/delete a tag assignment, get an assignment's merge-preview or merged state, get a tagged element
+- **Software Management**: Add/get/delete a software image or extension, get an image's upload/validation status, get an image's device/rule assignments, list releases available from Arista's Software Download site
 
-A typical flow: create a workspace, push configuration into a Studio, request a build (a single call that internally validates, compiles, and checks the change), submit the workspace (which creates a Change Control), then approve and start that Change Control.
+A typical Workspace/Studio/Change Control flow: create a workspace, push configuration into a Studio, request a build (a single call that internally validates, compiles, and checks the change), submit the workspace (which creates a Change Control), then approve and start that Change Control.
 
-Deliberately excludes: every other Studio resource (AssignedTags, AutofillAction, SecretInput, Studio/StudioConfig, StudioSummary) and Change Control's ChangeControlSummary, since they aren't part of this flow; the "list all" and "get several" operations on every resource, since those are long-lived streaming (chunked NDJSON) responses rather than a single JSON object and don't fit a request/response workflow task; and the dozens of other CloudVision resource packages (inventory, tags, image, telemetry, etc.) entirely, since they're outside this workflow. Several nested vendor structures (build diagnostics, change control stages) are preserved as opaque objects rather than fully typed, since they're deep, vendor-internal detail not needed to drive this flow.
+Deliberately excludes: every other Studio resource (AssignedTags, AutofillAction, SecretInput, Studio/StudioConfig, StudioSummary) and Change Control's ChangeControlSummary, since they aren't part of the provisioning flow; the "list all" and "get several" operations on every resource, since those are long-lived streaming (chunked NDJSON) responses rather than a single JSON object and don't fit a request/response workflow task; and the rest of CloudVision's resource packages (alerting, dashboards, licensing, identity providers, audit logs, connectivity monitoring, and more) entirely, since they're outside this scope. Several nested vendor structures (build diagnostics, change control stages, ZTP upgrade rules) are preserved as opaque objects rather than fully typed, since they're deep, vendor-internal detail not needed to drive automation against these resources.
+
+A handful of resource names are prefixed with `Arista` (e.g. `Arista Get Tag`) to avoid colliding with identically-named workflows already published for other products — workflow names are unique across the whole Itential Platform instance, not scoped per-project.
 
 ## Studio Projects
 
 ### Arista CloudVision Project
 
-Backed by the **`Arista CloudVision:latest`** Integration Model (see [`arista_cloudvision_api-latest.json`](./OpenAPIs/arista_cloudvision_api-latest.json) above). The project contains **15 workflows** organized into **3 folders**.
+Backed by the **`Arista CloudVision:latest`** Integration Model (see [`arista_cloudvision_api-latest.json`](./OpenAPIs/arista_cloudvision_api-latest.json) above). The project contains **40 workflows** organized into **6 folders**.
 
 #### Folder Structure
 
 | Folder | Workflows | Scope |
 |---|---|---|
+| Inventory | 10 | Device onboarding, decommissioning, and status |
+| Tags | 9 | Tags and tag assignments |
+| Software Management | 6 | Software image/extension management |
 | Workspace | 6 | Workspace lifecycle, build/submit requests, build status |
 | Change Control | 5 | Change Control lifecycle, status, approval |
 | Studio | 4 | Studio input configuration |

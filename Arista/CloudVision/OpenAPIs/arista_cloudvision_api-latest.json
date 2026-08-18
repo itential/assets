@@ -2,10 +2,10 @@
   "openapi": "3.0.0",
   "info": {
     "version": "latest",
-    "x-vendor-api-version": "CloudVision Resource APIs (workspace.v1, studio.v1, changecontrol.v1)",
+    "x-vendor-api-version": "CloudVision Resource APIs (workspace.v1, studio.v1, changecontrol.v1, inventory.v1, tag.v2, softwaremanagement.v1)",
     "title": "Arista CloudVision",
-    "description": "Arista CloudVision-as-a-Service (CVaaS) Resource APIs for the modern Workspace/Studio provisioning model: create a workspace, push configuration into a Studio (e.g. the Static Configlet Studio), build and validate the workspace, submit it (which creates a Change Control), then approve and execute that Change Control.\n\nAuthentication: bearer service-account token. Send Authorization: Bearer <token> on every request.\n\nCloudVision's Resource APIs are gRPC-native; this spec describes Arista's own generated REST/JSON gateway over those same services (introduced in CVP 2021.1.0, still actively maintained), converted from the vendor's published Swagger 2.0 documents to OpenAPI 3.0.\n\nSource: https://github.com/aristanetworks/cloudvision-apis",
-    "x-itential-curated": "Scoped to exactly the resources needed for the Workspace/Studio/Change Control provisioning flow: Workspace config and status, workspace build status (overall and per-device), Studio input configuration, and Change Control config/status/approval -- 15 operations across 3 of CloudVision's many resource packages. Deliberately excludes: every other studio.v1 resource (AssignedTags, AutofillAction, SecretInput, Studio/StudioConfig, StudioSummary) and changecontrol.v1's ChangeControlSummary, since they aren't part of this flow; the \"list all\" (GetAll) and \"get several\" (GetSome) operations on every resource, since those are long-lived streaming (chunked NDJSON) responses rather than a single JSON object and don't fit a request/response workflow task; and the dozens of other CloudVision resource packages (inventory, tags, image, telemetry, etc.) entirely, since they're outside this workflow. Several nested vendor structures (build diagnostics, change control stages) are preserved as opaque objects rather than fully typed, since they're deep, vendor-internal detail not needed to drive this flow -- the top-level state/status fields that matter (BuildState, ChangeControlStatus, etc.) are fully typed enums."
+    "description": "Arista CloudVision-as-a-Service (CVaaS) Resource APIs covering the modern Workspace/Studio provisioning flow (create a workspace, push configuration into a Studio, build and validate, submit to create a Change Control, then approve and execute it), device onboarding and decommissioning, tags and tag assignments, and software image/extension management.\n\nAuthentication: bearer service-account token. Send Authorization: Bearer <token> on every request.\n\nSource: https://github.com/aristanetworks/cloudvision-apis",
+    "x-itential-curated": "Covers Workspace config/status/build, Studio input configuration, Change Control config/status/approval, device onboarding/decommissioning/inventory, tags and tag assignments, and software image/extension management -- 40 operations across 6 of CloudVision's resource packages. Excludes the \"list all\" (GetAll) and \"get several\" (GetSome) operations on every resource, since those are long-lived streaming (chunked NDJSON) responses rather than a single JSON object and don't fit a request/response workflow task, plus every other CloudVision resource package (alerting, dashboards, licensing, identity providers, etc.) outside this scope."
   },
   "servers": [
     {
@@ -151,6 +151,444 @@
             "in": "query",
             "required": true,
             "description": "ID of the Change Control.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/inventory/v1/Device": {
+      "get": {
+        "operationId": "inventory_GetDevice",
+        "summary": "Get an inventoried device's identity and streaming status",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.deviceId",
+            "in": "query",
+            "required": true,
+            "description": "ID of the device.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/inventory/v1/DeviceDecommissioning": {
+      "get": {
+        "operationId": "inventory_GetDecommissioningStatus",
+        "summary": "Get the status of a decommissioning request",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceDecommissioningResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.requestId",
+            "in": "query",
+            "required": true,
+            "description": "UUID of the decommissioning request.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/inventory/v1/DeviceDecommissioningConfig": {
+      "post": {
+        "operationId": "inventory_DecommissionDevice",
+        "summary": "Submit a request to decommission (stop streaming and remove from inventory) a device",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceDecommissioningConfigResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceDecommissioningConfig"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "inventory_GetDecommissioningConfig",
+        "summary": "Get a decommissioning request's configuration",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceDecommissioningConfigResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.requestId",
+            "in": "query",
+            "required": true,
+            "description": "UUID of the decommissioning request.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "inventory_DeleteDecommissioningRequest",
+        "summary": "Delete a decommissioning request",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceDecommissioningConfigDeleteResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.requestId",
+            "in": "query",
+            "required": true,
+            "description": "UUID of the decommissioning request.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/inventory/v1/DeviceOnboarding": {
+      "get": {
+        "operationId": "inventory_GetOnboardingStatus",
+        "summary": "Get the status of an onboarding request",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceOnboardingResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.requestId",
+            "in": "query",
+            "required": true,
+            "description": "UUID of the onboarding request.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/inventory/v1/DeviceOnboardingConfig": {
+      "post": {
+        "operationId": "inventory_OnboardDevice",
+        "summary": "Submit a request to onboard (start streaming and add to inventory) a device",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceOnboardingConfigResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceOnboardingConfig"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "inventory_GetOnboardingConfig",
+        "summary": "Get an onboarding request's configuration",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceOnboardingConfigResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.requestId",
+            "in": "query",
+            "required": true,
+            "description": "UUID of the onboarding request.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "inventory_DeleteOnboardingRequest",
+        "summary": "Delete an onboarding request",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceOnboardingConfigDeleteResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.requestId",
+            "in": "query",
+            "required": true,
+            "description": "UUID of the onboarding request.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/inventory/v1/ProvisionedDevice": {
+      "get": {
+        "operationId": "inventory_GetProvisionedDevice",
+        "summary": "Get an onboarded device's provisioning status",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProvisionedDeviceResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.deviceId",
+            "in": "query",
+            "required": true,
+            "description": "ID of the device.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/softwaremanagement/v1/Assignments": {
+      "get": {
+        "operationId": "software_GetAssignments",
+        "summary": "Get the devices, ZTP upgrade rules, and studio tag queries that reference a software image",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentsResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.name",
+            "in": "query",
+            "required": true,
+            "description": "Repository key name.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/softwaremanagement/v1/Releases": {
+      "get": {
+        "operationId": "software_GetReleases",
+        "summary": "List software releases available for download from Arista's Software Download site",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReleasesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/resources/softwaremanagement/v1/Repository": {
+      "get": {
+        "operationId": "software_GetRepository",
+        "summary": "Get a software image/extension's upload/validation status and metadata",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepositoryResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.name",
+            "in": "query",
+            "required": true,
+            "description": "Repository key name.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/softwaremanagement/v1/RepositoryConfig": {
+      "post": {
+        "operationId": "software_AddImage",
+        "summary": "Add or update a software image/extension in CloudVision, downloading it from Arista's Software Download site (or a prior upload) by URI",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepositoryConfigResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepositoryConfig"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "software_GetRepositoryConfig",
+        "summary": "Get a software image/extension's configuration",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepositoryConfigResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.name",
+            "in": "query",
+            "required": true,
+            "description": "Repository key name (must include file suffix, e.g. \"EOS-4.30.0.swi\").",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "software_DeleteImage",
+        "summary": "Remove a software image/extension from CloudVision",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepositoryConfigDeleteResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.name",
+            "in": "query",
+            "required": true,
+            "description": "Repository key name.",
             "schema": {
               "type": "string"
             }
@@ -327,6 +765,608 @@
               "items": {
                 "type": "string"
               }
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/tag/v2/Element": {
+      "get": {
+        "operationId": "tag_GetElement",
+        "summary": "Get a tagged or untaggable network element's identity",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ElementResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.type",
+            "in": "query",
+            "required": true,
+            "description": "ELEMENT_TYPE_DEVICE, ELEMENT_TYPE_INTERFACE, or ELEMENT_TYPE_VIRTUAL.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.subType",
+            "in": "query",
+            "required": true,
+            "description": "Element sub-type.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.primaryId",
+            "in": "query",
+            "required": true,
+            "description": "Primary ID (meaning depends on type/sub-type -- see schema description).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.secondaryId",
+            "in": "query",
+            "required": true,
+            "description": "Secondary ID (meaning depends on type/sub-type -- see schema description).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/tag/v2/Tag": {
+      "get": {
+        "operationId": "tag_GetTag",
+        "summary": "Get a tag's merge-preview or merged state",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.workspaceId",
+            "in": "query",
+            "required": true,
+            "description": "Workspace ID (\"\" for merged tags).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.elementType",
+            "in": "query",
+            "required": true,
+            "description": "ELEMENT_TYPE_DEVICE, ELEMENT_TYPE_INTERFACE, or ELEMENT_TYPE_VIRTUAL.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.label",
+            "in": "query",
+            "required": true,
+            "description": "Tag label.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.value",
+            "in": "query",
+            "required": true,
+            "description": "Tag value.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.elementSubType",
+            "in": "query",
+            "required": true,
+            "description": "Tag element sub-type.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/tag/v2/TagAssignment": {
+      "get": {
+        "operationId": "tag_GetAssignment",
+        "summary": "Get a tag assignment's merge-preview or merged state",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagAssignmentResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.workspaceId",
+            "in": "query",
+            "required": true,
+            "description": "Workspace ID (\"\" for merged assignments).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.elementType",
+            "in": "query",
+            "required": true,
+            "description": "ELEMENT_TYPE_DEVICE, ELEMENT_TYPE_INTERFACE, or ELEMENT_TYPE_VIRTUAL.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.label",
+            "in": "query",
+            "required": true,
+            "description": "Tag label.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.value",
+            "in": "query",
+            "required": true,
+            "description": "Tag value.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.deviceId",
+            "in": "query",
+            "required": false,
+            "description": "Device ID (for device/interface element types).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.interfaceId",
+            "in": "query",
+            "required": false,
+            "description": "Interface ID (for interface element type).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.elementSubType",
+            "in": "query",
+            "required": true,
+            "description": "Tag element sub-type.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.primaryEntityId",
+            "in": "query",
+            "required": false,
+            "description": "Primary entity ID (for virtual element type).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.secondaryEntityId",
+            "in": "query",
+            "required": false,
+            "description": "Secondary entity ID (for virtual element type).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/tag/v2/TagAssignmentConfig": {
+      "post": {
+        "operationId": "tag_SetAssignment",
+        "summary": "Assign (or unassign) a tag to a network element (within a workspace, pending merge)",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagAssignmentConfigResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagAssignmentConfig"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "tag_GetAssignmentConfig",
+        "summary": "Get a tag assignment's configuration",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagAssignmentConfigResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.workspaceId",
+            "in": "query",
+            "required": true,
+            "description": "Workspace ID (\"\" for merged assignments).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.elementType",
+            "in": "query",
+            "required": true,
+            "description": "ELEMENT_TYPE_DEVICE, ELEMENT_TYPE_INTERFACE, or ELEMENT_TYPE_VIRTUAL.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.label",
+            "in": "query",
+            "required": true,
+            "description": "Tag label.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.value",
+            "in": "query",
+            "required": true,
+            "description": "Tag value.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.deviceId",
+            "in": "query",
+            "required": false,
+            "description": "Device ID (for device/interface element types).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.interfaceId",
+            "in": "query",
+            "required": false,
+            "description": "Interface ID (for interface element type).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.elementSubType",
+            "in": "query",
+            "required": true,
+            "description": "Tag element sub-type.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.primaryEntityId",
+            "in": "query",
+            "required": false,
+            "description": "Primary entity ID (for virtual element type).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.secondaryEntityId",
+            "in": "query",
+            "required": false,
+            "description": "Secondary entity ID (for virtual element type).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "tag_DeleteAssignment",
+        "summary": "Delete a tag assignment",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagAssignmentConfigDeleteResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.workspaceId",
+            "in": "query",
+            "required": true,
+            "description": "Workspace ID (\"\" for merged assignments).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.elementType",
+            "in": "query",
+            "required": true,
+            "description": "ELEMENT_TYPE_DEVICE, ELEMENT_TYPE_INTERFACE, or ELEMENT_TYPE_VIRTUAL.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.label",
+            "in": "query",
+            "required": true,
+            "description": "Tag label.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.value",
+            "in": "query",
+            "required": true,
+            "description": "Tag value.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.deviceId",
+            "in": "query",
+            "required": false,
+            "description": "Device ID (for device/interface element types).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.interfaceId",
+            "in": "query",
+            "required": false,
+            "description": "Interface ID (for interface element type).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.elementSubType",
+            "in": "query",
+            "required": true,
+            "description": "Tag element sub-type.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.primaryEntityId",
+            "in": "query",
+            "required": false,
+            "description": "Primary entity ID (for virtual element type).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.secondaryEntityId",
+            "in": "query",
+            "required": false,
+            "description": "Secondary entity ID (for virtual element type).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/resources/tag/v2/TagConfig": {
+      "post": {
+        "operationId": "tag_SetTag",
+        "summary": "Create or remove a tag (within a workspace, pending merge)",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagConfigResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagConfig"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "tag_GetTagConfig",
+        "summary": "Get a tag's configuration",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagConfigResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.workspaceId",
+            "in": "query",
+            "required": true,
+            "description": "Workspace ID (\"\" for merged tags).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.elementType",
+            "in": "query",
+            "required": true,
+            "description": "ELEMENT_TYPE_DEVICE, ELEMENT_TYPE_INTERFACE, or ELEMENT_TYPE_VIRTUAL.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.label",
+            "in": "query",
+            "required": true,
+            "description": "Tag label.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.value",
+            "in": "query",
+            "required": true,
+            "description": "Tag value.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.elementSubType",
+            "in": "query",
+            "required": true,
+            "description": "Tag element sub-type.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "tag_DeleteTag",
+        "summary": "Delete a tag",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagConfigDeleteResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key.workspaceId",
+            "in": "query",
+            "required": true,
+            "description": "Workspace ID (\"\" for merged tags).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.elementType",
+            "in": "query",
+            "required": true,
+            "description": "ELEMENT_TYPE_DEVICE, ELEMENT_TYPE_INTERFACE, or ELEMENT_TYPE_VIRTUAL.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.label",
+            "in": "query",
+            "required": true,
+            "description": "Tag label.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.value",
+            "in": "query",
+            "required": true,
+            "description": "Tag value.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key.elementSubType",
+            "in": "query",
+            "required": true,
+            "description": "Tag element sub-type.",
+            "schema": {
+              "type": "string"
             }
           }
         ]
@@ -1274,6 +2314,877 @@
         "properties": {
           "value": {
             "$ref": "#/components/schemas/ApproveConfig"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UUIDKey": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "A UUID you generate to identify this onboarding/decommissioning request."
+          }
+        },
+        "required": [
+          "requestId"
+        ]
+      },
+      "DeviceConfiguration": {
+        "type": "object",
+        "properties": {
+          "options": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Device-specific options for a third-party device, e.g. {\"address\": \"...\", \"community\": \"...\"} for SNMP."
+          }
+        }
+      },
+      "DeviceOnboardingConfig": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/UUIDKey"
+          },
+          "hostnameOrIp": {
+            "type": "string",
+            "description": "Hostname or IP at which the device can be reached."
+          },
+          "deviceType": {
+            "type": "string",
+            "description": "\"eos\" for EOS devices; for third-party devices: \"openconfig\", \"snmp\", \"cvp\", \"mwm\", or \"vCenter\"."
+          },
+          "deviceConfig": {
+            "$ref": "#/components/schemas/DeviceConfiguration",
+            "description": "Configuration for a third-party device."
+          },
+          "profileName": {
+            "type": "string",
+            "description": "Name of the TerminAttr profile with custom TerminAttr configuration to apply while onboarding."
+          }
+        },
+        "required": [
+          "key",
+          "hostnameOrIp",
+          "deviceType"
+        ]
+      },
+      "DeviceOnboardingConfigResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/DeviceOnboardingConfig"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DeviceOnboardingConfigDeleteResponse": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/UUIDKey"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "OnboardingStatus": {
+        "type": "string",
+        "enum": [
+          "ONBOARDING_STATUS_UNSPECIFIED",
+          "ONBOARDING_STATUS_IN_PROGRESS",
+          "ONBOARDING_STATUS_FAILURE",
+          "ONBOARDING_STATUS_SUCCESS"
+        ]
+      },
+      "DeviceOnboarding": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/UUIDKey"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Unique device ID discovered via onboarding."
+          },
+          "status": {
+            "$ref": "#/components/schemas/OnboardingStatus"
+          },
+          "error": {
+            "type": "string",
+            "description": "Set if status is ONBOARDING_STATUS_FAILURE."
+          },
+          "statusMessage": {
+            "type": "string",
+            "description": "Unstructured, display-only progress message."
+          },
+          "profileName": {
+            "type": "string"
+          }
+        }
+      },
+      "DeviceOnboardingResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/DeviceOnboarding"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DeviceDecommissioningConfig": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/UUIDKey"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Unique device ID that was discovered via onboarding."
+          },
+          "force": {
+            "type": "boolean",
+            "description": "Ignore pending/in-progress blocking tasks and decommission anyway."
+          },
+          "userName": {
+            "type": "string",
+            "description": "Name of the user who decommissioned the device."
+          }
+        },
+        "required": [
+          "key",
+          "deviceId"
+        ]
+      },
+      "DeviceDecommissioningConfigResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/DeviceDecommissioningConfig"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DeviceDecommissioningConfigDeleteResponse": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/UUIDKey"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DecommissioningStatus": {
+        "type": "string",
+        "enum": [
+          "DECOMMISSIONING_STATUS_UNSPECIFIED",
+          "DECOMMISSIONING_STATUS_IN_PROGRESS",
+          "DECOMMISSIONING_STATUS_FAILURE",
+          "DECOMMISSIONING_STATUS_SUCCESS"
+        ]
+      },
+      "DeviceDecommissioning": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/UUIDKey"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DecommissioningStatus"
+          },
+          "error": {
+            "type": "string",
+            "description": "Set if status is DECOMMISSIONING_STATUS_FAILURE."
+          },
+          "statusMessage": {
+            "type": "string",
+            "description": "Unstructured, display-only progress message."
+          }
+        }
+      },
+      "DeviceDecommissioningResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/DeviceDecommissioning"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DeviceKey": {
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "string",
+            "description": "Unique identifier of the device."
+          }
+        },
+        "required": [
+          "deviceId"
+        ]
+      },
+      "StreamingStatus": {
+        "type": "string",
+        "enum": [
+          "STREAMING_STATUS_UNSPECIFIED",
+          "STREAMING_STATUS_INACTIVE",
+          "STREAMING_STATUS_ACTIVE"
+        ]
+      },
+      "ExtendedAttributes": {
+        "type": "object",
+        "properties": {
+          "featureEnabled": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "description": "Map of feature name to enabled status; a missing feature is assumed off."
+          }
+        }
+      },
+      "Device": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/DeviceKey"
+          },
+          "softwareVersion": {
+            "type": "string"
+          },
+          "modelName": {
+            "type": "string"
+          },
+          "hardwareRevision": {
+            "type": "string"
+          },
+          "fqdn": {
+            "type": "string"
+          },
+          "hostname": {
+            "type": "string"
+          },
+          "domainName": {
+            "type": "string"
+          },
+          "systemMacAddress": {
+            "type": "string"
+          },
+          "bootTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "streamingStatus": {
+            "$ref": "#/components/schemas/StreamingStatus"
+          },
+          "extendedAttributes": {
+            "$ref": "#/components/schemas/ExtendedAttributes"
+          }
+        }
+      },
+      "DeviceResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/Device"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ProvisioningStatus": {
+        "type": "string",
+        "enum": [
+          "PROVISIONING_STATUS_UNSPECIFIED",
+          "PROVISIONING_STATUS_IN_PROGRESS",
+          "PROVISIONING_STATUS_FAILURE",
+          "PROVISIONING_STATUS_SUCCESS"
+        ]
+      },
+      "ProvisionedDevice": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/DeviceKey"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ProvisioningStatus"
+          },
+          "error": {
+            "type": "string",
+            "description": "Set if status is PROVISIONING_STATUS_FAILURE."
+          },
+          "ztpMode": {
+            "type": "boolean"
+          },
+          "ipAddress": {
+            "type": "string",
+            "description": "Current (post-provisioning) IP address of the device."
+          },
+          "provisioningGroupName": {
+            "type": "string",
+            "description": "Name of the group/container the device belongs to; \"undefined_container\" if provisioned but ungrouped."
+          },
+          "ipv6Address": {
+            "type": "string"
+          }
+        }
+      },
+      "ProvisionedDeviceResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/ProvisionedDevice"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ElementType": {
+        "type": "string",
+        "enum": [
+          "ELEMENT_TYPE_UNSPECIFIED",
+          "ELEMENT_TYPE_DEVICE",
+          "ELEMENT_TYPE_INTERFACE",
+          "ELEMENT_TYPE_VIRTUAL"
+        ]
+      },
+      "ElementSubType": {
+        "type": "string",
+        "enum": [
+          "ELEMENT_SUB_TYPE_UNSPECIFIED",
+          "ELEMENT_SUB_TYPE_DEVICE",
+          "ELEMENT_SUB_TYPE_VDS",
+          "ELEMENT_SUB_TYPE_WORKLOAD_SERVER",
+          "ELEMENT_SUB_TYPE_VM",
+          "ELEMENT_SUB_TYPE_APPLICATION",
+          "ELEMENT_SUB_TYPE_CONNECTIVITY_MONITOR_PROBE"
+        ]
+      },
+      "CreatorType": {
+        "type": "string",
+        "enum": [
+          "CREATOR_TYPE_UNSPECIFIED",
+          "CREATOR_TYPE_SYSTEM",
+          "CREATOR_TYPE_USER",
+          "CREATOR_TYPE_EXTERNAL"
+        ]
+      },
+      "TagKey": {
+        "type": "object",
+        "properties": {
+          "workspaceId": {
+            "type": "string",
+            "description": "Workspace ID; the special ID \"\" identifies where merged (published) tags reside."
+          },
+          "elementType": {
+            "$ref": "#/components/schemas/ElementType"
+          },
+          "label": {
+            "type": "string",
+            "description": "Tag label."
+          },
+          "value": {
+            "type": "string",
+            "description": "Tag value."
+          },
+          "elementSubType": {
+            "$ref": "#/components/schemas/ElementSubType"
+          }
+        },
+        "required": [
+          "workspaceId",
+          "elementType",
+          "label",
+          "value",
+          "elementSubType"
+        ]
+      },
+      "TagConfig": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/TagKey"
+          },
+          "remove": {
+            "type": "boolean",
+            "description": "Set true to remove this tag when the encompassing workspace merges."
+          }
+        },
+        "required": [
+          "key"
+        ]
+      },
+      "TagConfigResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/TagConfig"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TagConfigDeleteResponse": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/TagKey"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Tag": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/TagKey"
+          },
+          "creatorType": {
+            "$ref": "#/components/schemas/CreatorType"
+          },
+          "assigned": {
+            "type": "boolean",
+            "description": "Whether the tag is currently assigned to any element."
+          }
+        }
+      },
+      "TagResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/Tag"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TagAssignmentKey": {
+        "type": "object",
+        "properties": {
+          "workspaceId": {
+            "type": "string",
+            "description": "Workspace ID; the special ID \"\" identifies where merged assignments reside."
+          },
+          "elementType": {
+            "$ref": "#/components/schemas/ElementType"
+          },
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Set for ELEMENT_TYPE_DEVICE and ELEMENT_TYPE_INTERFACE."
+          },
+          "interfaceId": {
+            "type": "string",
+            "description": "Set for ELEMENT_TYPE_INTERFACE."
+          },
+          "elementSubType": {
+            "$ref": "#/components/schemas/ElementSubType"
+          },
+          "primaryEntityId": {
+            "type": "string",
+            "description": "Set for ELEMENT_TYPE_VIRTUAL (e.g. application ID)."
+          },
+          "secondaryEntityId": {
+            "type": "string",
+            "description": "Set for ELEMENT_TYPE_VIRTUAL (e.g. service ID)."
+          }
+        },
+        "required": [
+          "workspaceId",
+          "elementType",
+          "label",
+          "value",
+          "elementSubType"
+        ]
+      },
+      "TagAssignmentConfig": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/TagAssignmentKey"
+          },
+          "remove": {
+            "type": "boolean",
+            "description": "Set true to remove this assignment when the encompassing workspace merges."
+          }
+        },
+        "required": [
+          "key"
+        ]
+      },
+      "TagAssignmentConfigResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/TagAssignmentConfig"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TagAssignmentConfigDeleteResponse": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/TagAssignmentKey"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TagAssignment": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/TagAssignmentKey"
+          },
+          "tagCreatorType": {
+            "$ref": "#/components/schemas/CreatorType"
+          }
+        }
+      },
+      "TagAssignmentResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/TagAssignment"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ElementKey": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/ElementType"
+          },
+          "subType": {
+            "$ref": "#/components/schemas/ElementSubType"
+          },
+          "primaryId": {
+            "type": "string",
+            "description": "Device ID (serial number or UUID depending on sub-type); see the vendor docs for the full mapping by type/sub-type."
+          },
+          "secondaryId": {
+            "type": "string",
+            "description": "Interface/service ID where applicable; empty for device-level elements."
+          }
+        },
+        "required": [
+          "type",
+          "subType",
+          "primaryId",
+          "secondaryId"
+        ]
+      },
+      "Element": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/ElementKey"
+          }
+        }
+      },
+      "ElementResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/Element"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "RepositoryKey": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Unique identifier for the image/extension, including its file suffix (.swi, .swix, .rpm; Streaming Agent files must contain \"TerminAttr\")."
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "RepositoryConfig": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/RepositoryKey"
+          },
+          "uri": {
+            "type": "string",
+            "description": "Arista Software Download site identifier, or the CloudVision file server identifier if uploaded via the Software Upload REST API."
+          },
+          "rebootRequired": {
+            "type": "boolean",
+            "description": ".swi images always require a reboot."
+          }
+        },
+        "required": [
+          "key",
+          "uri"
+        ]
+      },
+      "RepositoryConfigResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/RepositoryConfig"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "RepositoryConfigDeleteResponse": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/RepositoryKey"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SoftwareType": {
+        "type": "string",
+        "enum": [
+          "SOFTWARE_TYPE_UNSPECIFIED",
+          "SOFTWARE_TYPE_SWI",
+          "SOFTWARE_TYPE_TERMINATTR",
+          "SOFTWARE_TYPE_SWIX",
+          "SOFTWARE_TYPE_RPM"
+        ]
+      },
+      "DigestType": {
+        "type": "string",
+        "enum": [
+          "DIGEST_TYPE_UNSPECIFIED",
+          "DIGEST_TYPE_SHA512"
+        ]
+      },
+      "Progress": {
+        "type": "string",
+        "enum": [
+          "PROGRESS_UNSPECIFIED",
+          "PROGRESS_INITIAL",
+          "PROGRESS_QUEUED",
+          "PROGRESS_LOADING",
+          "PROGRESS_VALIDATING",
+          "PROGRESS_SAVING",
+          "PROGRESS_SUCCESS",
+          "PROGRESS_ERROR"
+        ]
+      },
+      "RecommendedAction": {
+        "type": "string",
+        "enum": [
+          "RECOMMENDED_ACTION_UNSPECIFIED",
+          "RECOMMENDED_ACTION_CONTACT_TAC",
+          "RECOMMENDED_ACTION_ADD_TOKEN",
+          "RECOMMENDED_ACTION_UPDATE_TOKEN",
+          "RECOMMENDED_ACTION_ACCEPT_EULA",
+          "RECOMMENDED_ACTION_RETRY"
+        ]
+      },
+      "SoftwareMetadata": {
+        "type": "object",
+        "properties": {
+          "digestType": {
+            "$ref": "#/components/schemas/DigestType"
+          },
+          "digest": {
+            "type": "string"
+          },
+          "size": {
+            "type": "string",
+            "description": "Size in bytes."
+          },
+          "rebootRequired": {
+            "type": "boolean"
+          },
+          "softwareType": {
+            "$ref": "#/components/schemas/SoftwareType"
+          }
+        }
+      },
+      "SoftwareStatus": {
+        "type": "object",
+        "properties": {
+          "progress": {
+            "$ref": "#/components/schemas/Progress"
+          },
+          "message": {
+            "type": "string"
+          },
+          "recommendedAction": {
+            "$ref": "#/components/schemas/RecommendedAction"
+          }
+        }
+      },
+      "Repository": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/RepositoryKey"
+          },
+          "uploadedBy": {
+            "type": "string"
+          },
+          "uploadedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifiedBy": {
+            "type": "string"
+          },
+          "lastModifiedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "softwareStatus": {
+            "$ref": "#/components/schemas/SoftwareStatus"
+          },
+          "softwareMetadata": {
+            "$ref": "#/components/schemas/SoftwareMetadata"
+          }
+        }
+      },
+      "RepositoryResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/Repository"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Assignments": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/RepositoryKey"
+          },
+          "devices": {
+            "$ref": "#/components/schemas/StringList",
+            "description": "Devices whose designed image references this software image."
+          },
+          "ztpUpgradeRules": {
+            "type": "object",
+            "description": "ZTP upgrade rules referencing this software image; vendor-defined nested structure preserved as-is."
+          },
+          "studioTagQueries": {
+            "type": "object",
+            "description": "Studio tag queries referencing this software image; vendor-defined nested structure preserved as-is."
+          }
+        }
+      },
+      "AssignmentsResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/Assignments"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ReleasesStatus": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "string",
+            "enum": [
+              "LEVEL_UNSPECIFIED",
+              "LEVEL_INFO",
+              "LEVEL_WARNING",
+              "LEVEL_ERROR"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "description": "Status of the latest interaction with Arista's Software Download site."
+          },
+          "recommendedAction": {
+            "$ref": "#/components/schemas/RecommendedAction"
+          }
+        }
+      },
+      "Releases": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/ReleasesStatus"
+          },
+          "uris": {
+            "$ref": "#/components/schemas/StringList",
+            "description": "URI paths of software releases available from Arista's Software Download site, usable as RepositoryConfig.uri."
+          }
+        }
+      },
+      "ReleasesResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/Releases"
           },
           "time": {
             "type": "string",
