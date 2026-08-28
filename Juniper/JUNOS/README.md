@@ -30,7 +30,7 @@ This project provides a NETCONF-based device driver, a Studio Project covering s
 | Asset | Description |
 |---|---|
 | [device-drivers/netconf-python](./device-drivers/netconf-python/) | IG5 Python NETCONF driver — is-alive, run-command, get-config, send-command, reboot |
-| [Projects/Juniper JUNOS](./Projects/Juniper%20JUNOS.project.json) | IG5 project — software upgrade, port turn-up, push configuration, command runner |
+| [Studio Projects/Juniper JUNOS](./Studio%20Projects/Juniper%20JUNOS.project.json) | IG5 project — software upgrade, port turn-up, push configuration, command runner |
 | [Configuration Parsers/juniper-junos-set.json](./Configuration%20Parsers/juniper-junos-set.json) | Config Manager parser defining the `juniper-junos-set` device type |
 | [Golden Configurations/Juniper JUNOS set](./Golden%20Configurations/Juniper%20JUNOS%20set.json) | Golden config tree using JUNOS `set`-format lines — requires `juniper-junos-set` parser |
 | [Golden Configurations/Juniper JUNOS text - Jinja2](./Golden%20Configurations/Juniper%20JUNOS%20text%20-%20Jinja2.json) | Golden config tree using `text`-format lines with Jinja2 templates for flexible value matching |
