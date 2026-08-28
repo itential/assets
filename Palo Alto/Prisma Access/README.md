@@ -33,7 +33,7 @@ This project provides an OpenAPI spec for automating against Prisma Access's SAS
 
 Import `palo_alto_prisma_access-latest.json` as an Integration Model in **Admin > Integrations**, then create an integration pointing at Prisma Access's SASE API.
 
-Authentication is OAuth 2.0 (client credentials grant), using an IAM service account's client ID/secret and your Tenant Service Group (TSG) ID as the scope.
+Authentication is OAuth 2.0 (client credentials grant), using an IAM service account's client ID/secret and your Tenant Service Group (TSG) ID as the scope. Set `auth_method` to `client_secret_basic` — Palo Alto's token endpoint requires HTTP Basic client credentials, not the alternate body-based method.
 
 The instance's `authentication`/`server` properties should look like this once configured:
 
