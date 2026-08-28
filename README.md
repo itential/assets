@@ -37,7 +37,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **CyberArk** | Conjur (secrets management) |
 | **Datadog** | Observability |
 | **Docker** | Docker Engine · Docker Hub |
-| **F5** | BIG-IP · BIG-IQ |
+| **F5** | BIG-IP · BIG-IQ · Insight |
 | **Fortinet** | FortiGate |
 | **GitHub** | GitHub |
 | **GitLab** | GitLab |
