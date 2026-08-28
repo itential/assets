@@ -172,7 +172,7 @@ Resources included, by category:
 
 Full spec (178 operations), generated directly from a live vCenter 9.1 instance using VMware's [`vmware-openapi-generator`](https://github.com/vmware/vmware-openapi-generator), which only picked up `/rest`-style bindings on this instance despite it being well past the `/api` cutover — see `vmware_vsphere_automation-9.1.0.0.json` below for the modern surface, which turned out to have an official published source instead of needing generation. Regenerate against your own vCenter if you need an exact `/rest` match to a different version. See `vmware_vsphere_vcenter-latest.json` above for the curated subset if you just need common CRUD automation.
 
-vSphere's `/rest` API uses dot-notation query parameter names for list filters (e.g. `filter.names`, `filter.clusters`), which Itential Platform's naming convention doesn't allow — these optional filter parameters are omitted here too, for the same reason.
+vSphere's `/rest` API uses dot-notation query parameter names for list filters (e.g. `filter.names`, `filter.clusters`) — these optional filter parameters are omitted here too; list operations still return the full unfiltered set.
 
 ### `vmware_vsphere_automation-latest.json`
 
