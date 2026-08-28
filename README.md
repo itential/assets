@@ -62,7 +62,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **OpenAI** | AI / LLM APIs |
 | **Paessler** | PRTG monitoring |
 | **PagerDuty** | Incident management |
-| **Palo Alto** | Panorama · Prisma Cloud CSPM |
+| **Palo Alto** | Panorama · Prisma Access · Prisma Cloud CSPM |
 | **RingCentral** | Unified communications |
 | **Ruckus** | Fastiron |
 | **Selector** | AIOps |
