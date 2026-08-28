@@ -37,7 +37,9 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Cisco** | ASA · Crosswork Network Controller · IOS · ISE · Meraki · NSO · NX-OS · PSIRT Open Vulnerability · Umbrella · Webex |
 | **CyberArk** | Conjur (secrets management) |
 | **Datadog** | Observability |
+| **Delinea** | Secret Server (secrets management) |
 | **Docker** | Docker Engine · Docker Hub |
+| **EfficientIP** | SOLIDserver (DDI) |
 | **F5** | BIG-IP · BIG-IQ · Insight |
 | **Fortinet** | FortiGate |
 | **GitHub** | GitHub |
@@ -51,7 +53,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Kentik** | Network observability |
 | **Kubernetes** | Container orchestration |
 | **LogicMonitor** | Observability |
-| **Microsoft** | Graph Mail · Teams |
+| **Microsoft** | Azure Key Vault · Graph Mail · Teams |
 | **Nautobot** | Nautobot 2.4 |
 | **NetBox** | IPAM / DCIM |
 | **NetScaler** | ADC |
@@ -71,6 +73,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Versa** | Director |
 | **VMware** | vSphere vCenter |
 | **Zoom** | Meetings / collaboration |
+| **Zscaler** | ZIA |
 
 ---
 
