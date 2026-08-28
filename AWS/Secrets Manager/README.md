@@ -10,12 +10,14 @@ This project provides an OpenAPI spec for automating against the AWS Secrets Man
 - [OpenAPIs](#openapis)
   - [`aws_secrets_manager-latest.json`](#aws_secrets_manager-latestjson)
   - [`aws_secrets_manager-2017-10-17.json`](#aws_secrets_manager-2017-10-17json)
+- [Secret Providers](#secret-providers)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | AWS Secrets Manager API OpenAPI spec — curated `-latest` plus the full dated version |
+| [secret-providers/](./secret-providers/) | IG5 custom secret-provider plugin — resolves AWS Secrets Manager secrets into Gateway secret aliases, usable in device inventory credentials and Gateway-executed Integration Model instances |
 
 ## Requirements
 
@@ -63,3 +65,9 @@ Operations included, by category:
 ### `aws_secrets_manager-2017-10-17.json`
 
 Full spec, converted in-house from AWS's official service model, for AWS Secrets Manager API version 2017-10-17 (23 operations) — the entire upstream API surface as AWS defines it. See `aws_secrets_manager-latest.json` above for the curated automation spec.
+
+## Secret Providers
+
+Separately from automating *against* AWS Secrets Manager via the Integration Model above, this product also ships a custom secret-provider plugin so **Itential Gateway** can resolve credentials *from* AWS Secrets Manager at runtime — for device inventory passwords or Gateway-executed Integration Model instances — instead of storing them in Gateway's own encrypted store.
+
+See [secret-providers/README.md](./secret-providers/README.md) for full setup details: three ways to authenticate to AWS (EC2 instance role, IAM Roles Anywhere, or a static access key), registration steps, and how to reference the resulting alias.

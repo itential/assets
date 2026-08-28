@@ -17,6 +17,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Golden Configurations** | Config Manager compliance trees for auditing device configuration drift |
 | **device-drivers** | Netmiko-based drivers for connecting Itential Gateway to physical and virtual devices |
 | **Configuration Parsers** | Scripts for parsing structured output from device CLI commands |
+| **secret-providers** | Custom secret-provider plugin so Itential Gateway resolves credentials from an external secrets manager at runtime, instead of storing them in Gateway's own encrypted store — usable for both device inventory credentials and Gateway-executed Integration Model instances |
 
 ---
 
@@ -82,6 +83,7 @@ Vendor/
     ├── device-drivers/
     ├── Golden Configurations/
     ├── OpenAPIs/
+    ├── secret-providers/
     ├── Studio Projects/
     └── README.md
 ```
@@ -117,6 +119,9 @@ See [Golden Configuration overview](https://docs.itential.com/itential-platform/
 ### Install a Device Driver (Gateway)
 Follow the instructions in the driver's `README.md`. Drivers typically require copying files to your Itential Gateway host and restarting the Itential Gateway service.
 
+### Install a Secret Provider (Gateway)
+Follow the instructions in the `secret-providers/README.md`. Copy the plugin file to your Itential Gateway host, then register it as a secret provider and create a secret alias via `iagctl` — see [Itential Gateway — Configure a Custom Plugin Secret Provider](https://docs.itential.com/itential-gateway/secrets/external-secrets/configure-custom-plugin-provider).
+
 ---
 
 ## Requirements
@@ -124,7 +129,7 @@ Follow the instructions in the driver's `README.md`. Drivers typically require c
 Minimum versions vary by asset - check each product's `README.md` for specifics. In general:
 
 - **Itential Platform** ≥ 6.4
-- **Itential Gateway** ≥ 5.0 (for device-driver assets)
+- **Itential Gateway** ≥ 5.0 (for device-driver assets), ≥ 5.5 (for secret-providers assets)
 
 ---
 
