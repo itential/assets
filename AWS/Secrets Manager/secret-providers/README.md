@@ -1,12 +1,16 @@
 # AWS Secrets Manager — Custom Secret Provider for Itential Gateway
 
-Itential Gateway 5.5+ supports **external secret providers**: instead of storing credentials in Itential Gateway's own encrypted store, Itential Gateway resolves them at execution time from an external secrets system. Out of the box it supports **HashiCorp Vault (KV v2)** and **CyberArk CCP** — see Itential's docs on [configuring a custom secret provider plugin](https://docs.itential.com/itential-gateway/secrets/external-secrets/configure-custom-plugin-provider) and [managing secret aliases](https://docs.itential.com/itential-gateway/secrets/external-secrets/manage-secret-aliases). AWS Secrets Manager isn't a built-in type, so this uses the third option — **`plugin`** — a small executable you provide that Itential Gateway calls to fetch a secret on demand.
+## What This Is
 
-This is a working example: a Python plugin for AWS Secrets Manager, **three different ways to authenticate it to AWS**, the registration steps, and how to reference the resulting alias — from device inventory or from an Integration Model instance.
+A custom secret-provider plugin so Itential Gateway resolves AWS Secrets Manager credentials at runtime instead of storing them in Gateway's own encrypted store — for device inventory passwords, Integration Model API credentials, and other Gateway-executed actions. One less place your team manages credentials, and rotation in AWS Secrets Manager propagates automatically on the next run — no VPN needed between a SaaS Platform and an on-prem secrets manager, since only Gateway ever resolves the value.
+
+The interesting part of this integration isn't the Secrets Manager API call itself (a single `GetSecretValue`) — it's **how the plugin process authenticates to AWS**, since that varies a lot depending on where Itential Gateway is actually running. This example implements and tests three patterns and lets you pick per-provider.
+
+Itential Gateway 5.5+ supports **external secret providers** out of the box for **HashiCorp Vault (KV v2)** and **CyberArk CCP** — see Itential's docs on [configuring a custom secret provider plugin](https://docs.itential.com/itential-gateway/secrets/external-secrets/configure-custom-plugin-provider) and [managing secret aliases](https://docs.itential.com/itential-gateway/secrets/external-secrets/manage-secret-aliases). AWS Secrets Manager isn't a built-in type, so this uses the third option — **`plugin`** — a small executable you provide that Itential Gateway calls to fetch a secret on demand.
 
 ## Table of Contents
 
-- [Architecture](#architecture)
+- [What This Is](#what-this-is)
 - [Prerequisites](#prerequisites)
 - [The Plugin](#the-plugin)
 - [Authenticating to AWS: Three Patterns](#authenticating-to-aws-three-patterns)
@@ -21,22 +25,6 @@ This is a working example: a Python plugin for AWS Secrets Manager, **three diff
 - [Verifying It's Working](#verifying-its-working)
 - [Adapting This Example](#adapting-this-example)
 - [References](#references)
-
-## Architecture
-
-Itential Gateway is the only thing that ever talks to AWS Secrets Manager. Two different callers can trigger that resolution — Inventory Manager driving a device connection, or an Integration Model instance making an API call — but both go through the exact same alias → provider → plugin path, and the plaintext secret never travels back to Platform:
-
-```
-Itential Platform                                        Itential Gateway
-──────────────────                                        ────────────────
-device sync (Inventory Manager)  ─┐
-Integration Model instance         ├─▶  resolves $GATEWAYSECRET_(alias)  ──▶  aws-plugin.py  ──(SigV4-signed request)──▶  AWS Secrets Manager
-(Gateway-executed)                ─┘
-```
-
-Itential Gateway resolves the `$GATEWAYSECRET_(...)` reference just before the value is used, so the plaintext password is never stored in Inventory Manager, in a sync template, in an Integration Model instance's config, or in Itential Gateway's own database — only the alias name is.
-
-The interesting part of this integration isn't the Secrets Manager API call itself (a single `GetSecretValue`) — it's **how the plugin process authenticates to AWS**, since that varies a lot depending on where Itential Gateway is actually running. This example implements and tests three patterns and lets you pick per-provider.
 
 ## Prerequisites
 
@@ -239,7 +227,24 @@ iagctl describe secret AWS-IOSXE-PASSWORD
 
 ## Referencing the Alias
 
-Use `$GATEWAYSECRET_(alias-name)` anywhere Itential Gateway resolves secrets at execution time. Two common places:
+Use `$GATEWAYSECRET_(alias-name)` anywhere Itential Gateway resolves secrets at execution time. This doc covers two callers in detail below — Inventory Manager device sync and Integration Model instances — but Gateway resolves the same alias for other Gateway-executed actions too, including Config Manager command templates and GatewayManager tasks like `runService`/`runCode`/`sendCommand`/`sendConfig`. See [Itential Gateway — External Secrets Overview](https://docs.itential.com/itential-gateway/5/secrets/external-secrets/overview) for the complete list. Whichever one triggers it, the path is identical, and the plaintext secret never travels back to Platform:
+
+```
+Itential Platform
+  • Inventory Manager device sync
+  • Integration Model instances (Gateway-executed)
+  • Config Manager command templates
+  • GatewayManager tasks (runService, runCode, sendCommand, sendConfig, ...)
+        │
+        ▼
+Itential Gateway
+        │  resolves $GATEWAYSECRET_(alias)
+        ▼
+aws-plugin.py
+        │  SigV4-signed request
+        ▼
+AWS Secrets Manager
+```
 
 ### In Device Inventory
 
