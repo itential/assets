@@ -22,7 +22,7 @@ This project provides a Studio Project covering software upgrade, port turn-up, 
 
 | Asset | Description |
 |---|---|
-| [Projects/Cisco IOS](./Projects/Cisco%20IOS.project.json) | Itential Platform project — software upgrade, port turn-up, compliance, inventory management |
+| [Studio Projects/Cisco IOS](./Studio%20Projects/Cisco%20IOS.project.json) | Itential Platform project — software upgrade, port turn-up, compliance, inventory management |
 | [Golden Configurations/Cisco IOS - Simple](./Golden%20Configurations/Cisco%20IOS%20-%20Simple.json) | Golden config tree using literal matching |
 | [Golden Configurations/Cisco IOS - Jinja2](./Golden%20Configurations/Cisco%20IOS%20-%20Jinja2.json) | Golden config tree using Jinja2 expressions for flexible value matching |
 | [Golden Configurations/Cisco IOS - Lab](./Golden%20Configurations/Cisco%20IOS%20-%20Lab.json) | Golden config tree for lab baseline configuration |
