@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BASE_SHA=$(git log --pretty=format:'%P' -n 1 HEAD | awk '{print $1}')
+: "${BASE_SHA:?BASE_SHA environment variable must be set}"
 ASSET_DIRS="Studio Projects|Agent Projects|Automations|LCM Resource Models|Golden Configs"
 INTEGRATION_MODELS_DIR="OpenAPIs"
 
@@ -27,8 +27,14 @@ else
 fi
 
 # ── Integration spec diff ─────────────────────────────────────────────────────
+if [ "${INCLUDE_ALL_SPEC_VERSIONS:-false}" = "true" ]; then
+  SPEC_PATTERN="${INTEGRATION_MODELS_DIR}/.*\.json$"
+else
+  SPEC_PATTERN="${INTEGRATION_MODELS_DIR}/.*-latest\.json$"
+fi
+
 CHANGED_SPECS=$(git -c core.quotePath=false diff --name-only --diff-filter=AM "$BASE_SHA" HEAD \
-  | { grep "${INTEGRATION_MODELS_DIR}/.*-latest\.json$" || true; } | jq -R . | jq -sc .)
+  | { grep -E "$SPEC_PATTERN" || true; } | jq -R . | jq -sc .)
 echo "changed_specs: $CHANGED_SPECS"
 
 # Use heredoc format — GitHub Actions rejects bare JSON arrays as output values
