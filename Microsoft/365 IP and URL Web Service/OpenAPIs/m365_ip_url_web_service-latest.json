@@ -1,0 +1,473 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Microsoft 365 IP Address and URL Web Service",
+    "description": "Public REST service for the current Microsoft 365 IP address ranges and URLs used to configure firewalls and proxy servers, plus version tracking and change history.",
+    "version": "latest",
+    "x-itential-curated": "Hand-authored from Microsoft's own documentation (https://aka.ms/ipurlws) -- no vendor-published OpenAPI/Swagger spec exists for this service. All 4 documented web methods (version, version-for-instance, endpoints, changes) are included; nothing was excluded, this is the service's complete surface."
+  },
+  "servers": [
+    {
+      "url": "https://endpoints.office.com"
+    }
+  ],
+  "paths": {
+    "/version": {
+      "get": {
+        "operationId": "getAllVersions",
+        "summary": "Get latest version for all instances",
+        "description": "Returns the latest published version for every Microsoft 365 service instance.",
+        "tags": [
+          "Version"
+        ],
+        "parameters": [
+          {
+            "name": "clientRequestId",
+            "in": "query",
+            "required": true,
+            "description": "A GUID you generate to identify this client. Generate one per client and reuse it across calls -- do not generate a new one per request.",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            }
+          },
+          {
+            "name": "allVersions",
+            "in": "query",
+            "required": false,
+            "description": "Return all previously published versions, not just the latest.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Version records for every instance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "instance": {
+                        "type": "string"
+                      },
+                      "serviceArea": {
+                        "type": "string"
+                      },
+                      "latest": {
+                        "type": "string",
+                        "description": "Latest published version, format YYYYMMDDNN."
+                      },
+                      "versions": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "All previously published versions. Only present when allVersions=true."
+                      }
+                    },
+                    "required": [
+                      "instance",
+                      "latest"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/version/{instance}": {
+      "get": {
+        "operationId": "getVersionForInstance",
+        "summary": "Get latest version for one instance",
+        "description": "Returns the latest published version for a single Microsoft 365 service instance.",
+        "tags": [
+          "Version"
+        ],
+        "parameters": [
+          {
+            "name": "instance",
+            "in": "path",
+            "required": true,
+            "description": "The Microsoft 365 service instance.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Worldwide",
+                "China",
+                "USGovDoD",
+                "USGovGCCHigh",
+                "France",
+                "Germany"
+              ]
+            }
+          },
+          {
+            "name": "clientRequestId",
+            "in": "query",
+            "required": true,
+            "description": "A GUID you generate to identify this client. Generate one per client and reuse it across calls -- do not generate a new one per request.",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            }
+          },
+          {
+            "name": "allVersions",
+            "in": "query",
+            "required": false,
+            "description": "Return all previously published versions, not just the latest.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Version record for the requested instance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "instance": {
+                      "type": "string"
+                    },
+                    "serviceArea": {
+                      "type": "string"
+                    },
+                    "latest": {
+                      "type": "string",
+                      "description": "Latest published version, format YYYYMMDDNN."
+                    },
+                    "versions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "All previously published versions. Only present when allVersions=true."
+                    }
+                  },
+                  "required": [
+                    "instance",
+                    "latest"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/endpoints/{instance}": {
+      "get": {
+        "operationId": "getEndpoints",
+        "summary": "Get IP address ranges and URLs",
+        "description": "Returns all endpoint sets (IP ranges and URLs) for the requested instance. Rate limited -- avoid calling more often than the version method indicates a change.",
+        "tags": [
+          "Endpoints"
+        ],
+        "parameters": [
+          {
+            "name": "instance",
+            "in": "path",
+            "required": true,
+            "description": "The Microsoft 365 service instance.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Worldwide",
+                "China",
+                "USGovDoD",
+                "USGovGCCHigh",
+                "France",
+                "Germany"
+              ]
+            }
+          },
+          {
+            "name": "clientRequestId",
+            "in": "query",
+            "required": true,
+            "description": "A GUID you generate to identify this client. Generate one per client and reuse it across calls -- do not generate a new one per request.",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            }
+          },
+          {
+            "name": "serviceAreas",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated list of service areas to filter by. Common is always included.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Exchange,SharePoint"
+          },
+          {
+            "name": "tenantName",
+            "in": "query",
+            "required": false,
+            "description": "Your Microsoft 365 tenant name, substituted into wildcarded URLs. Omitted parts default to '*'.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "noIPv6",
+            "in": "query",
+            "required": false,
+            "description": "Exclude IPv6 addresses from the response.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoint sets for the requested instance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "description": "Immutable ID of the endpoint set."
+                      },
+                      "serviceArea": {
+                        "type": "string",
+                        "enum": [
+                          "Common",
+                          "Exchange",
+                          "SharePoint",
+                          "Skype"
+                        ]
+                      },
+                      "serviceAreaDisplayName": {
+                        "type": "string"
+                      },
+                      "urls": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "ips": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "tcpPorts": {
+                        "type": "string"
+                      },
+                      "udpPorts": {
+                        "type": "string"
+                      },
+                      "category": {
+                        "type": "string",
+                        "enum": [
+                          "Optimize",
+                          "Allow",
+                          "Default"
+                        ]
+                      },
+                      "expressRoute": {
+                        "type": "boolean"
+                      },
+                      "required": {
+                        "type": "boolean"
+                      },
+                      "notes": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "serviceArea",
+                      "category"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests -- wait an hour or generate a new clientRequestId."
+          }
+        }
+      }
+    },
+    "/changes/{instance}/{version}": {
+      "get": {
+        "operationId": "getChanges",
+        "summary": "Get changes since a version",
+        "description": "Returns the changes published since the given version. Use version 0000000000 to get the full change history.",
+        "tags": [
+          "Changes"
+        ],
+        "parameters": [
+          {
+            "name": "instance",
+            "in": "path",
+            "required": true,
+            "description": "The Microsoft 365 service instance.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Worldwide",
+                "China",
+                "USGovDoD",
+                "USGovGCCHigh",
+                "France",
+                "Germany"
+              ]
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "description": "The version to get changes since, format YYYYMMDDNN. Use 0000000000 for full history.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]{10}$"
+            }
+          },
+          {
+            "name": "clientRequestId",
+            "in": "query",
+            "required": true,
+            "description": "A GUID you generate to identify this client. Generate one per client and reuse it across calls -- do not generate a new one per request.",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Change records since the given version.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "description": "Immutable ID of the change record."
+                      },
+                      "endpointSetId": {
+                        "type": "integer"
+                      },
+                      "disposition": {
+                        "type": "string",
+                        "enum": [
+                          "Add",
+                          "Change",
+                          "Remove"
+                        ]
+                      },
+                      "impact": {
+                        "type": "string",
+                        "description": "Expected impact to a network perimeter environment. Only present for change records from version 2018112800 onward.",
+                        "enum": [
+                          "AddedIp",
+                          "AddedUrl",
+                          "AddedIpAndUrl",
+                          "AddedSubstituteUrl",
+                          "RemovedIpOrUrl",
+                          "ChangedIsExpressRoute",
+                          "MovedIpOrUrl",
+                          "RemovedDuplicateIpOrUrl",
+                          "OtherNonPriorityChanges"
+                        ]
+                      },
+                      "version": {
+                        "type": "string",
+                        "pattern": "^[0-9]{10}$"
+                      },
+                      "previous": {
+                        "type": "object"
+                      },
+                      "current": {
+                        "type": "object"
+                      },
+                      "add": {
+                        "type": "object",
+                        "properties": {
+                          "effectiveDate": {
+                            "type": "string"
+                          },
+                          "ips": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "urls": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "remove": {
+                        "type": "object",
+                        "properties": {
+                          "ips": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "urls": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "endpointSetId",
+                      "disposition",
+                      "version"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests -- wait an hour or generate a new clientRequestId."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {}
+  }
+}
