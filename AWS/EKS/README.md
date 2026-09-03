@@ -35,6 +35,25 @@ Authorization: AWS4-HMAC-SHA256 Credential=<access-key-id>/<date>/<region>/eks/a
 
 Generate an AWS access key ID and secret access key for an IAM principal with `eks:*` permissions under **IAM > Users/Roles > Security credentials**.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "hmac": {
+      "accessKeyId": "<your-aws-access-key-id>",
+      "secretAccessKey": "<your-aws-secret-access-key>",
+      "sessionToken": ""
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "eks.us-east-1.amazonaws.com",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

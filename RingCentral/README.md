@@ -37,6 +37,31 @@ Authorization: Bearer <access_token>
 
 Obtain an access token via RingCentral's OAuth2 flow (client credentials or JWT flow) using an app registered in your RingCentral Developer account at https://developers.ringcentral.com. The spec's `OAuth2` security scheme points at RingCentral's own `authorizationUrl`/`tokenUrl` endpoints (`https://platform.ringcentral.com/restapi/oauth/authorize` and `.../restapi/oauth/token`).
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "OAuth2": {
+      "client_id": "<your-client-id>",
+      "client_secret": "<your-client-secret>",
+      "token_url": "https://platform.ringcentral.com/restapi/oauth/token",
+      "refresh_url": "",
+      "scope": "",
+      "token": {
+        "access_token": ""
+      },
+      "authorization_url": "https://platform.ringcentral.com/restapi/oauth/authorize"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "platform.ringcentral.com",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

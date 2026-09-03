@@ -85,6 +85,24 @@ Authorization: Basic <base64(username:password)>
 
 Enable API access on the ISE node under **Administration > System > Settings > API Settings**, then use the ISE admin credentials as the Basic Auth username/password when configuring the integration.
 
+The instance's `authentication`/`server` properties should look like this once configured — every module spec uses the same scheme, so this applies regardless of which one(s) you import:
+
+```json
+{
+  "authentication": {
+    "BasicAuth": {
+      "username": "<your-username>",
+      "password": "<your-password>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "<your-ise-pan-host>:443",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 Every module below shares the same authentication (HTTP Basic) and vendor API version (`1.0.0`). Each has its own `-latest.json` (actively-maintained) and dated `-1.0.0.json` (full, unmodified vendor spec) pair in `OpenAPIs/`.

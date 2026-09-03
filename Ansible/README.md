@@ -37,6 +37,21 @@ Authorization: Bearer <token>
 
 Generate a token by issuing `POST /api/v2/tokens/` with your AWX username and password.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "bearerAuth": "<your-bearer-token>"
+  },
+  "server": {
+    "protocol": "https",
+    "host": "<your-host>",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

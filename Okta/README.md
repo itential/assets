@@ -37,6 +37,23 @@ Authorization: SSWS <your-okta-api-token>
 
 Generate a token in the Okta Admin Console under **Security → API → Tokens**.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "ApiKey": {
+      "value": "<your-api-key>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "subdomain.okta.com",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

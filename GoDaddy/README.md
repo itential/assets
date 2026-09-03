@@ -35,6 +35,23 @@ Authorization: sso-key <api_key>:<api_secret>
 
 Generate an API key pair at https://developer.godaddy.com/keys.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "apiKeyAuth": {
+      "value": "<your-api-key-and-secret>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "api.ote-godaddy.com",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

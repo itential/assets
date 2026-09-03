@@ -37,6 +37,21 @@ Authorization: Bearer <your-openai-api-key>
 
 Generate an API key at [platform.openai.com/api-keys](https://platform.openai.com/api-keys).
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "ApiKeyAuth": "<your-bearer-token>"
+  },
+  "server": {
+    "protocol": "https",
+    "host": "api.openai.com",
+    "base_path": "/v1"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

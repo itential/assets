@@ -39,6 +39,25 @@ Authorization: AWS4-HMAC-SHA256 Credential=<access-key-id>/<date>/<region>/secre
 
 Generate an access key ID and secret access key in the AWS IAM console under **Users → Security credentials → Access keys**. The IAM principal used must be granted the relevant `secretsmanager:*` permissions for the operations it will call.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "hmac": {
+      "accessKeyId": "<your-aws-access-key-id>",
+      "secretAccessKey": "<your-aws-secret-access-key>",
+      "sessionToken": ""
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "secretsmanager.us-east-1.amazonaws.com",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

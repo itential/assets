@@ -37,6 +37,24 @@ Authorization: Basic <base64(username:password_or_token)>
 
 Generate a Personal Access Token in Jira under your user profile → **Personal Access Tokens**.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "basic": {
+      "username": "<your-username>",
+      "password": "<your-password>"
+    }
+  },
+  "server": {
+    "protocol": "http",
+    "host": "localhost:8090",
+    "base_path": "/jira/rest"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

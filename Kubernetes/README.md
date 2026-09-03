@@ -37,6 +37,23 @@ Authorization: Bearer <your-kubernetes-token>
 
 Use a Kubernetes service account token, a kubeconfig user credential, or a cluster admin token as the value.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "BearerToken": {
+      "value": "<your-bearer-token>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "kubernetes.local",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

@@ -39,6 +39,24 @@ Generate an App Password in Bitbucket under **Personal Settings > App passwords*
 
 > **Note:** The upstream spec also defines OAuth2 and a deprecated account API key scheme. Itential Platform supports a single authentication method per integration instance, so this spec is consolidated to the Basic/App Password scheme, which is the standard non-interactive credential for automation.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "basic": {
+      "username": "<your-username>",
+      "password": "<your-password>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "api.bitbucket.org",
+    "base_path": "/2.0"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

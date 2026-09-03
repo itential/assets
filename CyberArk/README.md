@@ -37,6 +37,24 @@ Authorization: Basic <base64(username:password_or_api_key)>
 
 Conjur also exposes dedicated authenticator endpoints (`/authn`, `/authn-ldap`, `/authn-oidc`, `/authn-k8s`, `/authn-azure`, `/authn-gcp`, `/authn-iam`, `/authn-jwt`) that exchange credentials for a short-lived Conjur access token, which can then be used for subsequent calls. See the spec's `/authn/{account}/login` and `/authn/{account}/{login}/authenticate` operations for details.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "basicAuth": {
+      "username": "<your-username>",
+      "password": "<your-password>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "<your-host>",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

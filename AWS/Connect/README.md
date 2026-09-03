@@ -37,6 +37,25 @@ Authorization: AWS4-HMAC-SHA256 Credential=<access-key-id>/<date>/<region>/conne
 
 Generate an access key ID and secret access key for an IAM user or role with the required Amazon Connect permissions in the AWS IAM console.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "hmac": {
+      "accessKeyId": "<your-aws-access-key-id>",
+      "secretAccessKey": "<your-aws-secret-access-key>",
+      "sessionToken": ""
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "connect.us-east-1.amazonaws.com",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

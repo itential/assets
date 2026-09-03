@@ -37,6 +37,24 @@ Authorization: Basic base64(<AccountSid>:<AuthToken>)
 
 Both values are available in the Twilio Console at https://console.twilio.com.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "accountSid_authToken": {
+      "username": "<your-username>",
+      "password": "<your-password>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "api.twilio.com",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

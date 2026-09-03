@@ -37,6 +37,21 @@ Authorization: Bearer <your-logicmonitor-api-token>
 
 Generate an API token in LogicMonitor under **Settings → Users and Roles → API Tokens** (or via the admin API tokens endpoint).
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "BearerAuth": "<your-bearer-token>"
+  },
+  "server": {
+    "protocol": "https",
+    "host": "api.logicmonitor.com",
+    "base_path": "/santaba/rest"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

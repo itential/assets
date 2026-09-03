@@ -35,6 +35,24 @@ Authentication is HTTP Basic — a Confluence username and password, or a person
 Authorization: Basic <base64(username:password_or_token)>
 ```
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "basic": {
+      "username": "<your-username>",
+      "password": "<your-password>"
+    }
+  },
+  "server": {
+    "protocol": "http",
+    "host": "example.com:7990",
+    "base_path": "/confluence"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

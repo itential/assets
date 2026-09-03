@@ -47,6 +47,25 @@ To build automation directly against the EC2 API instead, import one of the Open
 
 Authentication is AWS Signature Version 4 — sign requests with an AWS access key ID and secret access key.
 
+The instance's `authentication`/`server` properties should look like this once configured (`sessionToken` is only needed for temporary/STS credentials):
+
+```json
+{
+  "authentication": {
+    "hmac": {
+      "accessKeyId": "<your-aws-access-key-id>",
+      "secretAccessKey": "<your-aws-secret-access-key>",
+      "sessionToken": ""
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "ec2.us-east-1.amazonaws.com",
+    "base_path": ""
+  }
+}
+```
+
 ---
 
 ## Studio Projects

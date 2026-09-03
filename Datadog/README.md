@@ -38,6 +38,23 @@ DD-APPLICATION-KEY: <your-datadog-application-key>
 
 Generate both from Datadog under **Organization Settings → API Keys** and **Application Keys**.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "apiKeyAuth": {
+      "value": "<your-api-key>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "api.datadoghq.com",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

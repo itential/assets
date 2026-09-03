@@ -41,6 +41,23 @@ Authorization: Bearer <client_token>
 
 Generate EdgeGrid credentials in Akamai Control Center (Identity and Access Management) and use the client token as the bearer value.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "apiKeyAuth": {
+      "value": "<your-api-key>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "akamaiapis.net",
+    "base_path": "/config-dns/v2"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

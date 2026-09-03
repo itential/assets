@@ -37,6 +37,21 @@ Authorization: Bearer <token>
 
 Obtain a token via `POST /v2/users/login` with your Docker Hub username and password.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "bearerAuth": "<your-bearer-token>"
+  },
+  "server": {
+    "protocol": "https",
+    "host": "hub.docker.com",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

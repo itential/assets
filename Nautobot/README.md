@@ -39,6 +39,23 @@ Authorization: Token <your-nautobot-api-token>
 
 Generate a token in Nautobot under your user profile → **API Tokens**.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "tokenAuth": {
+      "value": "<your-api-token>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "<your-host>",
+    "base_path": "/api"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

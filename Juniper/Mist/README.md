@@ -37,6 +37,23 @@ Authorization: Token <your-mist-api-token>
 
 Generate an API token in the Mist dashboard under **Organization → Settings → API Token**. The token carries the same privileges as the admin it was generated for.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "apiToken": {
+      "value": "<your-api-token>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "api.mist.com",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

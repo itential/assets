@@ -37,6 +37,23 @@ Authorization: Token <your-bloxone-api-key>
 
 Generate an API key from the Infoblox Cloud Services Portal under **Administration → API Keys**.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "apiKeyAuth": {
+      "value": "<your-api-key>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "csp.infoblox.com",
+    "base_path": "/api/ddi/v1"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

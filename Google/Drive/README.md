@@ -37,6 +37,31 @@ Authorization: Bearer <access_token>
 
 Obtain an access token via the Google Cloud Console → **Service Accounts**, granted a Drive API OAuth scope (e.g. `https://www.googleapis.com/auth/drive`), using the `client_credentials` flow for a service account or a delegated-user OAuth2 authorization-code flow.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "Oauth2c": {
+      "client_id": "<your-client-id>",
+      "client_secret": "<your-client-secret>",
+      "token_url": "https://accounts.google.com/o/oauth2/token",
+      "refresh_url": "",
+      "scope": "",
+      "token": {
+        "access_token": ""
+      },
+      "authorization_url": "https://accounts.google.com/o/oauth2/auth"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "www.googleapis.com",
+    "base_path": "/drive/v3"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |
