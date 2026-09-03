@@ -37,6 +37,24 @@ Authorization: Basic <base64(username:password)>
 
 Configure API access in 6connect under **Administration → Users**.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "basicAuth": {
+      "username": "<your-username>",
+      "password": "<your-password>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "6connect.com",
+    "base_path": "/api/v2"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

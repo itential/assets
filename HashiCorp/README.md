@@ -37,6 +37,23 @@ X-Vault-Token: <your-vault-client-token>
 
 Obtain a client token by authenticating against your configured auth method (userpass, AppRole, AWS, Kubernetes, etc.) — see the [Vault authentication documentation](https://developer.hashicorp.com/vault/docs/auth) for details on generating one for your environment.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "vaultToken": {
+      "value": "<your-vault-token>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "<your-host>",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

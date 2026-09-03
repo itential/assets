@@ -37,6 +37,24 @@ Authorization: Basic <base64(username:password)>
 
 Configure accounts under **Security → Users** in the Nexus admin UI.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "basic": {
+      "username": "<your-username>",
+      "password": "<your-password>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "example.com:443",
+    "base_path": "/service/rest"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

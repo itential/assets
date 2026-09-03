@@ -37,6 +37,23 @@ Authorization: GenieKey <your-opsgenie-api-key>
 
 Generate an API key in OpsGenie under **Settings > API key management**.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "GenieKey": {
+      "value": "<your-genie-key>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "api.opsgenie.com",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

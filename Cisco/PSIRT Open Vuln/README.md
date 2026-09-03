@@ -35,6 +35,21 @@ Authorization: Bearer <token>
 
 Register an app at https://apiconsole.cisco.com with openVuln API access, then obtain a token via OAuth2 client credentials from `POST https://id.cisco.com/oauth2/default/v1/token`.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "psirt_openvuln_api_auth": "<your-bearer-token>"
+  },
+  "server": {
+    "protocol": "https",
+    "host": "apix.cisco.com",
+    "base_path": "/security/advisories/v2"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

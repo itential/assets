@@ -57,6 +57,29 @@ Authorization: Basic <base64(client_key:client_secret)>
 
 Obtain a client key and secret from Cisco Umbrella under **Admin > API Keys > Umbrella API**. The token endpoint requires the client credentials as HTTP Basic auth on the Authorization header. On each Integration instance, set the authentication's `auth_method` field to `client_secret_basic` (it defaults to `client_secret_post`) — Itential Platform then builds `Authorization: Basic <base64(client_id:client_secret)>` on the token request automatically from the plain `client_id`/`client_secret` values, with no manual encoding step.
 
+The instance's `authentication`/`server` properties should look like this once configured — every resource spec shares the same `tokenUrl`, but `base_path` differs per spec (e.g. `/policies/v2` for application/destination lists, `/deployments/v2` for sites/networks/devices — see each spec file for its exact path):
+
+```json
+{
+  "authentication": {
+    "oauthFlow": {
+      "client_id": "<your-client-id>",
+      "client_secret": "<your-client-secret>",
+      "auth_method": "client_secret_basic",
+      "token_url": "https://api.umbrella.com/auth/v2/token",
+      "refresh_url": "",
+      "scope": "",
+      "token": { "access_token": "" }
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "api.umbrella.com",
+    "base_path": "<resource-base-path-per-spec>"
+  }
+}
+```
+
 ---
 
 ## Studio Projects

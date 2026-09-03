@@ -39,6 +39,21 @@ Authorization: Bearer <token>
 
 Obtain a token from your Selector AI instance credentials. See https://docs.selector.ai/ for details.
 
+The instance's `authentication`/`server` properties should look like this once configured — `base_path` differs per spec (`/api/inventory-manager` for metastore inventory, `/api/collab2-slack` for AI query):
+
+```json
+{
+  "authentication": {
+    "bearerAuth": "<token>"
+  },
+  "server": {
+    "protocol": "https",
+    "host": "demo2.selector.ai",
+    "base_path": "/api/inventory-manager"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

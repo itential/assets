@@ -45,6 +45,30 @@ The app registration needs the `Mail.ReadWrite` and `Mail.Send` application perm
 
 All operations in this spec use the `/users/{user-id}/...` endpoints, not `/me/...` — application permissions have no signed-in user context, so `user-id` (a mailbox's user ID or UPN) must be supplied on every call.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "oauth2ClientCredentials": {
+      "client_id": "<your-client-id>",
+      "client_secret": "<your-client-secret>",
+      "token_url": "https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token",
+      "refresh_url": "",
+      "scope": "",
+      "token": {
+        "access_token": ""
+      }
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "graph.microsoft.com",
+    "base_path": "/v1.0"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

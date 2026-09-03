@@ -37,6 +37,21 @@ Authorization: Bearer <your-slack-token>
 
 Use a Slack bot token (`xoxb-*`) for bot operations, or a user token (`xoxp-*`) for user-delegated actions. Generate one from your Slack app configuration at https://api.slack.com/apps.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "botToken": "<your-bearer-token>"
+  },
+  "server": {
+    "protocol": "https",
+    "host": "slack.com",
+    "base_path": "/api"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

@@ -37,6 +37,24 @@ Authorization: Basic base64(<your-email>:<your-api-token>)
 
 Generate an API token at https://id.atlassian.com/manage-profile/security/api-tokens.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "basicAuth": {
+      "username": "<your-username>",
+      "password": "<your-password>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "no-default",
+    "base_path": "/wiki/api/v2"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

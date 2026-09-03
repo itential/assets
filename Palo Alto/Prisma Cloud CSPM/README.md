@@ -41,6 +41,23 @@ x-redlock-auth: <jwt>
 
 Obtain a JWT by calling `POST /login` with your Prisma Cloud access key ID and secret key (generated in the Prisma Cloud console under **Settings > Access Keys**). The JWT expires after a period of time and must be refreshed by calling `/login` again.
 
+The instance's `authentication`/`server` properties should look like this once configured — substitute `host` with your tenant's actual regional endpoint (e.g. `api.eu.prismacloud.io`, `api2.prismacloud.io`) if it differs from the global default:
+
+```json
+{
+  "authentication": {
+    "x-redlock-auth": {
+      "value": "<your-jwt>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "api.prismacloud.io",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

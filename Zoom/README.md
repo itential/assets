@@ -37,6 +37,23 @@ GET https://api.zoom.us/v2/users?access_token=<your-access-token>
 
 Generate an access token by creating a Server-to-Server OAuth app at [marketplace.zoom.us](https://marketplace.zoom.us), then exchanging the app's client ID and secret for an access token via `POST https://zoom.us/oauth/token`.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "global": {
+      "value": "<your-api-key>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "api.zoom.us",
+    "base_path": "/v2"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

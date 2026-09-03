@@ -37,6 +37,24 @@ Authorization: Basic <base64(username:password)>
 
 Create or manage the account under the Airflow UI's **Admin > Users**.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "Basic": {
+      "username": "<your-username>",
+      "password": "<your-password>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "apache.local",
+    "base_path": "/api/v1"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

@@ -37,6 +37,23 @@ X-Api-Key: <your-new-relic-api-key>
 
 Generate a user or ingest API key in New Relic under **Account Settings > API Keys**.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "APIKeyHeader": {
+      "value": "<your-api-key>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "api.newrelic.com",
+    "base_path": "/v2"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

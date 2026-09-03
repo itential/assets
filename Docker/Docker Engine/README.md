@@ -37,6 +37,24 @@ Authorization: Basic <base64(username:password)>
 
 Local socket access typically requires no authentication. For remote/production access, expose the Docker daemon over TCP with TLS certificates configured (`dockerd --tlsverify ...`) and supply credentials enforced by your TLS/proxy layer, since the Docker Engine API itself has no native user database.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "basicAuth": {
+      "username": "<your-username>",
+      "password": "<your-password>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "<your-host>",
+    "base_path": "/v1.33"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

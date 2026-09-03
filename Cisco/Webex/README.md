@@ -39,6 +39,23 @@ Authorization: Bearer <your-webex-token>
 
 Generate a bot token or personal access token at [developer.webex.com](https://developer.webex.com/docs/api/v1) (under **My Webex Apps** or the API docs page for a short-lived personal token).
 
+The instance's `authentication`/`server` properties should look like this once configured for `cisco_webex-latest.json`:
+
+```json
+{
+  "authentication": {
+    "httpBearer": "<your-webex-token>"
+  },
+  "server": {
+    "protocol": "https",
+    "host": "webexapis.com",
+    "base_path": "/v1"
+  }
+}
+```
+
+`cisco_webex_messaging-latest.json` uses the same bearer token value, but under a differently-named scheme key — configure it as `authentication.bearer-key` instead of `authentication.httpBearer` on an instance of that model.
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

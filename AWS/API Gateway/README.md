@@ -37,6 +37,25 @@ Authorization: AWS4-HMAC-SHA256 Credential=<access-key-id>/<date>/<region>/apiga
 
 Sign requests with an AWS access key ID and secret access key belonging to an IAM user or role with the appropriate `apigateway:*` permissions. See [AWS Signature Version 4 signing](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html) for details on constructing the signature.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "hmac": {
+      "accessKeyId": "<your-aws-access-key-id>",
+      "secretAccessKey": "<your-aws-secret-access-key>",
+      "sessionToken": ""
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "apigateway.us-east-1.amazonaws.com",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

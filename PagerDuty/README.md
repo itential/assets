@@ -37,6 +37,23 @@ Authorization: Token token=<your-pagerduty-api-key>
 
 Generate a REST API key in PagerDuty under **My Profile > User Settings > API Access**, or as a general access API key under **Integrations > API Access Keys**.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "api_key": {
+      "value": "<your-api-key>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "api.pagerduty.com",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

@@ -37,6 +37,23 @@ Authorization: PrtgSharedSecret <api_token>
 
 Generate a token in PRTG under **Setup > Account Settings > My Account > API Token**.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "Bearer": {
+      "value": "<your-bearer-token>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "<your-host>",
+    "base_path": "/api/v2"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

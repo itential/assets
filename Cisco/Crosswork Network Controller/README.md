@@ -38,7 +38,22 @@ Authentication is a Bearer JWT, obtained via a two-step CAS exchange:
 Authorization: Bearer <jwt>
 ```
 
-Paste the JWT as the bearer token. JWTs expire and must be refreshed manually until Cisco resolves IPSO-9866.
+Paste the JWT as the bearer token. JWTs expire and must be refreshed manually.
+
+The instance's `authentication`/`server` properties should look like this once configured — `base_path` differs per spec (`/crosswork/inventory/v1` for device management, `/crosswork/proxy/nso/restconf` for L3VPN):
+
+```json
+{
+  "authentication": {
+    "bearerAuth": "<jwt>"
+  },
+  "server": {
+    "protocol": "https",
+    "host": "<cnc-host>:<cnc-port>",
+    "base_path": "/crosswork/inventory/v1"
+  }
+}
+```
 
 ## OpenAPIs
 

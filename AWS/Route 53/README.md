@@ -38,6 +38,25 @@ Authorization: AWS4-HMAC-SHA256 Credential=<access-key-id>/<date>/<region>/route
 
 Generate an access key ID and secret access key for an IAM user or role with Route 53 permissions in the AWS Console under **IAM > Users > Security credentials**, then configure your integration's connection to sign requests with SigV4 using those credentials.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "hmac": {
+      "accessKeyId": "<your-aws-access-key-id>",
+      "secretAccessKey": "<your-aws-secret-access-key>",
+      "sessionToken": ""
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "route53.amazonaws.com",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

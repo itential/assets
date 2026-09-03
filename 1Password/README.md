@@ -37,6 +37,21 @@ Authorization: Bearer <token>
 
 Generate a 1Password Connect token when deploying a Connect server. See https://developer.1password.com/docs/connect for details.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "ConnectToken": "<your-bearer-token>"
+  },
+  "server": {
+    "protocol": "http",
+    "host": "1password.local",
+    "base_path": ""
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |

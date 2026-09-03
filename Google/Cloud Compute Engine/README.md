@@ -37,6 +37,31 @@ Authorization: Bearer <access_token>
 
 Use a Google service account access token with Compute Engine permissions (`https://www.googleapis.com/auth/compute` or `https://www.googleapis.com/auth/cloud-platform` scope). Generate one via Google Cloud IAM → Service Accounts.
 
+The instance's `authentication`/`server` properties should look like this once configured:
+
+```json
+{
+  "authentication": {
+    "Oauth2c": {
+      "client_id": "<your-client-id>",
+      "client_secret": "<your-client-secret>",
+      "token_url": "https://accounts.google.com/o/oauth2/token",
+      "refresh_url": "",
+      "scope": "",
+      "token": {
+        "access_token": ""
+      },
+      "authorization_url": "https://accounts.google.com/o/oauth2/auth"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "compute.googleapis.com",
+    "base_path": "/compute/v1"
+  }
+}
+```
+
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |
