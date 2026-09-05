@@ -1,0 +1,796 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "CyberArk Privilege Cloud",
+    "description": "CyberArk Privilege Cloud REST API \u2014 SaaS privileged access management: safes, privileged accounts, and password lifecycle actions (verify/change/reconcile/retrieve).",
+    "version": "latest",
+    "x-itential-curated": "Hand-authored from CyberArk's current, product-separated Bruno REST API collection (github.com/IAM-Jah/CyberArk-REST-API-Bruno, Privilege Cloud - Standard collection, current to Privilege Cloud v14.7/August 2025) rather than the vendor's own docs, since CyberArk does not publish a static downloadable OpenAPI/Swagger file for Privilege Cloud \u2014 only a live, per-tenant Swagger UI with no stable pinnable URL. Scoped to 16 core operations: Safes CRUD, Accounts CRUD, and the four password lifecycle actions (verify, change, reconcile, retrieve). Excluded: session/PSM connection actions (ad-hoc connect, PSM connect, check-in exclusive accounts \u2014 interactive session management, not automation targets), Safe Members, Applications, Users, Requests/access workflows, LDAP integration, monitoring/recordings, and onboarding rules \u2014 all out of scope for a first curated build. Not independently verified against a live CyberArk tenant \u2014 the source collection is current and product-specific, but field-level request/response shapes should be spot-checked against your own tenant's Swagger UI before relying on them in production."
+  },
+  "servers": [
+    {
+      "url": "https://{subdomain}.privilegecloud.cyberark.com/PasswordVault/API",
+      "variables": {
+        "subdomain": {
+          "default": "<tenant-subdomain>"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "oauth2ClientCredentials": []
+    }
+  ],
+  "paths": {
+    "/Accounts": {
+      "get": {
+        "operationId": "getAccounts",
+        "summary": "List Accounts",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "List of keywords separated by spaces"
+          },
+          {
+            "name": "searchType",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "contains",
+                "startswith"
+              ]
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Property name plus asc/desc, e.g. 'safeName asc'"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 50
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "e.g. 'safeName eq mySafe AND modificationTime ge 0'"
+          },
+          {
+            "name": "savedfilter",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Regular/Recently/New/Deleted/etc."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountsListResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "addAccount",
+        "summary": "Add Account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Account"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Accounts/{accountID}": {
+      "parameters": [
+        {
+          "name": "accountID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getAccountDetails",
+        "summary": "Get Account Details",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateAccount",
+        "summary": "Update Account",
+        "description": "Partial update using a JSON-Patch (RFC 6902) style operation array.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/JsonPatchOperation"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteAccount",
+        "summary": "Delete Account",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/Accounts/{accountID}/Password/Retrieve": {
+      "post": {
+        "operationId": "retrieveAccountPassword",
+        "summary": "Retrieve Password Value",
+        "description": "Returns the account's current secret value as a raw string (not a JSON envelope).",
+        "parameters": [
+          {
+            "name": "accountID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string"
+                  },
+                  "TicketingSystem": {
+                    "type": "string"
+                  },
+                  "TicketId": {
+                    "type": "string"
+                  },
+                  "ActionType": {
+                    "type": "string",
+                    "enum": [
+                      "show",
+                      "copy",
+                      "connect"
+                    ]
+                  },
+                  "Machine": {
+                    "type": "string",
+                    "description": "Target address, required when the account is provisioned for multiple remote machines"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Accounts/{accountID}/Password/Update": {
+      "post": {
+        "operationId": "changeAccountCredentials",
+        "summary": "Change Credentials",
+        "description": "Sets a new credential value for the account and pushes it to the target via the CPM.",
+        "parameters": [
+          {
+            "name": "accountID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "NewCredentials"
+                ],
+                "properties": {
+                  "ChangeEntireGroup": {
+                    "type": "boolean"
+                  },
+                  "NewCredentials": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/Accounts/{accountID}/Reconcile": {
+      "post": {
+        "operationId": "reconcileAccountCredentials",
+        "summary": "Reconcile Credentials",
+        "description": "Marks the account for the CPM to reconcile its credential using the platform's configured reconcile/logon account. Asynchronous \u2014 no body, no return value.",
+        "parameters": [
+          {
+            "name": "accountID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/Accounts/{accountID}/Verify": {
+      "post": {
+        "operationId": "verifyAccountCredentials",
+        "summary": "Verify Credentials",
+        "description": "Marks the account for the CPM to verify its current credential against the target. Asynchronous \u2014 no body, no return value.",
+        "parameters": [
+          {
+            "name": "accountID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/Platforms": {
+      "get": {
+        "operationId": "getPlatforms",
+        "summary": "List Platforms",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlatformsListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Platforms/{platformName}": {
+      "get": {
+        "operationId": "getPlatformDetails",
+        "summary": "Get Platform Details",
+        "parameters": [
+          {
+            "name": "platformName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Platform"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Safes": {
+      "get": {
+        "operationId": "getSafes",
+        "summary": "List Safes",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "List of keywords separated by spaces"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 50
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "e.g. 'safeName asc'"
+          },
+          {
+            "name": "includeAccounts",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "extendedDetails",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafesListResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "addSafe",
+        "summary": "Add Safe",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Safe"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Safe"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Safes/{safeId}": {
+      "parameters": [
+        {
+          "name": "safeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getSafeDetails",
+        "summary": "Get Safe Details",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Safe"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateSafe",
+        "summary": "Update Safe",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Safe"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Safe"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteSafe",
+        "summary": "Delete Safe",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Account": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique account ID (read-only)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Account object name"
+          },
+          "address": {
+            "type": "string",
+            "description": "Target address (hostname/IP) the account authenticates to"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "platformId": {
+            "type": "string",
+            "description": "Platform ID governing this account's management policy"
+          },
+          "safeName": {
+            "type": "string"
+          },
+          "secretType": {
+            "type": "string",
+            "enum": [
+              "password",
+              "key"
+            ]
+          },
+          "secret": {
+            "type": "string",
+            "description": "The credential value. Write-only \u2014 never returned in a response."
+          },
+          "platformAccountProperties": {
+            "type": "object",
+            "description": "Platform-specific properties (e.g. LogonDomain, Port), keys vary by platformId"
+          },
+          "secretManagement": {
+            "type": "object",
+            "properties": {
+              "automaticManagementEnabled": {
+                "type": "boolean"
+              },
+              "manualManagementReason": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "inProcess",
+                  "succeeded",
+                  "failed",
+                  "partiallySucceeded"
+                ]
+              },
+              "lastModifiedDateTime": {
+                "type": "string"
+              },
+              "lastReconciledDateTime": {
+                "type": "string"
+              },
+              "lastVerifiedDateTime": {
+                "type": "string"
+              }
+            }
+          },
+          "remoteMachinesAccess": {
+            "type": "object",
+            "properties": {
+              "remoteMachines": {
+                "type": "string",
+                "description": "Semicolon-separated list of remote machine addresses"
+              },
+              "accessRestrictedToRemoteMachines": {
+                "type": "boolean"
+              }
+            }
+          },
+          "createdTime": {
+            "type": "integer"
+          }
+        }
+      },
+      "AccountsListResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Account"
+            }
+          },
+          "count": {
+            "type": "integer"
+          },
+          "nextLink": {
+            "type": "string"
+          }
+        }
+      },
+      "JsonPatchOperation": {
+        "type": "object",
+        "required": [
+          "op",
+          "path"
+        ],
+        "properties": {
+          "op": {
+            "type": "string",
+            "enum": [
+              "replace",
+              "add",
+              "remove"
+            ]
+          },
+          "path": {
+            "type": "string",
+            "description": "JSON Pointer to the field being changed, e.g. /address"
+          },
+          "value": {
+            "description": "New value \u2014 omit for op=remove"
+          }
+        }
+      },
+      "Safe": {
+        "type": "object",
+        "properties": {
+          "safeUrlId": {
+            "type": "string"
+          },
+          "safeNumber": {
+            "type": "integer"
+          },
+          "safeName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "creator": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "managingCPM": {
+            "type": "string"
+          },
+          "numberOfVersionsRetention": {
+            "type": "integer",
+            "nullable": true
+          },
+          "numberOfDaysRetention": {
+            "type": "integer"
+          },
+          "autoPurgeEnabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SafesListResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Safe"
+            }
+          },
+          "count": {
+            "type": "integer"
+          },
+          "nextLink": {
+            "type": "string"
+          }
+        }
+      },
+      "Platform": {
+        "type": "object",
+        "properties": {
+          "general": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "systemType": {
+                "type": "string"
+              },
+              "active": {
+                "type": "boolean"
+              }
+            }
+          },
+          "properties": {
+            "type": "object",
+            "description": "Platform-specific configuration properties"
+          },
+          "credentialsManagementPolicy": {
+            "type": "object"
+          },
+          "sessionManagementPolicy": {
+            "type": "object"
+          }
+        }
+      },
+      "PlatformsListResponse": {
+        "type": "object",
+        "properties": {
+          "Platforms": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Platform"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "oauth2ClientCredentials": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://{tenant_id}.id.cyberark.cloud/oauth2/platformtoken",
+            "scopes": {}
+          }
+        }
+      }
+    }
+  }
+}
