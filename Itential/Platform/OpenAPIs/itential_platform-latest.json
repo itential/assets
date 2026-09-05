@@ -2,9 +2,9 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Itential Platform",
-    "description": "Itential Platform's own REST API \u2014 Integration Models, integration instances, Automation Studio workflows and projects. Lets one Itential Platform (or Itential Gateway) automate the configuration of another Itential Platform instance, or itself.",
+    "description": "Itential Platform's own REST API \u2014 Integration Models, integration instances, Automation Studio (projects/workflows), Workflow Builder, Workflow Engine validation, and Operations Manager (automations, jobs, tasks, triggers, events). Lets one Itential Platform (or Itential Gateway) automate the configuration and operation of another Itential Platform instance, or itself.",
     "version": "latest",
-    "x-itential-curated": "Hand-authored from direct, first-hand use of these exact endpoints (not a vendor-published spec \u2014 Itential Platform doesn't expose one at a stable URL). Scoped to 12 operations covering the core build/automate loop: Integration Models (list/import/delete), Integration Instances (list/create/delete), task schema lookup, and Automation Studio workflows and projects (create/get/export) plus the undocumented workflow-delete-by-name endpoint. Excluded: device inventory, Configuration Manager, job/task execution and monitoring, user/role administration, and everything else in the platform's much larger overall API surface \u2014 this build is scoped specifically to Integration-Model-based build/deploy automation, not general platform administration."
+    "x-itential-curated": "Hand-authored from Itential's own published API reference (docs.itential.com/itential-platform/6/api-reference), not a downloadable spec file \u2014 Itential doesn't publish one at a stable URL, only per-operation documentation pages (140+ pages across the full platform surface). Curated to 83 of the ~142 operations across the six categories most relevant to Integration-Model-based build/deploy/run automation. Excluded within those six categories: Automation Studio Templates and Component Groups plus their import endpoints (14 ops \u2014 Configuration Manager/template tooling, a different automation surface), Automation Studio admin ACL-bypass project variants and thumbnail management (6 ops), Automation Studio reference-discovery introspection and method-options listing (3 ops), Workflow Builder's workflow group/ACL management (5 ops \u2014 access control, not build automation), Workflow Engine's task mocks, metrics, rate limits, worker activation, timezones, diff-to-html, and ad hoc query/evaluation endpoints (20 ops \u2014 a testing/ops-monitoring surface), and Operations Manager's job watcher and job-group tagging endpoints plus large-data blob export (10 ops). Excluded entirely: every other platform service category not covering Integration-Model build/deploy/run automation (Configuration Manager, Gateway Manager, JSON Forms, Inventory Manager, Lifecycle Manager, and ~30 more)."
   },
   "servers": [
     {
@@ -17,23 +17,205 @@
     }
   ],
   "paths": {
+    "/automation-studio/apps/list": {
+      "get": {
+        "operationId": "getAppsAndAdapters",
+        "summary": "Get Apps and Adapters",
+        "tags": [
+          "Automation Studio - Workflows"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/automation-studio/automations": {
       "post": {
-        "operationId": "createAutomation",
+        "operationId": "asCreateAutomation",
         "summary": "Create Workflow",
+        "tags": [
+          "Automation Studio - Workflows"
+        ],
         "requestBody": {
-          "required": true,
+          "required": false,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateAutomationRequest"
+                "type": "object",
+                "properties": {
+                  "automation": {
+                    "type": "object",
+                    "description": "name, type, tasks, transitions, groups required; description/inputSchema/outputSchema/tags/scenarios optional"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "created": {
+                      "type": "object"
+                    },
+                    "edit": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/automation-studio/automations/{id}": {
+      "put": {
+        "operationId": "asUpdateAutomation",
+        "summary": "Update Workflow",
+        "tags": [
+          "Automation Studio - Workflows"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "update": {
+                    "type": "object",
+                    "description": "Full workflow document to replace with"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "updated": {
+                      "type": "object"
+                    },
+                    "edit": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/automation-studio/locations/{location}/packages/{pckg}/tasks/{method}": {
+      "get": {
+        "operationId": "asGetTaskDetails",
+        "summary": "Get Task Details",
+        "tags": [
+          "Automation Studio - Workflows"
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Application|Adapter|Broker"
+          },
+          {
+            "name": "pckg",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "method",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "dereferenceSchemas",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "location": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "app": {
+                      "type": "string"
+                    },
+                    "variables": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -41,14 +223,35 @@
     "/automation-studio/multipleTaskDetails": {
       "post": {
         "operationId": "getMultipleTaskDetails",
-        "summary": "Get Task Schemas",
-        "description": "Fetch the incoming/outgoing variable schema for one or more Integration Model operations, ahead of wiring them into a workflow task.",
+        "summary": "Get Multiple Task Details",
+        "tags": [
+          "Automation Studio - Workflows"
+        ],
         "requestBody": {
-          "required": true,
+          "required": false,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TaskDetailsRequest"
+                "type": "object",
+                "properties": {
+                  "inputsArray": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "location": {
+                          "type": "string"
+                        },
+                        "pckg": {
+                          "type": "string"
+                        },
+                        "method": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -61,7 +264,21 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/TaskDetail"
+                    "type": "object",
+                    "properties": {
+                      "location": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "app": {
+                        "type": "string"
+                      },
+                      "variables": {
+                        "type": "object"
+                      }
+                    }
                   }
                 }
               }
@@ -71,15 +288,129 @@
       }
     },
     "/automation-studio/projects": {
+      "get": {
+        "operationId": "getProjects",
+        "summary": "List Studio Projects",
+        "tags": [
+          "Automation Studio - Projects"
+        ],
+        "parameters": [
+          {
+            "name": "contains",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "operationId": "createProject",
         "summary": "Create Studio Project",
+        "tags": [
+          "Automation Studio - Projects"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateProjectRequest"
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "components": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "iid": {
+                          "type": "integer"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "reference": {
+                          "type": "string"
+                        },
+                        "folder": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "name"
+                ]
               }
             }
           }
@@ -90,7 +421,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Project"
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
                 }
               }
             }
@@ -99,9 +441,12 @@
       }
     },
     "/automation-studio/projects/{id}": {
-      "get": {
-        "operationId": "getProject",
-        "summary": "Get Studio Project",
+      "delete": {
+        "operationId": "deleteProject",
+        "summary": "Delete Studio Project",
+        "tags": [
+          "Automation Studio - Projects"
+        ],
         "parameters": [
           {
             "name": "id",
@@ -109,7 +454,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": ""
           }
         ],
         "responses": {
@@ -118,7 +464,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Project"
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             }
@@ -130,7 +481,9 @@
       "get": {
         "operationId": "exportProject",
         "summary": "Export Studio Project",
-        "description": "Unlike GET /automation-studio/projects/{id}, this returns each component's full inline `document` \u2014 the shape needed to save/version the project as a standalone file.",
+        "tags": [
+          "Automation Studio - Projects"
+        ],
         "parameters": [
           {
             "name": "id",
@@ -138,7 +491,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": ""
           }
         ],
         "responses": {
@@ -147,7 +501,511 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Project"
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "description": "Project with components inlined as full document"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/automation-studio/projects/{projectId}": {
+      "get": {
+        "operationId": "getProject",
+        "summary": "Get Studio Project",
+        "tags": [
+          "Automation Studio - Projects"
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateProject",
+        "summary": "Update Studio Project",
+        "tags": [
+          "Automation Studio - Projects"
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "thumbnailBackgroundColor": {
+                    "type": "string"
+                  },
+                  "members": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/automation-studio/projects/{projectId}/components/add": {
+      "post": {
+        "operationId": "addComponentsToProject",
+        "summary": "Add Components to Project",
+        "tags": [
+          "Automation Studio - Projects"
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "components": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "iid": {
+                          "type": "integer"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "workflow",
+                            "jsonForm",
+                            "mopAnalyticTemplate",
+                            "mopCommandTemplate",
+                            "template",
+                            "transformation"
+                          ]
+                        },
+                        "reference": {
+                          "type": "string"
+                        },
+                        "folder": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "move",
+                      "copy",
+                      "duplicate",
+                      "create"
+                    ]
+                  }
+                },
+                "required": [
+                  "components"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/automation-studio/projects/{projectId}/components/{componentId}": {
+      "delete": {
+        "operationId": "removeComponentFromProject",
+        "summary": "Remove Component from Project",
+        "tags": [
+          "Automation Studio - Projects"
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "componentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "options": {
+                    "type": "object",
+                    "properties": {
+                      "mode": {
+                        "type": "string",
+                        "enum": [
+                          "delete",
+                          "move"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/automation-studio/workflows": {
+      "get": {
+        "operationId": "getWorkflows",
+        "summary": "List Workflows",
+        "tags": [
+          "Automation Studio - Workflows"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "contains",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "equals",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "tasks": {
+                            "type": "object"
+                          },
+                          "_id": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "count": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/automation-studio/workflows/detailed/{name}": {
+      "get": {
+        "operationId": "getWorkflowDetailedByName",
+        "summary": "Get Workflow Detail by Name",
+        "tags": [
+          "Automation Studio - Workflows"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "tasks": {
+                      "type": "object"
+                    },
+                    "transitions": {
+                      "type": "object"
+                    },
+                    "inputSchema": {
+                      "type": "object"
+                    },
+                    "outputSchema": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/automation-studio/workflows/validate": {
+      "post": {
+        "operationId": "validateWorkflow",
+        "summary": "Validate Workflow",
+        "tags": [
+          "Automation Studio - Workflows"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "workflow": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "warnings": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -157,24 +1015,65 @@
     },
     "/integration-models": {
       "get": {
-        "operationId": "listIntegrationModels",
+        "operationId": "getIntegrationModels",
         "summary": "List Integration Models",
+        "tags": [
+          "Integration Models"
+        ],
         "parameters": [
           {
-            "name": "limit",
+            "name": "contains",
             "in": "query",
+            "required": false,
             "schema": {
-              "type": "integer",
-              "default": 25
-            }
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "equalsField",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
           },
           {
             "name": "skip",
             "in": "query",
+            "required": false,
             "schema": {
-              "type": "integer",
-              "default": 0
-            }
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "default 25"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
           }
         ],
         "responses": {
@@ -183,7 +1082,32 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/IntegrationModelsListResponse"
+                  "type": "object",
+                  "properties": {
+                    "integrationModels": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "model": {
+                            "type": "string"
+                          },
+                          "versionId": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "properties": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    },
+                    "total": {
+                      "type": "integer"
+                    }
+                  }
                 }
               }
             }
@@ -193,28 +1117,147 @@
       "post": {
         "operationId": "createIntegrationModel",
         "summary": "Import Integration Model",
+        "tags": [
+          "Integration Models"
+        ],
         "requestBody": {
-          "required": true,
+          "required": false,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateIntegrationModelRequest"
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "type": "object",
+                    "description": "Full OpenAPI 3.x document"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateIntegrationModel",
+        "summary": "Update Integration Model",
+        "tags": [
+          "Integration Models"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "type": "object",
+                    "description": "Full OpenAPI 3.x document"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integration-models/validation": {
+      "put": {
+        "operationId": "validateIntegrationModel",
+        "summary": "Validate Integration Model",
+        "tags": [
+          "Integration Models"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
     "/integration-models/{name}": {
-      "delete": {
-        "operationId": "deleteIntegrationModel",
-        "summary": "Delete Integration Model",
-        "description": "name is '<Title>:<version>', URL-encoded, e.g. 'Amazon%20EC2%3Alatest'",
+      "get": {
+        "operationId": "getIntegrationModel",
+        "summary": "Get Integration Model",
+        "tags": [
+          "Integration Models"
+        ],
         "parameters": [
           {
             "name": "name",
@@ -222,36 +1265,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/integrations": {
-      "get": {
-        "operationId": "listIntegrations",
-        "summary": "List Integration Instances",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 25
-            }
-          },
-          {
-            "name": "skip",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 0
-            }
+            },
+            "description": ""
           }
         ],
         "responses": {
@@ -260,7 +1275,225 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/IntegrationsListResponse"
+                  "type": "object",
+                  "properties": {
+                    "model": {
+                      "type": "string"
+                    },
+                    "versionId": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteIntegrationModel",
+        "summary": "Delete Integration Model",
+        "tags": [
+          "Integration Models"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integration-models/{name}/export": {
+      "get": {
+        "operationId": "exportIntegrationModel",
+        "summary": "Export Integration Model",
+        "tags": [
+          "Integration Models"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "spec": {
+                      "type": "object",
+                      "description": "The model's full OpenAPI document"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integration-models/{name}/securitySchemes": {
+      "get": {
+        "operationId": "getIntegrationModelSecuritySchemes",
+        "summary": "Get Integration Model Security Schemes",
+        "tags": [
+          "Integration Models"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "securitySchemes": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integrations": {
+      "get": {
+        "operationId": "getIntegrations",
+        "summary": "List Integration Instances",
+        "tags": [
+          "Integrations"
+        ],
+        "parameters": [
+          {
+            "name": "contains",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "default 25"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "skipActiveSync",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "total": {
+                      "type": "integer"
+                    }
+                  }
                 }
               }
             }
@@ -270,27 +1503,60 @@
       "post": {
         "operationId": "createIntegration",
         "summary": "Create Integration Instance",
+        "tags": [
+          "Integrations"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateIntegrationRequest"
+                "type": "object",
+                "properties": {
+                  "properties": {
+                    "type": "object",
+                    "description": "name, type (Application|Adapter), properties, virtual, plus optional loggerProps/isEncrypted/model/description"
+                  }
+                },
+                "required": [
+                  "properties"
+                ]
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
     "/integrations/{name}": {
-      "delete": {
-        "operationId": "deleteIntegration",
-        "summary": "Delete Integration Instance",
+      "get": {
+        "operationId": "getIntegration",
+        "summary": "Get Integration Instance",
+        "tags": [
+          "Integrations"
+        ],
         "parameters": [
           {
             "name": "name",
@@ -298,12 +1564,2856 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": ""
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "metadata": {
+                      "type": "object"
+                    },
+                    "data": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateIntegration",
+        "summary": "Update Integration Instance",
+        "tags": [
+          "Integrations"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "properties": {
+                    "type": "object"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteIntegration",
+        "summary": "Delete Integration Instance",
+        "tags": [
+          "Integrations"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integrations/{name}/authCode": {
+      "post": {
+        "operationId": "postAuthFlowAccessToken",
+        "summary": "Exchange Auth Code for Access Token",
+        "tags": [
+          "Integrations"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "authorizationCode": {
+                    "type": "string"
+                  },
+                  "redirectUri": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integrations/{name}/properties": {
+      "put": {
+        "operationId": "updateIntegrationProperties",
+        "summary": "Update Integration Instance Properties",
+        "tags": [
+          "Integrations"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "properties": {
+                    "type": "object",
+                    "description": "Configuration values only"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/automation-types": {
+      "get": {
+        "operationId": "getAutomationTypes",
+        "summary": "List Automation Types",
+        "tags": [
+          "Operations Manager - Automations"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/automations": {
+      "get": {
+        "operationId": "omGetAutomations",
+        "summary": "List Automations",
+        "tags": [
+          "Operations Manager - Automations"
+        ],
+        "parameters": [
+          {
+            "name": "contains",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "equals",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "omCreateAutomation",
+        "summary": "Create Automation",
+        "tags": [
+          "Operations Manager - Automations"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "componentType": {
+                    "type": "string"
+                  },
+                  "componentId": {
+                    "type": "string"
+                  },
+                  "gbac": {
+                    "type": "object",
+                    "properties": {
+                      "write": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "read": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "importAutomations",
+        "summary": "Import Automations",
+        "tags": [
+          "Operations Manager - Automations"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "automations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "options": {
+                    "type": "object",
+                    "properties": {
+                      "adapterMap": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/automations/clone": {
+      "post": {
+        "operationId": "cloneAutomation",
+        "summary": "Clone Automation",
+        "tags": [
+          "Operations Manager - Automations"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/automations/{automationIdentifier}/validate": {
+      "post": {
+        "operationId": "validateAutomation",
+        "summary": "Validate Automation",
+        "tags": [
+          "Operations Manager - Automations"
+        ],
+        "parameters": [
+          {
+            "name": "automationIdentifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "errors": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        },
+                        "warnings": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/automations/{id}": {
+      "get": {
+        "operationId": "omGetAutomation",
+        "summary": "Get Automation",
+        "tags": [
+          "Operations Manager - Automations"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "omUpdateAutomation",
+        "summary": "Update Automation",
+        "tags": [
+          "Operations Manager - Automations"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "componentType": {
+                    "type": "string"
+                  },
+                  "gbac": {
+                    "type": "object"
+                  },
+                  "componentId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "omDeleteAutomation",
+        "summary": "Delete Automation",
+        "tags": [
+          "Operations Manager - Automations"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/automations/{id}/export": {
+      "get": {
+        "operationId": "exportAutomation",
+        "summary": "Export Automation",
+        "tags": [
+          "Operations Manager - Automations"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/events": {
+      "get": {
+        "operationId": "getEvents",
+        "summary": "List Events",
+        "tags": [
+          "Operations Manager - Events"
+        ],
+        "parameters": [
+          {
+            "name": "source",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "topic",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/events/{source}/{topic}": {
+      "get": {
+        "operationId": "getEventDefinition",
+        "summary": "Get Event Definition",
+        "tags": [
+          "Operations Manager - Events"
+        ],
+        "parameters": [
+          {
+            "name": "source",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "topic",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "source": {
+                      "type": "string"
+                    },
+                    "topic": {
+                      "type": "string"
+                    },
+                    "definition": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs": {
+      "get": {
+        "operationId": "getJobs",
+        "summary": "List Jobs",
+        "tags": [
+          "Operations Manager - Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "contains",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "equals",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/bulk-delete": {
+      "post": {
+        "operationId": "bulkDeleteJobs",
+        "summary": "Bulk Delete Jobs",
+        "tags": [
+          "Operations Manager - Jobs"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jobIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "jobsDeleted": {
+                          "type": "integer"
+                        },
+                        "tasksDeleted": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/cancel": {
+      "post": {
+        "operationId": "cancelJobs",
+        "summary": "Cancel Jobs",
+        "tags": [
+          "Operations Manager - Jobs"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jobIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/delete": {
+      "post": {
+        "operationId": "deleteJobs",
+        "summary": "Delete Jobs",
+        "tags": [
+          "Operations Manager - Jobs"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jobIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/pause": {
+      "post": {
+        "operationId": "pauseJobs",
+        "summary": "Pause Jobs",
+        "tags": [
+          "Operations Manager - Jobs"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jobIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/resume": {
+      "post": {
+        "operationId": "resumeJobs",
+        "summary": "Resume Jobs",
+        "tags": [
+          "Operations Manager - Jobs"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jobIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/start": {
+      "post": {
+        "operationId": "startJob",
+        "summary": "Start Job",
+        "tags": [
+          "Operations Manager - Jobs"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "workflow": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object",
+                    "properties": {
+                      "description": {
+                        "type": "string"
+                      },
+                      "variables": {
+                        "type": "object"
+                      },
+                      "groups": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/{id}": {
+      "get": {
+        "operationId": "getJob",
+        "summary": "Get Job",
+        "tags": [
+          "Operations Manager - Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "exclude",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/{jobId}": {
+      "delete": {
+        "operationId": "deleteJob",
+        "summary": "Delete Job",
+        "tags": [
+          "Operations Manager - Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/{jobId}/continue": {
+      "post": {
+        "operationId": "continueJobFrom",
+        "summary": "Continue Job From Task",
+        "tags": [
+          "Operations Manager - Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fromTask": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/{jobId}/revert": {
+      "post": {
+        "operationId": "revertJob",
+        "summary": "Revert Job",
+        "tags": [
+          "Operations Manager - Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fromTask": {
+                    "type": "string"
+                  },
+                  "toTask": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/{jobId}/tasks/{taskId}/finish": {
+      "post": {
+        "operationId": "finishManualTask",
+        "summary": "Finish Manual Task",
+        "tags": [
+          "Operations Manager - Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "taskData": {
+                    "type": "object",
+                    "properties": {
+                      "finish_state": {
+                        "type": "string"
+                      },
+                      "variables": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "taskData"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/{jobId}/tasks/{taskId}/manual-controller": {
+      "get": {
+        "operationId": "getManualTaskController",
+        "summary": "Get Manual Task Controller",
+        "tags": [
+          "Operations Manager - Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/{jobId}/tasks/{taskId}/retry": {
+      "post": {
+        "operationId": "retryTask",
+        "summary": "Retry Task",
+        "tags": [
+          "Operations Manager - Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "variables": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/tasks": {
+      "get": {
+        "operationId": "getTasks",
+        "summary": "List Tasks",
+        "tags": [
+          "Operations Manager - Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "equals",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "contains",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "actionableTasks",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/tasks/{id}": {
+      "get": {
+        "operationId": "getTask",
+        "summary": "Get Task",
+        "tags": [
+          "Operations Manager - Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/tasks/{taskId}/assign": {
+      "post": {
+        "operationId": "assignTask",
+        "summary": "Assign Task",
+        "tags": [
+          "Operations Manager - Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/tasks/{taskId}/claim": {
+      "post": {
+        "operationId": "claimTask",
+        "summary": "Claim Task",
+        "tags": [
+          "Operations Manager - Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/tasks/{taskId}/release": {
+      "post": {
+        "operationId": "releaseTask",
+        "summary": "Release Task",
+        "tags": [
+          "Operations Manager - Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/triggers": {
+      "get": {
+        "operationId": "getTriggers",
+        "summary": "List Triggers",
+        "tags": [
+          "Operations Manager - Triggers"
+        ],
+        "parameters": [
+          {
+            "name": "contains",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "enabled",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": ""
+          },
+          {
+            "name": "actionId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createTrigger",
+        "summary": "Create Trigger",
+        "tags": [
+          "Operations Manager - Triggers"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "actionType": {
+                    "type": "string"
+                  },
+                  "actionId": {
+                    "type": "string"
+                  },
+                  "routeName": {
+                    "type": "string"
+                  },
+                  "verb": {
+                    "type": "string"
+                  },
+                  "topic": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "formData": {
+                    "type": "object"
+                  },
+                  "formId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "type"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "importTriggers",
+        "summary": "Import Triggers",
+        "tags": [
+          "Operations Manager - Triggers"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "triggers": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/triggers/action/{id}": {
+      "delete": {
+        "operationId": "deleteTriggersByActionId",
+        "summary": "Delete Triggers by Action ID",
+        "tags": [
+          "Operations Manager - Triggers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "the parent Automation ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/triggers/endpoint/{routeName}": {
+      "post": {
+        "operationId": "runEndpointTriggerWithPost",
+        "summary": "Run Endpoint Trigger",
+        "tags": [
+          "Operations Manager - Triggers"
+        ],
+        "parameters": [
+          {
+            "name": "routeName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/triggers/manual/{id}/run": {
+      "post": {
+        "operationId": "runManualTrigger",
+        "summary": "Run Manual Trigger",
+        "tags": [
+          "Operations Manager - Triggers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "formData": {
+                    "type": "object"
+                  },
+                  "runtimeOptions": {
+                    "type": "object",
+                    "properties": {
+                      "targetType": {
+                        "type": "string"
+                      },
+                      "targetIdentifier": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/triggers/{id}": {
+      "get": {
+        "operationId": "getTrigger",
+        "summary": "Get Trigger",
+        "tags": [
+          "Operations Manager - Triggers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateTrigger",
+        "summary": "Update Trigger",
+        "tags": [
+          "Operations Manager - Triggers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "actionId": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteTrigger",
+        "summary": "Delete Trigger",
+        "tags": [
+          "Operations Manager - Triggers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/triggers/{id}/export": {
+      "get": {
+        "operationId": "exportTrigger",
+        "summary": "Export Trigger",
+        "tags": [
+          "Operations Manager - Triggers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/triggers/{triggerId}/validate": {
+      "post": {
+        "operationId": "validateTrigger",
+        "summary": "Validate Trigger",
+        "tags": [
+          "Operations Manager - Triggers"
+        ],
+        "parameters": [
+          {
+            "name": "triggerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "errors": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        },
+                        "warnings": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow_builder/export": {
+      "post": {
+        "operationId": "exportWorkflow",
+        "summary": "Export Workflow",
+        "tags": [
+          "Workflow Builder"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "tasks": {
+                      "type": "object"
+                    },
+                    "transitions": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow_builder/getTaskDetails/{app}/{task}": {
+      "get": {
+        "operationId": "wbGetTaskDetails",
+        "summary": "Get Task Details",
+        "tags": [
+          "Workflow Builder"
+        ],
+        "parameters": [
+          {
+            "name": "app",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "task",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "summary": {
+                      "type": "string"
+                    },
+                    "app": {
+                      "type": "string"
+                    },
+                    "variables": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow_builder/import": {
+      "post": {
+        "operationId": "importWorkflow",
+        "summary": "Import Workflow",
+        "tags": [
+          "Workflow Builder"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "workflow": {
+                    "type": "object"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow_builder/tasks/list": {
+      "get": {
+        "operationId": "getTasksList",
+        "summary": "Get Tasks List",
+        "tags": [
+          "Workflow Builder"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "string"
+                      },
+                      "app": {
+                        "type": "string"
+                      },
+                      "variables": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -312,7 +4422,9 @@
       "delete": {
         "operationId": "deleteWorkflow",
         "summary": "Delete Workflow by Name",
-        "description": "Undocumented anywhere except platform source \u2014 deletes by workflow name, not _id.",
+        "tags": [
+          "Workflow Builder"
+        ],
         "parameters": [
           {
             "name": "name",
@@ -320,295 +4432,268 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": ""
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow_builder/workflows/rename": {
+      "post": {
+        "operationId": "renameWorkflow",
+        "summary": "Rename Workflow",
+        "tags": [
+          "Workflow Builder"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "workflow": {
+                    "type": "object"
+                  },
+                  "newName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow_builder/workflows/save": {
+      "post": {
+        "operationId": "saveWorkflow",
+        "summary": "Save Workflow",
+        "tags": [
+          "Workflow Builder"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "workflow": {
+                    "type": "object",
+                    "description": "name, type, tasks, transitions, groups required"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "created": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow_builder/workflows/schemas": {
+      "post": {
+        "operationId": "getSchemas",
+        "summary": "Get Workflow Schemas",
+        "tags": [
+          "Workflow Builder"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "workflow": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "inputSchema": {
+                      "type": "object"
+                    },
+                    "outputSchema": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow_engine/workflows/validate": {
+      "post": {
+        "operationId": "weValidateWorkflowObject",
+        "summary": "Validate Workflow Object",
+        "tags": [
+          "Workflow Engine"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "isValid": {
+                      "type": "boolean"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "warnings": {
+                      "type": "array",
+                      "items": {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow_engine/workflows/{id}/validate": {
+      "post": {
+        "operationId": "weValidateWorkflow",
+        "summary": "Validate Stored Workflow",
+        "tags": [
+          "Workflow Engine"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "isValid": {
+                      "type": "boolean"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "warnings": {
+                      "type": "array",
+                      "items": {}
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     }
   },
   "components": {
-    "schemas": {
-      "IntegrationModelsListResponse": {
-        "type": "object",
-        "properties": {
-          "integrationModels": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/IntegrationModelSummary"
-            }
-          },
-          "total": {
-            "type": "integer"
-          }
-        }
-      },
-      "IntegrationModelSummary": {
-        "type": "object",
-        "properties": {
-          "model": {
-            "type": "string",
-            "description": "@itential/adapter_<Title>:<version>"
-          },
-          "versionId": {
-            "type": "string",
-            "description": "'<Title>:<version>' \u2014 the identifier used everywhere else (integration instances, task lookups)"
-          },
-          "description": {
-            "type": "string"
-          },
-          "properties": {
-            "type": "object",
-            "description": "Scaffolded default authentication/server/tls/variables properties for a new instance of this model"
-          }
-        }
-      },
-      "CreateIntegrationModelRequest": {
-        "type": "object",
-        "required": [
-          "model"
-        ],
-        "properties": {
-          "model": {
-            "type": "object",
-            "description": "The full OpenAPI 3.0 document to import as an Integration Model"
-          }
-        }
-      },
-      "IntegrationsListResponse": {
-        "type": "object",
-        "properties": {
-          "results": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/IntegrationInstance"
-            }
-          },
-          "total": {
-            "type": "integer"
-          }
-        }
-      },
-      "IntegrationInstance": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "model": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "Adapter"
-            ]
-          },
-          "properties": {
-            "type": "object"
-          },
-          "virtual": {
-            "type": "boolean"
-          }
-        }
-      },
-      "CreateIntegrationRequest": {
-        "type": "object",
-        "required": [
-          "properties"
-        ],
-        "properties": {
-          "properties": {
-            "type": "object",
-            "required": [
-              "name",
-              "type",
-              "properties",
-              "virtual"
-            ],
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "Instance name"
-              },
-              "type": {
-                "type": "string",
-                "enum": [
-                  "Adapter"
-                ]
-              },
-              "properties": {
-                "type": "object",
-                "required": [
-                  "id",
-                  "type"
-                ],
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Same value as the outer name"
-                  },
-                  "type": {
-                    "type": "string",
-                    "description": "'<Model Title>:<version>', e.g. 'Amazon EC2:latest'"
-                  },
-                  "authentication": {
-                    "type": "object"
-                  },
-                  "server": {
-                    "type": "object"
-                  }
-                }
-              },
-              "virtual": {
-                "type": "boolean",
-                "enum": [
-                  true
-                ]
-              }
-            }
-          }
-        }
-      },
-      "TaskDetailsRequest": {
-        "type": "object",
-        "required": [
-          "inputsArray"
-        ],
-        "properties": {
-          "inputsArray": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "location": {
-                  "type": "string",
-                  "enum": [
-                    "Adapter"
-                  ]
-                },
-                "pckg": {
-                  "type": "string",
-                  "description": "'<Model Title>:<version>'"
-                },
-                "method": {
-                  "type": "string",
-                  "description": "operationId to fetch the task schema for"
-                }
-              }
-            }
-          }
-        }
-      },
-      "TaskDetail": {
-        "type": "object",
-        "properties": {
-          "location": {
-            "type": "string"
-          },
-          "app": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string",
-            "description": "operationId"
-          },
-          "variables": {
-            "type": "object",
-            "description": "incoming/outgoing task variable schema"
-          }
-        }
-      },
-      "CreateAutomationRequest": {
-        "type": "object",
-        "required": [
-          "automation"
-        ],
-        "properties": {
-          "automation": {
-            "type": "object",
-            "description": "Full workflow document \u2014 tasks, transitions, inputSchema, outputSchema"
-          }
-        }
-      },
-      "CreateProjectRequest": {
-        "type": "object",
-        "required": [
-          "name",
-          "components"
-        ],
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "components": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "type": {
-                  "type": "string",
-                  "enum": [
-                    "workflow"
-                  ]
-                },
-                "reference": {
-                  "type": "string",
-                  "description": "Workflow _id"
-                },
-                "folder": {
-                  "type": "string",
-                  "description": "e.g. '/Devices'"
-                }
-              }
-            }
-          }
-        }
-      },
-      "Project": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "components": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            }
-          },
-          "componentIidIndex": {
-            "type": "integer"
-          },
-          "failedComponents": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            },
-            "nullable": true
-          }
-        }
-      }
-    },
+    "schemas": {},
     "securitySchemes": {
       "apiKeyAuth": {
         "type": "apiKey",
