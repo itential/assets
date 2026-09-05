@@ -1,0 +1,649 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Itential Platform",
+    "description": "Itential Platform's own REST API \u2014 Integration Models, integration instances, Automation Studio workflows and projects. Lets one Itential Platform (or Itential Gateway) automate the configuration of another Itential Platform instance, or itself.",
+    "version": "latest",
+    "x-itential-curated": "Hand-authored from direct, first-hand use of these exact endpoints (not a vendor-published spec \u2014 Itential Platform doesn't expose one at a stable URL). Scoped to 12 operations covering the core build/automate loop: Integration Models (list/import/delete), Integration Instances (list/create/delete), task schema lookup, and Automation Studio workflows and projects (create/get/export) plus the undocumented workflow-delete-by-name endpoint. Excluded: device inventory, Configuration Manager, job/task execution and monitoring, user/role administration, and everything else in the platform's much larger overall API surface \u2014 this build is scoped specifically to Integration-Model-based build/deploy automation, not general platform administration."
+  },
+  "servers": [
+    {
+      "url": "https://<itential-platform-host>"
+    }
+  ],
+  "security": [
+    {
+      "apiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/automation-studio/automations": {
+      "post": {
+        "operationId": "createAutomation",
+        "summary": "Create Workflow",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAutomationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/automation-studio/multipleTaskDetails": {
+      "post": {
+        "operationId": "getMultipleTaskDetails",
+        "summary": "Get Task Schemas",
+        "description": "Fetch the incoming/outgoing variable schema for one or more Integration Model operations, ahead of wiring them into a workflow task.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskDetailsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaskDetail"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/automation-studio/projects": {
+      "post": {
+        "operationId": "createProject",
+        "summary": "Create Studio Project",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProjectRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/automation-studio/projects/{id}": {
+      "get": {
+        "operationId": "getProject",
+        "summary": "Get Studio Project",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/automation-studio/projects/{id}/export": {
+      "get": {
+        "operationId": "exportProject",
+        "summary": "Export Studio Project",
+        "description": "Unlike GET /automation-studio/projects/{id}, this returns each component's full inline `document` \u2014 the shape needed to save/version the project as a standalone file.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integration-models": {
+      "get": {
+        "operationId": "listIntegrationModels",
+        "summary": "List Integration Models",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 25
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrationModelsListResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createIntegrationModel",
+        "summary": "Import Integration Model",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateIntegrationModelRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/integration-models/{name}": {
+      "delete": {
+        "operationId": "deleteIntegrationModel",
+        "summary": "Delete Integration Model",
+        "description": "name is '<Title>:<version>', URL-encoded, e.g. 'Amazon%20EC2%3Alatest'",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/integrations": {
+      "get": {
+        "operationId": "listIntegrations",
+        "summary": "List Integration Instances",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 25
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrationsListResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createIntegration",
+        "summary": "Create Integration Instance",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateIntegrationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/integrations/{name}": {
+      "delete": {
+        "operationId": "deleteIntegration",
+        "summary": "Delete Integration Instance",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/workflow_builder/workflows/delete/{name}": {
+      "delete": {
+        "operationId": "deleteWorkflow",
+        "summary": "Delete Workflow by Name",
+        "description": "Undocumented anywhere except platform source \u2014 deletes by workflow name, not _id.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "IntegrationModelsListResponse": {
+        "type": "object",
+        "properties": {
+          "integrationModels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IntegrationModelSummary"
+            }
+          },
+          "total": {
+            "type": "integer"
+          }
+        }
+      },
+      "IntegrationModelSummary": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "@itential/adapter_<Title>:<version>"
+          },
+          "versionId": {
+            "type": "string",
+            "description": "'<Title>:<version>' \u2014 the identifier used everywhere else (integration instances, task lookups)"
+          },
+          "description": {
+            "type": "string"
+          },
+          "properties": {
+            "type": "object",
+            "description": "Scaffolded default authentication/server/tls/variables properties for a new instance of this model"
+          }
+        }
+      },
+      "CreateIntegrationModelRequest": {
+        "type": "object",
+        "required": [
+          "model"
+        ],
+        "properties": {
+          "model": {
+            "type": "object",
+            "description": "The full OpenAPI 3.0 document to import as an Integration Model"
+          }
+        }
+      },
+      "IntegrationsListResponse": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IntegrationInstance"
+            }
+          },
+          "total": {
+            "type": "integer"
+          }
+        }
+      },
+      "IntegrationInstance": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "Adapter"
+            ]
+          },
+          "properties": {
+            "type": "object"
+          },
+          "virtual": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CreateIntegrationRequest": {
+        "type": "object",
+        "required": [
+          "properties"
+        ],
+        "properties": {
+          "properties": {
+            "type": "object",
+            "required": [
+              "name",
+              "type",
+              "properties",
+              "virtual"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Instance name"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "Adapter"
+                ]
+              },
+              "properties": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "type"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Same value as the outer name"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "'<Model Title>:<version>', e.g. 'Amazon EC2:latest'"
+                  },
+                  "authentication": {
+                    "type": "object"
+                  },
+                  "server": {
+                    "type": "object"
+                  }
+                }
+              },
+              "virtual": {
+                "type": "boolean",
+                "enum": [
+                  true
+                ]
+              }
+            }
+          }
+        }
+      },
+      "TaskDetailsRequest": {
+        "type": "object",
+        "required": [
+          "inputsArray"
+        ],
+        "properties": {
+          "inputsArray": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "location": {
+                  "type": "string",
+                  "enum": [
+                    "Adapter"
+                  ]
+                },
+                "pckg": {
+                  "type": "string",
+                  "description": "'<Model Title>:<version>'"
+                },
+                "method": {
+                  "type": "string",
+                  "description": "operationId to fetch the task schema for"
+                }
+              }
+            }
+          }
+        }
+      },
+      "TaskDetail": {
+        "type": "object",
+        "properties": {
+          "location": {
+            "type": "string"
+          },
+          "app": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "operationId"
+          },
+          "variables": {
+            "type": "object",
+            "description": "incoming/outgoing task variable schema"
+          }
+        }
+      },
+      "CreateAutomationRequest": {
+        "type": "object",
+        "required": [
+          "automation"
+        ],
+        "properties": {
+          "automation": {
+            "type": "object",
+            "description": "Full workflow document \u2014 tasks, transitions, inputSchema, outputSchema"
+          }
+        }
+      },
+      "CreateProjectRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "components"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "components": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "workflow"
+                  ]
+                },
+                "reference": {
+                  "type": "string",
+                  "description": "Workflow _id"
+                },
+                "folder": {
+                  "type": "string",
+                  "description": "e.g. '/Devices'"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Project": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "components": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "componentIidIndex": {
+            "type": "integer"
+          },
+          "failedComponents": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "nullable": true
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "token",
+        "description": "Token obtained from POST /login using a username/password body. Itential Platform automates the retrieval and injects it as the 'token' query parameter on every request. The response body is the bare token string itself (no JSON envelope), so no responsePointer is set.",
+        "x-itential-dynamic-retrieval": {
+          "method": "POST",
+          "url": "https://<itential-platform-host>/login"
+        },
+        "x-itential-parameters": [
+          {
+            "name": "username",
+            "in": "body",
+            "x-itential-use-in": [
+              "key"
+            ],
+            "schema": {
+              "type": "string"
+            },
+            "description": "Platform username, e.g. admin@itential"
+          },
+          {
+            "name": "password",
+            "in": "body",
+            "x-itential-use-in": [
+              "key"
+            ],
+            "schema": {
+              "type": "string"
+            },
+            "description": "Platform password"
+          }
+        ]
+      }
+    }
+  }
+}
