@@ -19,7 +19,7 @@ This project provides an OpenAPI spec for automating FlowAI on Itential Platform
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Itential Platform - FlowAI OpenAPI spec |
-| [Studio Projects/](./Studio%20Projects/) | Itential Platform - FlowAI project containing all 52 workflows in 10 folders |
+| [Studio Projects/](./Studio%20Projects/) | Itential Platform - FlowAI project containing 12 workflows in 4 folders |
 
 ## Requirements
 
@@ -86,22 +86,18 @@ Hand-authored from Itential's own published per-operation API reference (docs.it
 
 ### Itential Platform - FlowAI Project
 
-Backed by the **`Itential Platform - FlowAI:latest`** Integration Model (see [`itential_platform_flowai-latest.json`](./OpenAPIs/itential_platform_flowai-latest.json) above). The project contains **52 workflows** organized into **10 folders**.
+Backed by the **`Itential Platform - FlowAI:latest`** Integration Model (see [`itential_platform_flowai-latest.json`](./OpenAPIs/itential_platform_flowai-latest.json) above). The project contains **12 workflows** organized into **4 folders**.
+
+The full FlowAI REST API (agent/project CRUD, LLM provider registration, admin variants, bundles) is available in the OpenAPI spec above, but this Studio Project deliberately narrows to the two patterns a customer workflow actually builds around: **invoking an agent and consuming its result**, and **handing work off to a human** when an agent needs input. Agent/project definition, LLM provider/credential setup, and bundle import/export are one-time build- or admin-time activities better done directly against the REST API (or the FlowAI UI) than wired into a repeatable workflow, so they are intentionally not modeled as workflows here.
 
 #### Folder Structure
 
 | Folder | Workflows | Scope |
 |---|---|---|
-| FlowAI - Projects | 5 | Create FlowAI Project, Get FlowAI Project, List FlowAI Projects, Update FlowAI Project, Delete FlowAI Project |
-| FlowAI - Agents | 8 | Create Agent, Get Agent, Update Agent, Delete Agent, Get Operable Agent, List Operable Agents, ... |
-| FlowAI - Profiles | 2 | Get LLM Provider Profile (Agent Project Service), List LLM Provider Profiles (Agent Project Service) |
-| FlowAI - Admin | 4 | List FlowAI Projects (Admin), Update FlowAI Project (Admin), Delete FlowAI Project (Admin), FlowAI Project Service Health Ping |
-| FlowAI - Bundles | 2 | Export Project Bundle, Import Project Bundle |
-| FlowAI - Sessions | 6 | Start Agent Session, Get Agent Session, List Agent Sessions, Update Agent Session State, Delete Agent Session, Get Distinct Trigger Source Options |
+| FlowAI - Sessions | 3 | Start Agent Session, Get Agent Session, Update Agent Session State |
 | FlowAI - Run Agent | 1 | Run Agent Synchronously |
-| FlowAI - Messages | 2 | Get Session Messages, Get Raw Session Message |
-| FlowAI - Work Items | 12 | Assign Work Item, Cancel Work Item, Cancel Work Items for Execution, Claim Work Item, Complete Work Item, Count Pending Work Items, ... |
-| FlowAI - Model Registry | 10 | Create Provider Profile, Delete Provider Profile, Fetch Models from Provider (Validate Credential), Get Agent Impact of Profile Deletion, Get Provider Profile, Get Provider Definition, ... |
+| FlowAI - Messages | 1 | Get Session Messages |
+| FlowAI - Work Items | 7 | Assign Work Item, Cancel Work Item, Claim Work Item, Complete Work Item, Create Work Item, Get Work Item, ... |
 
 #### Dependencies
 
