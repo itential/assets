@@ -49,6 +49,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **HashiCorp** | Vault (secrets management) |
 | **Infoblox** | NIOS WAPI · Threat Defense BloxOne · Universal DDI BloxOne |
 | **IP Fabric** | Network intelligence |
+| **Itential** | Platform automation (self-service) |
 | **Juniper** | JUNOS · Mist |
 | **Kentik** | Network observability |
 | **Kubernetes** | Container orchestration |
