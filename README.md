@@ -59,6 +59,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Nautobot** | Nautobot 2.4 |
 | **NetBox** | IPAM / DCIM |
 | **NetScaler** | ADC |
+| **Netskope** | Cloud security platform APIs |
 | **New Relic** | Observability |
 | **Okta** | Identity management |
 | **OpenAI** | AI / LLM APIs |
