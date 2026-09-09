@@ -63,8 +63,6 @@ The instance's `authentication`/`server` properties should look like this once c
 }
 ```
 
-**Pointing this at the same Platform instance running the integration itself:** if the target is genuinely the same Platform, use the internal host/port the Platform container/process actually listens on, not any externally-mapped port — e.g. in a single-container Docker deployment mapping host port 3001 to the container's internal port 3000, use `localhost:3000` (the internal port), not `localhost:3001` (the host-mapped port), since the outbound call executes from inside that same container.
-
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |
