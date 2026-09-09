@@ -73,7 +73,7 @@ The instance's `authentication`/`server` properties should look like this once c
 
 ### `itential_platform-latest.json`
 
-Hand-authored from Itential's own published per-operation API reference (docs.itential.com/itential-platform/6/6/api-reference) and downloadable OpenAPI 3.1 spec (docs.itential.com/openapi/api-reference-3.yaml). This is one Integration Model covering Itential Platform's full REST API surface -- Itential ships one platform with one API, so there is one spec and one integration instance here. The 7 Studio Projects below each curate a different day-to-day activity from this shared model; see each project's section for what it covers and what it deliberately leaves out.
+Sourced from Itential's downloadable OpenAPI 3.1 spec (docs.itential.com/openapi/api-reference-3.yaml) and published per-operation API reference (docs.itential.com/itential-platform/6/6/api-reference).
 
 - **Automation Studio - Workflows** (8 ops): Create Workflow, Update Workflow, List Workflows, Get Workflow Detail by Name, Get Multiple Task Details, Get Task Details, ...
 - **Workflow Builder** (8 ops): Save Workflow, Export Workflow, Import Workflow, Rename Workflow, Get Task Details, Get Tasks List, ...
