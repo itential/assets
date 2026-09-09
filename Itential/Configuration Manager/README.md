@@ -19,7 +19,7 @@ This project provides an OpenAPI spec for automating Configuration Manager on It
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Itential Platform - Configuration Manager OpenAPI spec |
-| [Studio Projects/](./Studio%20Projects/) | Itential Platform - Configuration Manager project containing all 88 workflows in 15 folders |
+| [Studio Projects/](./Studio%20Projects/) | Itential Platform - Configuration Manager project containing 74 workflows in 13 folders |
 
 ## Requirements
 
@@ -91,29 +91,29 @@ Hand-authored from Itential's own published per-operation API reference (docs.it
 
 ### Itential Platform - Configuration Manager Project
 
-Backed by the **`Itential Platform - Configuration Manager:latest`** Integration Model (see [`itential_platform_configuration_manager-latest.json`](./OpenAPIs/itential_platform_configuration_manager-latest.json) above). The project contains **88 workflows** organized into **15 folders**.
+Backed by the **`Itential Platform - Configuration Manager:latest`** Integration Model (see [`itential_platform_configuration_manager-latest.json`](./OpenAPIs/itential_platform_configuration_manager-latest.json) above). The project contains **74 workflows** organized into **13 folders**.
+
+The full Configuration Manager REST API is available in the OpenAPI spec above; the Studio Project has been curated down to the operations worth promoting as workflow-building patterns, dropping Device Templates and Template Builder (overlapping template-rendering surfaces better accessed directly via the REST API) plus a handful of other individual operations.
 
 #### Folder Structure
 
 | Folder | Workflows | Scope |
 |---|---|---|
-| Configuration Manager - Golden Config Trees | 8 | Create Golden Config Tree, Update Golden Config Tree, Delete Golden Config Tree, Delete Golden Config Trees (Bulk), Export Golden Config Tree, List Golden Config Trees, ... |
-| Configuration Manager - Golden Config Tree Versions | 1 | Get Golden Config Tree Version |
-| Configuration Manager - Golden Config Nodes | 10 | Create Golden Config Node, Delete Golden Config Node, Add Device Groups to Node, Add Devices to Node, Add Tasks to Node, Remove Device Groups from Node, ... |
-| Configuration Manager - Compliance Plans | 10 | Create Compliance Plan, Delete Compliance Plans, Get Compliance Plan, Get Compliance Plans Summary, Import Compliance Plans, Get Compliance Plan Score Trend, ... |
-| Configuration Manager - Compliance Plan Nodes | 2 | Add Nodes to Compliance Plan, Remove Nodes from Compliance Plan |
-| Configuration Manager - Compliance Runs | 3 | Run Compliance Plan, List Compliance Plan Runs, List Latest Compliance Plan Run per Plan |
-| Configuration Manager - Compliance Reports | 8 | Get Compliance Report Totals for a Backup, Get Compliance Report Totals for a Device, Get Compliance Report Totals for a Task Instance, Get Compliance Reports Detail (Bulk), Get Compliance Report Detail, Get Compliance Report Metadata for a Batch, ... |
-| Configuration Manager - Grading | 4 | Grade Compliance Reports for a Node, Grade a Single Compliance Report, Get Historical Graded Compliance Reports, Query Graded Compliance History (Paginated) |
-| Configuration Manager - Device Groups | 10 | Create Device Group, Get Device Group by ID, Get Device Group by Name, List Device Groups, Update Device Group, Delete Device Groups, ... |
-| Configuration Manager - Device Templates | 6 | Create Device Template, Search Device Templates, Get Config Spec Template, Update Device Template, Delete Device Templates, Apply Device Template |
-| Configuration Manager - Backups | 7 | Back Up Device Config, Search Backups, List Devices with Backups, Get Backup by ID, Update Backup Metadata, Delete Backups, ... |
-| Configuration Manager - Device Configuration | 4 | Get Device Configuration, Apply Device Configuration, Patch Device Configuration, Advanced Patch Device Configuration |
-| Configuration Manager - Devices | 3 | Get Device, Search Devices (Paginated, Filtered), Get Devices (Basic Options) |
-| Configuration Manager - Config Parsers | 7 | Create Config Parser, Get Config Parser, List Config Parsers, Update Config Parser, Delete Config Parser, Delete Config Parsers (Bulk), ... |
-| Template Builder | 5 | Apply Template, Apply Templates (Bulk), Parse Template (TextFSM), Render Jinja2 Template with Cast, Render Jinja Template |
+| Golden Config Trees | 8 | Create Golden Config Tree, Update Golden Config Tree, Delete Golden Config Tree, Delete Golden Config Trees (Bulk), Export Golden Config Tree, List Golden Config Trees, ... |
+| Golden Config Tree Versions | 1 | Get Golden Config Tree Version |
+| Golden Config Nodes | 10 | Create Golden Config Node, Delete Golden Config Node, Add Device Groups to Node, Add Devices to Node, Add Tasks to Node, Remove Device Groups from Node, ... |
+| Compliance Plans | 10 | Create Compliance Plan, Delete Compliance Plans, Get Compliance Plan, Get Compliance Plans Summary, Import Compliance Plans, Get Compliance Plan Score Trend, ... |
+| Compliance Plan Nodes | 2 | Add Nodes to Compliance Plan, Remove Nodes from Compliance Plan |
+| Compliance Runs | 3 | Run Compliance Plan, List Compliance Plan Runs, List Latest Compliance Plan Run per Plan |
+| Compliance Reports | 8 | Get Compliance Report Totals for a Backup, Get Compliance Report Totals for a Device, Get Compliance Report Totals for a Task Instance, Get Compliance Reports Detail (Bulk), Get Compliance Report Detail, Get Compliance Report Metadata for a Batch, ... |
+| Grading | 4 | Grade Compliance Reports for a Node, Grade a Single Compliance Report, Get Historical Graded Compliance Reports, Query Graded Compliance History (Paginated) |
+| Device Groups | 10 | Create Device Group, Get Device Group by ID, Get Device Group by Name, List Device Groups, Update Device Group, Delete Device Groups, ... |
+| Backups | 7 | Back Up Device Config, Search Backups, List Devices with Backups, Get Backup by ID, Update Backup Metadata, Delete Backups, ... |
+| Device Configuration | 1 | Get Device Configuration |
+| Devices | 3 | Get Device, Search Devices (Paginated, Filtered), Get Devices (Basic Options) |
+| Config Parsers | 7 | Create Config Parser, Get Config Parser, List Config Parsers, Update Config Parser, Delete Config Parser, Delete Config Parsers (Bulk), ... |
 
-A handful of workflow names (`Create Device Template`, `Get Device`, `Update Device Template`) are prefixed with `Itential Platform - Configuration Manager` to avoid colliding with identically-named workflows already published for other products — workflow names are unique across the whole Itential Platform instance, not scoped per-project.
+A handful of workflow names (`Get Device`) are prefixed with `Itential Platform - Configuration Manager` to avoid colliding with identically-named workflows already published for other products — workflow names are unique across the whole Itential Platform instance, not scoped per-project.
 
 #### Dependencies
 
