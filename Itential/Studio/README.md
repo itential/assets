@@ -19,7 +19,7 @@ This project provides an OpenAPI spec for automating Studio on Itential Platform
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Itential Platform - Studio OpenAPI spec |
-| [Studio Projects/](./Studio%20Projects/) | Itential Platform - Studio project containing 65 workflows in 9 folders |
+| [Studio Projects/](./Studio%20Projects/) | Itential Platform - Studio project containing 46 workflows in 7 folders |
 
 ## Requirements
 
@@ -65,7 +65,7 @@ The instance's `authentication`/`server` properties should look like this once c
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
-| [`itential_platform_studio-latest.json`](./OpenAPIs/itential_platform_studio-latest.json) | latest | 66 | Studio — see breakdown below |
+| [`itential_platform_studio-latest.json`](./OpenAPIs/itential_platform_studio-latest.json) | latest | 47 | Studio — see breakdown below |
 
 ### `itential_platform_studio-latest.json`
 
@@ -74,8 +74,6 @@ Hand-authored from Itential's own published per-operation API reference (docs.it
 - **Automation Studio - Workflows** (8 ops): Create Workflow, Update Workflow, List Workflows, Get Workflow Detail by Name, Get Multiple Task Details, Get Task Details, ...
 - **Workflow Builder** (8 ops): Save Workflow, Export Workflow, Import Workflow, Rename Workflow, Get Task Details, Get Tasks List, ...
 - **Workflow Engine** (2 ops): Validate Stored Workflow, Validate Workflow Object
-- **Operations Manager - Jobs** (11 ops): Start Job, Get Job, List Jobs, Cancel Jobs, Pause Jobs, Resume Jobs, ...
-- **Operations Manager - Tasks** (8 ops): Get Task, List Tasks, Assign Task, Claim Task, Release Task, Retry Task, ...
 - **Method of Procedures - Templates** (7 ops): Create Command Template, List Command Templates, Update Command Template, Delete Command Template, Import Command Template, Export Command Template, ...
 - **Method of Procedures - Run Commands** (4 ops): Run Command Against a Device, Run Command Against Multiple Devices, Run Command Template Against Devices, Run a Single Command From a Template
 - **JSON Forms** (11 ops): Create JSON Form, List JSON Forms, Get JSON Form, Update JSON Form, Delete JSON Forms, Import JSON Forms, ...
@@ -85,7 +83,7 @@ Hand-authored from Itential's own published per-operation API reference (docs.it
 
 ### Itential Platform - Studio Project
 
-Backed by the **`Itential Platform - Studio:latest`** Integration Model (see [`itential_platform_studio-latest.json`](./OpenAPIs/itential_platform_studio-latest.json) above). The project contains **65 workflows** organized into **9 folders**.
+Backed by the **`Itential Platform - Studio:latest`** Integration Model (see [`itential_platform_studio-latest.json`](./OpenAPIs/itential_platform_studio-latest.json) above). The project contains **46 workflows** organized into **7 folders**.
 
 #### Folder Structure
 
@@ -94,8 +92,6 @@ Backed by the **`Itential Platform - Studio:latest`** Integration Model (see [`i
 | Workflows | 8 | Create Workflow, Get Apps and Adapters, Get Multiple Task Details, Get Task Details, Get Workflow Detail by Name, List Workflows, ... |
 | Workflow Builder | 8 | Delete Workflow by Name, Export Workflow, Get Task Details, Get Tasks List, Get Workflow Schemas, Import Workflow, ... |
 | Workflow Engine | 2 | Validate Stored Workflow, Validate Workflow Object |
-| Operations Manager - Jobs | 11 | Cancel Jobs, Continue Job From Task, Delete Jobs, Bulk Delete Jobs, Delete Job, Get Job, ... |
-| Operations Manager - Tasks | 8 | Assign Task, Claim Task, Finish Manual Task, Get Manual Task Controller, Get Task, List Tasks, ... |
 | Command Templates | 6 | Create Command Template, Delete Command Template, Export Command Template, Import Command Template, List Command Templates, Update Command Template |
 | Command Templates - Run Commands | 4 | Run Command Against Multiple Devices, Run Command Against a Device, Run Command Template Against Devices, Run a Single Command From a Template |
 | JSON Forms | 11 | Create JSON Form, List JSON Forms, Get JSON Form, Update JSON Form, Delete JSON Forms, Import JSON Forms, ... |

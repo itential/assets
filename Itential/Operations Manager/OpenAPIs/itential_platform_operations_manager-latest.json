@@ -1,0 +1,3766 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Itential Platform - Operations Manager",
+    "description": "Itential Platform's own Operations Manager REST API: job and task execution/lifecycle, triggers (including cron-free schedule triggers, endpoint/webhook triggers, event-driven triggers, and manual triggers), events, and the automation-catalog registration that ties a workflow to a runnable/triggerable Automation. Lets one Itential Platform (or Itential Gateway) automate running, monitoring, and scheduling workflow automations on another Itential Platform instance, or itself.",
+    "version": "latest",
+    "x-itential-curated": "Hand-authored from Itential's own downloadable OpenAPI 3.1 spec (docs.itential.com/openapi/api-reference-3.yaml) and per-operation reference pages. Split out as its own product from what was originally divided between Studio (job/task execution) and Admin (trigger/event/automation registration), since Operations Manager -- running, scheduling, and triggering automations -- is a distinct day-to-day activity in its own right. Covers Jobs (start/get/list/cancel/pause/resume/delete/bulk-delete/revert/continue-from), Tasks (get/list/assign/claim/release/retry/finish-manual-task/manual-task-controller), Triggers (full CRUD plus manual/endpoint run, validate, export/import -- including the schedule trigger type, which is NOT cron-based: Itential uses a firstRunAt epoch timestamp plus a 'repeat' interval tree instead of a cron expression), Events (list/get-definition), and Automations (the GBAC-governed catalog entry that registers a workflow as a triggerable/runnable Automation: CRUD, clone, validate, export/import, list types). Note: the exact request-body shape for creating/updating a schedule-type trigger is not fully resolvable from Itential's own published OpenAPI spec (the schedule branch renders as an unresolved generic type there too) -- the schema in this spec was reconstructed by cross-referencing the fully-expanded read/export trigger schemas, and should be spot-checked against a live platform before being treated as gospel."
+  },
+  "servers": [
+    {
+      "url": "https://<itential-platform-host>"
+    }
+  ],
+  "security": [
+    {
+      "apiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/operations-manager/automation-types": {
+      "get": {
+        "operationId": "getAutomationTypes",
+        "summary": "List Automation Types",
+        "tags": [
+          "Automations"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/automations": {
+      "get": {
+        "operationId": "omGetAutomations",
+        "summary": "List Automations",
+        "tags": [
+          "Automations"
+        ],
+        "parameters": [
+          {
+            "name": "contains",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "equals",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "omCreateAutomation",
+        "summary": "Create Automation",
+        "tags": [
+          "Automations"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "componentType": {
+                    "type": "string"
+                  },
+                  "componentId": {
+                    "type": "string"
+                  },
+                  "gbac": {
+                    "type": "object",
+                    "properties": {
+                      "write": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "read": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "importAutomations",
+        "summary": "Import Automations",
+        "tags": [
+          "Automations"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "automations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "options": {
+                    "type": "object",
+                    "properties": {
+                      "adapterMap": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/automations/clone": {
+      "post": {
+        "operationId": "cloneAutomation",
+        "summary": "Clone Automation",
+        "tags": [
+          "Automations"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/automations/{automationIdentifier}/validate": {
+      "post": {
+        "operationId": "validateAutomation",
+        "summary": "Validate Automation",
+        "tags": [
+          "Automations"
+        ],
+        "parameters": [
+          {
+            "name": "automationIdentifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "errors": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        },
+                        "warnings": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/automations/{id}": {
+      "get": {
+        "operationId": "omGetAutomation",
+        "summary": "Get Automation",
+        "tags": [
+          "Automations"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "omUpdateAutomation",
+        "summary": "Update Automation",
+        "tags": [
+          "Automations"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "componentType": {
+                    "type": "string"
+                  },
+                  "gbac": {
+                    "type": "object"
+                  },
+                  "componentId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "omDeleteAutomation",
+        "summary": "Delete Automation",
+        "tags": [
+          "Automations"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/automations/{id}/export": {
+      "get": {
+        "operationId": "exportAutomation",
+        "summary": "Export Automation",
+        "tags": [
+          "Automations"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/events": {
+      "get": {
+        "operationId": "getEvents",
+        "summary": "List Events",
+        "tags": [
+          "Events"
+        ],
+        "parameters": [
+          {
+            "name": "source",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "topic",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/events/{source}/{topic}": {
+      "get": {
+        "operationId": "getEventDefinition",
+        "summary": "Get Event Definition",
+        "tags": [
+          "Events"
+        ],
+        "parameters": [
+          {
+            "name": "source",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "topic",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "source": {
+                      "type": "string"
+                    },
+                    "topic": {
+                      "type": "string"
+                    },
+                    "definition": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs": {
+      "get": {
+        "operationId": "getJobs",
+        "summary": "List Jobs",
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "contains",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "equals",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/bulk-delete": {
+      "post": {
+        "operationId": "bulkDeleteJobs",
+        "summary": "Bulk Delete Jobs",
+        "tags": [
+          "Jobs"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jobIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "jobsDeleted": {
+                          "type": "integer"
+                        },
+                        "tasksDeleted": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/cancel": {
+      "post": {
+        "operationId": "cancelJobs",
+        "summary": "Cancel Jobs",
+        "tags": [
+          "Jobs"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jobIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/delete": {
+      "post": {
+        "operationId": "deleteJobs",
+        "summary": "Delete Jobs",
+        "tags": [
+          "Jobs"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jobIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/pause": {
+      "post": {
+        "operationId": "pauseJobs",
+        "summary": "Pause Jobs",
+        "tags": [
+          "Jobs"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jobIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/resume": {
+      "post": {
+        "operationId": "resumeJobs",
+        "summary": "Resume Jobs",
+        "tags": [
+          "Jobs"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jobIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/start": {
+      "post": {
+        "operationId": "startJob",
+        "summary": "Start Job",
+        "tags": [
+          "Jobs"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "workflow": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object",
+                    "properties": {
+                      "description": {
+                        "type": "string"
+                      },
+                      "variables": {
+                        "type": "object"
+                      },
+                      "groups": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/{id}": {
+      "get": {
+        "operationId": "getJob",
+        "summary": "Get Job",
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "exclude",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/{jobId}": {
+      "delete": {
+        "operationId": "deleteJob",
+        "summary": "Delete Job",
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/{jobId}/continue": {
+      "post": {
+        "operationId": "continueJobFrom",
+        "summary": "Continue Job From Task",
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fromTask": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/{jobId}/revert": {
+      "post": {
+        "operationId": "revertJob",
+        "summary": "Revert Job",
+        "tags": [
+          "Jobs"
+        ],
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fromTask": {
+                    "type": "string"
+                  },
+                  "toTask": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/{jobId}/tasks/{taskId}/finish": {
+      "post": {
+        "operationId": "finishManualTask",
+        "summary": "Finish Manual Task",
+        "tags": [
+          "Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "taskData": {
+                    "type": "object",
+                    "properties": {
+                      "finish_state": {
+                        "type": "string"
+                      },
+                      "variables": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "taskData"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/{jobId}/tasks/{taskId}/manual-controller": {
+      "get": {
+        "operationId": "getManualTaskController",
+        "summary": "Get Manual Task Controller",
+        "tags": [
+          "Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/jobs/{jobId}/tasks/{taskId}/retry": {
+      "post": {
+        "operationId": "retryTask",
+        "summary": "Retry Task",
+        "tags": [
+          "Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "variables": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/tasks": {
+      "get": {
+        "operationId": "getTasks",
+        "summary": "List Tasks",
+        "tags": [
+          "Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": ""
+          },
+          {
+            "name": "equals",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "contains",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "actionableTasks",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/tasks/{id}": {
+      "get": {
+        "operationId": "getTask",
+        "summary": "Get Task",
+        "tags": [
+          "Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/tasks/{taskId}/assign": {
+      "post": {
+        "operationId": "assignTask",
+        "summary": "Assign Task",
+        "tags": [
+          "Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/tasks/{taskId}/claim": {
+      "post": {
+        "operationId": "claimTask",
+        "summary": "Claim Task",
+        "tags": [
+          "Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/tasks/{taskId}/release": {
+      "post": {
+        "operationId": "releaseTask",
+        "summary": "Release Task",
+        "tags": [
+          "Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/triggers": {
+      "post": {
+        "operationId": "createTrigger",
+        "summary": "Create Trigger",
+        "tags": [
+          "Triggers"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "required"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "manual",
+                      "endpoint",
+                      "eventSystem",
+                      "schedule"
+                    ],
+                    "description": "required, discriminates which of the fields below apply"
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "actionType": {
+                    "type": "string",
+                    "enum": [
+                      "automations"
+                    ],
+                    "description": "required"
+                  },
+                  "actionId": {
+                    "type": "string",
+                    "description": "required, the target Automation's id"
+                  },
+                  "routeName": {
+                    "type": "string",
+                    "description": "required for type=endpoint"
+                  },
+                  "verb": {
+                    "type": "string",
+                    "description": "endpoint type"
+                  },
+                  "topic": {
+                    "type": "string",
+                    "description": "required for type=eventSystem"
+                  },
+                  "source": {
+                    "type": "string",
+                    "description": "type=eventSystem"
+                  },
+                  "formData": {
+                    "type": "object",
+                    "description": "required for type=manual; optional for type=schedule"
+                  },
+                  "formId": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object",
+                    "properties": {
+                      "targetType": {
+                        "type": "string",
+                        "enum": [
+                          "instance",
+                          "group"
+                        ]
+                      },
+                      "targetIdentifier": {
+                        "type": "string"
+                      },
+                      "chooseTargetAtRuntime": {
+                        "type": "boolean"
+                      }
+                    },
+                    "description": "type=schedule"
+                  },
+                  "firstRunAt": {
+                    "type": "integer",
+                    "description": "required for type=schedule -- epoch milliseconds for the first/only run. This is the entire scheduling mechanism; Itential has no separate cron field."
+                  },
+                  "processMissedRuns": {
+                    "type": "string",
+                    "enum": [
+                      "none",
+                      "last"
+                    ],
+                    "description": "type=schedule"
+                  },
+                  "repeat": {
+                    "type": "object",
+                    "nullable": true,
+                    "description": "Recurrence rule. Itential has no cron expression -- recurrence is this discriminated interval tree instead. Omit/null for a one-time (non-recurring) run.",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "repeating",
+                          "terminating"
+                        ],
+                        "description": "Variant 0/2: 'repeating' runs forever on the interval; 'terminating' + count stops after N runs; a date-range variant (start/end) also exists -- use start/end instead of duration/count for that variant"
+                      },
+                      "duration": {
+                        "type": "object",
+                        "properties": {
+                          "unit": {
+                            "type": "string",
+                            "enum": [
+                              "minute",
+                              "hour",
+                              "day",
+                              "week"
+                            ]
+                          },
+                          "quantity": {
+                            "type": "integer"
+                          }
+                        },
+                        "description": "required for the repeating/terminating variants"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "description": "required for the count-bounded ('terminating') variant instead of an end date"
+                      },
+                      "start": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "required for the date-range variant, instead of duration"
+                      },
+                      "end": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "required for the date-range variant"
+                      },
+                      "action": {
+                        "type": "string",
+                        "enum": [
+                          "execute",
+                          "wait"
+                        ]
+                      },
+                      "components": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "nested child interval definitions for sub-schedules within a parent interval; usually []"
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "name",
+                  "type",
+                  "actionType",
+                  "actionId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "manual",
+                            "endpoint",
+                            "eventSystem",
+                            "schedule"
+                          ]
+                        },
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "actionType": {
+                          "type": "string",
+                          "enum": [
+                            "automations"
+                          ]
+                        },
+                        "actionId": {
+                          "type": "string"
+                        },
+                        "routeName": {
+                          "type": "string",
+                          "description": "endpoint type only"
+                        },
+                        "topic": {
+                          "type": "string",
+                          "description": "eventSystem type only"
+                        },
+                        "source": {
+                          "type": "string",
+                          "description": "eventSystem type only"
+                        },
+                        "formData": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "manual and schedule types"
+                        },
+                        "formId": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "options": {
+                          "type": "object",
+                          "properties": {
+                            "targetType": {
+                              "type": "string",
+                              "enum": [
+                                "instance",
+                                "group"
+                              ]
+                            },
+                            "targetIdentifier": {
+                              "type": "string"
+                            },
+                            "chooseTargetAtRuntime": {
+                              "type": "boolean"
+                            }
+                          },
+                          "description": "schedule type only"
+                        },
+                        "firstRunAt": {
+                          "type": "integer",
+                          "description": "schedule type only -- start time as an epoch millisecond timestamp, NOT a cron expression"
+                        },
+                        "nextRunAt": {
+                          "type": "integer",
+                          "nullable": true,
+                          "description": "schedule type only, read-only/server-computed"
+                        },
+                        "processMissedRuns": {
+                          "type": "string",
+                          "enum": [
+                            "none",
+                            "last"
+                          ],
+                          "description": "schedule type only"
+                        },
+                        "repeat": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Recurrence rule. Itential has no cron expression -- recurrence is this discriminated interval tree instead. Omit/null for a one-time (non-recurring) run.",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "repeating",
+                                "terminating"
+                              ],
+                              "description": "Variant 0/2: 'repeating' runs forever on the interval; 'terminating' + count stops after N runs; a date-range variant (start/end) also exists -- use start/end instead of duration/count for that variant"
+                            },
+                            "duration": {
+                              "type": "object",
+                              "properties": {
+                                "unit": {
+                                  "type": "string",
+                                  "enum": [
+                                    "minute",
+                                    "hour",
+                                    "day",
+                                    "week"
+                                  ]
+                                },
+                                "quantity": {
+                                  "type": "integer"
+                                }
+                              },
+                              "description": "required for the repeating/terminating variants"
+                            },
+                            "count": {
+                              "type": "integer",
+                              "description": "required for the count-bounded ('terminating') variant instead of an end date"
+                            },
+                            "start": {
+                              "type": "string",
+                              "format": "date-time",
+                              "description": "required for the date-range variant, instead of duration"
+                            },
+                            "end": {
+                              "type": "string",
+                              "format": "date-time",
+                              "description": "required for the date-range variant"
+                            },
+                            "action": {
+                              "type": "string",
+                              "enum": [
+                                "execute",
+                                "wait"
+                              ]
+                            },
+                            "components": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              },
+                              "description": "nested child interval definitions for sub-schedules within a parent interval; usually []"
+                            }
+                          }
+                        },
+                        "created": {
+                          "type": "string"
+                        },
+                        "createdBy": {
+                          "type": "string"
+                        },
+                        "lastUpdated": {
+                          "type": "string"
+                        },
+                        "lastUpdatedBy": {
+                          "type": "string"
+                        },
+                        "lastExecuted": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getTriggers",
+        "summary": "List Triggers",
+        "tags": [
+          "Triggers"
+        ],
+        "parameters": [
+          {
+            "name": "contains",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "equals",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "startsWith",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "enabled",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": ""
+          },
+          {
+            "name": "actionId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "default 25"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "default 0"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "1|-1, default 1"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "default name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "_id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "manual",
+                              "endpoint",
+                              "eventSystem",
+                              "schedule"
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "actionType": {
+                            "type": "string",
+                            "enum": [
+                              "automations"
+                            ]
+                          },
+                          "actionId": {
+                            "type": "string"
+                          },
+                          "routeName": {
+                            "type": "string",
+                            "description": "endpoint type only"
+                          },
+                          "topic": {
+                            "type": "string",
+                            "description": "eventSystem type only"
+                          },
+                          "source": {
+                            "type": "string",
+                            "description": "eventSystem type only"
+                          },
+                          "formData": {
+                            "type": "object",
+                            "nullable": true,
+                            "description": "manual and schedule types"
+                          },
+                          "formId": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "options": {
+                            "type": "object",
+                            "properties": {
+                              "targetType": {
+                                "type": "string",
+                                "enum": [
+                                  "instance",
+                                  "group"
+                                ]
+                              },
+                              "targetIdentifier": {
+                                "type": "string"
+                              },
+                              "chooseTargetAtRuntime": {
+                                "type": "boolean"
+                              }
+                            },
+                            "description": "schedule type only"
+                          },
+                          "firstRunAt": {
+                            "type": "integer",
+                            "description": "schedule type only -- start time as an epoch millisecond timestamp, NOT a cron expression"
+                          },
+                          "nextRunAt": {
+                            "type": "integer",
+                            "nullable": true,
+                            "description": "schedule type only, read-only/server-computed"
+                          },
+                          "processMissedRuns": {
+                            "type": "string",
+                            "enum": [
+                              "none",
+                              "last"
+                            ],
+                            "description": "schedule type only"
+                          },
+                          "repeat": {
+                            "type": "object",
+                            "nullable": true,
+                            "description": "Recurrence rule. Itential has no cron expression -- recurrence is this discriminated interval tree instead. Omit/null for a one-time (non-recurring) run.",
+                            "properties": {
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "repeating",
+                                  "terminating"
+                                ],
+                                "description": "Variant 0/2: 'repeating' runs forever on the interval; 'terminating' + count stops after N runs; a date-range variant (start/end) also exists -- use start/end instead of duration/count for that variant"
+                              },
+                              "duration": {
+                                "type": "object",
+                                "properties": {
+                                  "unit": {
+                                    "type": "string",
+                                    "enum": [
+                                      "minute",
+                                      "hour",
+                                      "day",
+                                      "week"
+                                    ]
+                                  },
+                                  "quantity": {
+                                    "type": "integer"
+                                  }
+                                },
+                                "description": "required for the repeating/terminating variants"
+                              },
+                              "count": {
+                                "type": "integer",
+                                "description": "required for the count-bounded ('terminating') variant instead of an end date"
+                              },
+                              "start": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "required for the date-range variant, instead of duration"
+                              },
+                              "end": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "required for the date-range variant"
+                              },
+                              "action": {
+                                "type": "string",
+                                "enum": [
+                                  "execute",
+                                  "wait"
+                                ]
+                              },
+                              "components": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object"
+                                },
+                                "description": "nested child interval definitions for sub-schedules within a parent interval; usually []"
+                              }
+                            }
+                          },
+                          "created": {
+                            "type": "string"
+                          },
+                          "createdBy": {
+                            "type": "string"
+                          },
+                          "lastUpdated": {
+                            "type": "string"
+                          },
+                          "lastUpdatedBy": {
+                            "type": "string"
+                          },
+                          "lastExecuted": {
+                            "type": "string",
+                            "nullable": true
+                          }
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "importTriggers",
+        "summary": "Import Triggers",
+        "tags": [
+          "Triggers"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "triggers": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "manual",
+                            "endpoint",
+                            "eventSystem",
+                            "schedule"
+                          ]
+                        },
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "actionType": {
+                          "type": "string",
+                          "enum": [
+                            "automations"
+                          ]
+                        },
+                        "actionId": {
+                          "type": "string"
+                        },
+                        "routeName": {
+                          "type": "string",
+                          "description": "endpoint type only"
+                        },
+                        "topic": {
+                          "type": "string",
+                          "description": "eventSystem type only"
+                        },
+                        "source": {
+                          "type": "string",
+                          "description": "eventSystem type only"
+                        },
+                        "formData": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "manual and schedule types"
+                        },
+                        "formId": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "options": {
+                          "type": "object",
+                          "properties": {
+                            "targetType": {
+                              "type": "string",
+                              "enum": [
+                                "instance",
+                                "group"
+                              ]
+                            },
+                            "targetIdentifier": {
+                              "type": "string"
+                            },
+                            "chooseTargetAtRuntime": {
+                              "type": "boolean"
+                            }
+                          },
+                          "description": "schedule type only"
+                        },
+                        "firstRunAt": {
+                          "type": "integer",
+                          "description": "schedule type only -- start time as an epoch millisecond timestamp, NOT a cron expression"
+                        },
+                        "nextRunAt": {
+                          "type": "integer",
+                          "nullable": true,
+                          "description": "schedule type only, read-only/server-computed"
+                        },
+                        "processMissedRuns": {
+                          "type": "string",
+                          "enum": [
+                            "none",
+                            "last"
+                          ],
+                          "description": "schedule type only"
+                        },
+                        "repeat": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Recurrence rule. Itential has no cron expression -- recurrence is this discriminated interval tree instead. Omit/null for a one-time (non-recurring) run.",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "repeating",
+                                "terminating"
+                              ],
+                              "description": "Variant 0/2: 'repeating' runs forever on the interval; 'terminating' + count stops after N runs; a date-range variant (start/end) also exists -- use start/end instead of duration/count for that variant"
+                            },
+                            "duration": {
+                              "type": "object",
+                              "properties": {
+                                "unit": {
+                                  "type": "string",
+                                  "enum": [
+                                    "minute",
+                                    "hour",
+                                    "day",
+                                    "week"
+                                  ]
+                                },
+                                "quantity": {
+                                  "type": "integer"
+                                }
+                              },
+                              "description": "required for the repeating/terminating variants"
+                            },
+                            "count": {
+                              "type": "integer",
+                              "description": "required for the count-bounded ('terminating') variant instead of an end date"
+                            },
+                            "start": {
+                              "type": "string",
+                              "format": "date-time",
+                              "description": "required for the date-range variant, instead of duration"
+                            },
+                            "end": {
+                              "type": "string",
+                              "format": "date-time",
+                              "description": "required for the date-range variant"
+                            },
+                            "action": {
+                              "type": "string",
+                              "enum": [
+                                "execute",
+                                "wait"
+                              ]
+                            },
+                            "components": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              },
+                              "description": "nested child interval definitions for sub-schedules within a parent interval; usually []"
+                            }
+                          }
+                        },
+                        "created": {
+                          "type": "string"
+                        },
+                        "createdBy": {
+                          "type": "string"
+                        },
+                        "lastUpdated": {
+                          "type": "string"
+                        },
+                        "lastUpdatedBy": {
+                          "type": "string"
+                        },
+                        "lastExecuted": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      }
+                    }
+                  },
+                  "options": {
+                    "type": "object",
+                    "properties": {
+                      "adapterMap": {
+                        "type": "object",
+                        "description": "map of old provenance -> new provenance"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "data": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/triggers/action/{id}": {
+      "delete": {
+        "operationId": "deleteTriggersByActionId",
+        "summary": "Delete Triggers by Action ID",
+        "tags": [
+          "Triggers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "the parent Automation ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/triggers/endpoint/{routeName}": {
+      "post": {
+        "operationId": "runEndpointTriggerWithPost",
+        "summary": "Run Endpoint Trigger",
+        "tags": [
+          "Triggers"
+        ],
+        "parameters": [
+          {
+            "name": "routeName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "description": "the spawned Job"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/triggers/manual/{id}/run": {
+      "post": {
+        "operationId": "runManualTrigger",
+        "summary": "Run Manual Trigger",
+        "tags": [
+          "Triggers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "formData": {
+                    "type": "object"
+                  },
+                  "runtimeOptions": {
+                    "type": "object",
+                    "properties": {
+                      "targetType": {
+                        "type": "string",
+                        "enum": [
+                          "instance",
+                          "group"
+                        ]
+                      },
+                      "targetIdentifier": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "description": "the spawned Job"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/triggers/{id}": {
+      "get": {
+        "operationId": "getTrigger",
+        "summary": "Get Trigger",
+        "tags": [
+          "Triggers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "manual",
+                            "endpoint",
+                            "eventSystem",
+                            "schedule"
+                          ]
+                        },
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "actionType": {
+                          "type": "string",
+                          "enum": [
+                            "automations"
+                          ]
+                        },
+                        "actionId": {
+                          "type": "string"
+                        },
+                        "routeName": {
+                          "type": "string",
+                          "description": "endpoint type only"
+                        },
+                        "topic": {
+                          "type": "string",
+                          "description": "eventSystem type only"
+                        },
+                        "source": {
+                          "type": "string",
+                          "description": "eventSystem type only"
+                        },
+                        "formData": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "manual and schedule types"
+                        },
+                        "formId": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "options": {
+                          "type": "object",
+                          "properties": {
+                            "targetType": {
+                              "type": "string",
+                              "enum": [
+                                "instance",
+                                "group"
+                              ]
+                            },
+                            "targetIdentifier": {
+                              "type": "string"
+                            },
+                            "chooseTargetAtRuntime": {
+                              "type": "boolean"
+                            }
+                          },
+                          "description": "schedule type only"
+                        },
+                        "firstRunAt": {
+                          "type": "integer",
+                          "description": "schedule type only -- start time as an epoch millisecond timestamp, NOT a cron expression"
+                        },
+                        "nextRunAt": {
+                          "type": "integer",
+                          "nullable": true,
+                          "description": "schedule type only, read-only/server-computed"
+                        },
+                        "processMissedRuns": {
+                          "type": "string",
+                          "enum": [
+                            "none",
+                            "last"
+                          ],
+                          "description": "schedule type only"
+                        },
+                        "repeat": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Recurrence rule. Itential has no cron expression -- recurrence is this discriminated interval tree instead. Omit/null for a one-time (non-recurring) run.",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "repeating",
+                                "terminating"
+                              ],
+                              "description": "Variant 0/2: 'repeating' runs forever on the interval; 'terminating' + count stops after N runs; a date-range variant (start/end) also exists -- use start/end instead of duration/count for that variant"
+                            },
+                            "duration": {
+                              "type": "object",
+                              "properties": {
+                                "unit": {
+                                  "type": "string",
+                                  "enum": [
+                                    "minute",
+                                    "hour",
+                                    "day",
+                                    "week"
+                                  ]
+                                },
+                                "quantity": {
+                                  "type": "integer"
+                                }
+                              },
+                              "description": "required for the repeating/terminating variants"
+                            },
+                            "count": {
+                              "type": "integer",
+                              "description": "required for the count-bounded ('terminating') variant instead of an end date"
+                            },
+                            "start": {
+                              "type": "string",
+                              "format": "date-time",
+                              "description": "required for the date-range variant, instead of duration"
+                            },
+                            "end": {
+                              "type": "string",
+                              "format": "date-time",
+                              "description": "required for the date-range variant"
+                            },
+                            "action": {
+                              "type": "string",
+                              "enum": [
+                                "execute",
+                                "wait"
+                              ]
+                            },
+                            "components": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              },
+                              "description": "nested child interval definitions for sub-schedules within a parent interval; usually []"
+                            }
+                          }
+                        },
+                        "created": {
+                          "type": "string"
+                        },
+                        "createdBy": {
+                          "type": "string"
+                        },
+                        "lastUpdated": {
+                          "type": "string"
+                        },
+                        "lastUpdatedBy": {
+                          "type": "string"
+                        },
+                        "lastExecuted": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateTrigger",
+        "summary": "Update Trigger",
+        "tags": [
+          "Triggers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "required"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "actionType": {
+                    "type": "string",
+                    "enum": [
+                      "automations"
+                    ],
+                    "description": "required"
+                  },
+                  "actionId": {
+                    "type": "string",
+                    "description": "required, the target Automation's id"
+                  },
+                  "routeName": {
+                    "type": "string",
+                    "description": "required for type=endpoint"
+                  },
+                  "verb": {
+                    "type": "string",
+                    "description": "endpoint type"
+                  },
+                  "topic": {
+                    "type": "string",
+                    "description": "required for type=eventSystem"
+                  },
+                  "source": {
+                    "type": "string",
+                    "description": "type=eventSystem"
+                  },
+                  "formData": {
+                    "type": "object",
+                    "description": "required for type=manual; optional for type=schedule"
+                  },
+                  "formId": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object",
+                    "properties": {
+                      "targetType": {
+                        "type": "string",
+                        "enum": [
+                          "instance",
+                          "group"
+                        ]
+                      },
+                      "targetIdentifier": {
+                        "type": "string"
+                      },
+                      "chooseTargetAtRuntime": {
+                        "type": "boolean"
+                      }
+                    },
+                    "description": "type=schedule"
+                  },
+                  "firstRunAt": {
+                    "type": "integer",
+                    "description": "required for type=schedule -- epoch milliseconds for the first/only run. This is the entire scheduling mechanism; Itential has no separate cron field."
+                  },
+                  "processMissedRuns": {
+                    "type": "string",
+                    "enum": [
+                      "none",
+                      "last"
+                    ],
+                    "description": "type=schedule"
+                  },
+                  "repeat": {
+                    "type": "object",
+                    "nullable": true,
+                    "description": "Recurrence rule. Itential has no cron expression -- recurrence is this discriminated interval tree instead. Omit/null for a one-time (non-recurring) run.",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "repeating",
+                          "terminating"
+                        ],
+                        "description": "Variant 0/2: 'repeating' runs forever on the interval; 'terminating' + count stops after N runs; a date-range variant (start/end) also exists -- use start/end instead of duration/count for that variant"
+                      },
+                      "duration": {
+                        "type": "object",
+                        "properties": {
+                          "unit": {
+                            "type": "string",
+                            "enum": [
+                              "minute",
+                              "hour",
+                              "day",
+                              "week"
+                            ]
+                          },
+                          "quantity": {
+                            "type": "integer"
+                          }
+                        },
+                        "description": "required for the repeating/terminating variants"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "description": "required for the count-bounded ('terminating') variant instead of an end date"
+                      },
+                      "start": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "required for the date-range variant, instead of duration"
+                      },
+                      "end": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "required for the date-range variant"
+                      },
+                      "action": {
+                        "type": "string",
+                        "enum": [
+                          "execute",
+                          "wait"
+                        ]
+                      },
+                      "components": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "nested child interval definitions for sub-schedules within a parent interval; usually []"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "manual",
+                            "endpoint",
+                            "eventSystem",
+                            "schedule"
+                          ]
+                        },
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "actionType": {
+                          "type": "string",
+                          "enum": [
+                            "automations"
+                          ]
+                        },
+                        "actionId": {
+                          "type": "string"
+                        },
+                        "routeName": {
+                          "type": "string",
+                          "description": "endpoint type only"
+                        },
+                        "topic": {
+                          "type": "string",
+                          "description": "eventSystem type only"
+                        },
+                        "source": {
+                          "type": "string",
+                          "description": "eventSystem type only"
+                        },
+                        "formData": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "manual and schedule types"
+                        },
+                        "formId": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "options": {
+                          "type": "object",
+                          "properties": {
+                            "targetType": {
+                              "type": "string",
+                              "enum": [
+                                "instance",
+                                "group"
+                              ]
+                            },
+                            "targetIdentifier": {
+                              "type": "string"
+                            },
+                            "chooseTargetAtRuntime": {
+                              "type": "boolean"
+                            }
+                          },
+                          "description": "schedule type only"
+                        },
+                        "firstRunAt": {
+                          "type": "integer",
+                          "description": "schedule type only -- start time as an epoch millisecond timestamp, NOT a cron expression"
+                        },
+                        "nextRunAt": {
+                          "type": "integer",
+                          "nullable": true,
+                          "description": "schedule type only, read-only/server-computed"
+                        },
+                        "processMissedRuns": {
+                          "type": "string",
+                          "enum": [
+                            "none",
+                            "last"
+                          ],
+                          "description": "schedule type only"
+                        },
+                        "repeat": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Recurrence rule. Itential has no cron expression -- recurrence is this discriminated interval tree instead. Omit/null for a one-time (non-recurring) run.",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "repeating",
+                                "terminating"
+                              ],
+                              "description": "Variant 0/2: 'repeating' runs forever on the interval; 'terminating' + count stops after N runs; a date-range variant (start/end) also exists -- use start/end instead of duration/count for that variant"
+                            },
+                            "duration": {
+                              "type": "object",
+                              "properties": {
+                                "unit": {
+                                  "type": "string",
+                                  "enum": [
+                                    "minute",
+                                    "hour",
+                                    "day",
+                                    "week"
+                                  ]
+                                },
+                                "quantity": {
+                                  "type": "integer"
+                                }
+                              },
+                              "description": "required for the repeating/terminating variants"
+                            },
+                            "count": {
+                              "type": "integer",
+                              "description": "required for the count-bounded ('terminating') variant instead of an end date"
+                            },
+                            "start": {
+                              "type": "string",
+                              "format": "date-time",
+                              "description": "required for the date-range variant, instead of duration"
+                            },
+                            "end": {
+                              "type": "string",
+                              "format": "date-time",
+                              "description": "required for the date-range variant"
+                            },
+                            "action": {
+                              "type": "string",
+                              "enum": [
+                                "execute",
+                                "wait"
+                              ]
+                            },
+                            "components": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              },
+                              "description": "nested child interval definitions for sub-schedules within a parent interval; usually []"
+                            }
+                          }
+                        },
+                        "created": {
+                          "type": "string"
+                        },
+                        "createdBy": {
+                          "type": "string"
+                        },
+                        "lastUpdated": {
+                          "type": "string"
+                        },
+                        "lastUpdatedBy": {
+                          "type": "string"
+                        },
+                        "lastExecuted": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteTrigger",
+        "summary": "Delete Trigger",
+        "tags": [
+          "Triggers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/triggers/{id}/export": {
+      "get": {
+        "operationId": "exportTrigger",
+        "summary": "Export Trigger",
+        "tags": [
+          "Triggers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "manual",
+                            "endpoint",
+                            "eventSystem",
+                            "schedule"
+                          ]
+                        },
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "actionType": {
+                          "type": "string",
+                          "enum": [
+                            "automations"
+                          ]
+                        },
+                        "actionId": {
+                          "type": "string"
+                        },
+                        "routeName": {
+                          "type": "string",
+                          "description": "endpoint type only"
+                        },
+                        "topic": {
+                          "type": "string",
+                          "description": "eventSystem type only"
+                        },
+                        "source": {
+                          "type": "string",
+                          "description": "eventSystem type only"
+                        },
+                        "formData": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "manual and schedule types"
+                        },
+                        "formId": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "options": {
+                          "type": "object",
+                          "properties": {
+                            "targetType": {
+                              "type": "string",
+                              "enum": [
+                                "instance",
+                                "group"
+                              ]
+                            },
+                            "targetIdentifier": {
+                              "type": "string"
+                            },
+                            "chooseTargetAtRuntime": {
+                              "type": "boolean"
+                            }
+                          },
+                          "description": "schedule type only"
+                        },
+                        "firstRunAt": {
+                          "type": "integer",
+                          "description": "schedule type only -- start time as an epoch millisecond timestamp, NOT a cron expression"
+                        },
+                        "nextRunAt": {
+                          "type": "integer",
+                          "nullable": true,
+                          "description": "schedule type only, read-only/server-computed"
+                        },
+                        "processMissedRuns": {
+                          "type": "string",
+                          "enum": [
+                            "none",
+                            "last"
+                          ],
+                          "description": "schedule type only"
+                        },
+                        "repeat": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Recurrence rule. Itential has no cron expression -- recurrence is this discriminated interval tree instead. Omit/null for a one-time (non-recurring) run.",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "repeating",
+                                "terminating"
+                              ],
+                              "description": "Variant 0/2: 'repeating' runs forever on the interval; 'terminating' + count stops after N runs; a date-range variant (start/end) also exists -- use start/end instead of duration/count for that variant"
+                            },
+                            "duration": {
+                              "type": "object",
+                              "properties": {
+                                "unit": {
+                                  "type": "string",
+                                  "enum": [
+                                    "minute",
+                                    "hour",
+                                    "day",
+                                    "week"
+                                  ]
+                                },
+                                "quantity": {
+                                  "type": "integer"
+                                }
+                              },
+                              "description": "required for the repeating/terminating variants"
+                            },
+                            "count": {
+                              "type": "integer",
+                              "description": "required for the count-bounded ('terminating') variant instead of an end date"
+                            },
+                            "start": {
+                              "type": "string",
+                              "format": "date-time",
+                              "description": "required for the date-range variant, instead of duration"
+                            },
+                            "end": {
+                              "type": "string",
+                              "format": "date-time",
+                              "description": "required for the date-range variant"
+                            },
+                            "action": {
+                              "type": "string",
+                              "enum": [
+                                "execute",
+                                "wait"
+                              ]
+                            },
+                            "components": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              },
+                              "description": "nested child interval definitions for sub-schedules within a parent interval; usually []"
+                            }
+                          }
+                        },
+                        "created": {
+                          "type": "string"
+                        },
+                        "createdBy": {
+                          "type": "string"
+                        },
+                        "lastUpdated": {
+                          "type": "string"
+                        },
+                        "lastUpdatedBy": {
+                          "type": "string"
+                        },
+                        "lastExecuted": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/operations-manager/triggers/{triggerId}/validate": {
+      "post": {
+        "operationId": "validateTrigger",
+        "summary": "Validate Trigger",
+        "tags": [
+          "Triggers"
+        ],
+        "parameters": [
+          {
+            "name": "triggerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "errors": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        },
+                        "warnings": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "token",
+        "description": "Token obtained from POST /login using a username/password body. Itential Platform automates the retrieval and injects it as the 'token' query parameter on every request. The response body is the bare token string itself (no JSON envelope), so no responsePointer is set.",
+        "x-itential-dynamic-retrieval": {
+          "method": "POST",
+          "url": "https://<itential-platform-host>/login"
+        },
+        "x-itential-parameters": [
+          {
+            "name": "username",
+            "in": "body",
+            "x-itential-use-in": [
+              "key"
+            ],
+            "schema": {
+              "type": "string"
+            },
+            "description": "Platform username, e.g. admin@itential"
+          },
+          {
+            "name": "password",
+            "in": "body",
+            "x-itential-use-in": [
+              "key"
+            ],
+            "schema": {
+              "type": "string"
+            },
+            "description": "Platform password"
+          }
+        ]
+      }
+    }
+  }
+}

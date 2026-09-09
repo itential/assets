@@ -19,7 +19,7 @@ This project provides an OpenAPI spec for automating Admin on Itential Platform'
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Itential Platform - Admin OpenAPI spec |
-| [Studio Projects/](./Studio%20Projects/) | Itential Platform - Admin project containing all 53 workflows in 9 folders |
+| [Studio Projects/](./Studio%20Projects/) | Itential Platform - Admin project containing 30 workflows in 6 folders |
 
 ## Requirements
 
@@ -65,7 +65,7 @@ The instance's `authentication`/`server` properties should look like this once c
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
-| [`itential_platform_admin-latest.json`](./OpenAPIs/itential_platform_admin-latest.json) | latest | 53 | Admin — see breakdown below |
+| [`itential_platform_admin-latest.json`](./OpenAPIs/itential_platform_admin-latest.json) | latest | 30 | Admin — see breakdown below |
 
 ### `itential_platform_admin-latest.json`
 
@@ -73,9 +73,6 @@ Hand-authored from Itential's own published per-operation API reference (docs.it
 
 - **Integration Models** (8 ops): List Integration Models, Import Integration Model, Update Integration Model, Validate Integration Model, Get Integration Model, Delete Integration Model, ...
 - **Integrations** (7 ops): List Integration Instances, Create Integration Instance, Get Integration Instance, Update Integration Instance, Update Integration Instance Properties, Delete Integration Instance, ...
-- **Operations Manager - Triggers** (11 ops): List Triggers, Create Trigger, Get Trigger, Update Trigger, Delete Trigger, Delete Triggers by Action ID, ...
-- **Operations Manager - Events** (2 ops): List Events, Get Event Definition
-- **Operations Manager - Automations** (10 ops): List Automations, Create Automation, Get Automation, Update Automation, Delete Automation, Clone Automation, ...
 - **Health** (7 ops): Get Platform Health Status, Get Adapter Health, Get Application Health, List Adapter Health, List Application Health, Get Server Health, ...
 - **Server** (2 ops): Get Platform Configuration, Get Platform Configuration Property
 - **Workflow Engine - Worker Status** (2 ops): Check Staterator Active State (deprecated), Get Task/Job Worker Status
@@ -85,7 +82,7 @@ Hand-authored from Itential's own published per-operation API reference (docs.it
 
 ### Itential Platform - Admin Project
 
-Backed by the **`Itential Platform - Admin:latest`** Integration Model (see [`itential_platform_admin-latest.json`](./OpenAPIs/itential_platform_admin-latest.json) above). The project contains **53 workflows** organized into **9 folders**.
+Backed by the **`Itential Platform - Admin:latest`** Integration Model (see [`itential_platform_admin-latest.json`](./OpenAPIs/itential_platform_admin-latest.json) above). The project contains **30 workflows** organized into **6 folders**.
 
 #### Folder Structure
 
@@ -93,9 +90,6 @@ Backed by the **`Itential Platform - Admin:latest`** Integration Model (see [`it
 |---|---|---|
 | Integration Models | 8 | List Integration Models, Import Integration Model, Update Integration Model, Validate Integration Model, Get Integration Model, Delete Integration Model, ... |
 | Integrations | 7 | List Integration Instances, Create Integration Instance, Get Integration Instance, Update Integration Instance, Update Integration Instance Properties, Delete Integration Instance, ... |
-| Operations Manager - Triggers | 11 | List Triggers, Create Trigger, Get Trigger, Update Trigger, Delete Trigger, Delete Triggers by Action ID, ... |
-| Operations Manager - Events | 2 | List Events, Get Event Definition |
-| Operations Manager - Automations | 10 | List Automations, Create Automation, Get Automation, Update Automation, Delete Automation, Clone Automation, ... |
 | Health | 7 | Get Platform Health Status, Get Adapter Health, Get Application Health, List Adapter Health, List Application Health, Get Server Health, ... |
 | Server | 2 | Get Platform Configuration, Get Platform Configuration Property |
 | Workflow Engine - Worker Status | 2 | Check Staterator Active State (deprecated), Get Task/Job Worker Status |
