@@ -4,7 +4,7 @@
     "title": "Itential Platform - Studio",
     "description": "Itential Platform's own Automation Studio / Workflow Builder / Workflow Engine / Operations Manager (jobs and tasks) / Method of Procedures command-template REST API. Lets one Itential Platform (or Itential Gateway) automate building, validating, running, and monitoring workflows -- including manual-task transitions and ad hoc device command execution -- on another Itential Platform instance, or itself.",
     "version": "latest",
-    "x-itential-curated": "Hand-authored from Itential's own published per-operation API reference (docs.itential.com/itential-platform/6/6/api-reference), which has no downloadable spec file. Part of a 6-product split of Itential's platform-automation surface (Studio, Admin, Configuration Manager, Lifecycle Manager, Inventory Manager, FlowAI) grouped by the day-to-day activity they support rather than by backend service boundary. This product covers building and running automations: Automation Studio workflow CRUD/validation, Workflow Builder's save/export/import/rename, Workflow Engine validation, Operations Manager job lifecycle (start/cancel/pause/resume/delete/revert/continue), task lifecycle including manual-task assignment/claim/release/finish (the transition a human works through a manual task with), and Method of Procedures command templates (create/list/update/delete/import/export/diff) plus their execution against one or more devices. Excludes Automation Studio project/component CRUD (a separate content-management surface, not workflow-building), which is intentionally not modeled as Integration Model automation here. Job and task execution moved out to the new Itential Platform - Operations Manager product."
+    "x-itential-curated": "Hand-authored from Itential's own published per-operation API reference (docs.itential.com/itential-platform/6/6/api-reference), which has no downloadable spec file. Part of a 6-product split of Itential's platform-automation surface (Studio, Admin, Configuration Manager, Lifecycle Manager, Inventory Manager, FlowAI) grouped by the day-to-day activity they support rather than by backend service boundary. This product covers building and running automations: Automation Studio workflow CRUD/validation, Workflow Builder's save/export/import/rename, Workflow Engine validation, Operations Manager job lifecycle (start/cancel/pause/resume/delete/revert/continue), task lifecycle including manual-task assignment/claim/release/finish (the transition a human works through a manual task with), and Method of Procedures command templates (create/list/update/delete/import/export/diff) plus their execution against one or more devices. Excludes Automation Studio project/component CRUD (a separate content-management surface, not workflow-building), which is intentionally not modeled as Integration Model automation here. Configuration Manager Template Builder (Jinja2/TextFSM rendering and parsing) is grouped here too, alongside Automation Studio's own Templates category."
   },
   "servers": [
     {
@@ -3614,6 +3614,302 @@
                     },
                     "nModified": {
                       "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/template_builder/applyTemplate": {
+      "post": {
+        "operationId": "applyTemplate",
+        "summary": "Apply Template",
+        "tags": [
+          "Templates"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "template": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "description": "parsed result; field names undocumented on the public reference page"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/template_builder/applyTemplates": {
+      "post": {
+        "operationId": "applyTemplates",
+        "summary": "Apply Templates (Bulk)",
+        "tags": [
+          "Templates"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "templates": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/template_builder/parseTemplate": {
+      "post": {
+        "operationId": "parseTemplate",
+        "summary": "Parse Template (TextFSM)",
+        "tags": [
+          "Templates"
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": "string",
+                        "description": "required"
+                      },
+                      "template": {
+                        "type": "object",
+                        "description": "required",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "description": "required"
+                          },
+                          "device": {
+                            "type": "string",
+                            "description": "required"
+                          },
+                          "command": {
+                            "type": "string",
+                            "description": "required"
+                          },
+                          "template": {
+                            "type": "string",
+                            "description": "required \u2014 the TextFSM template content"
+                          },
+                          "text": {
+                            "type": "string",
+                            "description": "required"
+                          },
+                          "type": {
+                            "type": "string",
+                            "description": "required, fixed value 'custom'"
+                          },
+                          "_id": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "description": "TextFSM parse results; field names undocumented on the public reference page"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/template_builder/templates/{name}/renderJinja": {
+      "post": {
+        "operationId": "renderJinja",
+        "summary": "Render Jinja Template",
+        "tags": [
+          "Templates"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "context": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "renderedTemplate": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/template_builder/templates/{name}/renderJinja2TemplateWithCast": {
+      "post": {
+        "operationId": "renderJinja2TemplateWithCast",
+        "summary": "Render Jinja2 Template with Cast",
+        "tags": [
+          "Templates"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "template": {
+                    "type": "string"
+                  },
+                  "variables": {
+                    "type": "object"
+                  },
+                  "castDataType": {
+                    "type": "string",
+                    "enum": [
+                      "boolean",
+                      "object",
+                      "number",
+                      "string"
+                    ],
+                    "description": "default 'string'"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "renderedTemplate": {
+                      "type": "string"
                     }
                   }
                 }

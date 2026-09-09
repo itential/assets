@@ -19,7 +19,7 @@ This project provides an OpenAPI spec for automating Studio on Itential Platform
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Itential Platform - Studio OpenAPI spec |
-| [Studio Projects/](./Studio%20Projects/) | Itential Platform - Studio project containing 46 workflows in 7 folders |
+| [Studio Projects/](./Studio%20Projects/) | Itential Platform - Studio project containing 49 workflows in 7 folders |
 
 ## Requirements
 
@@ -65,7 +65,7 @@ The instance's `authentication`/`server` properties should look like this once c
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
-| [`itential_platform_studio-latest.json`](./OpenAPIs/itential_platform_studio-latest.json) | latest | 47 | Studio — see breakdown below |
+| [`itential_platform_studio-latest.json`](./OpenAPIs/itential_platform_studio-latest.json) | latest | 52 | Studio — see breakdown below |
 
 ### `itential_platform_studio-latest.json`
 
@@ -77,13 +77,13 @@ Hand-authored from Itential's own published per-operation API reference (docs.it
 - **Method of Procedures - Templates** (7 ops): Create Command Template, List Command Templates, Update Command Template, Delete Command Template, Import Command Template, Export Command Template, ...
 - **Method of Procedures - Run Commands** (4 ops): Run Command Against a Device, Run Command Against Multiple Devices, Run Command Template Against Devices, Run a Single Command From a Template
 - **JSON Forms** (11 ops): Create JSON Form, List JSON Forms, Get JSON Form, Update JSON Form, Delete JSON Forms, Import JSON Forms, ...
-- **Templates** (7 ops): Create Template (Jinja2/TextFSM), List Templates, Get Template, Update Template, Delete Template, Export Template, ...
+- **Templates** (12 ops): Create Template (Jinja2/TextFSM), List Templates, Get Template, Update Template, Delete Template, Export Template, ...
 
 ## Studio Projects
 
 ### Itential Platform - Studio Project
 
-Backed by the **`Itential Platform - Studio:latest`** Integration Model (see [`itential_platform_studio-latest.json`](./OpenAPIs/itential_platform_studio-latest.json) above). The project contains **46 workflows** organized into **7 folders**.
+Backed by the **`Itential Platform - Studio:latest`** Integration Model (see [`itential_platform_studio-latest.json`](./OpenAPIs/itential_platform_studio-latest.json) above). The project contains **49 workflows** organized into **7 folders**.
 
 #### Folder Structure
 
@@ -94,10 +94,8 @@ Backed by the **`Itential Platform - Studio:latest`** Integration Model (see [`i
 | Workflow Engine | 2 | Validate Stored Workflow, Validate Workflow Object |
 | Command Templates | 6 | Create Command Template, Delete Command Template, Export Command Template, Import Command Template, List Command Templates, Update Command Template |
 | Command Templates - Run Commands | 4 | Run Command Against Multiple Devices, Run Command Against a Device, Run Command Template Against Devices, Run a Single Command From a Template |
-| JSON Forms | 11 | Create JSON Form, List JSON Forms, Get JSON Form, Update JSON Form, Delete JSON Forms, Import JSON Forms, ... |
-| Templates | 7 | Create Template (Jinja2/TextFSM), List Templates, Get Template, Delete Template, Export Template, Import Templates, ... |
-
-A handful of workflow names (`Update Template`) are prefixed with `Itential Platform - Studio` to avoid colliding with identically-named workflows already published for other products — workflow names are unique across the whole Itential Platform instance, not scoped per-project.
+| JSON Forms | 9 | Create JSON Form, List JSON Forms, Get JSON Form, Update JSON Form, Delete JSON Forms, Import JSON Forms, ... |
+| Templates | 12 | Create Template (Jinja2/TextFSM), List Templates, Get Template, Delete Template, Export Template, Import Templates, ... |
 
 #### Dependencies
 
