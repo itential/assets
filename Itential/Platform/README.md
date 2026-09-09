@@ -132,7 +132,9 @@ Every workflow's adapter task is wired to the Integration instance name `Itentia
 
 ### `Itential Platform - Studio.project.json`
 
-Build, validate, run, and monitor Itential Platform workflows -- including manual-task transitions, MOP command-template execution, JSON Forms, and Jinja2/TextFSM templates -- against another Itential Platform instance or itself. Contains **49 workflows** organized into **7 folders**.
+Build, validate, run, and monitor Itential Platform workflows -- including manual-task transitions, MOP command-template execution, JSON Forms, and Jinja2/TextFSM templates -- against another Itential Platform instance or itself. Contains **43 workflows** organized into **6 folders**.
+
+MOP command-template CRUD (create/list/get/update/delete/export/import) is left out here in favor of just the execution workflows (Command Templates - Run Commands) -- defining a template is a one-time setup activity, running one against a device is the repeatable workflow pattern.
 
 | Folder | Workflows |
 |---|---|
@@ -142,7 +144,6 @@ Build, validate, run, and monitor Itential Platform workflows -- including manua
 | Command Templates - Run Commands | (4) Run Command Against Multiple Devices, Run Command Against a Device, Run Command Template Against Devices, Run a Single Command From a Template |
 | Templates | (12) Apply Template, Apply Templates (Bulk), Create Template (Jinja2/TextFSM), Delete Template, Export Template, Get Template, ... |
 | JSON Forms | (9) Create JSON Form, Deep Validate JSON Form Definition, Delete JSON Forms, Get JSON Form, Import JSON Forms, List JSON Forms, ... |
-| Command Templates | (6) Create Command Template (1), Delete Command Template (1), Export Command Template (1), Import Command Template (1), List Command Templates (1), Update Command Template (1) |
 
 ### `Itential Platform - Admin.project.json`
 
@@ -199,7 +200,7 @@ Manage device/asset inventories, bulk-load nodes, and organize by tags against a
 | Inventories | (6) Create Inventory, Delete Inventory, Get Inventory Manager Stats, Get Inventory by Identifier, Inventory Manager Health Check, List Inventories |
 | Nodes | (7) Build Inventory Filter, Bulk Load Inventory Nodes, Clear Inventory Nodes, Expand Node Identifiers to Full Documents, Get Node by Identifier, List Nodes (Cross-Inventory), ... |
 | Actions | (5) Create Inventory Action, Delete Inventory Action, Get Inventory Action, List Actions (Cross-Inventory), List Actions for an Inventory |
-| Tags | (6) Find Inventories and Nodes by Tags, Get Tag Usage Statistics, Get Tag by Identifier, Itential Platform - Inventory Manager List Tags, List Accessible Tags, List Tags for an Inventory |
+| Tags | (6) Find Inventories and Nodes by Tags, Get Tag Usage Statistics, Get Tag by Identifier, List Accessible Tags, List Tags, List Tags for an Inventory |
 
 ### `Itential Platform - Operations Manager.project.json`
 
