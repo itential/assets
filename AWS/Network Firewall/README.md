@@ -10,12 +10,17 @@ This project provides an OpenAPI spec for automating against the AWS Network Fir
 - [OpenAPIs](#openapis)
   - [`aws_network_firewall-latest.json`](#aws_network_firewall-latestjson)
   - [`aws_network_firewall-2020-11-12.json`](#aws_network_firewall-2020-11-12json)
+- [Studio Projects](#studio-projects)
+  - [AWS Network Firewall Project](#aws-network-firewall-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | AWS Network Firewall API OpenAPI specs — `-latest` plus the full dated spec |
+| [Studio Projects/AWS Network Firewall](./Studio%20Projects/AWS%20Network%20Firewall.project.json) | 23 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -82,3 +87,28 @@ Operations included, by category:
 ### `aws_network_firewall-2020-11-12.json`
 
 Full spec, converted in-house from AWS's official service model, for API version 2020-11-12 (36 operations) — the entire upstream API surface as AWS defines it. See `aws_network_firewall-latest.json` above for the curated `-latest` copy; per the review noted there, no operations were excluded, so both specs cover the same operation set.
+
+---
+
+## Studio Projects
+
+### AWS Network Firewall Project
+
+Backed by the **`AWS Network Firewall:latest`** Integration Model (see [`aws_network_firewall-latest.json`](./OpenAPIs/aws_network_firewall-latest.json) above). The project contains **23 workflows** organized into **5 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec. This is an AWS JSON-protocol API — every operation is a `POST` distinguished by a required `X-Amz-Target` header, which each workflow exposes as an input alongside the request body.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Firewalls | Create, Describe, List, Delete Firewall, Update Firewall Description | Firewall lifecycle |
+| Firewall Policies | Create, Describe, List, Delete, Update Firewall Policy | Firewall policy management |
+| Rule Groups | Create, Describe, List, Delete, Update Rule Group | Rule group management |
+| TLS Inspection Configurations | Create, Describe, List, Delete, Update TLS Inspection Configuration | TLS inspection configuration management |
+| Tags | List, Tag, Untag Resource | Tagging management |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `AWS Network Firewall:latest` Integration Model | Import from [`aws_network_firewall-latest.json`](./OpenAPIs/aws_network_firewall-latest.json) before importing the project |
+| `AWS Network Firewall` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `AWS Network Firewall` — update the `adapter_id` value in each workflow task if yours is named differently |
