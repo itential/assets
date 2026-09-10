@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against the Airflow stable RE
 - [OpenAPIs](#openapis)
   - [`apache_airflow-latest.json`](#apache_airflow-latestjson)
   - [`apache_airflow-2.5.1.json`](#apache_airflow-251json)
+- [Studio Projects](#studio-projects)
+  - [Apache Airflow Project](#apache-airflow-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Apache Airflow REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Apache Airflow](./Studio%20Projects/Apache%20Airflow.project.json) | 26 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -81,4 +86,30 @@ Excluded as internal vendor tooling or reporting-only tails: Config, DAG Warning
 ### `apache_airflow-2.5.1.json`
 
 Full, unmodified vendor spec for Apache Airflow 2.5.1 (73 operations) — the vendor's complete API surface, preserved as-is. See `apache_airflow-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Apache Airflow Project
+
+Backed by the **`Apache Airflow:latest`** Integration Model (see [`apache_airflow-latest.json`](./OpenAPIs/apache_airflow-latest.json) above). The project contains **26 workflows** organized into **6 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| DAGs | List, Get, Update, Delete DAG | DAG lifecycle and pause/unpause |
+| DAG Runs | List, Get, Create, Update, Delete DAG Run | DAG run triggering and state management |
+| Task Instances | List, Get Task Instance | Task instance inspection |
+| Connections | List, Get, Create, Update, Delete Connection | Connection management |
+| Pools | List, Get, Create, Update, Delete Pool | Worker pool management |
+| Variables | List, Get, Create, Update, Delete Variable | Variable management |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Apache Airflow:latest` Integration Model | Import from [`apache_airflow-latest.json`](./OpenAPIs/apache_airflow-latest.json) before importing the project |
+| `Apache Airflow` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Apache Airflow` — update the `adapter_id` value in each workflow task if yours is named differently |
 

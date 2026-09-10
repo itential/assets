@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against the AWX (Tower) REST 
 - [OpenAPIs](#openapis)
   - [`ansible_awx_tower-latest.json`](#ansible_awx_tower-latestjson)
   - [`ansible_awx_tower-v2.json`](#ansible_awx_tower-v2json)
+- [Studio Projects](#studio-projects)
+  - [Ansible AWX (Tower) Project](#ansible-awx-tower-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Ansible AWX (Tower) REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Ansible AWX (Tower)](./Studio%20Projects/Ansible%20AWX%20%28Tower%29.project.json) | 30 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -82,3 +87,29 @@ Excluded as long-tail/admin surface: activity streams, analytics/reporting, bulk
 ### `ansible_awx_tower-v2.json`
 
 Full, unmodified vendor spec (API v2, 631 operations) — the vendor's complete API surface, preserved as-is. See `ansible_awx_tower-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Ansible AWX (Tower) Project
+
+Backed by the **`Ansible AWX (Tower):latest`** Integration Model (see [`ansible_awx_tower-latest.json`](./OpenAPIs/ansible_awx_tower-latest.json) above). The project contains **30 workflows** organized into **6 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Job Templates | List, Get, Create, Update, Delete, Launch Job Template | Job template lifecycle and launch |
+| Jobs | List, Get, Relaunch, Delete Job | Job monitoring and control |
+| Inventories | List, Get, Create, Update, Delete Inventory | Inventory lifecycle |
+| Projects | List, Get, Create, Update, Delete Project | SCM project lifecycle |
+| Credentials | List, Get, Create, Update, Delete Credential | Credential lifecycle |
+| Hosts | List, Get, Create, Update, Delete Host | Host lifecycle |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Ansible AWX (Tower):latest` Integration Model | Import from [`ansible_awx_tower-latest.json`](./OpenAPIs/ansible_awx_tower-latest.json) before importing the project |
+| `Ansible AWX (Tower)` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Ansible AWX (Tower)` — update the `adapter_id` value in each workflow task if yours is named differently |

@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against the Google Drive REST
 - [OpenAPIs](#openapis)
   - [`google_drive-latest.json`](#google_drive-latestjson)
   - [`google_drive-v3.json`](#google_drive-v3json)
+- [Studio Projects](#studio-projects)
+  - [Google Drive Project](#google-drive-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Google Drive REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Google Drive](./Studio%20Projects/Google%20Drive.project.json) | 21 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -88,3 +93,27 @@ Not included: change/activity polling and push-notification channels (`changes`,
 ### `google_drive-v3.json`
 
 Full, unmodified vendor spec for the Google Drive v3 API (48 operations) — the vendor's complete API surface, preserved as-is. See `google_drive-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Google Drive Project
+
+Backed by the **`Google Drive:latest`** Integration Model (see [`google_drive-latest.json`](./OpenAPIs/google_drive-latest.json) above). The project contains **21 workflows** organized into **4 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Files | List, Get, Create, Update, Delete, Copy File | File lifecycle |
+| Drives | List, Get, Create, Update, Delete Drive | Shared drive lifecycle |
+| Permissions | List, Get, Create, Update, Delete Permission | File/drive sharing |
+| Comments | List, Get, Create, Update, Delete Comment | File comments |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Google Drive:latest` Integration Model | Import from [`google_drive-latest.json`](./OpenAPIs/google_drive-latest.json) before importing the project |
+| `Google Drive` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Google Drive` — update the `adapter_id` value in each workflow task if yours is named differently |
