@@ -1,4 +1,4 @@
-Cisco Nexus Dashboard Fabric Controller (NDFC) REST API — fabric lifecycle, VRF and network provisioning, interface configuration, switch inventory and discovery, policy management, image management (ISSU), config templates, and feature manager. Lets Itential Platform automate NDFC-managed data center fabrics end-to-end.
+Cisco Nexus Dashboard Fabric Controller (NDFC) REST API — LAN fabric lifecycle and SAN fabric management. Lets Itential Platform automate NDFC-managed data center fabrics end-to-end.
 
 ## Table of Contents
 
@@ -6,7 +6,8 @@ Cisco Nexus Dashboard Fabric Controller (NDFC) REST API — fabric lifecycle, VR
 - [Requirements](#requirements)
 - [Integration Configuration](#integration-configuration)
 - [OpenAPIs](#openapis)
-  - [`cisco_ndfc-latest.json`](#cisco_ndfc-latestjson)
+  - [`cisco_ndfc_lan-latest.json`](#cisco_ndfc_lan-latestjson)
+  - [`cisco_ndfc_san-latest.json`](#cisco_ndfc_san-latestjson)
   - [`cisco_ndfc_lan_v12-2-2.json`](#cisco_ndfc_lan_v12-2-2json)
   - [`cisco_ndfc_san_v12-2-2.json`](#cisco_ndfc_san_v12-2-2json)
 
@@ -54,13 +55,14 @@ Configure the instance with `X-Nd-Apikey` as the `ApiKeyAuth` value and `X-Nd-Us
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
-| [`cisco_ndfc-latest.json`](./OpenAPIs/cisco_ndfc-latest.json) | 12.2.2 | 353 | Curated LAN fabric automation: fabrics, switches, inventory, VRFs, networks, interfaces, links, vPC pairs, policies, templates, resource manager, image/ISSU management, change control, deployment |
+| [`cisco_ndfc_lan-latest.json`](./OpenAPIs/cisco_ndfc_lan-latest.json) | 12.2.2 | 353 | Curated LAN fabric automation: fabrics, switches, inventory, VRFs, networks, interfaces, policies, templates, resource manager, image/ISSU management |
+| [`cisco_ndfc_san-latest.json`](./OpenAPIs/cisco_ndfc_san-latest.json) | 12.2.2 | 252 | Curated SAN automation: inventory, discovery, VSAN, zone manager, device alias, portchannels, port monitoring, topology, config archive/drift, image/ISSU management |
 | [`cisco_ndfc_lan_v12-2-2.json`](./OpenAPIs/cisco_ndfc_lan_v12-2-2.json) | 12.2.2 | 840 | Full Cisco NDFC LAN Fabric REST API |
 | [`cisco_ndfc_san_v12-2-2.json`](./OpenAPIs/cisco_ndfc_san_v12-2-2.json) | 12.2.2 | 473 | Full Cisco NDFC SAN REST API |
 
-### `cisco_ndfc-latest.json`
+### `cisco_ndfc_lan-latest.json`
 
-Curated from the official Cisco NDFC LAN Fabric REST API spec (published on [Cisco DevNet](https://developer.cisco.com/docs/nexus-dashboard-fabric-controller/latest/api-reference-lan/)). Covers the operations most relevant to data-center fabric automation.
+Curated from the official Cisco NDFC LAN Fabric REST API spec (published on [Cisco DevNet](https://developer.cisco.com/docs/nexus-dashboard-fabric-controller/latest/api-reference-lan/)). Covers the operations most relevant to data-center LAN fabric automation.
 
 | Category | Operations |
 |---|---|
@@ -81,6 +83,30 @@ Curated from the official Cisco NDFC LAN Fabric REST API spec (published on [Cis
 | Fabric Inventory | Fabric-level inventory operations |
 | Fabric Backup and Restore | Fabric configuration backup and restore |
 | Features | NDFC feature list |
+
+### `cisco_ndfc_san-latest.json`
+
+Curated from the official Cisco NDFC SAN REST API spec (published on [Cisco DevNet](https://developer.cisco.com/docs/nexus-dashboard-fabric-controller/latest/api-reference-san/)). Covers the operations most relevant to SAN fabric automation.
+
+| Category | Operations |
+|---|---|
+| SAN Inventory | Switch inventory and discovery |
+| SAN Discovery Manager | Discovery management |
+| SAN VSAN | VSAN create, update, delete, list |
+| SAN Zone Manager | Zone and zoneset management |
+| SAN Device Alias | Device alias configuration |
+| SAN PortChannel | PortChannel management |
+| SAN Port Monitoring | Port monitoring policies |
+| SAN Topology | Topology discovery and management |
+| SAN Credential Management | Switch credential management |
+| SAN Config Archive / Config Drift | Config archive and drift detection |
+| SAN Image Management | SAN-specific image management |
+| ISSU Reports / ISSU Upgrade | In-service software upgrade |
+| Stage Management | Image staging |
+| Upgrade Management | Upgrade lifecycle |
+| Policy Management | Policy CRUD |
+| Templates | Config template list and get |
+| Features / Switch Features | Feature management |
 
 ### `cisco_ndfc_lan_v12-2-2.json`
 
