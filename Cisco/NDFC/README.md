@@ -10,12 +10,21 @@ Cisco Nexus Dashboard Fabric Controller (NDFC) REST API — LAN fabric lifecycle
   - [`cisco_ndfc_san-latest.json`](#cisco_ndfc_san-latestjson)
   - [`cisco_ndfc_lan-12.2.2.json`](#cisco_ndfc_lan-1222json)
   - [`cisco_ndfc_san-12.2.2.json`](#cisco_ndfc_san-1222json)
+- [Studio Projects](#studio-projects)
+  - [Cisco NDFC LAN Fabric Project](#cisco-ndfc-lan-fabric-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
+  - [Cisco NDFC SAN Project](#cisco-ndfc-san-project)
+    - [Folder Structure](#folder-structure-1)
+    - [Dependencies](#dependencies-1)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Cisco NDFC REST API Integration Models |
+| [Studio Projects/Cisco NDFC LAN Fabric](./Studio%20Projects/Cisco%20NDFC%20LAN%20Fabric.project.json) | 26 workflows covering common CRUD LAN fabric automation |
+| [Studio Projects/Cisco NDFC SAN](./Studio%20Projects/Cisco%20NDFC%20SAN.project.json) | 19 workflows covering common CRUD SAN automation |
 
 ## Requirements
 
@@ -115,3 +124,51 @@ Full official LAN Fabric REST API spec sourced directly from [Cisco DevNet](http
 ### `cisco_ndfc_san-12.2.2.json`
 
 Full official SAN REST API spec sourced directly from [Cisco DevNet](https://developer.cisco.com/docs/nexus-dashboard-fabric-controller/latest/api-reference-san/). Covers all 473 operations for SAN fabric management, including SAN topology, zoning, device alias, VSAN, portchannels, and SAN-specific image management.
+
+---
+
+## Studio Projects
+
+### Cisco NDFC LAN Fabric Project
+
+Backed by the **`Cisco NDFC LAN Fabric:latest`** Integration Model (see [`cisco_ndfc_lan-latest.json`](./OpenAPIs/cisco_ndfc_lan-latest.json) above). The project contains **26 workflows** organized into **6 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Fabrics | List, Get, Create, Update, Delete Fabric | Fabric lifecycle |
+| Switches | List Switch Inventory Summary, Set Switch Roles, List Switches in Fabric, Discover Switches, Rediscover Switch | Switch inventory and discovery |
+| VRFs | List, Get, Create, Update, Delete VRF | VRF CRUD |
+| Networks | List, Get, Create, Update, Delete Network | Network CRUD |
+| Interfaces | List Global Interfaces, Create Interface | Global interface management |
+| Policies | Get, Create, Update, Delete Policy | Policy CRUD |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Cisco NDFC LAN Fabric:latest` Integration Model | Import from [`cisco_ndfc_lan-latest.json`](./OpenAPIs/cisco_ndfc_lan-latest.json) before importing the project |
+| `Cisco NDFC LAN Fabric` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Cisco NDFC LAN Fabric` — update the `adapter_id` value in each workflow task if yours is named differently |
+
+### Cisco NDFC SAN Project
+
+Backed by the **`Cisco NDFC SAN:latest`** Integration Model (see [`cisco_ndfc_san-latest.json`](./OpenAPIs/cisco_ndfc_san-latest.json) above). The project contains **19 workflows** organized into **6 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Inventory | List Switches, VSANs, Zones, Fabrics, Interfaces | Read-only SAN inventory |
+| VSAN | List Manageable Fabrics for VSAN, Get Switches on VSAN | VSAN scope lookups |
+| Zone Manager | List Zone Sets, Create Zone, Create Zone Set, Delete Zones | Zone/zoneset CRUD |
+| Device Alias | Get Device Alias, Delete Device Alias | Device alias management |
+| PortChannel | Create Port Channel Link, Edit Port Channel | PortChannel configuration |
+| Discovery | Get Fabric Status, Discover SAN Fabric, Rediscover Fabric, Delete Discovered Fabric | SAN fabric discovery lifecycle |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Cisco NDFC SAN:latest` Integration Model | Import from [`cisco_ndfc_san-latest.json`](./OpenAPIs/cisco_ndfc_san-latest.json) before importing the project |
+| `Cisco NDFC SAN` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Cisco NDFC SAN` — update the `adapter_id` value in each workflow task if yours is named differently |
