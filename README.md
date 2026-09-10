@@ -74,7 +74,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Sonatype** | Nexus |
 | **Twilio** | Communications APIs |
 | **Versa** | Director |
-| **VMware** | vSphere vCenter |
+| **VMware** | NSX · vSphere vCenter |
 | **Zoom** | Meetings / collaboration |
 | **Zscaler** | ZIA |
 
