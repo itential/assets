@@ -8,12 +8,17 @@ Cloudflare's REST API — DNS, zones, firewall/WAF, load balancing, SSL/TLS, Zer
 - [OpenAPIs](#openapis)
   - [`cloudflare-latest.json`](#cloudflare-latestjson)
   - [`cloudflare-4.0.0.json`](#cloudflare-400json)
+- [Studio Projects](#studio-projects)
+  - [Cloudflare Project](#cloudflare-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Curated Cloudflare Integration Model (`cloudflare-latest.json`) and the full Cloudflare v4 spec (`cloudflare-4.0.0.json`) |
+| [Studio Projects/Cloudflare](./Studio%20Projects/Cloudflare.project.json) | 29 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -76,3 +81,29 @@ Sourced from Cloudflare's official api-schemas GitHub repo (github.com/cloudflar
 ### `cloudflare-4.0.0.json`
 
 Sourced from Cloudflare's official api-schemas GitHub repo (github.com/cloudflare/api-schemas). Full Cloudflare v4 REST API — 3,460 operations across 553 tags covering all Cloudflare product areas including Radar analytics, R2 storage, D1 databases, AI Gateway, Magic networking, CASB, Email Security, and more. Import this spec if you need operations not covered by the curated build.
+
+---
+
+## Studio Projects
+
+### Cloudflare Project
+
+Backed by the **`Cloudflare:latest`** Integration Model (see [`cloudflare-latest.json`](./OpenAPIs/cloudflare-latest.json) above). The project contains **29 workflows** organized into **6 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| DNS Records | List, Create, Get, Update, Delete DNS Record | Zone DNS record CRUD |
+| Zones | List, Create, Get, Edit, Delete Zone | Zone lifecycle |
+| Firewall Rules | List, Create, Get, Delete Firewall Rule | Zone firewall rule CRUD |
+| Load Balancers | List, Create, Get, Update, Delete Load Balancer | Zone load balancer lifecycle |
+| Workers | List, Create, Get, Edit, Delete Worker | Workers script lifecycle |
+| Access Applications | List, Add, Get, Update, Delete Access Application | Zero Trust Access application CRUD |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Cloudflare:latest` Integration Model | Import from [`cloudflare-latest.json`](./OpenAPIs/cloudflare-latest.json) before importing the project |
+| `Cloudflare` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Cloudflare` — update the `adapter_id` value in each workflow task if yours is named differently |
