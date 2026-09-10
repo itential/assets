@@ -10,12 +10,17 @@ This project provides an OpenAPI spec for automating against the CloudFormation 
 - [OpenAPIs](#openapis)
   - [`aws_cloudformation-latest.json`](#aws_cloudformation-latestjson)
   - [`aws_cloudformation-2010-05-15.json`](#aws_cloudformation-2010-05-15json)
+- [Studio Projects](#studio-projects)
+  - [AWS CloudFormation Project](#aws-cloudformation-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | AWS CloudFormation API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/AWS CloudFormation](./Studio%20Projects/AWS%20CloudFormation.project.json) | 19 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -80,3 +85,29 @@ Not included: type/extension registry management (`RegisterType`, `PublishType`,
 ### `aws_cloudformation-2010-05-15.json`
 
 Full spec, converted in-house from AWS's official service model, for the CloudFormation 2010-05-15 API (164 operations) — the entire upstream API surface as AWS defines it. See `aws_cloudformation-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### AWS CloudFormation Project
+
+Backed by the **`AWS CloudFormation:latest`** Integration Model (see [`aws_cloudformation-latest.json`](./OpenAPIs/aws_cloudformation-latest.json) above). The project contains **19 workflows** organized into **4 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+CloudFormation is an AWS query-protocol API — every operation is a `POST` whose `Action`/`Version` query parameters are fixed single-value constants already baked into the operation's path, not real user input, so those are omitted from each workflow's input schema in favor of the single `requestBody` (XML) parameter.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Stacks | List, Create, Describe, Update, Delete Stack | Stack lifecycle |
+| Change Sets | List, Create, Describe, Execute, Delete Change Set | Change preview and execution |
+| StackSets | List, Create, Describe, Update, Delete StackSet | Multi-account/region StackSet management |
+| Stack Instances | List, Create, Update, Delete Stack Instances | StackSet instance management |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `AWS CloudFormation:latest` Integration Model | Import from [`aws_cloudformation-latest.json`](./OpenAPIs/aws_cloudformation-latest.json) before importing the project |
+| `AWS CloudFormation` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `AWS CloudFormation` — update the `adapter_id` value in each workflow task if yours is named differently |

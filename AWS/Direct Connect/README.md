@@ -10,12 +10,17 @@ This project provides an OpenAPI spec for automating against the AWS Direct Conn
 - [OpenAPIs](#openapis)
   - [`aws_direct_connect-latest.json`](#aws_direct_connect-latestjson)
   - [`aws_direct_connect-2012-10-25.json`](#aws_direct_connect-2012-10-25json)
+- [Studio Projects](#studio-projects)
+  - [AWS Direct Connect Project](#aws-direct-connect-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | AWS Direct Connect API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/AWS Direct Connect](./Studio%20Projects/AWS%20Direct%20Connect.project.json) | 25 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -86,3 +91,32 @@ Operations included, by category:
 ### `aws_direct_connect-2012-10-25.json`
 
 Full spec, converted in-house from AWS's official service model, for AWS Direct Connect API version 2012-10-25 (63 operations) — the entire upstream API surface as AWS defines it. See `aws_direct_connect-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### AWS Direct Connect Project
+
+Backed by the **`AWS Direct Connect:latest`** Integration Model (see [`aws_direct_connect-latest.json`](./OpenAPIs/aws_direct_connect-latest.json) above). The project contains **25 workflows** organized into **7 folders**, one atomic workflow per API operation, covering a common-CRUD subset of the spec (the full spec is already curated to 63 core operations — see above).
+
+Direct Connect is an AWS JSON-protocol API — every operation is a `POST` whose `X-Amz-Target` header is a fixed single-value constant already baked into the operation's path, not real user input, so it's omitted from each workflow's input schema in favor of the single `requestBody` (JSON) parameter.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Connections | Describe, Create, Update, Delete Connection | Connection lifecycle |
+| Virtual Interfaces | Describe, Create Private, Update Attributes, Delete Virtual Interface | Virtual interface lifecycle |
+| Direct Connect Gateways | Describe, Create, Update, Delete Direct Connect Gateway | Gateway lifecycle |
+| Direct Connect Gateway Associations | Describe, Create, Update, Delete Direct Connect Gateway Association | Gateway-to-VGW/TGW association management |
+| LAGs | Describe, Create, Update, Delete Lag | Link Aggregation Group lifecycle |
+| Interconnects | Describe, Create, Delete Interconnect | Interconnect lifecycle |
+| BGP Peers | Create, Delete BGP Peer | BGP peer management |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `AWS Direct Connect:latest` Integration Model | Import from [`aws_direct_connect-latest.json`](./OpenAPIs/aws_direct_connect-latest.json) before importing the project |
+| `AWS Direct Connect` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `AWS Direct Connect` — update the `adapter_id` value in each workflow task if yours is named differently |

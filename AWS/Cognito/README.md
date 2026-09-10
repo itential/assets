@@ -10,12 +10,17 @@ This project provides an OpenAPI spec for automating against the Cognito User Po
 - [OpenAPIs](#openapis)
   - [`amazon_cognito_user_pools-latest.json`](#amazon_cognito_user_pools-latestjson)
   - [`amazon_cognito_user_pools-2016-04-18.json`](#amazon_cognito_user_pools-2016-04-18json)
+- [Studio Projects](#studio-projects)
+  - [Amazon Cognito User Pools Project](#amazon-cognito-user-pools-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Amazon Cognito User Pools REST API OpenAPI spec — curated `-latest` plus the full dated version |
+| [Studio Projects/Amazon Cognito User Pools](./Studio%20Projects/Amazon%20Cognito%20User%20Pools.project.json) | 30 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -89,3 +94,31 @@ Not included: user import jobs (bulk CSV import via S3), advanced security/risk 
 ### `amazon_cognito_user_pools-2016-04-18.json`
 
 Full spec, converted in-house from AWS's official service model, for the Amazon Cognito User Pools API (2016-04-18) — the entire upstream API surface as AWS defines it (103 operations). See `amazon_cognito_user_pools-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Amazon Cognito User Pools Project
+
+Backed by the **`Amazon Cognito User Pools:latest`** Integration Model (see [`amazon_cognito_user_pools-latest.json`](./OpenAPIs/amazon_cognito_user_pools-latest.json) above). The project contains **30 workflows** organized into **6 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+Cognito User Pools is an AWS JSON-protocol API — every operation is a `POST` whose `X-Amz-Target` header is a fixed single-value constant already baked into the operation's path, not real user input, so it's omitted from each workflow's input schema in favor of the single `requestBody` (JSON) parameter.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| User Pools | List, Create, Describe, Update, Delete User Pool | User pool lifecycle |
+| App Clients | List, Create, Describe, Update, Delete User Pool Client | App client lifecycle |
+| Users | List Users, Admin Create/Get/Update Attributes/Delete User | Admin user lifecycle |
+| Groups | List, Create, Get, Update, Delete Group | Group management |
+| Identity Providers | List, Create, Describe, Update, Delete Identity Provider | Federation configuration |
+| Resource Servers | List, Create, Describe, Update, Delete Resource Server | OAuth resource server management |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Amazon Cognito User Pools:latest` Integration Model | Import from [`amazon_cognito_user_pools-latest.json`](./OpenAPIs/amazon_cognito_user_pools-latest.json) before importing the project |
+| `Amazon Cognito User Pools` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Amazon Cognito User Pools` — update the `adapter_id` value in each workflow task if yours is named differently |

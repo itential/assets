@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against the Amazon Connect AP
 - [OpenAPIs](#openapis)
   - [`amazon_connect-latest.json`](#amazon_connect-latestjson)
   - [`amazon_connect-2017-08-08.json`](#amazon_connect-2017-08-08json)
+- [Studio Projects](#studio-projects)
+  - [Amazon Connect Project](#amazon-connect-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Amazon Connect API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Amazon Connect](./Studio%20Projects/Amazon%20Connect.project.json) | 25 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -91,3 +96,29 @@ Not included: real-time and historical metrics/reporting, custom vocabularies (C
 ### `amazon_connect-2017-08-08.json`
 
 Full spec, converted in-house from AWS's official service model, for Amazon Connect API version 2017-08-08 (255 operations) — the entire upstream API surface as AWS defines it. See `amazon_connect-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Amazon Connect Project
+
+Backed by the **`Amazon Connect:latest`** Integration Model (see [`amazon_connect-latest.json`](./OpenAPIs/amazon_connect-latest.json) above). The project contains **25 workflows** organized into **6 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Instances | List, Create, Describe, Delete Instance | Instance lifecycle |
+| Users | List, Create, Describe, Update Identity Info, Delete User | User lifecycle |
+| Queues | List, Create, Describe, Update Name | Queue management |
+| Routing Profiles | List, Create, Describe, Update Name | Routing profile management |
+| Contact Flows | List, Create, Describe, Update Content, Delete Contact Flow | Contact flow lifecycle |
+| Contact Lifecycle | Start Task Contact, Stop Contact, Transfer Contact | Core contact operations |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Amazon Connect:latest` Integration Model | Import from [`amazon_connect-latest.json`](./OpenAPIs/amazon_connect-latest.json) before importing the project |
+| `Amazon Connect` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Amazon Connect` — update the `adapter_id` value in each workflow task if yours is named differently |
