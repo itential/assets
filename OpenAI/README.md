@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against the OpenAI REST API v
 - [OpenAPIs](#openapis)
   - [`openai-latest.json`](#openai-latestjson)
   - [`openai-2.3.0.json`](#openai-230json)
+- [Studio Projects](#studio-projects)
+  - [OpenAI Project](#openai-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | OpenAI REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/OpenAI](./Studio%20Projects/OpenAI.project.json) | 22 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -84,3 +89,28 @@ Excluded: administration/org-management (API keys, users, roles, groups, invites
 ### `openai-2.3.0.json`
 
 Full, unmodified vendor spec covering all 242 upstream operations — the vendor's complete API surface, preserved as-is. See `openai-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### OpenAI Project
+
+Backed by the **`OpenAI:latest`** Integration Model (see [`openai-latest.json`](./OpenAPIs/openai-latest.json) above). The project contains **22 workflows** organized into **5 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Models | List, Retrieve, Delete Model | Model catalog |
+| Chat Completions | List, Create, Get, Update, Delete Chat Completion | Chat completion lifecycle |
+| Files | List, Create, Retrieve, Delete File, Download File Content | File lifecycle |
+| Fine-tuning Jobs | List, Create, Retrieve, Cancel Fine-tuning Job | Fine-tuning job lifecycle |
+| Assistants | List, Create, Get, Modify, Delete Assistant | Assistant lifecycle |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `OpenAI:latest` Integration Model | Import from [`openai-latest.json`](./OpenAPIs/openai-latest.json) before importing the project |
+| `OpenAI` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `OpenAI` — update the `adapter_id` value in each workflow task if yours is named differently |

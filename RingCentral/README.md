@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against the RingCentral Conne
 - [OpenAPIs](#openapis)
   - [`ringcentral-latest.json`](#ringcentral-latestjson)
   - [`ringcentral-1.0.39.json`](#ringcentral-1039json)
+- [Studio Projects](#studio-projects)
+  - [RingCentral Project](#ringcentral-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | RingCentral Connect Platform REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/RingCentral](./Studio%20Projects/RingCentral.project.json) | 22 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -101,3 +106,28 @@ Dropped as long tails: OAuth2 endpoints (handled by the integration's security s
 ### `ringcentral-1.0.39.json`
 
 Full, unmodified vendor spec for RingCentral Connect Platform API 1.0.39 (312 operations) — the vendor's complete API surface, preserved as-is. See `ringcentral-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### RingCentral Project
+
+Backed by the **`RingCentral:latest`** Integration Model (see [`ringcentral-latest.json`](./OpenAPIs/ringcentral-latest.json) above). The project contains **22 workflows** organized into **5 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Calls | Create Call-Out, Get, Delete Call Session, Hold, Transfer Call Party | Telephony session and call party control |
+| Messages | List, Get, Update, Delete Message, Create SMS Message | Message store and SMS |
+| Extensions | List, Create, Get, Update, Delete Extension | Extension (user) lifecycle |
+| Meetings | List, Create, Get, Update, Delete Meeting | RingCentral Video meeting lifecycle |
+| Presence | Get, Update User Presence | Extension presence status |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `RingCentral:latest` Integration Model | Import from [`ringcentral-latest.json`](./OpenAPIs/ringcentral-latest.json) before importing the project |
+| `RingCentral` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `RingCentral` — update the `adapter_id` value in each workflow task if yours is named differently |

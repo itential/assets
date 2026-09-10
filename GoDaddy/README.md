@@ -8,12 +8,17 @@ GoDaddy is a domain registrar and web hosting provider. This project covers the 
 - [OpenAPIs](#openapis)
   - [`godaddy_domains-latest.json`](#godaddy_domains-latestjson)
   - [`godaddy_domains-1.0.0.json`](#godaddy_domains-100json)
+- [Studio Projects](#studio-projects)
+  - [GoDaddy Domains Project](#godaddy-domains-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | GoDaddy Domains REST API OpenAPI spec — curated `-latest` plus the full dated version |
+| [Studio Projects/GoDaddy Domains](./Studio%20Projects/GoDaddy%20Domains.project.json) | 15 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -77,3 +82,27 @@ Notification opt-in/acknowledgement management, domain action/job history, sched
 ### `godaddy_domains-1.0.0.json`
 
 Full, unmodified vendor spec for the GoDaddy Domains API, version 1.0.0 (42 operations) — the vendor's complete API surface, preserved as-is. See `godaddy_domains-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### GoDaddy Domains Project
+
+Backed by the **`GoDaddy Domains:latest`** Integration Model (see [`godaddy_domains-latest.json`](./OpenAPIs/godaddy_domains-latest.json) above). The project contains **15 workflows** organized into **4 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Domains | List, Get, Update, Cancel, Purchase, Renew Domain | Domain lifecycle |
+| DNS Records | Get, Replace, Delete DNS Record, Add DNS Records | DNS record management |
+| Availability & Discovery | Check Domain Availability (single and bulk), Suggest Domains | Domain lookup |
+| Domain Privacy | Purchase, Cancel Domain Privacy | Privacy protection |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `GoDaddy Domains:latest` Integration Model | Import from [`godaddy_domains-latest.json`](./OpenAPIs/godaddy_domains-latest.json) before importing the project |
+| `GoDaddy Domains` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `GoDaddy Domains` — update the `adapter_id` value in each workflow task if yours is named differently |

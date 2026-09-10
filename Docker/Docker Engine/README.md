@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against the Docker Engine RES
 - [OpenAPIs](#openapis)
   - [`docker_engine-latest.json`](#docker_engine-latestjson)
   - [`docker_engine-1.33.json`](#docker_engine-133json)
+- [Studio Projects](#studio-projects)
+  - [Docker Engine Project](#docker-engine-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Docker Engine REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Docker Engine](./Studio%20Projects/Docker%20Engine.project.json) | 21 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -80,3 +85,27 @@ Excluded as out of scope for this curated spec: Swarm mode and its orchestration
 ### `docker_engine-1.33.json`
 
 Full, unmodified vendor spec for Docker Engine API 1.33 (105 operations) — the vendor's complete API surface, preserved as-is. See `docker_engine-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Docker Engine Project
+
+Backed by the **`Docker Engine:latest`** Integration Model (see [`docker_engine-latest.json`](./OpenAPIs/docker_engine-latest.json) above). The project contains **21 workflows** organized into **4 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Containers | List, Create, Inspect, Start, Stop, Delete Container | Container lifecycle |
+| Images | List, Pull, Inspect, Tag, Delete Image | Image lifecycle |
+| Networks | List, Create, Inspect, Delete, Connect, Disconnect Network | Network lifecycle and container attachment |
+| Volumes | List, Create, Inspect, Delete Volume | Volume lifecycle |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Docker Engine:latest` Integration Model | Import from [`docker_engine-latest.json`](./OpenAPIs/docker_engine-latest.json) before importing the project |
+| `Docker Engine` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Docker Engine` — update the `adapter_id` value in each workflow task if yours is named differently |
