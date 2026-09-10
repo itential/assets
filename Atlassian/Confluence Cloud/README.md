@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against Confluence Cloud's RE
 - [OpenAPIs](#openapis)
   - [`atlassian_confluence_cloud-latest.json`](#atlassian_confluence_cloud-latestjson)
   - [`atlassian_confluence_cloud-1.0.0.json`](#atlassian_confluence_cloud-100json)
+- [Studio Projects](#studio-projects)
+  - [Atlassian Confluence Cloud Project](#atlassian-confluence-cloud-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Confluence Cloud REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Atlassian Confluence Cloud](./Studio%20Projects/Atlassian%20Confluence%20Cloud.project.json) | 20 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -81,3 +86,28 @@ Also removed 104 redundant per-operation `security` overrides that all duplicate
 ### `atlassian_confluence_cloud-1.0.0.json`
 
 Full, unmodified vendor spec for Confluence Cloud REST API v1 (174 operations) — the vendor's complete API surface, preserved as-is. See `atlassian_confluence_cloud-latest.json` above for the curated v2 subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Atlassian Confluence Cloud Project
+
+Backed by the **`Atlassian Confluence Cloud:latest`** Integration Model (see [`atlassian_confluence_cloud-latest.json`](./OpenAPIs/atlassian_confluence_cloud-latest.json) above). The project contains **20 workflows** organized into **5 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Pages | List, Create, Get, Update, Delete Page | Page lifecycle |
+| Blog Posts | List, Create, Get, Update, Delete Blog Post | Blog post lifecycle |
+| Spaces | List Spaces, Get Space | Space lookup |
+| Attachments | List, Get, Delete Attachment | Attachment lifecycle |
+| Comments | List, Add, Get, Update, Delete Comment | Footer comment lifecycle |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Atlassian Confluence Cloud:latest` Integration Model | Import from [`atlassian_confluence_cloud-latest.json`](./OpenAPIs/atlassian_confluence_cloud-latest.json) before importing the project |
+| `Atlassian Confluence Cloud` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Atlassian Confluence Cloud` — update the `adapter_id` value in each workflow task if yours is named differently |

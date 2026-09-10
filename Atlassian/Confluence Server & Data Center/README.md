@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against the Confluence Server
 - [OpenAPIs](#openapis)
   - [`atlassian_confluence_server_data_center-latest.json`](#atlassian_confluence_server_data_center-latestjson)
   - [`atlassian_confluence_server_data_center-9.0.0.json`](#atlassian_confluence_server_data_center-900json)
+- [Studio Projects](#studio-projects)
+  - [Atlassian Confluence Server — Data Center Project](#atlassian-confluence-server--data-center-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Confluence Server & Data Center REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Atlassian Confluence Server — Data Center](./Studio%20Projects/Atlassian%20Confluence%20Server%20%E2%80%94%20Data%20Center.project.json) | 22 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -80,3 +85,28 @@ Excluded (not part of this curated spec): Confluence administration (user/group 
 ### `atlassian_confluence_server_data_center-9.0.0.json`
 
 Full, unmodified vendor spec for Confluence Server & Data Center 9.0.0 (111 operations) — the vendor's complete API surface, preserved as-is. See `atlassian_confluence_server_data_center-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Atlassian Confluence Server — Data Center Project
+
+Backed by the **`Atlassian Confluence Server — Data Center:latest`** Integration Model (see [`atlassian_confluence_server_data_center-latest.json`](./OpenAPIs/atlassian_confluence_server_data_center-latest.json) above). The project contains **22 workflows** organized into **5 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Content | List, Create, Get, Update, Delete Content | Page/blog post content lifecycle |
+| Spaces | List, Create, Get, Update, Delete Space | Space lifecycle |
+| Attachments | List, Create, Update, Delete Attachment | Attachment lifecycle |
+| Content Labels | List, Add, Delete Label | Content label management |
+| Content Properties | List, Create, Get, Update, Delete Property | Content metadata key/value properties |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Atlassian Confluence Server — Data Center:latest` Integration Model | Import from [`atlassian_confluence_server_data_center-latest.json`](./OpenAPIs/atlassian_confluence_server_data_center-latest.json) before importing the project |
+| `Atlassian Confluence Server — Data Center` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Atlassian Confluence Server — Data Center` — update the `adapter_id` value in each workflow task if yours is named differently |

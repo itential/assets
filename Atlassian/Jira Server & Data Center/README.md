@@ -10,12 +10,17 @@ This project provides an OpenAPI spec for automating against the Jira Server/Dat
 - [OpenAPIs](#openapis)
   - [`atlassian_jira_server_data_center-latest.json`](#atlassian_jira_server_data_center-latestjson)
   - [`atlassian_jira_server_data_center-10.0.0.json`](#atlassian_jira_server_data_center-1000json)
+- [Studio Projects](#studio-projects)
+  - [Atlassian Jira Server — Data Center Project](#atlassian-jira-server--data-center-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Jira Server & Data Center REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Atlassian Jira Server — Data Center](./Studio%20Projects/Atlassian%20Jira%20Server%20%E2%80%94%20Data%20Center.project.json) | 29 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -81,3 +86,29 @@ Excluded: Jira Software Agile boards/sprints/epics (a separate add-on module), J
 ### `atlassian_jira_server_data_center-10.0.0.json`
 
 Full, unmodified vendor spec for Jira Server & Data Center 10.0.0 (430 operations) — the vendor's complete API surface, preserved as-is. See `atlassian_jira_server_data_center-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Atlassian Jira Server — Data Center Project
+
+Backed by the **`Atlassian Jira Server — Data Center:latest`** Integration Model (see [`atlassian_jira_server_data_center-latest.json`](./OpenAPIs/atlassian_jira_server_data_center-latest.json) above). The project contains **29 workflows** organized into **6 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Issues | Create Issue, Get Issue, Update Issue, Delete Issue, Get Transitions, Transition Issue | Issue lifecycle and workflow transitions |
+| Comments | List, Add, Get, Update, Delete Comment | Issue comment lifecycle |
+| Projects | List, Create, Get, Update, Delete Project | Project lifecycle |
+| Issue Worklogs | List, Add, Get, Update, Delete Worklog | Issue worklog lifecycle |
+| Project Components | List, Create, Get, Update, Delete Component | Project component lifecycle |
+| Project Versions | List Versions, Get Version, Update Version | Project version lookup and update |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Atlassian Jira Server — Data Center:latest` Integration Model | Import from [`atlassian_jira_server_data_center-latest.json`](./OpenAPIs/atlassian_jira_server_data_center-latest.json) before importing the project |
+| `Atlassian Jira Server — Data Center` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Atlassian Jira Server — Data Center` — update the `adapter_id` value in each workflow task if yours is named differently |

@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against OpsGenie's REST API v
 - [OpenAPIs](#openapis)
   - [`atlassian_opsgenie-latest.json`](#atlassian_opsgenie-latestjson)
   - [`atlassian_opsgenie-2.0.0.json`](#atlassian_opsgenie-200json)
+- [Studio Projects](#studio-projects)
+  - [Atlassian OpsGenie Project](#atlassian-opsgenie-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | OpsGenie REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Atlassian OpsGenie](./Studio%20Projects/Atlassian%20OpsGenie.project.json) | 26 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -85,3 +90,28 @@ Dropped as long-tail/admin: legacy v1 alert/notification policy endpoints (super
 ### `atlassian_opsgenie-2.0.0.json`
 
 Full, unmodified vendor spec for OpsGenie API v2.0.0 (170 operations) — the vendor's complete API surface, preserved as-is. See `atlassian_opsgenie-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Atlassian OpsGenie Project
+
+Backed by the **`Atlassian OpsGenie:latest`** Integration Model (see [`atlassian_opsgenie-latest.json`](./OpenAPIs/atlassian_opsgenie-latest.json) above). The project contains **26 workflows** organized into **5 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Alerts | List, Create, Get, Delete, Acknowledge, Close Alert | Alert lifecycle |
+| Teams | List, Create, Get, Update, Delete Team | Team lifecycle |
+| Users | List, Create, Get, Update, Delete User | User lifecycle |
+| Schedules | List, Create, Get, Update, Delete Schedule | On-call schedule lifecycle |
+| Incidents | List, Create, Get, Delete, Close Incident | Incident lifecycle |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Atlassian OpsGenie:latest` Integration Model | Import from [`atlassian_opsgenie-latest.json`](./OpenAPIs/atlassian_opsgenie-latest.json) before importing the project |
+| `Atlassian OpsGenie` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Atlassian OpsGenie` — update the `adapter_id` value in each workflow task if yours is named differently |
