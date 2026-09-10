@@ -8,8 +8,8 @@ Cisco Nexus Dashboard Fabric Controller (NDFC) REST API — LAN fabric lifecycle
 - [OpenAPIs](#openapis)
   - [`cisco_ndfc_lan-latest.json`](#cisco_ndfc_lan-latestjson)
   - [`cisco_ndfc_san-latest.json`](#cisco_ndfc_san-latestjson)
-  - [`cisco_ndfc_lan_v12-2-2.json`](#cisco_ndfc_lan_v12-2-2json)
-  - [`cisco_ndfc_san_v12-2-2.json`](#cisco_ndfc_san_v12-2-2json)
+  - [`cisco_ndfc_lan-12.2.2.json`](#cisco_ndfc_lan-1222json)
+  - [`cisco_ndfc_san-12.2.2.json`](#cisco_ndfc_san-1222json)
 
 ## Contents
 
@@ -55,14 +55,14 @@ Configure the instance with `X-Nd-Apikey` as the `ApiKeyAuth` value and `X-Nd-Us
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
-| [`cisco_ndfc_lan-latest.json`](./OpenAPIs/cisco_ndfc_lan-latest.json) | 12.2.2 | 353 | Curated LAN fabric automation: fabrics, switches, inventory, VRFs, networks, interfaces, policies, templates, resource manager, image/ISSU management |
-| [`cisco_ndfc_san-latest.json`](./OpenAPIs/cisco_ndfc_san-latest.json) | 12.2.2 | 252 | Curated SAN automation: inventory, discovery, VSAN, zone manager, device alias, portchannels, port monitoring, topology, config archive/drift, image/ISSU management |
-| [`cisco_ndfc_lan_v12-2-2.json`](./OpenAPIs/cisco_ndfc_lan_v12-2-2.json) | 12.2.2 | 840 | Full Cisco NDFC LAN Fabric REST API |
-| [`cisco_ndfc_san_v12-2-2.json`](./OpenAPIs/cisco_ndfc_san_v12-2-2.json) | 12.2.2 | 473 | Full Cisco NDFC SAN REST API |
+| [`cisco_ndfc_lan-latest.json`](./OpenAPIs/cisco_ndfc_lan-latest.json) | latest (curated) | 353 | Curated LAN fabric automation: fabrics, switches, inventory, VRFs, networks, interfaces, policies, templates, resource manager, image/ISSU management |
+| [`cisco_ndfc_san-latest.json`](./OpenAPIs/cisco_ndfc_san-latest.json) | latest (curated) | 252 | Curated SAN automation: inventory, discovery, VSAN, zone manager, device alias, portchannels, port monitoring, topology, config archive/drift, image/ISSU management |
+| [`cisco_ndfc_lan-12.2.2.json`](./OpenAPIs/cisco_ndfc_lan-12.2.2.json) | 12.2.2 | 840 | Full Cisco NDFC LAN Fabric REST API |
+| [`cisco_ndfc_san-12.2.2.json`](./OpenAPIs/cisco_ndfc_san-12.2.2.json) | 12.2.2 | 473 | Full Cisco NDFC SAN REST API |
 
 ### `cisco_ndfc_lan-latest.json`
 
-Curated from the official Cisco NDFC LAN Fabric REST API spec (published on [Cisco DevNet](https://developer.cisco.com/docs/nexus-dashboard-fabric-controller/latest/api-reference-lan/)). Covers the operations most relevant to data-center LAN fabric automation.
+Curated from the official Cisco NDFC LAN Fabric REST API spec (published on [Cisco DevNet](https://developer.cisco.com/docs/nexus-dashboard-fabric-controller/latest/api-reference-lan/), `x-vendor-api-version: 12.2.2`). Covers the operations most relevant to data-center LAN fabric automation.
 
 | Category | Operations |
 |---|---|
@@ -86,7 +86,7 @@ Curated from the official Cisco NDFC LAN Fabric REST API spec (published on [Cis
 
 ### `cisco_ndfc_san-latest.json`
 
-Curated from the official Cisco NDFC SAN REST API spec (published on [Cisco DevNet](https://developer.cisco.com/docs/nexus-dashboard-fabric-controller/latest/api-reference-san/)). Covers the operations most relevant to SAN fabric automation.
+Curated from the official Cisco NDFC SAN REST API spec (published on [Cisco DevNet](https://developer.cisco.com/docs/nexus-dashboard-fabric-controller/latest/api-reference-san/), `x-vendor-api-version: 12.2.2`). Covers the operations most relevant to SAN fabric automation.
 
 | Category | Operations |
 |---|---|
@@ -108,10 +108,10 @@ Curated from the official Cisco NDFC SAN REST API spec (published on [Cisco DevN
 | Templates | Config template list and get |
 | Features / Switch Features | Feature management |
 
-### `cisco_ndfc_lan_v12-2-2.json`
+### `cisco_ndfc_lan-12.2.2.json`
 
 Full official LAN Fabric REST API spec sourced directly from [Cisco DevNet](https://developer.cisco.com/docs/nexus-dashboard-fabric-controller/latest/api-reference-lan/). Covers all 840 operations across all LAN fabric management domains.
 
-### `cisco_ndfc_san_v12-2-2.json`
+### `cisco_ndfc_san-12.2.2.json`
 
 Full official SAN REST API spec sourced directly from [Cisco DevNet](https://developer.cisco.com/docs/nexus-dashboard-fabric-controller/latest/api-reference-san/). Covers all 473 operations for SAN fabric management, including SAN topology, zoning, device alias, VSAN, portchannels, and SAN-specific image management.
