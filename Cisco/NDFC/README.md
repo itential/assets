@@ -110,8 +110,8 @@ Curated from the official Cisco NDFC SAN REST API spec (published on [Cisco DevN
 
 ### `cisco_ndfc_lan_v12-2-2.json`
 
-Full official LAN Fabric REST API spec sourced directly from [Cisco DevNet PubHub](https://developer.cisco.com/docs/nexus-dashboard-fabric-controller/latest/api-reference-lan/). Covers all 840 operations across all LAN fabric management domains.
+Full official LAN Fabric REST API spec sourced directly from [Cisco DevNet](https://developer.cisco.com/docs/nexus-dashboard-fabric-controller/latest/api-reference-lan/). Covers all 840 operations across all LAN fabric management domains.
 
 ### `cisco_ndfc_san_v12-2-2.json`
 
-Full official SAN REST API spec sourced directly from [Cisco DevNet PubHub](https://developer.cisco.com/docs/nexus-dashboard-fabric-controller/latest/api-reference-san/). Covers all 473 operations for SAN fabric management, including SAN topology, zoning, device alias, VSAN, portchannels, and SAN-specific image management.
+Full official SAN REST API spec sourced directly from [Cisco DevNet](https://developer.cisco.com/docs/nexus-dashboard-fabric-controller/latest/api-reference-san/). Covers all 473 operations for SAN fabric management, including SAN topology, zoning, device alias, VSAN, portchannels, and SAN-specific image management.
