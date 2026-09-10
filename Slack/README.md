@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against the Slack Web API via
 - [OpenAPIs](#openapis)
   - [`slack_web_api-latest.json`](#slack_web_api-latestjson)
   - [`slack_web_api-1.7.0.json`](#slack_web_api-170json)
+- [Studio Projects](#studio-projects)
+  - [Slack Web API Project](#slack-web-api-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Slack Web API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Slack Web API](./Studio%20Projects/Slack%20Web%20API.project.json) | 30 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -80,3 +85,27 @@ This pass also removed 61 per-operation `security` overrides that were exact dup
 ### `slack_web_api-1.7.0.json`
 
 Full, unmodified vendor spec for the Slack Web API, version 1.7.0 (174 operations) — the vendor's complete API surface, preserved as-is. See `slack_web_api-latest.json` above for the curated subset if you just need common CRUD automation.
+
+## Studio Projects
+
+### Slack Web API Project
+
+Backed by the **`Slack Web API:latest`** Integration Model (see [`slack_web_api-latest.json`](./OpenAPIs/slack_web_api-latest.json) above). The project contains **30 workflows** organized into **6 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Messaging | Post, Update, Delete Message, Post Ephemeral Message, Schedule Message, Get Permalink | Sending and managing chat messages |
+| Conversations | Create, List, Get Info, Get History, Get Replies, Get Members, Invite, Archive, Rename | Channel/conversation lifecycle |
+| Users | List, Get Info, Lookup By Email, Get Presence, Get Profile, Set Profile | User lookup and profile management |
+| Files | Upload, List, Get Info, Delete | File sharing |
+| Reactions | Add, List, Remove | Emoji reactions on messages |
+| Pins | Add, List | Pinned items in a conversation |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Slack Web API:latest` Integration Model | Import from [`slack_web_api-latest.json`](./OpenAPIs/slack_web_api-latest.json) before importing the project |
+| `Slack Web API` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Slack Web API` — update the `adapter_id` value in each workflow task if yours is named differently |

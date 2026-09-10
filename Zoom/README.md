@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against the Zoom REST API via
 - [OpenAPIs](#openapis)
   - [`zoom-latest.json`](#zoom-latestjson)
   - [`zoom-2.0.0.json`](#zoom-200json)
+- [Studio Projects](#studio-projects)
+  - [Zoom Project](#zoom-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Zoom REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Zoom](./Studio%20Projects/Zoom.project.json) | 24 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -76,3 +81,25 @@ Excluded: sub-account administration and billing, groups and IM groups/chat, H.3
 ### `zoom-2.0.0.json`
 
 Full, unmodified vendor spec for Zoom API 2.0.0 (155 operations) — the vendor's complete API surface, preserved as-is. See `zoom-latest.json` above for the curated subset if you just need common CRUD automation.
+
+## Studio Projects
+
+### Zoom Project
+
+Backed by the **`Zoom:latest`** Integration Model (see [`zoom-latest.json`](./OpenAPIs/zoom-latest.json) above). The project contains **24 workflows** organized into **4 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Meetings | Create, List, Get, Update, Delete Meeting, List/Add Meeting Registrant | Meeting lifecycle and registrants |
+| Users | List, Create, Get, Update, Delete User, Get/Update User Settings | User account management |
+| Webinars | Create, List, Get, Update, Delete Webinar, List/Add Webinar Registrant | Webinar lifecycle and registrants |
+| Cloud Recording | Get/Delete Meeting Recordings, List User Recordings | Recording retrieval and cleanup |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Zoom:latest` Integration Model | Import from [`zoom-latest.json`](./OpenAPIs/zoom-latest.json) before importing the project |
+| `Zoom` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Zoom` — update the `adapter_id` value in each workflow task if yours is named differently |
