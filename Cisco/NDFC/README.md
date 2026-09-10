@@ -7,30 +7,30 @@ Cisco Nexus Dashboard Fabric Controller (NDFC) REST API — fabric lifecycle, VR
 - [Integration Configuration](#integration-configuration)
 - [OpenAPIs](#openapis)
   - [`cisco_ndfc-latest.json`](#cisco_ndfc-latestjson)
+  - [`cisco_ndfc_lan_v12-2-2.json`](#cisco_ndfc_lan_v12-2-2json)
+  - [`cisco_ndfc_san_v12-2-2.json`](#cisco_ndfc_san_v12-2-2json)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
-| [OpenAPIs/](./OpenAPIs/) | Cisco NDFC REST API Integration Model |
+| [OpenAPIs/](./OpenAPIs/) | Cisco NDFC REST API Integration Models |
 
 ## Requirements
 
 | Requirement | Version |
 |---|---|
 | Itential Platform | 6.x |
-| Cisco NDFC | 12.x |
+| Cisco NDFC | 12.2.x |
 | NDFC API key | Generated in NDFC under **Settings > API Tokens** |
 
 ## Integration Configuration
 
-Import `cisco_ndfc-latest.json` as an Integration Model in **Admin > Integrations**, then create an integration instance pointing at your Nexus Dashboard host.
+Import the desired spec as an Integration Model in **Admin > Integrations**, then create an integration instance pointing at your Nexus Dashboard host.
 
-Authentication requires two headers on every request: `X-Nd-Apikey` (the API key, used as the primary security scheme) and `X-Nd-Username` (the username associated with the key). Generate an API key in NDFC under **Settings > API Tokens**.
+Authentication requires two headers on every request: `X-Nd-Apikey` (the API key) and `X-Nd-Username` (the username associated with the key). Generate an API key in NDFC under **Settings > API Tokens**.
 
-Configure the instance with `X-Nd-Apikey` as the apiKey value. Add `X-Nd-Username` as an additional static header in the instance configuration (or include it in the integration's custom headers, depending on your Itential Platform version).
-
-The instance's `authentication`/`server` properties should look like this once configured:
+Configure the instance with `X-Nd-Apikey` as the `ApiKeyAuth` value and `X-Nd-Username` as the `ApiUsernameAuth` value:
 
 ```json
 {
@@ -45,33 +45,47 @@ The instance's `authentication`/`server` properties should look like this once c
   "server": {
     "protocol": "https",
     "host": "<ndfc-host>",
-    "base_path": "/appcenter/cisco/ndfc"
+    "base_path": "/appcenter/cisco/ndfc/api/v1"
   }
 }
 ```
-
-**Note:** No official standalone OpenAPI spec is published by Cisco. This spec was hand-authored from the [`CiscoDevNet/ansible-dcnm`](https://github.com/CiscoDevNet/ansible-dcnm) endpoint class inventory. The live Swagger UI is available in-product at `https://<ndfc-host>/apidocs/` for additional endpoint details.
 
 ## OpenAPIs
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
-| [`cisco_ndfc-latest.json`](./OpenAPIs/cisco_ndfc-latest.json) | 12.x | 100 | Cisco NDFC REST API: fabrics, VRFs, networks, interfaces, inventory, policies, image management |
+| [`cisco_ndfc-latest.json`](./OpenAPIs/cisco_ndfc-latest.json) | 12.2.2 | 353 | Curated LAN fabric automation: fabrics, switches, inventory, VRFs, networks, interfaces, links, vPC pairs, policies, templates, resource manager, image/ISSU management, change control, deployment |
+| [`cisco_ndfc_lan_v12-2-2.json`](./OpenAPIs/cisco_ndfc_lan_v12-2-2.json) | 12.2.2 | 840 | Full Cisco NDFC LAN Fabric REST API |
+| [`cisco_ndfc_san_v12-2-2.json`](./OpenAPIs/cisco_ndfc_san_v12-2-2.json) | 12.2.2 | 473 | Full Cisco NDFC SAN REST API |
 
 ### `cisco_ndfc-latest.json`
 
-Hand-authored from the CiscoDevNet/ansible-dcnm Ep* endpoint class inventory (github.com/CiscoDevNet/ansible-dcnm, `plugins/module_utils/common/api/v1/`) and the `dcnm_network`, `dcnm_vrf`, `dcnm_interface`, `dcnm_policy`, and `dcnm_inventory` module source files. No official standalone OpenAPI spec is published by Cisco — the live Swagger UI is available in-product at `https://<ndfc-host>/apidocs/`.
+Curated from the official Cisco NDFC LAN Fabric REST API spec (published on [Cisco DevNet](https://developer.cisco.com/docs/nexus-dashboard-fabric-controller/latest/api-reference-lan/)). Covers the operations most relevant to data-center fabric automation.
 
 | Category | Operations |
 |---|---|
-| Fabrics | List, get, create, update, delete fabrics; config-save, config-deploy, config-preview, freeze mode, access mode, maintenance mode enable/disable/deploy |
-| Switches | Fabric switch summary, list all switches, set switch roles |
-| Inventory | List/get/remove switches, POAP, discover, rediscover, RMA, serial number swap, credentials |
+| Fabrics | List, get, create, update, delete; config-save, config-deploy, config-preview; access mode, maintenance mode |
+| Switches | Fabric switch summary, list all, set roles |
+| Inventory | List by fabric, POAP, discover, rediscover, remove, RMA, serial number swap, credentials |
 | VRFs | CRUD, attachments, deploy, bulk create/update, VLAN ID pool |
 | Networks | CRUD, attachments, deploy, status, bulk create/update, VLAN ID pool |
-| Interfaces | List, get detail, create, update, bulk modify, mark delete, breakout, VPC pair, global interface deploy |
-| Policies | Get, create, update, delete, bulk create, deploy, list by switch |
+| Interfaces | List, detail, create, update, bulk modify, mark-delete, breakout, vPC pairs, global interface deploy |
+| Links | Fabric link management |
+| Policies | Get, create, update, delete, bulk create/deploy |
+| Templates | List, get |
 | Resource Manager | Get available VLAN ID, reserve/release resource IDs, fabric resource pool |
 | Image Management | Image policies CRUD, attach/detach, stage, validate, upgrade, ISSU status, bootflash |
-| Config Templates | List, get |
-| Feature Manager | NDFC version, feature list |
+| Change Control | Change control lifecycle |
+| Config Deployer | Config deployment operations |
+| Deployment | Deployment status and management |
+| Fabric Inventory | Fabric-level inventory operations |
+| Fabric Backup and Restore | Fabric configuration backup and restore |
+| Features | NDFC feature list |
+
+### `cisco_ndfc_lan_v12-2-2.json`
+
+Full official LAN Fabric REST API spec sourced directly from [Cisco DevNet PubHub](https://developer.cisco.com/docs/nexus-dashboard-fabric-controller/latest/api-reference-lan/). Covers all 840 operations across all LAN fabric management domains.
+
+### `cisco_ndfc_san_v12-2-2.json`
+
+Full official SAN REST API spec sourced directly from [Cisco DevNet PubHub](https://developer.cisco.com/docs/nexus-dashboard-fabric-controller/latest/api-reference-san/). Covers all 473 operations for SAN fabric management, including SAN topology, zoning, device alias, VSAN, portchannels, and SAN-specific image management.
