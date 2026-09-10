@@ -58,12 +58,17 @@ This product folder provides OpenAPI specs for automating against ISE's REST API
   - [`cisco_ise_trustsec-1.0.0.json`](#cisco_ise_trustsec-100json)
   - [`cisco_ise_upgrade-latest.json`](#cisco_ise_upgrade-latestjson)
   - [`cisco_ise_upgrade-1.0.0.json`](#cisco_ise_upgrade-100json)
+- [Studio Projects](#studio-projects)
+  - [Cisco ISE Project](#cisco-ise-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | ISE REST API OpenAPI specs, one per module — curated/full `-latest` plus full dated versions |
+| [Studio Projects/Cisco ISE](./Studio%20Projects/Cisco%20ISE.project.json) | 25 workflows covering common CRUD automation across the 5 most commonly-automated ISE modules |
 
 ## Requirements
 
@@ -486,3 +491,32 @@ Operations included, by category:
 ### `cisco_ise_upgrade-1.0.0.json`
 
 Full, unmodified vendor spec for the Upgrade module, API version 1.0.0 (8 operations) — the vendor's complete API surface, preserved as-is. See `cisco_ise_upgrade-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Cisco ISE Project
+
+Backed by 5 module-specific Integration Models — **`Cisco ISE — Network Devices:latest`**, **`Cisco ISE — Network Device Groups:latest`**, **`Cisco ISE — Endpoints:latest`**, **`Cisco ISE — Policy:latest`**, and **`Cisco ISE — TrustSec:latest`** (see the OpenAPIs above). The project contains **25 workflows** organized into **5 folders**, one atomic workflow per API operation, covering the most commonly-automated ISE modules: network device onboarding, device grouping, endpoint management, network access policy sets, and TrustSec virtual networks.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Network Devices | List, Get, Create, Update, Delete Network Device | Network device (NAS) CRUD via the ERS API |
+| Network Device Groups | List, Get, Create, Update, Delete Network Device Group | Network device group CRUD via the ERS API |
+| Endpoints | List, Get, Create, Update, Delete Endpoint | Endpoint CRUD |
+| Policy | List, Get, Create, Update, Delete Network Access Policy Set | Network access policy set CRUD |
+| TrustSec | List, Get, Create, Update, Delete Virtual Network | TrustSec virtual network CRUD |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Cisco ISE — Network Devices:latest` Integration Model | Import from [`cisco_ise_network_devices-latest.json`](./OpenAPIs/cisco_ise_network_devices-latest.json) before importing the project |
+| `Cisco ISE — Network Device Groups:latest` Integration Model | Import from [`cisco_ise_network_device_groups-latest.json`](./OpenAPIs/cisco_ise_network_device_groups-latest.json) before importing the project |
+| `Cisco ISE — Endpoints:latest` Integration Model | Import from [`cisco_ise_endpoints-latest.json`](./OpenAPIs/cisco_ise_endpoints-latest.json) before importing the project |
+| `Cisco ISE — Policy:latest` Integration Model | Import from [`cisco_ise_policy-latest.json`](./OpenAPIs/cisco_ise_policy-latest.json) before importing the project |
+| `Cisco ISE — TrustSec:latest` Integration Model | Import from [`cisco_ise_trustsec-latest.json`](./OpenAPIs/cisco_ise_trustsec-latest.json) before importing the project |
+| Matching integration instances | Create each in **Admin > Integrations** with the connection properties above. Workflows are wired to integration instances named after their module (e.g. `Cisco ISE — Network Devices`) — update the `adapter_id` value in each workflow task if yours are named differently |

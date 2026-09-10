@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against Okta's Identity Gover
 - [OpenAPIs](#openapis)
   - [`okta_management-latest.json`](#okta_management-latestjson)
   - [`okta_management-3.2.0.json`](#okta_management-320json)
+- [Studio Projects](#studio-projects)
+  - [Okta Management Project](#okta-management-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Okta Identity Governance REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Okta Management](./Studio%20Projects/Okta%20Management.project.json) | 29 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -79,3 +84,29 @@ Resources included, by category:
 ### `okta_management-3.2.0.json`
 
 Full, unmodified vendor spec for Okta Identity Governance 3.2.0 (162 operations) — the vendor's complete API surface, preserved as-is. See `okta_management-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Okta Management Project
+
+Backed by the **`Okta Management:latest`** Integration Model (see [`okta_management-latest.json`](./OpenAPIs/okta_management-latest.json) above). The project contains **29 workflows** organized into **6 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Entitlements | List, Create, Get, Replace, Delete Entitlement | Entitlement CRUD |
+| Entitlement Bundles | List, Create, Get, Replace, Delete Entitlement Bundle | Entitlement bundle CRUD |
+| Collections | List, Create, Get, Replace, Delete Collection | Resource collection CRUD |
+| Grants | List, Create, Get, Replace Grant | Access grant lifecycle |
+| Labels | List, Create, Get, Update, Delete Label | Label CRUD |
+| Access Certification Campaigns | List, Create, Get, Delete, Launch Campaign | Access certification campaign lifecycle |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Okta Management:latest` Integration Model | Import from [`okta_management-latest.json`](./OpenAPIs/okta_management-latest.json) before importing the project |
+| `Okta Management` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Okta Management` — update the `adapter_id` value in each workflow task if yours is named differently |
