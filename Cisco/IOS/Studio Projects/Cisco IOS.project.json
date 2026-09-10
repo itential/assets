@@ -2613,7 +2613,7 @@
             "variables": {
               "incoming": {
                 "template": "{#-\n  NetBox -> IAG5 Inventory Template \u2014 NON-JUNOS / netmiko\n  Filters: active devices, must have IP, must have a mapped platform,\n           and platform is NOT Junos.\n-#}\n\n{% set platform_map = {\n    'cisco-ios':         'cisco_ios',\n    'cisco-ios-xe':      'cisco_xe',\n    'cisco-ios-xr':      'cisco_xr',\n    'cisco-nxos':        'cisco_nxos',\n    'arista-eos':        'arista_eos',\n    'paloalto-panos':    'paloalto_panos',\n    'ubuntu-linux-18-04':'linux',\n    'linux':             'linux',\n    'ios':               'cisco_ios'\n} %}\n\n{% set credential_map = {\n    'cisco_ios':      {'user': 'itential', 'password': 'password'},\n    'cisco_xe':       {'user': 'itential', 'password': 'password'},\n    'cisco_xr':       {'user': 'admin',    'password': 'password'},\n    'cisco_nxos':     {'user': 'admin',    'password': 'CHANGEME_nxos'},\n    'arista_eos':     {'user': 'admin',    'password': 'CHANGEME_eos'},\n    'paloalto_panos': {'user': 'admin',    'password': 'CHANGEME_panos'},\n    'linux':          {'user': 'ubuntu',   'password': 'CHANGEME_linux'}\n} %}\n\n{% set device_overrides = {\n} %}\n\n{% set default_creds = {'user': 'admin', 'password': 'CHANGEME_default'} %}\n\n{% set netmiko_opts = {\n    'banner_timeout':        60,\n    'session_timeout':       300,\n    'read_timeout_override': 600,\n    'conn_timeout':          60,\n    'global_delay_factor':   3,\n    'enable_fast_mode':      true\n} %}\n\n[\n{%- set ns = namespace(first=true) %}\n{%- for device in body.results %}\n\n  {%- set nb_platform = (device.platform.slug if device.platform else device.device_type.slug) or '' %}\n  {%- set itential_platform = platform_map[nb_platform] if nb_platform in platform_map else '' %}\n\n  {%- if device.primary_ip4 %}\n    {%- set ip_address = device.primary_ip4.address.split('/')[0] %}\n  {%- elif device.config_context and device.config_context.ipAddress %}\n    {%- set ip_address = device.config_context.ipAddress %}\n  {%- else %}\n    {%- set ip_address = '' %}\n  {%- endif %}\n\n  {%- if device.name in device_overrides %}\n    {%- set creds = device_overrides[device.name] %}\n  {%- elif itential_platform in credential_map %}\n    {%- set creds = credential_map[itential_platform] %}\n  {%- else %}\n    {%- set creds = default_creds %}\n  {%- endif %}\n\n  {%- if ip_address and itential_platform and device.status and device.status.value == 'active' %}\n{{ \",\" if not ns.first else \"\" }}\n{%- set ns.first = false %}\n  {\n    \"name\": \"{{ device.name }}\",\n    \"attributes\": {\n      \"itential_host\":           \"{{ ip_address }}\",\n      \"itential_port\":           22,\n      \"itential_driver\":         \"netmiko\",\n      \"itential_platform\":       \"{{ itential_platform }}\",\n      \"itential_user\":           \"{{ creds.user }}\",\n      \"itential_password\":       \"{{ creds.password }}\",\n      \"itential_driver_options\": {{ {'netmiko': netmiko_opts} | tojson }}\n    },\n    \"tags\": [\n      \"{{ (device.role.slug if device.role else 'unknown') }}\",\n      \"{{ (device.site.slug if device.site else 'unknown') }}\",\n      \"{{ (device.status.value if device.status else 'unknown') }}\",\n      \"driver:netmiko\",\n      \"platform:{{ itential_platform }}\"\n    ]\n  }\n  {%- endif %}\n{%- endfor %}\n]\n",
-                "variables": {},
+                "variables": "$var.c036.response",
                 "castDataType": "object"
               },
               "outgoing": {
@@ -2679,10 +2679,10 @@
             "summary": "Get a list of device objects",
             "description": "Get a list of device objects.",
             "location": "Adapter",
-            "locationType": "NetBox REST API:4.6.0 (4.6)",
-            "app": "NetBox REST API:4.6.0 (4.6)",
+            "locationType": "NetBox:latest",
+            "app": "NetBox:latest",
             "type": "automatic",
-            "displayName": "NetBox-Itential-Lab",
+            "displayName": "NetBox:latest",
             "variables": {
               "incoming": {
                 "airflow": "",
@@ -3022,7 +3022,7 @@
                 "virtual_chassis_id": "",
                 "virtual_chassis_id__n": "",
                 "virtual_chassis_member": "",
-                "adapter_id": "NetBox-Itential-Lab"
+                "adapter_id": "NetBox"
               },
               "outgoing": {
                 "response": ""
@@ -3072,7 +3072,7 @@
             "displayName": "InventoryManager",
             "variables": {
               "incoming": {
-                "name": "",
+                "name": "$var.job.inventoryName",
                 "description": "Cisco IOS Inventory",
                 "groups": [
                   "admins"
