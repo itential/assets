@@ -10,12 +10,17 @@ This project provides an OpenAPI spec for automating against the S3 REST API via
 - [OpenAPIs](#openapis)
   - [`amazon_s3-latest.json`](#amazon_s3-latestjson)
   - [`amazon_s3-2006-03-01.json`](#amazon_s3-2006-03-01json)
+- [Studio Projects](#studio-projects)
+  - [Amazon S3 Project](#amazon-s3-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Amazon S3 REST API OpenAPI spec — curated `-latest` plus the full dated version |
+| [Studio Projects/Amazon S3](./Studio%20Projects/Amazon%20S3.project.json) | 14 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -83,3 +88,28 @@ Not included: bucket analytics/inventory/metrics/intelligent-tiering configurati
 ### `amazon_s3-2006-03-01.json`
 
 Full spec, converted in-house from AWS's official service model, for the Amazon S3 API (2006-03-01) (99 operations) — the entire upstream API surface as AWS defines it. See `amazon_s3-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Amazon S3 Project
+
+Backed by the **`Amazon S3:latest`** Integration Model (see [`amazon_s3-latest.json`](./OpenAPIs/amazon_s3-latest.json) above). The project contains **14 workflows** organized into **5 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Buckets | List Buckets, Create Bucket, Delete Bucket, List Objects | Bucket lifecycle and object listing |
+| Objects | Get Object, Delete Object | Object CRUD |
+| Bucket Policy | Get, Put, Delete Bucket Policy | Bucket policy management |
+| Bucket Versioning | Get, Put Bucket Versioning | Versioning configuration |
+| Bucket Tagging | Get, Put, Delete Bucket Tagging | Tagging management |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Amazon S3:latest` Integration Model | Import from [`amazon_s3-latest.json`](./OpenAPIs/amazon_s3-latest.json) before importing the project |
+| `Amazon S3` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Amazon S3` — update the `adapter_id` value in each workflow task if yours is named differently |
