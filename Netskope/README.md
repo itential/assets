@@ -1,4 +1,4 @@
-Netskope's REST API v2 — events and alerts, datasearch, dataexport iterators, policy, steering and NPA private apps, CASB, SaaS Posture Management, incidents and UBA, profiles, infrastructure, SCIM, reporting, and more. Ships as two specs: a curated Integration Model (`netskope-latest.json`) covering the most-commonly-automated customer-facing operations, and the full Netskope v2 API (`netskope_v2.json`) for complete coverage.
+Netskope's REST API v2 — events and alerts, datasearch, dataexport iterators, policy, steering and NPA private apps, CASB, SaaS Posture Management, incidents and UBA, profiles, infrastructure, SCIM, reporting, and more. Ships as two specs: a curated Integration Model (`netskope-latest.json`) covering the most-commonly-automated customer-facing operations, and the full Netskope v2 API (`netskope-1.0.0.json`) for complete coverage.
 
 ## Table of Contents
 
@@ -7,13 +7,18 @@ Netskope's REST API v2 — events and alerts, datasearch, dataexport iterators, 
 - [Integration Configuration](#integration-configuration)
 - [OpenAPIs](#openapis)
   - [`netskope-latest.json`](#netskope-latestjson)
-  - [`netskope_v2.json`](#netskope_v2json)
+  - [`netskope-1.0.0.json`](#netskope-100json)
+- [Studio Projects](#studio-projects)
+  - [Netskope Project](#netskope-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
-| [OpenAPIs/](./OpenAPIs/) | Curated Netskope Integration Model (`netskope-latest.json`) and the full Netskope v2 spec (`netskope_v2.json`) |
+| [OpenAPIs/](./OpenAPIs/) | Curated Netskope Integration Model (`netskope-latest.json`) and the full Netskope v2 spec (`netskope-1.0.0.json`) |
+| [Studio Projects/Netskope](./Studio%20Projects/Netskope.project.json) | 24 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -51,8 +56,8 @@ The instance's `authentication`/`server` properties should look like this once c
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
-| [`netskope-latest.json`](./OpenAPIs/netskope-latest.json) | v2 | 571 | Curated Netskope API: events, alerts, datasearch, policy, steering/NPA, CASB, SaaS Posture Management, incidents, profiles, infrastructure, SCIM, reporting |
-| [`netskope_v2.json`](./OpenAPIs/netskope_v2.json) | v2 | 848 | Full Netskope REST API v2 — all operations across all product areas |
+| [`netskope-latest.json`](./OpenAPIs/netskope-latest.json) | latest (curated) | 571 | Curated Netskope API: events, alerts, datasearch, policy, steering/NPA, CASB, SaaS Posture Management, incidents, profiles, infrastructure, SCIM, reporting |
+| [`netskope-1.0.0.json`](./OpenAPIs/netskope-1.0.0.json) | 1.0.0 | 848 | Full Netskope REST API v2 — all operations across all product areas |
 
 ### `netskope-latest.json`
 
@@ -80,6 +85,31 @@ Sourced from Netskope's official api-schemas repo published via Postman (postman
 | discovery | Log management, web uploader |
 | users | User attributes |
 
-### `netskope_v2.json`
+### `netskope-1.0.0.json`
 
 Sourced from Netskope's official api-schemas repo published via Postman (postman.com/netskope-tech-alliances/netskope-rest-api). Full Netskope REST API v2 — 848 operations across 571 paths covering all product areas including internal UI microservices and specialized services. Import this spec if you need operations not covered by the curated build.
+
+---
+
+## Studio Projects
+
+### Netskope Project
+
+Backed by the **`Netskope:latest`** Integration Model (see [`netskope-latest.json`](./OpenAPIs/netskope-latest.json) above). The project contains **24 workflows** organized into **5 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Real-Time Policy | List, Create, Get, Update, Delete Real-Time Policy | Real-time policy rule CRUD |
+| SCIM Users | List, Create, Get, Update, Delete SCIM User | SCIM user provisioning |
+| SCIM Groups | List, Create, Get, Update, Delete SCIM Group | SCIM group provisioning |
+| URL Lists | List, Create, Get, Delete URL List | URL list resource CRUD |
+| Roles | List, Create, Get, Update, Delete Role | RBAC custom role CRUD |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Netskope:latest` Integration Model | Import from [`netskope-latest.json`](./OpenAPIs/netskope-latest.json) before importing the project |
+| `Netskope` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Netskope` — update the `adapter_id` value in each workflow task if yours is named differently |
