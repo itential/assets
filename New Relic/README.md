@@ -10,12 +10,17 @@ This project provides an OpenAPI spec for automating against the New Relic REST 
 - [OpenAPIs](#openapis)
   - [`new_relic-latest.json`](#new_relic-latestjson)
   - [`new_relic-v2.json`](#new_relic-v2json)
+- [Studio Projects](#studio-projects)
+  - [New Relic Project](#new-relic-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | New Relic REST API v2 OpenAPI spec — `-latest` plus the full dated spec |
+| [Studio Projects/New Relic](./Studio%20Projects/New%20Relic.project.json) | 22 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -87,3 +92,28 @@ Several of the Alerts endpoints above carry vendor deprecation notices pointing 
 ### `new_relic-v2.json`
 
 Full, unmodified vendor spec for the New Relic REST API v2 — the vendor's complete API surface, preserved as-is. See `new_relic-latest.json` above for the curated subset if you just need common CRUD automation.
+
+## Studio Projects
+
+### New Relic Project
+
+Backed by the **`New Relic:latest`** Integration Model (see [`new_relic-latest.json`](./OpenAPIs/new_relic-latest.json) above). The project contains **22 workflows** organized into **7 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Applications | List, Get, Update, Delete Application | APM application CRUD |
+| Deployments | List, Create, Delete Deployment | Application deployment markers |
+| Alerts Policies | List, Create, Update, Delete Alerts Policy | Alert policy CRUD |
+| Alerts Conditions | List, Create, Update, Delete Alerts Condition | APM/Key Transaction alert condition CRUD |
+| Alerts NRQL Conditions | List, Create, Update, Delete Alerts NRQL Condition | NRQL-based alert condition CRUD |
+| Alerts Incidents | List Alerts Incidents | Alert incident visibility |
+| Key Transactions | List, Get Key Transaction | Key transaction visibility |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `New Relic:latest` Integration Model | Import from [`new_relic-latest.json`](./OpenAPIs/new_relic-latest.json) before importing the project |
+| `New Relic` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `New Relic` — update the `adapter_id` value in each workflow task if yours is named differently |

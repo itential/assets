@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against PagerDuty's REST API 
 - [OpenAPIs](#openapis)
   - [`pagerduty-latest.json`](#pagerduty-latestjson)
   - [`pagerduty-2.0.0.json`](#pagerduty-200json)
+- [Studio Projects](#studio-projects)
+  - [PagerDuty Project](#pagerduty-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | PagerDuty REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/PagerDuty](./Studio%20Projects/PagerDuty.project.json) | 29 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -83,3 +88,28 @@ Resources included, by category:
 ### `pagerduty-2.0.0.json`
 
 Full, unmodified vendor spec for PagerDuty REST API 2.0.0 (425 operations) — the vendor's complete API surface, preserved as-is. See `pagerduty-latest.json` above for the curated subset if you just need common CRUD automation.
+
+## Studio Projects
+
+### PagerDuty Project
+
+Backed by the **`PagerDuty:latest`** Integration Model (see [`pagerduty-latest.json`](./OpenAPIs/pagerduty-latest.json) above). The project contains **29 workflows** organized into **6 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Incidents | List, Create, Get, Update Incident | Incident lifecycle |
+| Services | List, Create, Get, Update, Delete Service | Service CRUD |
+| Escalation Policies | List, Create, Get, Update, Delete Escalation Policy | Escalation policy CRUD |
+| Schedules | List, Create, Get, Update, Delete Schedule | On-call schedule CRUD |
+| Users | List, Create, Get, Update, Delete User | User CRUD |
+| Teams | List, Create, Get, Update, Delete Team | Team CRUD |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `PagerDuty:latest` Integration Model | Import from [`pagerduty-latest.json`](./OpenAPIs/pagerduty-latest.json) before importing the project |
+| `PagerDuty` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `PagerDuty` — update the `adapter_id` value in each workflow task if yours is named differently |
+| `Accept` / `Content-Type` / `From` headers | PagerDuty's API requires these as explicit parameters on most calls; the generated workflows expose them as required inputs (`Accept` defaults to `application/vnd.pagerduty+json;version=2`, `Content-Type` to `application/json`, `From` to the acting user's email) rather than hardcoding them |
