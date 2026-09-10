@@ -10,12 +10,17 @@ This project provides an OpenAPI spec for automating against the BloxOne REST AP
 - [OpenAPIs](#openapis)
   - [`infoblox_universal_ddi_bloxone-latest.json`](#infoblox_universal_ddi_bloxone-latestjson)
   - [`infoblox_universal_ddi_bloxone-1.json`](#infoblox_universal_ddi_bloxone-1json)
+- [Studio Projects](#studio-projects)
+  - [Infoblox Universal DDI (BloxOne) Project](#infoblox-universal-ddi-bloxone-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Infoblox Universal DDI (BloxOne) REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Infoblox Universal DDI (BloxOne)](./Studio%20Projects/Infoblox%20Universal%20DDI%20%28BloxOne%29.project.json) | 30 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -73,3 +78,29 @@ Resources included, by category:
 ### `infoblox_universal_ddi_bloxone-1.json`
 
 Full, unmodified vendor spec for Infoblox Universal DDI (BloxOne) API version 1 (119 operations) — the vendor's complete API surface, preserved as-is. See `infoblox_universal_ddi_bloxone-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Infoblox Universal DDI (BloxOne) Project
+
+Backed by the **`Infoblox Universal DDI (BloxOne):latest`** Integration Model (see [`infoblox_universal_ddi_bloxone-latest.json`](./OpenAPIs/infoblox_universal_ddi_bloxone-latest.json) above). The project contains **30 workflows** organized into **6 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec. DNS records aren't covered — as noted above, DNS configuration lives on a separate BloxOne API surface not included in this spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| IP Spaces | List, Create, Get, Update, Delete IP Space | IPAM IP space lifecycle |
+| Address Blocks | List, Create, Get, Update, Delete Address Block | IPAM address block lifecycle |
+| Subnets | List, Create, Get, Update, Delete Subnet | IPAM subnet lifecycle |
+| Ranges | List, Create, Get, Update, Delete Range | IPAM range lifecycle |
+| Addresses | List, Create, Get, Update, Delete Address | IPAM address lifecycle |
+| DHCP Fixed Addresses | List, Create, Get, Update, Delete DHCP Fixed Address | DHCP fixed address lifecycle |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Infoblox Universal DDI (BloxOne):latest` Integration Model | Import from [`infoblox_universal_ddi_bloxone-latest.json`](./OpenAPIs/infoblox_universal_ddi_bloxone-latest.json) before importing the project |
+| `Infoblox Universal DDI (BloxOne)` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Infoblox Universal DDI (BloxOne)` — update the `adapter_id` value in each workflow task if yours is named differently |

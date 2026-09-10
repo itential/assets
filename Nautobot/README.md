@@ -12,12 +12,17 @@ This project provides OpenAPI specs for automating against Nautobot's REST API v
 - [OpenAPIs](#openapis)
   - [`nautobot-latest.json`](#nautobot-latestjson)
   - [`nautobot-2.4.14.json`](#nautobot-2414json)
+- [Studio Projects](#studio-projects)
+  - [Nautobot Project](#nautobot-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Nautobot REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Nautobot](./Studio%20Projects/Nautobot.project.json) | 25 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -79,3 +84,28 @@ Resources included, by category:
 ### `nautobot-2.4.14.json`
 
 Full, unmodified vendor spec for Nautobot 2.4.14 (2141 operations), including all optional plugin APIs. See `nautobot-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Nautobot Project
+
+Backed by the **`Nautobot:latest`** Integration Model (see [`nautobot-latest.json`](./OpenAPIs/nautobot-latest.json) above). The project contains **25 workflows** organized into **5 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec — mirroring the same core resources as this repo's NetBox Studio Project.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Devices | List, Create, Get, Update, Delete Device | Device lifecycle |
+| Locations | List, Create, Get, Update, Delete Location | Location lifecycle |
+| IP Addresses | List, Create, Get, Update, Delete IP Address | IP address lifecycle |
+| Prefixes | List, Create, Get, Update, Delete Prefix | Prefix lifecycle |
+| VLANs | List, Create, Get, Update, Delete VLAN | VLAN lifecycle |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Nautobot:latest` Integration Model | Import from [`nautobot-latest.json`](./OpenAPIs/nautobot-latest.json) before importing the project |
+| `Nautobot` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Nautobot` — update the `adapter_id` value in each workflow task if yours is named differently |
