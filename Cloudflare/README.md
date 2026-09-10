@@ -1,4 +1,4 @@
-Cloudflare's REST API — DNS, zones, firewall/WAF, load balancing, SSL/TLS, Zero Trust tunnels and Access, Workers, Email Routing, Page Rules, and custom hostnames. Ships as two specs: a curated Integration Model (`cloudflare-latest.json`) covering the most-commonly-automated operations, and the full Cloudflare v4 API (`cloudflare_v4.json`) for complete coverage.
+Cloudflare's REST API — DNS, zones, firewall/WAF, load balancing, SSL/TLS, Zero Trust tunnels and Access, Workers, Email Routing, Page Rules, and custom hostnames. Ships as two specs: a curated Integration Model (`cloudflare-latest.json`) covering the most-commonly-automated operations, and the full Cloudflare v4 API (`cloudflare-4.0.0.json`) for complete coverage.
 
 ## Table of Contents
 
@@ -7,13 +7,13 @@ Cloudflare's REST API — DNS, zones, firewall/WAF, load balancing, SSL/TLS, Zer
 - [Integration Configuration](#integration-configuration)
 - [OpenAPIs](#openapis)
   - [`cloudflare-latest.json`](#cloudflare-latestjson)
-  - [`cloudflare_v4.json`](#cloudflare_v4json)
+  - [`cloudflare-4.0.0.json`](#cloudflare-400json)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
-| [OpenAPIs/](./OpenAPIs/) | Curated Cloudflare Integration Model (`cloudflare-latest.json`) and the full Cloudflare v4 spec (`cloudflare_v4.json`) |
+| [OpenAPIs/](./OpenAPIs/) | Curated Cloudflare Integration Model (`cloudflare-latest.json`) and the full Cloudflare v4 spec (`cloudflare-4.0.0.json`) |
 
 ## Requirements
 
@@ -51,8 +51,8 @@ The instance's `authentication`/`server` properties should look like this once c
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
-| [`cloudflare-latest.json`](./OpenAPIs/cloudflare-latest.json) | latest | 406 | Curated Cloudflare API: DNS, zones, firewall/WAF, load balancing, SSL/TLS, Zero Trust, Workers, Email Routing, Page Rules, custom hostnames |
-| [`cloudflare_v4.json`](./OpenAPIs/cloudflare_v4.json) | v4 | 3460 | Full Cloudflare v4 REST API — all operations across all product areas |
+| [`cloudflare-latest.json`](./OpenAPIs/cloudflare-latest.json) | latest (curated) | 406 | Curated Cloudflare API: DNS, zones, firewall/WAF, load balancing, SSL/TLS, Zero Trust, Workers, Email Routing, Page Rules, custom hostnames |
+| [`cloudflare-4.0.0.json`](./OpenAPIs/cloudflare-4.0.0.json) | 4.0.0 | 3460 | Full Cloudflare v4 REST API — all operations across all product areas |
 
 ### `cloudflare-latest.json`
 
@@ -73,6 +73,6 @@ Sourced from Cloudflare's official api-schemas GitHub repo (github.com/cloudflar
 | Account | Accounts, Account Members, Account Roles, Audit Logs |
 | Notifications | Notification policies, Notification webhooks |
 
-### `cloudflare_v4.json`
+### `cloudflare-4.0.0.json`
 
 Sourced from Cloudflare's official api-schemas GitHub repo (github.com/cloudflare/api-schemas). Full Cloudflare v4 REST API — 3,460 operations across 553 tags covering all Cloudflare product areas including Radar analytics, R2 storage, D1 databases, AI Gateway, Magic networking, CASB, Email Security, and more. Import this spec if you need operations not covered by the curated build.

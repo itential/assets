@@ -1,4 +1,4 @@
-Netskope's REST API v2 — events and alerts, datasearch, dataexport iterators, policy, steering and NPA private apps, CASB, SaaS Posture Management, incidents and UBA, profiles, infrastructure, SCIM, reporting, and more. Ships as two specs: a curated Integration Model (`netskope-latest.json`) covering the most-commonly-automated customer-facing operations, and the full Netskope v2 API (`netskope_v2.json`) for complete coverage.
+Netskope's REST API v2 — events and alerts, datasearch, dataexport iterators, policy, steering and NPA private apps, CASB, SaaS Posture Management, incidents and UBA, profiles, infrastructure, SCIM, reporting, and more. Ships as two specs: a curated Integration Model (`netskope-latest.json`) covering the most-commonly-automated customer-facing operations, and the full Netskope v2 API (`netskope-1.0.0.json`) for complete coverage.
 
 ## Table of Contents
 
@@ -7,13 +7,13 @@ Netskope's REST API v2 — events and alerts, datasearch, dataexport iterators, 
 - [Integration Configuration](#integration-configuration)
 - [OpenAPIs](#openapis)
   - [`netskope-latest.json`](#netskope-latestjson)
-  - [`netskope_v2.json`](#netskope_v2json)
+  - [`netskope-1.0.0.json`](#netskope-100json)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
-| [OpenAPIs/](./OpenAPIs/) | Curated Netskope Integration Model (`netskope-latest.json`) and the full Netskope v2 spec (`netskope_v2.json`) |
+| [OpenAPIs/](./OpenAPIs/) | Curated Netskope Integration Model (`netskope-latest.json`) and the full Netskope v2 spec (`netskope-1.0.0.json`) |
 
 ## Requirements
 
@@ -51,8 +51,8 @@ The instance's `authentication`/`server` properties should look like this once c
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
-| [`netskope-latest.json`](./OpenAPIs/netskope-latest.json) | v2 | 571 | Curated Netskope API: events, alerts, datasearch, policy, steering/NPA, CASB, SaaS Posture Management, incidents, profiles, infrastructure, SCIM, reporting |
-| [`netskope_v2.json`](./OpenAPIs/netskope_v2.json) | v2 | 848 | Full Netskope REST API v2 — all operations across all product areas |
+| [`netskope-latest.json`](./OpenAPIs/netskope-latest.json) | latest (curated) | 571 | Curated Netskope API: events, alerts, datasearch, policy, steering/NPA, CASB, SaaS Posture Management, incidents, profiles, infrastructure, SCIM, reporting |
+| [`netskope-1.0.0.json`](./OpenAPIs/netskope-1.0.0.json) | 1.0.0 | 848 | Full Netskope REST API v2 — all operations across all product areas |
 
 ### `netskope-latest.json`
 
@@ -80,6 +80,6 @@ Sourced from Netskope's official api-schemas repo published via Postman (postman
 | discovery | Log management, web uploader |
 | users | User attributes |
 
-### `netskope_v2.json`
+### `netskope-1.0.0.json`
 
 Sourced from Netskope's official api-schemas repo published via Postman (postman.com/netskope-tech-alliances/netskope-rest-api). Full Netskope REST API v2 — 848 operations across 571 paths covering all product areas including internal UI microservices and specialized services. Import this spec if you need operations not covered by the curated build.
