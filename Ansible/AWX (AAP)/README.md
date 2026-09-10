@@ -1,6 +1,6 @@
 Ansible AWX (the upstream open-source project behind Red Hat Ansible Automation Platform's Controller) is a web UI, REST API, and task engine for Ansible — managing job templates, inventories, credentials, projects, and job/workflow execution.
 
-This project provides OpenAPI specs for automating against the AWX (Tower) REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
+This project provides OpenAPI specs for automating against the AWX (AAP) REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for automation — see **OpenAPIs** below.
 
 ## Table of Contents
 
@@ -8,10 +8,10 @@ This project provides OpenAPI specs for automating against the AWX (Tower) REST 
 - [Requirements](#requirements)
 - [Integration Configuration](#integration-configuration)
 - [OpenAPIs](#openapis)
-  - [`ansible_awx_tower-latest.json`](#ansible_awx_tower-latestjson)
-  - [`ansible_awx_tower-v2.json`](#ansible_awx_tower-v2json)
+  - [`ansible_awx_aap-latest.json`](#ansible_awx_aap-latestjson)
+  - [`ansible_awx_aap-v2.json`](#ansible_awx_aap-v2json)
 - [Studio Projects](#studio-projects)
-  - [Ansible AWX (Tower) Project](#ansible-awx-tower-project)
+  - [Ansible AWX (AAP) Project](#ansible-awx-aap-project)
     - [Folder Structure](#folder-structure)
     - [Dependencies](#dependencies)
 
@@ -19,20 +19,20 @@ This project provides OpenAPI specs for automating against the AWX (Tower) REST 
 
 | Asset | Description |
 |---|---|
-| [OpenAPIs/](./OpenAPIs/) | Ansible AWX (Tower) REST API OpenAPI specs — curated `-latest` plus the full dated spec |
-| [Studio Projects/Ansible AWX (Tower)](./Studio%20Projects/Ansible%20AWX%20%28Tower%29.project.json) | 30 workflows covering common CRUD automation |
+| [OpenAPIs/](./OpenAPIs/) | Ansible AWX (AAP) REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Ansible AWX (AAP)](./Studio%20Projects/Ansible%20AWX%20%28AAP%29.project.json) | 30 workflows covering common CRUD automation |
 
 ## Requirements
 
 | Requirement | Version |
 |---|---|
 | Itential Platform | 6.x |
-| Ansible AWX / Tower | API v2 |
-| Ansible AWX (Tower) Integration Model | Required to build automation against the OpenAPI specs |
+| Ansible AWX / AAP | API v2 |
+| Ansible AWX (AAP) Integration Model | Required to build automation against the OpenAPI specs |
 
 ## Integration Configuration
 
-Import one of the OpenAPI specs from `OpenAPIs/` as an Integration Model in **Admin > Integrations**, then create an integration pointing at your AWX/Tower instance.
+Import one of the OpenAPI specs from `OpenAPIs/` as an Integration Model in **Admin > Integrations**, then create an integration pointing at your AWX/AAP instance.
 
 Authentication is a bearer token in the `Authorization` header:
 
@@ -61,10 +61,10 @@ The instance's `authentication`/`server` properties should look like this once c
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
-| [`ansible_awx_tower-latest.json`](./OpenAPIs/ansible_awx_tower-latest.json) | latest (curated) | 277 | Trimmed to 277 of 631 upstream operations — see breakdown below |
-| [`ansible_awx_tower-v2.json`](./OpenAPIs/ansible_awx_tower-v2.json) | v2 | 631 | Full, unmodified vendor spec |
+| [`ansible_awx_aap-latest.json`](./OpenAPIs/ansible_awx_aap-latest.json) | latest (curated) | 277 | Trimmed to 277 of 631 upstream operations — see breakdown below |
+| [`ansible_awx_aap-v2.json`](./OpenAPIs/ansible_awx_aap-v2.json) | v2 | 631 | Full, unmodified vendor spec |
 
-### `ansible_awx_tower-latest.json`
+### `ansible_awx_aap-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: v2`). Trimmed to 277 of 631 upstream operations covering common CRUD for automation. Pull the full spec from a running AWX instance's `/api/v2/` OpenAPI schema endpoint if you need something not covered here.
 
@@ -84,17 +84,17 @@ Resources included, by category:
 
 Excluded as long-tail/admin surface: activity streams, analytics/reporting, bulk operations, instance/instance-group and mesh/receptor infrastructure administration, RBAC role management (`roles`, `role_definitions`, `role_*_assignments`), the `service-index` federation API, system jobs/settings/config administration, workflow approvals, and webhook receiver endpoints (GitHub/GitLab/Bitbucket callback hooks).
 
-### `ansible_awx_tower-v2.json`
+### `ansible_awx_aap-v2.json`
 
-Full, unmodified vendor spec (API v2, 631 operations) — the vendor's complete API surface, preserved as-is. See `ansible_awx_tower-latest.json` above for the curated subset if you just need common CRUD automation.
+Full, unmodified vendor spec (API v2, 631 operations) — the vendor's complete API surface, preserved as-is. See `ansible_awx_aap-latest.json` above for the curated subset if you just need common CRUD automation.
 
 ---
 
 ## Studio Projects
 
-### Ansible AWX (Tower) Project
+### Ansible AWX (AAP) Project
 
-Backed by the **`Ansible AWX (Tower):latest`** Integration Model (see [`ansible_awx_tower-latest.json`](./OpenAPIs/ansible_awx_tower-latest.json) above). The project contains **30 workflows** organized into **6 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+Backed by the **`Ansible AWX (AAP):latest`** Integration Model (see [`ansible_awx_aap-latest.json`](./OpenAPIs/ansible_awx_aap-latest.json) above). The project contains **30 workflows** organized into **6 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
 
 #### Folder Structure
 
@@ -111,5 +111,5 @@ Backed by the **`Ansible AWX (Tower):latest`** Integration Model (see [`ansible_
 
 | Dependency | Notes |
 |---|---|
-| `Ansible AWX (Tower):latest` Integration Model | Import from [`ansible_awx_tower-latest.json`](./OpenAPIs/ansible_awx_tower-latest.json) before importing the project |
-| `Ansible AWX (Tower)` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Ansible AWX (Tower)` — update the `adapter_id` value in each workflow task if yours is named differently |
+| `Ansible AWX (AAP):latest` Integration Model | Import from [`ansible_awx_aap-latest.json`](./OpenAPIs/ansible_awx_aap-latest.json) before importing the project |
+| `Ansible AWX (AAP)` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Ansible AWX (AAP)` — update the `adapter_id` value in each workflow task if yours is named differently |
