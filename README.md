@@ -71,6 +71,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Selector** | AIOps |
 | **ServiceNow** | Change management · Incident management · RITM |
 | **Slack** | Messaging |
+| **SolarWinds** | Orion NPM |
 | **Sonatype** | Nexus |
 | **Twilio** | Communications APIs |
 | **Versa** | Director |
