@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against PRTG's REST API via a
 - [OpenAPIs](#openapis)
   - [`paessler_prtg-latest.json`](#paessler_prtg-latestjson)
   - [`paessler_prtg-2.0.json`](#paessler_prtg-20json)
+- [Studio Projects](#studio-projects)
+  - [Paessler PRTG Project](#paessler-prtg-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Paessler PRTG REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Paessler PRTG](./Studio%20Projects/Paessler%20PRTG.project.json) | 24 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -81,3 +86,26 @@ Not included: user/usergroup/API-key administration, session-based login (the AP
 ### `paessler_prtg-2.0.json`
 
 Full, unmodified vendor spec for PRTG REST API v2.0 (115 operations) — the vendor's complete API surface, preserved as-is. See `paessler_prtg-latest.json` above for the curated subset if you just need common CRUD automation.
+
+## Studio Projects
+
+### Paessler PRTG Project
+
+Backed by the **`Paessler PRTG:latest`** Integration Model (see [`paessler_prtg-latest.json`](./OpenAPIs/paessler_prtg-latest.json) above). The project contains **24 workflows** organized into **5 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Devices | List, Get, Update, Delete, Pause, Resume Device | Device lifecycle |
+| Groups | List, Get, Update, Delete Group | Group lifecycle |
+| Probes | List, Get, Pause, Resume, Delete Probe | Probe lifecycle |
+| Sensors | List, Get, Update, Delete, Pause, Resume, Acknowledge Sensor | Sensor lifecycle and alarm handling |
+| Channels | List, Get Channel | Channel visibility |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Paessler PRTG:latest` Integration Model | Import from [`paessler_prtg-latest.json`](./OpenAPIs/paessler_prtg-latest.json) before importing the project |
+| `Paessler PRTG` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Paessler PRTG` — update the `adapter_id` value in each workflow task if yours is named differently |

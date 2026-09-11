@@ -12,12 +12,21 @@ This project provides OpenAPI specs for automating against Selector AI's REST AP
   - [`selector_ai_query-latest.json`](#selector_ai_query-latestjson)
   - [`selector_ai_metastore_inventory-1.0.0.json`](#selector_ai_metastore_inventory-100json)
   - [`selector_ai_query-1.0.0.json`](#selector_ai_query-100json)
+- [Studio Projects](#studio-projects)
+  - [Selector AI Metastore Inventory Project](#selector-ai-metastore-inventory-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
+  - [Selector AI Query Project](#selector-ai-query-project)
+    - [Folder Structure](#folder-structure-1)
+    - [Dependencies](#dependencies-1)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Selector AI REST API OpenAPI specs — curated `-latest` plus full dated versions |
+| [Studio Projects/Selector AI Metastore Inventory](./Studio%20Projects/Selector%20AI%20Metastore%20Inventory.project.json) | 15 workflows covering common CRUD automation for inventory and inventory schema |
+| [Studio Projects/Selector AI Query](./Studio%20Projects/Selector%20AI%20Query.project.json) | 1 workflow wrapping the single S2QL query operation |
 
 ## Requirements
 
@@ -89,3 +98,41 @@ Full, unmodified vendor spec for the Metastore/Inventory API (33 operations) —
 ### `selector_ai_query-1.0.0.json`
 
 Full, unmodified vendor spec for the Query API (1 operation) — the vendor's complete API surface, preserved as-is. See `selector_ai_query-latest.json` above for the curated subset if you just need common CRUD automation.
+
+## Studio Projects
+
+### Selector AI Metastore Inventory Project
+
+Backed by the **`Selector AI — Metastore Inventory latest`** Integration Model (see [`selector_ai_metastore_inventory-latest.json`](./OpenAPIs/selector_ai_metastore_inventory-latest.json) above). The project contains **15 workflows** organized into **3 folders**, one atomic workflow per API operation, covering the full curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Inventory Names | List Inventory Names, Create Inventory, Update Inventory Name, Delete Inventory Name | Inventory collection lifecycle |
+| Inventory Items | Get Inventory Data, Create Inventory Item, Get Inventory Item, Update Inventory Item, Delete Inventory Item, List All Inventory Items | Item-level CRUD within an inventory |
+| Inventory Schema | List Inventory Schema, Create Inventory Schema, Delete All Inventory Schema, Update Inventory Schema Type, Delete Inventory Schema Type | Inventory schema (v2) management |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Selector AI — Metastore Inventory latest` Integration Model | Import from [`selector_ai_metastore_inventory-latest.json`](./OpenAPIs/selector_ai_metastore_inventory-latest.json) before importing the project |
+| `Selector AI — Metastore Inventory latest` integration instance | Create in **Admin > Integrations** with the connection properties above (`base_path: /api/inventory-manager`). Workflows are wired to an integration instance named `Selector AI — Metastore Inventory latest` — update the `adapter_id` value in each workflow task if yours is named differently |
+
+### Selector AI Query Project
+
+Backed by the **`Selector AI — Query latest`** Integration Model (see [`selector_ai_query-latest.json`](./OpenAPIs/selector_ai_query-latest.json) above). The project contains **1 workflow** organized into **1 folder**, wrapping the spec's single operation.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Query | Execute S2QL Query | Run a Selector Query Language (S2QL) query against telemetry/observability data |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Selector AI — Query latest` Integration Model | Import from [`selector_ai_query-latest.json`](./OpenAPIs/selector_ai_query-latest.json) before importing the project |
+| `Selector AI — Query latest` integration instance | Create in **Admin > Integrations** with the connection properties above (`base_path: /api/collab2-slack`). Workflows are wired to an integration instance named `Selector AI — Query latest` — update the `adapter_id` value in each workflow task if yours is named differently |

@@ -8,12 +8,17 @@ Amazon Elastic Kubernetes Service (EKS) is a managed Kubernetes service for runn
 - [OpenAPIs](#openapis)
   - [`amazon_eks-latest.json`](#amazon_eks-latestjson)
   - [`amazon_eks-2017-11-01.json`](#amazon_eks-2017-11-01json)
+- [Studio Projects](#studio-projects)
+  - [Amazon EKS Project](#amazon-eks-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Amazon EKS REST API OpenAPI spec — curated `-latest` plus the full dated spec |
+| [Studio Projects/Amazon EKS](./Studio%20Projects/Amazon%20EKS.project.json) | 25 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -81,3 +86,29 @@ Operations included, by category:
 ### `amazon_eks-2017-11-01.json`
 
 Full spec, converted in-house from AWS's official service model, for the Amazon EKS 2017-11-01 API (35 operations) — the entire upstream API surface as AWS defines it. See `amazon_eks-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Amazon EKS Project
+
+Backed by the **`Amazon EKS:latest`** Integration Model (see [`amazon_eks-latest.json`](./OpenAPIs/amazon_eks-latest.json) above). The project contains **25 workflows** organized into **6 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Clusters | Create, List, Describe, Delete Cluster, Update Cluster Version | Cluster lifecycle |
+| Addons | Create, List, Describe, Update, Delete Addon | Add-on management |
+| Fargate Profiles | Create, List, Describe, Delete Fargate Profile | Fargate profile management |
+| Nodegroups | Create, List, Describe, Delete Nodegroup | Managed node group lifecycle |
+| Identity Provider Configs | Associate, List, Describe, Disassociate Identity Provider Config | Kubernetes RBAC identity provider integration |
+| Tags | List, Tag, Untag Resource | Tagging management |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Amazon EKS:latest` Integration Model | Import from [`amazon_eks-latest.json`](./OpenAPIs/amazon_eks-latest.json) before importing the project |
+| `Amazon EKS` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Amazon EKS` — update the `adapter_id` value in each workflow task if yours is named differently |

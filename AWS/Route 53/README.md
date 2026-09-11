@@ -10,12 +10,17 @@ This project provides an OpenAPI spec for automating against the Route 53 REST A
 - [OpenAPIs](#openapis)
   - [`amazon_route_53-latest.json`](#amazon_route_53-latestjson)
   - [`amazon_route_53-2013-04-01.json`](#amazon_route_53-2013-04-01json)
+- [Studio Projects](#studio-projects)
+  - [Amazon Route 53 Project](#amazon-route-53-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Amazon Route 53 REST API OpenAPI spec — curated `-latest` plus the full dated spec |
+| [Studio Projects/Amazon Route 53](./Studio%20Projects/Amazon%20Route%2053.project.json) | 17 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -84,3 +89,28 @@ Not included: CIDR collections, DNSSEC/key-signing key management, traffic polic
 ### `amazon_route_53-2013-04-01.json`
 
 Full spec, converted in-house from AWS's official service model, for the Route 53 2013-04-01 API (70 operations) — the entire upstream API surface as AWS defines it. See `amazon_route_53-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Amazon Route 53 Project
+
+Backed by the **`Amazon Route 53:latest`** Integration Model (see [`amazon_route_53-latest.json`](./OpenAPIs/amazon_route_53-latest.json) above). The project contains **17 workflows** organized into **5 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Hosted Zones | Create, Get, List, Delete Hosted Zone, Update Hosted Zone Comment | Hosted zone lifecycle |
+| Resource Record Sets | Change, List Resource Record Sets, Get Change | DNS record management and propagation tracking |
+| Health Checks | Create, Get, List, Delete, Update Health Check | Health check management |
+| VPC Associations | Associate, Disassociate VPC With Hosted Zone | Private hosted zone VPC association |
+| Tags | Change Tags For Resource, List Tags For Resource | Tagging management |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Amazon Route 53:latest` Integration Model | Import from [`amazon_route_53-latest.json`](./OpenAPIs/amazon_route_53-latest.json) before importing the project |
+| `Amazon Route 53` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Amazon Route 53` — update the `adapter_id` value in each workflow task if yours is named differently |

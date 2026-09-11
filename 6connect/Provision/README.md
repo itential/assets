@@ -10,12 +10,17 @@ This project provides the OpenAPI spec for automating against the 6connect Provi
 - [OpenAPIs](#openapis)
   - [`6connect_provision-latest.json`](#6connect_provision-latestjson)
   - [`6connect_provision-2.0.0.json`](#6connect_provision-200json)
+- [Studio Projects](#studio-projects)
+  - [6connect Provision Project](#6connect-provision-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | 6connect Provision REST API OpenAPI spec — `-latest` plus full dated version |
+| [Studio Projects/6connect Provision](./Studio%20Projects/6connect%20Provision.project.json) | 23 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -79,3 +84,28 @@ Operations included, by category:
 ### `6connect_provision-2.0.0.json`
 
 Full, unmodified vendor spec for 6connect Provision 2.0.0 (40 operations) — the vendor's complete API surface, preserved as-is. See `6connect_provision-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### 6connect Provision Project
+
+Backed by the **`6connect Provision:latest`** Integration Model (see [`6connect_provision-latest.json`](./OpenAPIs/6connect_provision-latest.json) above). The project contains **23 workflows** organized into **5 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Resources | List, Create, Get, Update, Delete Resource, Get Resource Children, Clone Resource | Resource lifecycle and tree navigation |
+| Resource Attributes | List, Add, Update, Delete Resource Attribute | Attribute management on a resource |
+| Resource Links | List, Create, Replace, Update, Delete Resource Link | Relationships between resources |
+| Resource Attachments | List, Attach, Get, Delete Resource Attachment | File attachments on a resource |
+| Resource Actions | List Resource Backups, Trigger Resource Backup, Push Resource | Backup and provisioning actions |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `6connect Provision:latest` Integration Model | Import from [`6connect_provision-latest.json`](./OpenAPIs/6connect_provision-latest.json) before importing the project |
+| `6connect Provision` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `6connect Provision` — update the `adapter_id` value in each workflow task if yours is named differently |

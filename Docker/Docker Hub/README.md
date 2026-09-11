@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against the Docker Hub REST A
 - [OpenAPIs](#openapis)
   - [`docker_hub-latest.json`](#docker_hub-latestjson)
   - [`docker_hub-beta.json`](#docker_hub-betajson)
+- [Studio Projects](#studio-projects)
+  - [Docker Hub Project](#docker-hub-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Docker Hub REST API OpenAPI specs — curated `-latest` plus full dated version |
+| [Studio Projects/Docker Hub](./Studio%20Projects/Docker%20Hub.project.json) | 13 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -74,3 +79,27 @@ Resources included, by category:
 ### `docker_hub-beta.json`
 
 Full, unmodified vendor spec for Docker Hub API (beta) (28 operations) — the vendor's complete API surface, preserved as-is. See `docker_hub-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Docker Hub Project
+
+Backed by the **`Docker Hub:latest`** Integration Model (see [`docker_hub-latest.json`](./OpenAPIs/docker_hub-latest.json) above). The project contains **13 workflows** organized into **4 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Access Tokens | List, Create, Get, Update, Delete Access Token | Personal access token lifecycle |
+| Repositories | List Repository Tags, Get Repository Tag | Repository tag lookup |
+| Images | List Repository Images, Get Repository Images Summary, List Image Tags By Digest, Delete Images | Image inspection and bulk deletion |
+| Organization Settings | Get, Update Organization Settings | Org-level configuration |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Docker Hub:latest` Integration Model | Import from [`docker_hub-latest.json`](./OpenAPIs/docker_hub-latest.json) before importing the project |
+| `Docker Hub` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Docker Hub` — update the `adapter_id` value in each workflow task if yours is named differently |

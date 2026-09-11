@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against Twilio's REST API via
 - [OpenAPIs](#openapis)
   - [`twilio-latest.json`](#twilio-latestjson)
   - [`twilio-1.0.0.json`](#twilio-100json)
+- [Studio Projects](#studio-projects)
+  - [Twilio Project](#twilio-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Twilio REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Twilio](./Studio%20Projects/Twilio.project.json) | 25 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -84,3 +89,26 @@ Resources included, by category:
 ### `twilio-1.0.0.json`
 
 Full, unmodified vendor spec for the Twilio REST API `2010-04-01`, version `1.0.0` (197 operations) — the vendor's complete API surface, preserved as-is. See `twilio-latest.json` above for the curated subset if you just need common CRUD automation.
+
+## Studio Projects
+
+### Twilio Project
+
+Backed by the **`Twilio:latest`** Integration Model (see [`twilio-latest.json`](./OpenAPIs/twilio-latest.json) above). The project contains **25 workflows** organized into **5 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Messages | Create, List, Fetch, Update, Delete Message | SMS/MMS messaging |
+| Calls | Create, List, Fetch, Update, Delete Call | Programmable voice calls |
+| Incoming Phone Numbers | List, Create, Fetch, Update, Delete Incoming Phone Number | Number provisioning and management |
+| Conferences & Participants | List/Fetch/Update Conference, Create/List/Fetch/Delete Participant | Conference and participant management |
+| Recordings | List, Fetch, Delete Recording | Account-level call recordings |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Twilio:latest` Integration Model | Import from [`twilio-latest.json`](./OpenAPIs/twilio-latest.json) before importing the project |
+| `Twilio` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Twilio` — update the `adapter_id` value in each workflow task if yours is named differently |

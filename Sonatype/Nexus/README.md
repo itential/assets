@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against the Nexus Repository 
 - [OpenAPIs](#openapis)
   - [`sonatype_nexus_repository-latest.json`](#sonatype_nexus_repository-latestjson)
   - [`sonatype_nexus_repository-3.69.0-02.json`](#sonatype_nexus_repository-3690-02json)
+- [Studio Projects](#studio-projects)
+  - [Sonatype Nexus Repository Project](#sonatype-nexus-repository-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Nexus Repository REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Sonatype Nexus Repository](./Studio%20Projects/Sonatype%20Nexus%20Repository.project.json) | 18 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -78,3 +83,26 @@ Resources included, by category:
 ### `sonatype_nexus_repository-3.69.0-02.json`
 
 Full, unmodified vendor spec for Nexus Repository 3.69.0-02 (241 operations) — the vendor's complete API surface, preserved as-is. See `sonatype_nexus_repository-latest.json` above for the curated subset if you just need common CRUD automation.
+
+## Studio Projects
+
+### Sonatype Nexus Repository Project
+
+Backed by the **`Sonatype Nexus Repository:latest`** Integration Model (see [`sonatype_nexus_repository-latest.json`](./OpenAPIs/sonatype_nexus_repository-latest.json) above). The project contains **18 workflows** organized into **5 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec. Repository create/update is scoped to Maven and npm hosted repositories as representative examples — the curated spec covers the same CRUD shape across 17 other formats if you need to extend it.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Repositories | List, Get, Delete Repository, Create/Update Maven Hosted Repository, Create/Update npm Hosted Repository, Invalidate Repository Cache | Repository lifecycle |
+| Components | List, Upload, Get, Delete Component | Component CRUD |
+| Assets | List, Get, Delete Asset | Asset CRUD |
+| Search | Search Components, Search Assets | Component/asset discovery |
+| Status | Check System Status | Read/write availability check |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Sonatype Nexus Repository:latest` Integration Model | Import from [`sonatype_nexus_repository-latest.json`](./OpenAPIs/sonatype_nexus_repository-latest.json) before importing the project |
+| `Sonatype Nexus Repository` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Sonatype Nexus Repository` — update the `adapter_id` value in each workflow task if yours is named differently |

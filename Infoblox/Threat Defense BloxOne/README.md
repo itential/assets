@@ -10,12 +10,17 @@ This project provides the OpenAPI spec for automating against the Infoblox Threa
 - [OpenAPIs](#openapis)
   - [`infoblox_threat_defense_bloxone-latest.json`](#infoblox_threat_defense_bloxone-latestjson)
   - [`infoblox_threat_defense_bloxone-1.json`](#infoblox_threat_defense_bloxone-1json)
+- [Studio Projects](#studio-projects)
+  - [Infoblox Threat Defense (BloxOne) Project](#infoblox-threat-defense-bloxone-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Infoblox Threat Defense (BloxOne) API OpenAPI spec — `-latest` plus the full dated spec |
+| [Studio Projects/Infoblox Threat Defense (BloxOne)](./Studio%20Projects/Infoblox%20Threat%20Defense%20%28BloxOne%29.project.json) | 25 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -81,3 +86,28 @@ Operations included, by category:
 ### `infoblox_threat_defense_bloxone-1.json`
 
 Full, unmodified vendor spec for Infoblox Threat Defense (BloxOne) API version 1 (61 operations) — the vendor's complete API surface, preserved as-is. See `infoblox_threat_defense_bloxone-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Infoblox Threat Defense (BloxOne) Project
+
+Backed by the **`Infoblox Threat Defense (BloxOne):latest`** Integration Model (see [`infoblox_threat_defense_bloxone-latest.json`](./OpenAPIs/infoblox_threat_defense_bloxone-latest.json) above). The project contains **25 workflows** organized into **5 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Security Policies | List, Create, Get, Update, Delete Security Policy | Security policy lifecycle |
+| Named Lists | List, Create, Get, Update, Delete Named List | Custom/threat-intel list lifecycle |
+| Network Lists | List, Create, Get, Update, Delete Network List | Network list lifecycle |
+| Application Filters | List, Create, Get, Update, Delete Application Filter | Application filter lifecycle |
+| Category Filters | List, Create, Get, Update, Delete Category Filter | Category filter lifecycle |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Infoblox Threat Defense (BloxOne):latest` Integration Model | Import from [`infoblox_threat_defense_bloxone-latest.json`](./OpenAPIs/infoblox_threat_defense_bloxone-latest.json) before importing the project |
+| `Infoblox Threat Defense (BloxOne)` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Infoblox Threat Defense (BloxOne)` — update the `adapter_id` value in each workflow task if yours is named differently |

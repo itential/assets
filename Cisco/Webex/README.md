@@ -12,12 +12,17 @@ This project provides OpenAPI specs for automating against the Webex REST API vi
   - [`cisco_webex_messaging-latest.json`](#cisco_webex_messaging-latestjson)
   - [`cisco_webex-1.0.json`](#cisco_webex-10json)
   - [`cisco_webex_messaging-1.0.0.json`](#cisco_webex_messaging-100json)
+- [Studio Projects](#studio-projects)
+  - [Cisco Webex Project](#cisco-webex-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Cisco Webex REST API OpenAPI specs — curated `-latest` plus the full dated spec, for both the core and messaging APIs |
+| [Studio Projects/Cisco Webex](./Studio%20Projects/Cisco%20Webex.project.json) | 30 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -98,3 +103,29 @@ Full, unmodified vendor spec for the Cisco Webex core API, version 1.0 (10 opera
 ### `cisco_webex_messaging-1.0.0.json`
 
 Full, unmodified vendor spec for the Cisco Webex Messaging API, version 1.0.0 (63 operations) — the vendor's complete API surface, preserved as-is. See `cisco_webex_messaging-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Cisco Webex Project
+
+Backed by the **`Cisco Webex — Messaging:latest`** Integration Model (see [`cisco_webex_messaging-latest.json`](./OpenAPIs/cisco_webex_messaging-latest.json) above). The project contains **30 workflows** organized into **6 folders**, one atomic workflow per API operation, covering the full CRUD surface of the curated messaging spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Memberships | List, Create, Get, Update, Delete Membership | Space membership CRUD |
+| Messages | List, Create, Get, Update, Delete Message | Message CRUD |
+| People | List, Create, Get, Update, Delete Person | Person CRUD |
+| Rooms | List, Create, Get, Update, Delete Room | Room/space CRUD |
+| Teams | List, Create, Get, Update, Delete Team | Team CRUD |
+| Team Memberships | List, Create, Get, Update, Delete Team Membership | Team membership CRUD |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Cisco Webex — Messaging:latest` Integration Model | Import from [`cisco_webex_messaging-latest.json`](./OpenAPIs/cisco_webex_messaging-latest.json) before importing the project |
+| `Cisco Webex — Messaging` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Cisco Webex — Messaging` — update the `adapter_id` value in each workflow task if yours is named differently |

@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against the Bitbucket Cloud R
 - [OpenAPIs](#openapis)
   - [`atlassian_bitbucket_cloud-latest.json`](#atlassian_bitbucket_cloud-latestjson)
   - [`atlassian_bitbucket_cloud-2.0.json`](#atlassian_bitbucket_cloud-20json)
+- [Studio Projects](#studio-projects)
+  - [Atlassian Bitbucket Cloud Project](#atlassian-bitbucket-cloud-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Bitbucket Cloud REST API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Atlassian Bitbucket Cloud](./Studio%20Projects/Atlassian%20Bitbucket%20Cloud.project.json) | 24 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -86,3 +91,28 @@ Not included: the legacy Issue Tracker, Snippets, Pipelines/CI-CD (config, varia
 ### `atlassian_bitbucket_cloud-2.0.json`
 
 Full, unmodified vendor spec for Bitbucket Cloud REST API 2.0 (Swagger 2.0, as published by the vendor) — the vendor's complete API surface, preserved as-is. See `atlassian_bitbucket_cloud-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Atlassian Bitbucket Cloud Project
+
+Backed by the **`Atlassian Bitbucket Cloud:latest`** Integration Model (see [`atlassian_bitbucket_cloud-latest.json`](./OpenAPIs/atlassian_bitbucket_cloud-latest.json) above). The project contains **24 workflows** organized into **5 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Repositories | List Repositories, Get Repository, Create Repository, Update Repository, Delete Repository | Repository lifecycle |
+| Pull Requests | List, Create, Get, Update, Decline, Merge Pull Request | Pull request lifecycle |
+| Commits | List Commits, Get Commit, List Commit Comments, Add Commit Comment | Commit history and comments |
+| Branches | List Branches, Create Branch, Get Branch, Delete Branch | Branch lifecycle |
+| Projects | List, Create, Get, Update, Delete Project | Workspace project lifecycle |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Atlassian Bitbucket Cloud:latest` Integration Model | Import from [`atlassian_bitbucket_cloud-latest.json`](./OpenAPIs/atlassian_bitbucket_cloud-latest.json) before importing the project |
+| `Atlassian Bitbucket Cloud` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Atlassian Bitbucket Cloud` — update the `adapter_id` value in each workflow task if yours is named differently |

@@ -12,12 +12,17 @@ This project provides the OpenAPI spec for automating against the AWS Organizati
 - [OpenAPIs](#openapis)
   - [`aws_organizations-latest.json`](#aws_organizations-latestjson)
   - [`aws_organizations-2016-11-28.json`](#aws_organizations-2016-11-28json)
+- [Studio Projects](#studio-projects)
+  - [AWS Organizations Project](#aws-organizations-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | AWS Organizations API OpenAPI spec — `-latest` plus the full dated spec |
+| [Studio Projects/AWS Organizations](./Studio%20Projects/AWS%20Organizations.project.json) | 25 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -86,3 +91,28 @@ Operations included, by category:
 ### `aws_organizations-2016-11-28.json`
 
 Full spec, converted in-house from AWS's official service model, for AWS Organizations API version 2016-11-28 (55 operations) — the entire upstream API surface as AWS defines it. See `aws_organizations-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### AWS Organizations Project
+
+Backed by the **`AWS Organizations:latest`** Integration Model (see [`aws_organizations-latest.json`](./OpenAPIs/aws_organizations-latest.json) above). The project contains **25 workflows** organized into **5 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec. This is an AWS JSON/Query-protocol API — every operation is a `POST` distinguished by a required `X-Amz-Target` header, which each workflow exposes as an input alongside the request body.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Organization | Create, Describe, Delete Organization, List Roots | Organization lifecycle |
+| Accounts | Create, Describe, List, Move, Close Account | Account management |
+| Organizational Units | Create, Describe, Update, Delete Organizational Unit, List Organizational Units For Parent, List Children | OU hierarchy management |
+| Policies | Create, Describe, Update, Delete, List Policy, Attach, Detach Policy | Policy management |
+| Tags | List, Tag, Untag Resource | Tagging management |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `AWS Organizations:latest` Integration Model | Import from [`aws_organizations-latest.json`](./OpenAPIs/aws_organizations-latest.json) before importing the project |
+| `AWS Organizations` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `AWS Organizations` — update the `adapter_id` value in each workflow task if yours is named differently |

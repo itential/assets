@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against the Compute Engine RE
 - [OpenAPIs](#openapis)
   - [`google_cloud_compute_engine-latest.json`](#google_cloud_compute_engine-latestjson)
   - [`google_cloud_compute_engine-v1.json`](#google_cloud_compute_engine-v1json)
+- [Studio Projects](#studio-projects)
+  - [Google Cloud Compute Engine Project](#google-cloud-compute-engine-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Compute Engine REST API OpenAPI specs — curated `-latest` plus the full dated version |
+| [Studio Projects/Google Cloud Compute Engine](./Studio%20Projects/Google%20Cloud%20Compute%20Engine.project.json) | 27 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -87,3 +92,28 @@ See the repo README for the full scope and the full spec.
 ### `google_cloud_compute_engine-v1.json`
 
 Full, unmodified vendor spec for Compute Engine API v1 (694 operations) — the vendor's complete API surface, preserved as-is. See `google_cloud_compute_engine-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Google Cloud Compute Engine Project
+
+Backed by the **`Google Cloud Compute Engine:latest`** Integration Model (see [`google_cloud_compute_engine-latest.json`](./OpenAPIs/google_cloud_compute_engine-latest.json) above). The project contains **27 workflows** organized into **5 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Instances | List, Get, Create, Update, Delete, Start, Stop Instance | VM instance lifecycle and power state |
+| Disks | List, Get, Create, Update, Delete Disk | Persistent disk lifecycle |
+| Networks | List, Get, Create, Update, Delete Network | VPC network lifecycle |
+| Firewalls | List, Get, Create, Update, Delete Firewall | Firewall rule lifecycle |
+| Images | List, Get, Create, Update, Delete Image | Machine image lifecycle |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Google Cloud Compute Engine:latest` Integration Model | Import from [`google_cloud_compute_engine-latest.json`](./OpenAPIs/google_cloud_compute_engine-latest.json) before importing the project |
+| `Google Cloud Compute Engine` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Google Cloud Compute Engine` — update the `adapter_id` value in each workflow task if yours is named differently |

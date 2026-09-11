@@ -10,12 +10,17 @@ This project provides OpenAPI specs for automating against the Kubernetes API se
 - [OpenAPIs](#openapis)
   - [`kubernetes-latest.json`](#kubernetes-latestjson)
   - [`kubernetes-v1.10.0.json`](#kubernetes-v1100json)
+- [Studio Projects](#studio-projects)
+  - [Kubernetes Project](#kubernetes-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Kubernetes API OpenAPI specs — curated `-latest` plus the full dated spec |
+| [Studio Projects/Kubernetes](./Studio%20Projects/Kubernetes.project.json) | 30 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -80,3 +85,29 @@ Excludes watch/streaming endpoints, exec/attach/portforward/proxy debug endpoint
 ### `kubernetes-v1.10.0.json`
 
 Full, unmodified vendor spec for Kubernetes v1.10.0 (945 operations) — the vendor's complete API surface, preserved as-is. See `kubernetes-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### Kubernetes Project
+
+Backed by the **`Kubernetes:latest`** Integration Model (see [`kubernetes-latest.json`](./OpenAPIs/kubernetes-latest.json) above). The project contains **30 workflows** organized into **6 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Pods | List, Get, Create, Update, Delete Pod | Pod lifecycle |
+| Deployments | List, Get, Create, Update, Delete Deployment | Deployment lifecycle |
+| Services | List, Get, Create, Update, Delete Service | Service lifecycle |
+| Namespaces | List, Get, Create, Update, Delete Namespace | Namespace lifecycle |
+| ConfigMaps | List, Get, Create, Update, Delete ConfigMap | ConfigMap lifecycle |
+| Secrets | List, Get, Create, Update, Delete Secret | Secret lifecycle |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `Kubernetes:latest` Integration Model | Import from [`kubernetes-latest.json`](./OpenAPIs/kubernetes-latest.json) before importing the project |
+| `Kubernetes` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Kubernetes` — update the `adapter_id` value in each workflow task if yours is named differently |

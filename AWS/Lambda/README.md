@@ -10,12 +10,17 @@ This project provides an OpenAPI spec for automating against the AWS Lambda API 
 - [OpenAPIs](#openapis)
   - [`aws_lambda-latest.json`](#aws_lambda-latestjson)
   - [`aws_lambda-2015-03-31.json`](#aws_lambda-2015-03-31json)
+- [Studio Projects](#studio-projects)
+  - [AWS Lambda Project](#aws-lambda-project)
+    - [Folder Structure](#folder-structure)
+    - [Dependencies](#dependencies)
 
 ## Contents
 
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | AWS Lambda API OpenAPI spec — curated `-latest` plus the full dated version |
+| [Studio Projects/AWS Lambda](./Studio%20Projects/AWS%20Lambda.project.json) | 30 workflows covering common CRUD automation |
 
 ## Requirements
 
@@ -88,3 +93,29 @@ Not included: code signing configs (create/describe/update/delete config plus fu
 ### `aws_lambda-2015-03-31.json`
 
 Full spec, converted in-house from AWS's official service model, for the AWS Lambda API (2015-03-31) — the entire upstream API surface as AWS defines it. See `aws_lambda-latest.json` above for the curated subset if you just need common CRUD automation.
+
+---
+
+## Studio Projects
+
+### AWS Lambda Project
+
+Backed by the **`AWS Lambda:latest`** Integration Model (see [`aws_lambda-latest.json`](./OpenAPIs/aws_lambda-latest.json) above). The project contains **30 workflows** organized into **6 folders**, one atomic workflow per API operation, covering the common-CRUD subset of the curated spec.
+
+#### Folder Structure
+
+| Folder | Workflows | Scope |
+|---|---|---|
+| Functions | Create, List, Get Function, Get/Update Configuration, Update Code, Delete, Invoke | Function lifecycle and invocation |
+| Aliases | Create, List, Get, Update, Delete Alias | Alias management |
+| Event Source Mappings | Create, List, Get, Update, Delete Event Source Mapping | Trigger management |
+| Function URL Config | Create, Get, Update, Delete Function Url Config | Function URL configuration |
+| Layers | Publish Layer Version, List Layers, List/Get Layer Version, Delete Layer Version | Layer management |
+| Tags | List, Tag, Untag Resource | Tagging management |
+
+#### Dependencies
+
+| Dependency | Notes |
+|---|---|
+| `AWS Lambda:latest` Integration Model | Import from [`aws_lambda-latest.json`](./OpenAPIs/aws_lambda-latest.json) before importing the project |
+| `AWS Lambda` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `AWS Lambda` — update the `adapter_id` value in each workflow task if yours is named differently |
