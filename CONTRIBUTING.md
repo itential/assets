@@ -39,7 +39,7 @@ Every asset type in this repo — Studio Projects, Golden Configurations, OpenAP
 - [ ] Free from errors.
 - [ ] Includes enough detail so that others can easily replicate the setup.
 - [ ] Clearly explains what your contribution does, why it's valuable, and how it improves or complements existing functionality.
-- [ ] No sensitive or private data included (see [`STANDARDS.md`](./STANDARDS.md#repo-wide-requirements)).
+- [ ] No sensitive or private data included, and no customer/partner names anywhere (see [`STANDARDS.md`](./STANDARDS.md#repo-wide-requirements)).
 - [ ] Root [`README.md`](./README.md) updated if your contribution adds a new vendor, a new product under an existing vendor, or a new asset type (update the Vendor Index and/or Asset Type table).
 - [ ] Reviewed against the relevant sections of [`STANDARDS.md`](./STANDARDS.md) for the asset type(s) you're contributing.
 
