@@ -38,6 +38,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Cloudflare** | CDN & edge platform APIs |
 | **CyberArk** | Conjur (secrets management) · Privilege Cloud |
 | **Datadog** | Observability |
+| **dbt Cloud** | Analytics engineering / data transformation |
 | **Delinea** | Secret Server (secrets management) |
 | **Docker** | Docker Engine · Docker Hub |
 | **EfficientIP** | SOLIDserver (DDI) |
@@ -51,10 +52,12 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Infoblox** | NIOS WAPI · Threat Defense BloxOne · Universal DDI BloxOne |
 | **IP Fabric** | Network intelligence |
 | **Itential** | Platform automation (self-service) |
+| **JFrog** | Artifactory |
 | **Juniper** | JUNOS · Mist |
 | **Kentik** | Network observability |
 | **Kubernetes** | Container orchestration |
 | **LogicMonitor** | Observability |
+| **Mattermost** | Team collaboration & messaging |
 | **Microsoft** | 365 IP and URL Web Service · Azure Key Vault · Graph Mail · Teams |
 | **Nautobot** | Nautobot 2.4 |
 | **NetBox** | IPAM / DCIM |
@@ -68,7 +71,9 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Palo Alto** | Panorama · Prisma Access · Prisma Cloud CSPM |
 | **RingCentral** | Unified communications |
 | **Ruckus** | Fastiron |
+| **Rundeck** | Job automation & orchestration |
 | **Selector** | AIOps |
+| **SendGrid** | Transactional & marketing email |
 | **ServiceNow** | Change management · Incident management · RITM |
 | **Slack** | Messaging |
 | **SolarWinds** | Orion NPM |
