@@ -40,6 +40,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Datadog** | Observability |
 | **dbt Cloud** | Analytics engineering / data transformation |
 | **Delinea** | Secret Server (secrets management) |
+| **DigiCert** | Trust Lifecycle Manager (DigiCert ONE) |
 | **Docker** | Docker Engine · Docker Hub |
 | **EasyPost** | Shipping / logistics |
 | **EfficientIP** | SOLIDserver (DDI) |
