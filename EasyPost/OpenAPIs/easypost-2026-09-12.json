@@ -1,0 +1,5583 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "EasyPost",
+    "description": "Authentication: HTTP Basic Auth (API key as username, blank password). EasyPost is a multi-carrier shipping API for rating, label purchase, address verification, package tracking, customs, insurance, and pickup scheduling across supported carriers.",
+    "version": "2026-09-12",
+    "x-itential-curated": "Full spec, not curated \u2014 110 operations converted from EasyPost's official Postman collection. See easypost-latest.json for the curated automation subset, and the repo README for the operation breakdown."
+  },
+  "servers": [
+    {
+      "url": "https://api.easypost.com"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  },
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Basics",
+      "description": "[https://docs.easypost.com/](https://docs.easypost.com/)"
+    },
+    {
+      "name": "Basics > Addresses",
+      "description": "[https://docs.easypost.com/docs/addresses](https://docs.easypost.com/docs/addresses)\n\n[<code>Address</code>](https://docs.easypost.com/docs/addresses#address-object)\u00a0objects represent people, places, and organizations and are used in multiple contexts across the EasyPost API. For example, a\u00a0[<code>Shipment</code>](https://docs.easypost.com/docs/shipments)\u00a0requires both a\u00a0`to_address`\u00a0and\u00a0`from_address`\u00a0to calculate rates and generate postage."
+    },
+    {
+      "name": "Basics > Insurance",
+      "description": "[https://docs.easypost.com/docs/insurance](https://docs.easypost.com/docs/insurance)\n\nAn\u00a0[<code>Insurance</code>](https://docs.easypost.com/docs/insurance#insurance-object)\u00a0object represents insurance for packages purchased both via the EasyPost API as well as shipments purchased through third parties and later registered with EasyPost. An\u00a0`Insurance`\u00a0object is created automatically whenever you\u00a0[buy a&nbsp;<code>Shipment</code>](https://docs.easypost.com/docs/shipments#buy-a-shipment)\u00a0through EasyPost and pass insurance options during the call,or in a later call to\u00a0[insure a&nbsp;<code>Shipment</code>](https://docs.easypost.com/docs/shipments/shipping-insurance#insure-a-shipment)."
+    },
+    {
+      "name": "Basics > Insurance > Claims",
+      "description": "[https://docs.easypost.com/docs/insurance/claims](https://docs.easypost.com/docs/insurance/claims)\n\nThe\u00a0`Claims API`\u00a0allows shippers to automate submitting and managing insurance claims for lost, damaged, or stolen packages. This endpoint streamlines claim submissions and provides an automated experience. Claims can be submitted via the\u00a0[EasyPost Dashboard](https://app.easypost.com/account/settings?tab=api-keys), a\u00a0[Claim Submission Form](https://app.easypost.com/claim-form), or the\u00a0[Claims API](https://docs.easypost.com/docs/insurance/claims#create-a-claim)."
+    },
+    {
+      "name": "Basics > Parcels",
+      "description": "[https://docs.easypost.com/docs/parcels](https://docs.easypost.com/docs/parcels)\n\n[<code>Parcel</code>](https://docs.easypost.com/docs/parcels#parcel-object)\u00a0objects represent the physical container being shipped."
+    },
+    {
+      "name": "Basics > Rates",
+      "description": "[https://docs.easypost.com/docs/shipments/rates](https://docs.easypost.com/docs/shipments/rates)\n\nAfter a\u00a0[<code>Shipment</code>](https://docs.easypost.com/docs/shipments)\u00a0is successfully created, it will automatically fetch\u00a0[<code>Rates</code>](https://docs.easypost.com/docs/shipments/rates#rate-object). You can limit the\u00a0[<code>CarrierAccounts</code>](https://docs.easypost.com/docs/carrier-accounts)\u00a0to use for rating by passing the\u00a0`carrier_accounts`\u00a0parameter upon\u00a0`Shipment`\u00a0creation."
+    },
+    {
+      "name": "Basics > Shipments",
+      "description": "[https://docs.easypost.com/docs/shipments](https://docs.easypost.com/docs/shipments)\n\nThe workhorse of the EasyPost API, a\u00a0[<code>Shipment</code>](https://docs.easypost.com/docs/shipments#shipment-object)\u00a0is made up of a \"to\" and \"from\"\u00a0[<code>Address</code>](https://docs.easypost.com/docs/addresses), the\u00a0[<code>Parcel</code>](https://docs.easypost.com/docs/parcels)\u00a0being shipped, and any\u00a0[<code>Forms</code>](https://docs.easypost.com/docs/shipments/forms)\u00a0required for international deliveries. Once created, a\u00a0`Shipment`\u00a0object is used to retrieve shipping\u00a0[<code>Rates</code>](https://docs.easypost.com/docs/shipments/rates)\u00a0and purchase a label.\n\nA\u00a0`Shipment`\u00a0created with a valid\u00a0`to_address`,\u00a0`from_address`, and\u00a0`parcel`\u00a0will automatically populate its\u00a0`rates`\u00a0attribute."
+    },
+    {
+      "name": "Basics > Shipments > Form",
+      "description": "[https://docs.easypost.com/docs/shipments/forms](https://docs.easypost.com/docs/shipments/forms)\n\nAfter a\u00a0[<code>Shipment</code>&nbsp;is created](https://docs.easypost.com/docs/shipments#create-a-shipment), you can create various associated\u00a0[<code>Form</code>](https://docs.easypost.com/docs/shipments/forms#form-object)\u00a0objects for that\u00a0`Shipment`, such as a return packing slip, QR codes, and other international shipping forms. For more information about how to use forms with your shipments, please check our\u00a0[forms guide](https://docs.easypost.com/guides/form-guide)."
+    },
+    {
+      "name": "Basics > Shipments > Luma",
+      "description": "[https://docs.easypost.com/docs/luma](https://docs.easypost.com/docs/luma)\n\nThe Luma API enables shippers to buy labels, leveraging the rate shopping rules configured within the\u00a0[EasyPost Dashboard](https://app.easypost.com/login). By using predefined rulesets, Luma automates the rate selection process based on criteria such as transit time, cost, carrier preferences, and delivery confidence levels."
+    },
+    {
+      "name": "Basics > Shipments > Options",
+      "description": "[https://docs.easypost.com/docs/shipments/options](https://docs.easypost.com/docs/shipments/options)"
+    },
+    {
+      "name": "Basics > Shipments > Rate",
+      "description": "[https://docs.easypost.com/docs/shipments/rates](https://docs.easypost.com/docs/shipments/rates)\n\nAfter a\u00a0[<code>Shipment</code>](https://docs.easypost.com/docs/shipments)\u00a0is successfully created, it will automatically fetch\u00a0[<code>Rates</code>](https://docs.easypost.com/docs/shipments/rates#rate-object). You can limit the\u00a0[<code>CarrierAccounts</code>](https://docs.easypost.com/docs/carrier-accounts)\u00a0to use for rating by passing the\u00a0`carrier_accounts`\u00a0parameter upon\u00a0`Shipment`\u00a0creation."
+    },
+    {
+      "name": "Basics > Shipments > Return",
+      "description": "[https://docs.easypost.com/docs/shipments/returns](https://docs.easypost.com/docs/shipments/returns)\n\nIf you are shipping merchandise or other frequently-returned products, you may wish to generate return labels to include with your shipment, for you customer's convenience. EasyPost offers a simple way to submit the same parameters as your initial shipment, but with an additional flag set, that will generate you a return label to receive any return shipments at your original from address."
+    },
+    {
+      "name": "Basics > Shipments > Shipping Insurance",
+      "description": "[https://docs.easypost.com/docs/shipments/shipping-insurance](https://docs.easypost.com/docs/shipments/shipping-insurance)\n\nShipping insurance can be purchased for any\u00a0[<code>Shipment</code>](https://docs.easypost.com/docs/shipments)\u00a0by specifying the value of the shipment's contents. The cost is 1.0% of the declared value, with a minimum charge of $1.00. All claims are processed and paid within 10 days."
+    },
+    {
+      "name": "Basics > Shipments > Shipping Refund",
+      "description": "[https://docs.easypost.com/docs/shipments/shipping-refund](https://docs.easypost.com/docs/shipments/shipping-refund)\n\nUSPS shipping labels can be refunded if requested within 30 days of generation. The processing time is at least 15 days, after which the funds will return to your EasyPost balance. EasyPost fees will also be refunded. To qualify, a shipment must not have been scanned by the USPS."
+    },
+    {
+      "name": "Basics > Shipments > SmartRate",
+      "description": "[https://docs.easypost.com/docs/shipments/shipping-smartrate](https://docs.easypost.com/docs/shipments/shipping-smartrate)\n\nThe Shipping SmartRate API provides shippers with highly accurate, shipment-level transit time predictions that can save money, improve on-time delivery, and provide end customers with reliable delivery estimates."
+    },
+    {
+      "name": "Basics > Shipments > TaxIdentifier",
+      "description": "[https://docs.easypost.com/docs/shipments/tax-identifiers](https://docs.easypost.com/docs/shipments/tax-identifiers)\n\n[<code>TaxIdentifiers</code>](https://docs.easypost.com/docs/shipments/tax-identifiers#taxidentifier-object)\u00a0are identifying numbers or IDs that are used to charge a specific party when dealing with the importing or exporting of good across international borders."
+    },
+    {
+      "name": "Basics > Shipments > EndShipper",
+      "description": "[https://docs.easypost.com/docs/endshippers](https://docs.easypost.com/docs/endshippers)\n\n**Important**: This endpoint only works for users of the EndShipper API. If you feel this is applicable for your use case, please contact\u00a0[sales](https://www.easypost.com/talk-to-easypost).\n\nThe EndShipper API is for platforms purchasing postage on behalf of their users, the EndShipper. Platforms\u00a0must\u00a0assert the EndShipper details, as the EndShipper is ultimately responsible for what is in the box. Multiple labels purchased for the same EndShipper\u00a0must\u00a0use the same\u00a0[<code>EndShipper</code>](https://docs.easypost.com/docs/endshippers#endshipper-object)\u00a0object."
+    },
+    {
+      "name": "Basics > Trackers",
+      "description": "[https://docs.easypost.com/docs/trackers](https://docs.easypost.com/docs/trackers)\n\nThe\u00a0[<code>Tracker</code>](https://docs.easypost.com/docs/trackers#tracker-object)\u00a0object contains tracking information for a package. A\u00a0`Tracker`\u00a0is created automatically when a\u00a0[<code>Shipment</code>](https://docs.easypost.com/docs/shipments#buy-a-shipment)\u00a0is purchased through EasyPost. For labels not purchased via EasyPost, a\u00a0`Tracker`\u00a0can still be created directly through the API."
+    },
+    {
+      "name": "Advanced",
+      "description": "https://www.easypost.com/docs/"
+    },
+    {
+      "name": "Advanced > Batches",
+      "description": "[https://docs.easypost.com/docs/batches](https://docs.easypost.com/docs/batches)\n\nThe\u00a0[<code>Batch</code>](https://docs.easypost.com/docs/batches#batch-object)\u00a0object allows you to perform operations on multiple\u00a0[<code>Shipments</code>](https://docs.easypost.com/docs/shipments)\u00a0at once. This includes\u00a0[scheduling a&nbsp;<code>Pickup</code>](https://docs.easypost.com/docs/pickups#create-a-pickup),\u00a0[creating a&nbsp;<code>ScanForm</code>](https://docs.easypost.com/docs/scan-form#create-a-scanform), and consolidating labels. Operations performed on\u00a0`Batches`\u00a0are asynchronous and take advantage of our\u00a0[webhook](https://docs.easypost.com/docs/events)\u00a0infrastructure.\n\n**Note:** `batches_buy` is not in the main documentation and doesn't work with the in-place created batch.\n\nIf looking to create a batch with more shipments, use the add X shipments to batch collection."
+    },
+    {
+      "name": "Advanced > Carrier Metadata",
+      "description": "[https://docs.easypost.com/docs/carrier-metadata](https://docs.easypost.com/docs/carrier-metadata)\n\nThe Carrier Metadata endpoint returns information about all the carriers available on the EasyPost platform. This information may include service levels, predefined packages, shipment options, supported features, and more that are available per carrier. This metadata can be useful during onboarding and integration or when determining the ideal carrier mix for your setup."
+    },
+    {
+      "name": "Advanced > CustomsInfo",
+      "description": "[https://docs.easypost.com/docs/customs-infos](https://docs.easypost.com/docs/customs-infos)\n\n[<code>CustomsInfo</code>](https://docs.easypost.com/docs/customs-infos#customsinfo-object)\u00a0objects contain\u00a0[<code>CustomsItem</code>&nbsp;](https://docs.easypost.com/docs/customs-items)\u00a0objects and all necessary information for the generation of customs forms required for international shipping.\n\nPlease see the\u00a0[<code>Shipments</code>&nbsp;documentation](https://docs.easypost.com/docs/shipments)\u00a0for examples of including a\u00a0`CustomsInfo`\u00a0object in a\u00a0`Shipment`.\u00a0\n\n**Note:**\u00a0the maximum number of items that can be included in customs info with UPS is 100."
+    },
+    {
+      "name": "Advanced > CustomsItem",
+      "description": "[https://docs.easypost.com/docs/customs-items](https://docs.easypost.com/docs/customs-items)\n\nA\u00a0[<code>CustomsItem</code>](https://docs.easypost.com/docs/customs-items#customsitems-object)\u00a0object describes goods for international shipment and should be created then included in a\u00a0[<code>CustomInfo</code>](https://docs.easypost.com/docs/customs-infos)\u00a0object."
+    },
+    {
+      "name": "Advanced > EndShipper",
+      "description": "[https://docs.easypost.com/docs/endshippers](https://docs.easypost.com/docs/endshippers)\n\n**Important**: This endpoint only works for users of the EndShipper API. If you feel this is applicable for your use case, please contact\u00a0[sales](https://www.easypost.com/talk-to-easypost).\n\nThe EndShipper API is for platforms purchasing postage on behalf of their users, the EndShipper. Platforms\u00a0must\u00a0assert the EndShipper details, as the EndShipper is ultimately responsible for what is in the box. Multiple labels purchased for the same EndShipper\u00a0must\u00a0use the same\u00a0[<code>EndShipper</code>](https://docs.easypost.com/docs/endshippers#endshipper-object)\u00a0object."
+    },
+    {
+      "name": "Advanced > Events",
+      "description": "[https://docs.easypost.com/docs/events](https://docs.easypost.com/docs/events)\n\nWebhook\u00a0[<code>Events</code>](https://docs.easypost.com/docs/events#event-object)\u00a0are triggered by changes in objects you've created via the API. Every time an\u00a0`Event`\u00a0related to one of your objects is created, EasyPost guarantees at least one POST request will be sent to each of the\u00a0[webhook URLs set up for your account](https://docs.easypost.com/docs/webhooks). For this reason, we strongly encourage your webhook handler to be idempotent. See the\u00a0[webhooks guide](https://docs.easypost.com/guides/webhooks-guide)\u00a0for more information."
+    },
+    {
+      "name": "Advanced > Orders",
+      "description": "[https://docs.easypost.com/docs/orders](https://docs.easypost.com/docs/orders)\n\n**Note:** Users are encouraged to integrate with the SHIPMENTS endpoint rather than with this ORDERS endpoint, unless they require very specific FedEx, UPS, or DHL Express Multi-parcel rates/labels support.\n\nThe\u00a0[<code>Order</code>](https://docs.easypost.com/docs/orders#order-object)\u00a0object represents a collection of packages and is intended only for multi-parcel shipping; please use\u00a0[<code>Shipments</code>](https://docs.easypost.com/docs/shipments)\u00a0for single-parcel shipping. Like a single\u00a0`Shipment`, each\u00a0`Order`\u00a0consists of a\u00a0[<code>to_address</code>](https://docs.easypost.com/docs/addresses)\u00a0and\u00a0[<code>from_address</code>](https://docs.easypost.com/docs/addresses), to be used for each\u00a0`Shipment`\u00a0within the\u00a0`Order`. These\u00a0`Address`\u00a0objects will be copied to each\u00a0`Shipment`, so there is no need to specify them multiple times. Each\u00a0`Shipment`\u00a0must then specify its\u00a0[<code>Parcel</code>](https://docs.easypost.com/docs/parcels),\u00a0[<code>Options</code>](https://docs.easypost.com/docs/shipments/options), and\u00a0[<code>CustomsInfo</code>](https://docs.easypost.com/docs/customs-infos).\n\n### Additional Notes\n\n`orders_create` uses an inline setup\n\n`orders_create2` uses the current shipment to and from address with predefined packages\n\nBoth set the environment variable `ORDER_ID`, which can be accessed by orders_retrieve"
+    },
+    {
+      "name": "Advanced > Pickup",
+      "description": "[https://docs.easypost.com/docs/pickups](https://docs.easypost.com/docs/pickups)\n\nThe\u00a0[<code>Pickup</code>](https://docs.easypost.com/docs/pickups#pickup-object)\u00a0object is used to schedule a pickup from a carrier at a residence or place of business.\n\nOnce a\u00a0`Pickup`\u00a0is successfully created,\u00a0[<code>PickupRates</code>](https://docs.easypost.com/docs/pickups#pickuprate-object)\u00a0will be automatically fetched for each specified\u00a0[<code>CarrierAccount</code>](https://docs.easypost.com/docs/carrier-accounts)\u00a0that supports scheduled pickups. A\u00a0`PickupRate`\u00a0must then be selected and purchased to successfully schedule the pickup.\n\n### Additional Notes\n\nUse `pickup_create_batch` when trying to create a pickup with batches, and use `pickup_create_shipment` when trying to create a pickup with shipments, with each one referencing the previously created batch or shipment in the previous folders."
+    },
+    {
+      "name": "Advanced > ReadyDocs",
+      "description": "[https://docs.easypost.com/docs/readydocs](https://docs.easypost.com/docs/readydocs)\n\nReadyDocs is a document-generation API that enables customers to create standardized packing slips using predefined templates.\n\nReadyDocs provides a library of approximately 140 packing slip templates, including generic templates that can be used for customer orders. Documents are generated programmatically by submitting order and shipment data to the ReadyDocs API.\n\n**Note:** ReadyDocs is a subscription-based feature, and usage is metered. Requests are authenticated using an EasyPost API key."
+    },
+    {
+      "name": "Advanced > Reports",
+      "description": "[https://docs.easypost.com/docs/reports](https://docs.easypost.com/docs/reports)\n\nA\u00a0[<code>Report</code>](https://docs.easypost.com/docs/reports#report-object)\u00a0contains a CSV that is a log of all the objects created within a certain time frame."
+    },
+    {
+      "name": "Advanced > ScanForms",
+      "description": "[https://docs.easypost.com/docs/scan-form](https://docs.easypost.com/docs/scan-form)\n\nA\u00a0[<code>ScanForm</code>](https://docs.easypost.com/docs/scan-form#scanform-object)\u00a0can be created to speed up and simplify the carrier pickup process. The\u00a0`ScanForm`\u00a0is one document that can be scanned to mark all included tracking codes as \"Accepted for Shipment\" by the carrier.\n\n### Additional Notes\n\nMake sure that all of the batch shipments have been purchased before attempting to create the scanform, as it will throw an error if not true."
+    },
+    {
+      "name": "Advanced > Webhook",
+      "description": "[https://docs.easypost.com/docs/webhooks](https://docs.easypost.com/docs/webhooks)\n\nEach\u00a0[<code>Webhook</code>](https://docs.easypost.com/docs/webhooks#webhook-object)\u00a0contains the\u00a0`url`\u00a0that EasyPost notifies when an object in the system updates."
+    },
+    {
+      "name": "Account Management"
+    },
+    {
+      "name": "Account Management > API Keys",
+      "description": "[https://docs.easypost.com/docs/api-keys](https://docs.easypost.com/docs/api-keys)\n\nWhen performing operations on\u00a0[<code>API Keys</code>](https://docs.easypost.com/docs/api-keys#api-keys-object)\u00a0for a specific user, you must be authenticated using a\u00a0[Production API Key](https://docs.easypost.com/docs/authentication)."
+    },
+    {
+      "name": "Account Management > Carrier Accounts",
+      "description": "[https://docs.easypost.com/docs/carrier-accounts](https://docs.easypost.com/docs/carrier-accounts)\n\nA\u00a0[<code>CarrierAccount</code>](https://docs.easypost.com/docs/carrier-accounts#carrieraccount-object)\u00a0encapsulates your credentials with the carrier. The\u00a0`CarrierAccount`\u00a0object provides CRUD operations for all\u00a0`CarrierAccounts`."
+    },
+    {
+      "name": "Account Management > Carrier Types",
+      "description": "[https://docs.easypost.com/docs/carrier-types](https://docs.easypost.com/docs/carrier-types)\n\nThe\u00a0[<code>CarrierType</code>](https://docs.easypost.com/docs/carrier-types#carriertype-object)\u00a0object provides an interface for determining the valid fields of a\u00a0[<code>CarrierAccount</code>](https://docs.easypost.com/docs/carrier-accounts). The list of\u00a0`CarrierType`\u00a0objects only changes when a new carrier is added to EasyPost."
+    },
+    {
+      "name": "Account Management > Users",
+      "description": "[https://docs.easypost.com/docs/users](https://docs.easypost.com/docs/users)\n\nThe User object can be used to manage your own account and to create child accounts. Only a Production mode API key can be used to make requests against the Users API."
+    },
+    {
+      "name": "Account Management > Users > Billing",
+      "description": "[https://docs.easypost.com/docs/users/billing](https://docs.easypost.com/docs/users/billing)\n\nThe\u00a0`Billing`\u00a0functions enable account billing management by\u00a0[adding](https://docs.easypost.com/docs/users/billing#create-credit-card)\u00a0or\u00a0[deleting](https://docs.easypost.com/docs/users/billing#delete-a-payment-method)\u00a0payment methods (credit cards and bank accounts), listing\u00a0[available payment methods](https://docs.easypost.com/docs/users/billing#retrieve-payment-methods), and\u00a0[funding wallets](https://docs.easypost.com/docs/users/billing#add-funds-to-your-wallet-one-time-charge)."
+    },
+    {
+      "name": "Account Management > Users > Billing > Partner White Label (Referrals)",
+      "description": "[https://docs.easypost.com/docs/users/referral-customers](https://docs.easypost.com/docs/users/referral-customers)\n\nA\u00a0[<code>ReferralCustomer</code>](https://docs.easypost.com/docs/users/referral-customers)\u00a0is a white label\u00a0[<code>User</code>](https://docs.easypost.com/docs/users)\u00a0that can have its own billing methods."
+    },
+    {
+      "name": "Account Management > Users > Billing > Partner White Label (Referrals) > Referral Users",
+      "description": "[https://docs.easypost.com/docs/users/referral-customers](https://docs.easypost.com/docs/users/referral-customers)"
+    },
+    {
+      "name": "Account Management > Users > Billing > Partner White Label (Referrals) > Billing",
+      "description": "[https://docs.easypost.com/docs/users/billing](https://docs.easypost.com/docs/users/billing)"
+    },
+    {
+      "name": "Account Management > Users > Brand",
+      "description": "[https://docs.easypost.com/docs/users/brand](https://docs.easypost.com/docs/users/brand)"
+    }
+  ],
+  "paths": {
+    "/v2/addresses": {
+      "post": {
+        "tags": [
+          "Basics > Addresses"
+        ],
+        "summary": "Create a Strictly Verified Address",
+        "description": "[https://docs.easypost.com/docs/addresses#verify-an-address](https://docs.easypost.com/docs/addresses#verify-an-address)\n\n**Important:**\u00a0Address verification is triggered when the\u00a0`verify`\u00a0or\u00a0`verify_strict`\u00a0parameter is included in the request,\u00a0**even if the value is**\u00a0**`false`**. To prevent verification, omit these parameters entirely.\n\nVerifying an\u00a0`Address`\u00a0before shipping is a great way to reduce issues with delivery.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "address": {
+                    "type": "object",
+                    "properties": {
+                      "street1": {
+                        "type": "string"
+                      },
+                      "street2": {
+                        "type": "string"
+                      },
+                      "city": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "zip": {
+                        "type": "string"
+                      },
+                      "country": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "company": {
+                        "type": "string"
+                      },
+                      "phone": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "federal_tax_id": {
+                        "type": "string"
+                      },
+                      "residential": {
+                        "type": "boolean"
+                      },
+                      "carrier_facility": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "address"
+                ],
+                "description": "No individual field is strictly required by the API itself (partial addresses are accepted for verification purposes), but street1, city, state, zip and country are needed for a deliverable address."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createAStrictlyVerifiedAddress"
+      },
+      "get": {
+        "tags": [
+          "Basics > Addresses"
+        ],
+        "summary": "Retrieve All Addresses",
+        "description": "[https://docs.easypost.com/docs/addresses#retrieve-all-addresses](https://docs.easypost.com/docs/addresses#retrieve-all-addresses)\n\nA list of all\u00a0`Address`\u00a0objects associated with the given\u00a0[<code>API Key</code>](https://docs.easypost.com/docs/api-keys)\u00a0can also be retrieved. See the\u00a0[Pagination](https://docs.easypost.com/docs/pagination)\u00a0section of our docs for more details on retrieving all records when multiple pages are available.",
+        "parameters": [
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "5"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveAllAddresses"
+      }
+    },
+    "/v2/addresses/create_and_verify": {
+      "post": {
+        "tags": [
+          "Basics > Addresses"
+        ],
+        "summary": "Create and Verify Address",
+        "description": "[https://docs.easypost.com/docs/addresses#verify-an-address](https://docs.easypost.com/docs/addresses#verify-an-address)\n\n**Important:**\u00a0Address verification is triggered when the\u00a0`verify`\u00a0or\u00a0`verify_strict`\u00a0parameter is included in the request,\u00a0**even if the value is**\u00a0**`false`**. To prevent verification, omit these parameters entirely.\n\nVerifying an\u00a0`Address`\u00a0before shipping is a great way to reduce issues with delivery.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "address": {
+                    "type": "object",
+                    "properties": {
+                      "street1": {
+                        "type": "string"
+                      },
+                      "street2": {
+                        "type": "string"
+                      },
+                      "city": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "zip": {
+                        "type": "string"
+                      },
+                      "country": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "company": {
+                        "type": "string"
+                      },
+                      "phone": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "federal_tax_id": {
+                        "type": "string"
+                      },
+                      "residential": {
+                        "type": "boolean"
+                      },
+                      "carrier_facility": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "address"
+                ],
+                "description": "No individual field is strictly required by the API itself (partial addresses are accepted for verification purposes), but street1, city, state, zip and country are needed for a deliverable address."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createAndVerifyAddress"
+      }
+    },
+    "/v2/addresses/{ADDRESS_ID}/verify": {
+      "get": {
+        "tags": [
+          "Basics > Addresses"
+        ],
+        "summary": "Verify Address",
+        "description": "[https://docs.easypost.com/docs/addresses#verify-an-address](https://docs.easypost.com/docs/addresses#verify-an-address)\n\n**Important:**\u00a0Address verification is triggered when the\u00a0`verify`\u00a0or\u00a0`verify_strict`\u00a0parameter is included in the request,\u00a0**even if the value is**\u00a0**`false`**. To prevent verification, omit these parameters entirely.\n\nVerifying an\u00a0`Address`\u00a0before shipping is a great way to reduce issues with delivery.",
+        "parameters": [
+          {
+            "name": "ADDRESS_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "verifyAddress"
+      },
+      "parameters": [
+        {
+          "name": "ADDRESS_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/addresses/{ADDRESS_ID}": {
+      "get": {
+        "tags": [
+          "Basics > Addresses"
+        ],
+        "summary": "Retrieve Address",
+        "description": "[https://docs.easypost.com/docs/addresses#retrieve-an-address](https://docs.easypost.com/docs/addresses#retrieve-an-address)\n\nAn\u00a0`Address`\u00a0can be retrieved by its\u00a0`id`.",
+        "parameters": [
+          {
+            "name": "ADDRESS_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveAddress"
+      },
+      "parameters": [
+        {
+          "name": "ADDRESS_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/claims": {
+      "post": {
+        "tags": [
+          "Basics > Insurance > Claims"
+        ],
+        "summary": "Create Claim",
+        "description": "[https://docs.easypost.com/docs/insurance/claims#create-a-claim](https://docs.easypost.com/docs/insurance/claims#create-a-claim)\n\nCreate a new claim for a shipment. This endpoint accepts the necessary information to create and validate a claim and store the details.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "claim": {
+                    "type": "object",
+                    "properties": {
+                      "tracking_code": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "e.g. \"loss\", \"damage\", \"loss_and_damage\"."
+                      },
+                      "amount": {
+                        "type": "number"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "contact_email": {
+                        "type": "string"
+                      },
+                      "recipient_name": {
+                        "type": "string"
+                      },
+                      "salvage": {
+                        "type": "boolean"
+                      },
+                      "attachments": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "required": [
+                      "tracking_code",
+                      "type",
+                      "amount",
+                      "description"
+                    ]
+                  }
+                },
+                "required": [
+                  "claim"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createClaim"
+      },
+      "get": {
+        "tags": [
+          "Basics > Insurance > Claims"
+        ],
+        "summary": "Retrieve All Claims",
+        "description": "[https://docs.easypost.com/docs/insurance/claims#retrieve-all-claims](https://docs.easypost.com/docs/insurance/claims#retrieve-all-claims)\n\nRetrieve a list of claims.",
+        "parameters": [
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "5"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveAllClaims"
+      }
+    },
+    "/v2/claims/{CLAIM_ID}": {
+      "get": {
+        "tags": [
+          "Basics > Insurance > Claims"
+        ],
+        "summary": "Retrieve Claim",
+        "description": "[https://docs.easypost.com/docs/insurance/claims#retrieve-a-claim](https://docs.easypost.com/docs/insurance/claims#retrieve-a-claim)\n\nRetrieve details of a specific claim using the\u00a0`id`.",
+        "parameters": [
+          {
+            "name": "CLAIM_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveClaim"
+      },
+      "parameters": [
+        {
+          "name": "CLAIM_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/claims/{CLAIM_ID}/cancel": {
+      "post": {
+        "tags": [
+          "Basics > Insurance > Claims"
+        ],
+        "summary": "Cancel Claim",
+        "description": "[https://docs.easypost.com/docs/insurance/claims#cancel-a-claim](https://docs.easypost.com/docs/insurance/claims#cancel-a-claim)\n\nCancel an existing claim using the\u00a0`id`.",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "CLAIM_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "cancelClaim"
+      },
+      "parameters": [
+        {
+          "name": "CLAIM_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/insurances": {
+      "post": {
+        "tags": [
+          "Basics > Insurance"
+        ],
+        "summary": "Create Insurance",
+        "description": "[https://docs.easypost.com/docs/insurance#create-an-insurance](https://docs.easypost.com/docs/insurance#create-an-insurance)\n\nAn\u00a0`Insurance`\u00a0created via this endpoint must belong to a shipment purchased outside of EasyPost. Insurance for a\u00a0[<code>Shipment</code>](https://docs.easypost.com/docs/shipments)\u00a0created within EasyPost must be created via the\u00a0[<code>Shipment</code>&nbsp;buy](https://docs.easypost.com/docs/shipments#buy-a-shipment)\u00a0or\u00a0[<code>Shipment</code>&nbsp;insure](https://docs.easypost.com/docs/shipments/shipping-insurance#insure-a-shipment)\u00a0endpoints. When creating Insurance for a non-EasyPost shipment, you must provide tracking_code, carrier, and amount information.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "insurance": {
+                    "type": "object",
+                    "properties": {
+                      "shipment_id": {
+                        "type": "string",
+                        "description": "Use with an existing EasyPost shipment, or supply tracking_code/carrier/from_address/to_address instead."
+                      },
+                      "tracking_code": {
+                        "type": "string"
+                      },
+                      "carrier": {
+                        "type": "string"
+                      },
+                      "amount": {
+                        "type": "number"
+                      },
+                      "from_address": {
+                        "type": "object",
+                        "properties": {
+                          "street1": {
+                            "type": "string"
+                          },
+                          "street2": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "zip": {
+                            "type": "string"
+                          },
+                          "country": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "company": {
+                            "type": "string"
+                          },
+                          "phone": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "federal_tax_id": {
+                            "type": "string"
+                          },
+                          "residential": {
+                            "type": "boolean"
+                          },
+                          "carrier_facility": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "to_address": {
+                        "type": "object",
+                        "properties": {
+                          "street1": {
+                            "type": "string"
+                          },
+                          "street2": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "zip": {
+                            "type": "string"
+                          },
+                          "country": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "company": {
+                            "type": "string"
+                          },
+                          "phone": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "federal_tax_id": {
+                            "type": "string"
+                          },
+                          "residential": {
+                            "type": "boolean"
+                          },
+                          "carrier_facility": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "required": [
+                      "amount"
+                    ]
+                  }
+                },
+                "required": [
+                  "insurance"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createInsurance"
+      },
+      "get": {
+        "tags": [
+          "Basics > Insurance"
+        ],
+        "summary": "Retrieve All Insurance",
+        "description": "[https://docs.easypost.com/docs/insurance#retrieve-all-insurances](https://docs.easypost.com/docs/insurance#retrieve-all-insurances)\n\nA list of all\u00a0`Insurance`\u00a0objects associated with the given\u00a0[<code>API Key</code>](https://docs.easypost.com/docs/api-keys)\u00a0can also be retrieved. See the\u00a0[Pagination](https://docs.easypost.com/docs/pagination)\u00a0section of our docs for more details on retrieving all records when multiple pages are available.",
+        "parameters": [
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "5"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveAllInsurance"
+      }
+    },
+    "/v2/insurances/{INSURANCE_ID}": {
+      "get": {
+        "tags": [
+          "Basics > Insurance"
+        ],
+        "summary": "Retrieve Insurance",
+        "description": "[https://docs.easypost.com/docs/insurance#retrieve-an-insurance](https://docs.easypost.com/docs/insurance#retrieve-an-insurance)\n\nRetrieve an\u00a0`Insurance`\u00a0by its\u00a0`id`.",
+        "parameters": [
+          {
+            "name": "INSURANCE_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveInsurance"
+      },
+      "parameters": [
+        {
+          "name": "INSURANCE_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/insurances/{INSURANCE_ID}/refund": {
+      "post": {
+        "tags": [
+          "Basics > Insurance"
+        ],
+        "summary": "Refund Insurance",
+        "description": "[https://docs.easypost.com/docs/insurance#refund-an-insurance](https://docs.easypost.com/docs/insurance#refund-an-insurance)\n\nRefunding\u00a0`Insurance`\u00a0is only available for standalone insurance purchased through EasyPost. The tracking status for the insurance must be either\u00a0`pre_transit`,\u00a0`cancelled`, or\u00a0`unknown`\u00a0in order to be eligible.",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "INSURANCE_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "refundInsurance"
+      },
+      "parameters": [
+        {
+          "name": "INSURANCE_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/parcels": {
+      "post": {
+        "tags": [
+          "Basics > Parcels"
+        ],
+        "summary": "Create Parcel",
+        "description": "[https://docs.easypost.com/docs/parcels#create-a-parcel](https://docs.easypost.com/docs/parcels#create-a-parcel)\n\nInclude the\u00a0`weight`, and either a\u00a0`predefined_package`\u00a0or\u00a0`length`,\u00a0`width`\u00a0and\u00a0`height`\u00a0if applicable.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "parcel": {
+                    "type": "object",
+                    "properties": {
+                      "length": {
+                        "type": "number",
+                        "description": "Inches. Required together with width/height unless predefined_package is set."
+                      },
+                      "width": {
+                        "type": "number",
+                        "description": "Inches. Required together with length/height unless predefined_package is set."
+                      },
+                      "height": {
+                        "type": "number",
+                        "description": "Inches. Required together with length/width unless predefined_package is set."
+                      },
+                      "weight": {
+                        "type": "number",
+                        "description": "Ounces."
+                      },
+                      "predefined_package": {
+                        "type": "string",
+                        "description": "Carrier-specific flat-rate package type, used instead of length/width/height."
+                      }
+                    },
+                    "required": [
+                      "weight"
+                    ]
+                  }
+                },
+                "required": [
+                  "parcel"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createParcel"
+      }
+    },
+    "/v2/parcels/{PARCEL_ID}": {
+      "get": {
+        "tags": [
+          "Basics > Parcels"
+        ],
+        "summary": "Retrieve Parcel",
+        "description": "[https://docs.easypost.com/docs/parcels#retrieve-a-parcel](https://docs.easypost.com/docs/parcels#retrieve-a-parcel)\n\nRetrieve a\u00a0`Parcel`\u00a0by its\u00a0`id`. In general, you should not need to use this in your automated solution. A\u00a0`Parcel`\u00a0object's\u00a0`id`\u00a0can be inlined into the creation call to other objects. This allows you to only create one\u00a0`Parcel`\u00a0for each package you will be using.",
+        "parameters": [
+          {
+            "name": "PARCEL_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveParcel"
+      },
+      "parameters": [
+        {
+          "name": "PARCEL_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/rates/{RATE_ID}": {
+      "get": {
+        "tags": [
+          "Basics > Rates"
+        ],
+        "summary": "Retrieve Rate",
+        "description": "[https://docs.easypost.com/docs/shipments/rates#retrieve-rates-for-a-shipment](https://docs.easypost.com/docs/shipments/rates#retrieve-rates-for-a-shipment)\n\nYou can retrieve\u00a0`Rates`\u00a0without creating a\u00a0[<code>Shipment</code>](https://docs.easypost.com/docs/shipments)\u00a0object using this endpoint. This endpoint is ideal when wanting to display or compare rates without creating\u00a0`Shipment`\u00a0objects. The\u00a0`Rate`\u00a0objects returned by this endpoint do not include IDs.",
+        "parameters": [
+          {
+            "name": "RATE_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveRate"
+      },
+      "parameters": [
+        {
+          "name": "RATE_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/shipments/{SHIPMENT_ID}/forms": {
+      "post": {
+        "tags": [
+          "Basics > Shipments > Form"
+        ],
+        "summary": "Create Form",
+        "description": "[https://docs.easypost.com/docs/shipments/forms#create-form](https://docs.easypost.com/docs/shipments/forms#create-form)\n\nPlease see\u00a0the [Forms Guide](https://docs.easypost.com/guides/form-guide)\u00a0for request parameters.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "form": {
+                    "type": "return_packing_slip",
+                    "barcode": "RMA12345678900",
+                    "line_items": [
+                      {
+                        "product": {
+                          "title": "Square Reader",
+                          "barcode": "855658003251"
+                        },
+                        "units": 8
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "SHIPMENT_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createForm"
+      },
+      "parameters": [
+        {
+          "name": "SHIPMENT_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/shipments/luma/promise": {
+      "post": {
+        "tags": [
+          "Basics > Shipments > Luma"
+        ],
+        "summary": "Luma Promise",
+        "description": "The Luma Promise endpoint evaluates rate options and returns a\u00a0`predicted_deliver_by_date`\u00a0and the selected rate without requiring a label purchase. This endpoint is designed for rating-only scenarios, such as displaying estimated delivery windows for customers. It supports predefined rulesets and enables evaluation without incurring label charges.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "to_address": {
+                    "name": "Dr. Steve Brule",
+                    "street1": "179 N Harbor Dr",
+                    "city": "Redondo Beach",
+                    "state": "CA",
+                    "zip": "90277",
+                    "country": "US",
+                    "phone": "4155559999",
+                    "email": "dr_steve_brule@gmail.com"
+                  },
+                  "from_address": {
+                    "name": "EasyPost",
+                    "street1": "417 Montgomery Street",
+                    "street2": "5th Floor",
+                    "city": "San Francisco",
+                    "state": "CA",
+                    "zip": "90277",
+                    "country": "US",
+                    "phone": "4155559999",
+                    "email": "support@easypost.com"
+                  },
+                  "parcel": {
+                    "length": 20.2,
+                    "width": 10.9,
+                    "height": 5,
+                    "weight": 65.9
+                  },
+                  "ruleset_name": "ruleset_...",
+                  "planned_ship_date": "2025-07-21",
+                  "deliver_by_date": "2025-07-25"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "lumaPromise"
+      }
+    },
+    "/v2/shipments/luma": {
+      "post": {
+        "tags": [
+          "Basics > Shipments > Luma"
+        ],
+        "summary": "One-Call Buy Shipment",
+        "description": "[https://docs.easypost.com/docs/luma#one-call-buy](https://docs.easypost.com/docs/luma#one-call-buy)\n\nUse `POST /shipments/luma` to create and purchase a shipment in a single request. This method is ideal for shippers with established rulesets who want to reduce API calls.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "to_address": {
+                    "name": "Dr. Steve Brule",
+                    "street1": "5744 Silverton Ave",
+                    "city": "McKinney",
+                    "state": "TX",
+                    "zip": "75070",
+                    "country": "US",
+                    "phone": "8573875756",
+                    "email": "dr_steve_brule@gmail.com"
+                  },
+                  "from_address": {
+                    "name": "EasyPost",
+                    "street1": "417 Montgomery Street",
+                    "street2": "5th Floor",
+                    "city": "San Francisco",
+                    "state": "CA",
+                    "zip": "94104",
+                    "country": "US",
+                    "phone": "4153334445",
+                    "email": "support@easypost.com"
+                  },
+                  "parcel": {
+                    "length": "20.2",
+                    "width": "10.9",
+                    "height": "5",
+                    "weight": "65.9"
+                  },
+                  "carrier_accounts": [
+                    "ca_..."
+                  ],
+                  "ruleset_name": "ruleset_...",
+                  "planned_ship_date": "2025-05-14",
+                  "deliver_by_date": "2025-05-16"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "postV2ShipmentsLuma"
+      }
+    },
+    "/v2/shipments": {
+      "post": {
+        "tags": [
+          "Basics > Shipments"
+        ],
+        "summary": "One-Call Buy Shipment",
+        "description": "[https://docs.easypost.com/docs/shipments#buy-a-shipment-without-rating-one-call-buy](https://docs.easypost.com/docs/shipments#buy-a-shipment-without-rating-one-call-buy)\n\nThe one-call buy method enables shipment creation and label purchase in a single API call. This approach is suitable when the desired service level is already known, or a flat-rate agreement is in place with the carrier.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "shipment": {
+                    "type": "object",
+                    "properties": {
+                      "to_address": {
+                        "type": "object",
+                        "properties": {
+                          "street1": {
+                            "type": "string"
+                          },
+                          "street2": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "zip": {
+                            "type": "string"
+                          },
+                          "country": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "company": {
+                            "type": "string"
+                          },
+                          "phone": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "federal_tax_id": {
+                            "type": "string"
+                          },
+                          "residential": {
+                            "type": "boolean"
+                          },
+                          "carrier_facility": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "from_address": {
+                        "type": "object",
+                        "properties": {
+                          "street1": {
+                            "type": "string"
+                          },
+                          "street2": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "zip": {
+                            "type": "string"
+                          },
+                          "country": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "company": {
+                            "type": "string"
+                          },
+                          "phone": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "federal_tax_id": {
+                            "type": "string"
+                          },
+                          "residential": {
+                            "type": "boolean"
+                          },
+                          "carrier_facility": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "parcel": {
+                        "type": "object",
+                        "properties": {
+                          "length": {
+                            "type": "number",
+                            "description": "Inches. Required together with width/height unless predefined_package is set."
+                          },
+                          "width": {
+                            "type": "number",
+                            "description": "Inches. Required together with length/height unless predefined_package is set."
+                          },
+                          "height": {
+                            "type": "number",
+                            "description": "Inches. Required together with length/width unless predefined_package is set."
+                          },
+                          "weight": {
+                            "type": "number",
+                            "description": "Ounces."
+                          },
+                          "predefined_package": {
+                            "type": "string",
+                            "description": "Carrier-specific flat-rate package type, used instead of length/width/height."
+                          }
+                        }
+                      },
+                      "customs_info": {
+                        "type": "object"
+                      },
+                      "service": {
+                        "type": "string"
+                      },
+                      "carrier_accounts": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "reference": {
+                        "type": "string"
+                      },
+                      "insurance": {
+                        "type": "number"
+                      },
+                      "options": {
+                        "type": "object"
+                      }
+                    },
+                    "required": [
+                      "to_address",
+                      "from_address",
+                      "parcel"
+                    ]
+                  }
+                },
+                "required": [
+                  "shipment"
+                ],
+                "description": "One-call buy requires to_address, from_address and parcel; include \"service\" and/or \"carrier_accounts\" to pin the rate purchased, otherwise the lowest available rate is bought."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "oneCallBuyShipment"
+      },
+      "get": {
+        "tags": [
+          "Basics > Shipments"
+        ],
+        "summary": "Retrieve All Shipments",
+        "description": "[https://docs.easypost.com/docs/shipments#retrieve-all-shipments](https://docs.easypost.com/docs/shipments#retrieve-all-shipments)\n\nA list of all\u00a0`Shipment`\u00a0objects associated with the given\u00a0[<code>API Key</code>](https://docs.easypost.com/docs/api-keys)\u00a0can also be retrieved. See the\u00a0[Pagination](https://docs.easypost.com/docs/pagination)\u00a0section of our docs for more details on retrieving all records when multiple pages are available.",
+        "parameters": [
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "5"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveAllShipments"
+      }
+    },
+    "/v2/shipments/{SHIPMENT_ID}/rerate": {
+      "post": {
+        "tags": [
+          "Basics > Shipments > Rate"
+        ],
+        "summary": "Regenerate Shipment Rates",
+        "description": "[https://docs.easypost.com/docs/shipments/rates#regenerate-rates-for-a-shipment](https://docs.easypost.com/docs/shipments/rates#regenerate-rates-for-a-shipment)\n\nYou can regenerate the\u00a0`Rates`\u00a0of a\u00a0`Shipment`\u00a0at any time. This is ideal when shipments aren't bought the same day as they were created and you want the most up-to-date rates available. This operation respects the\u00a0`carrier_accounts`\u00a0attribute.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "carrier_accounts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "SHIPMENT_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "regenerateShipmentRates"
+      },
+      "parameters": [
+        {
+          "name": "SHIPMENT_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/beta/rates": {
+      "post": {
+        "tags": [
+          "Basics > Shipments > Rate"
+        ],
+        "summary": "Retrieve Stateless Rates",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "shipment": {
+                    "to_address": {
+                      "name": "Dr. Steve Brule",
+                      "street1": "179 N Harbor Dr",
+                      "city": "Redondo Beach",
+                      "state": "CA",
+                      "zip": "90277",
+                      "country": "US",
+                      "phone": "8573875756",
+                      "email": "dr_steve_brule@gmail.com"
+                    },
+                    "from_address": {
+                      "name": "EasyPost",
+                      "street1": "417 Montgomery Street",
+                      "street2": "5th Floor",
+                      "city": "San Francisco",
+                      "state": "CA",
+                      "zip": "94104",
+                      "country": "US",
+                      "phone": "4153334445",
+                      "email": "support@easypost.com"
+                    },
+                    "parcel": {
+                      "length": "20.2",
+                      "width": "10.9",
+                      "height": "5",
+                      "weight": "65.9"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveStatelessRates"
+      }
+    },
+    "/v2/shipments/{SHIPMENT_ID}/insure": {
+      "post": {
+        "tags": [
+          "Basics > Shipments > Shipping Insurance"
+        ],
+        "summary": "Insure Shipment",
+        "description": "[https://docs.easypost.com/docs/shipments/shipping-insurance#insure-a-shipment](https://docs.easypost.com/docs/shipments/shipping-insurance#insure-a-shipment)",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "insurance": {
+                    "type": "object",
+                    "properties": {
+                      "amount": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "amount"
+                    ]
+                  }
+                },
+                "required": [
+                  "insurance"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "SHIPMENT_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "insureShipment"
+      },
+      "parameters": [
+        {
+          "name": "SHIPMENT_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/shipments/{SHIPMENT_ID}/refund": {
+      "post": {
+        "tags": [
+          "Basics > Shipments > Shipping Refund"
+        ],
+        "summary": "Refund Shipment",
+        "description": "[https://docs.easypost.com/docs/shipments/shipping-refund#refund-a-shipment](https://docs.easypost.com/docs/shipments/shipping-refund#refund-a-shipment)\n\nRefunding a\u00a0[<code>Shipment</code>](https://docs.easypost.com/docs/shipments)\u00a0is available for many carriers supported by EasyPost.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "carrier": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "SHIPMENT_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "refundShipment"
+      },
+      "parameters": [
+        {
+          "name": "SHIPMENT_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/shipments/{SHIPMENT_ID}/smartrate": {
+      "get": {
+        "tags": [
+          "Basics > Shipments > SmartRate"
+        ],
+        "summary": "Retrieve SmartRates of Shipment",
+        "parameters": [
+          {
+            "name": "SHIPMENT_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveSmartratesOfShipment"
+      },
+      "parameters": [
+        {
+          "name": "SHIPMENT_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/shipments/{SHIPMENT_ID}/smartrate/delivery_date": {
+      "get": {
+        "tags": [
+          "Basics > Shipments > SmartRate"
+        ],
+        "summary": "Retrieve Estimated Delivery Date",
+        "parameters": [
+          {
+            "name": "planned_ship_date",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "yyyy-mm-dd"
+          },
+          {
+            "name": "SHIPMENT_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveEstimatedDeliveryDate"
+      },
+      "parameters": [
+        {
+          "name": "SHIPMENT_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/shipments/{SHIPMENT_ID}/smartrate/precision_shipping": {
+      "get": {
+        "tags": [
+          "Basics > Shipments > SmartRate"
+        ],
+        "summary": "Precision Shipping",
+        "parameters": [
+          {
+            "name": "SHIPMENT_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "precisionShipping"
+      },
+      "parameters": [
+        {
+          "name": "SHIPMENT_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/smartrate/deliver_on": {
+      "post": {
+        "tags": [
+          "Basics > Shipments > SmartRate"
+        ],
+        "summary": "Deliver On",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "from_zip": "94104",
+                  "to_zip": "90277",
+                  "desired_delivery_date": "2024-07-10",
+                  "carriers": [
+                    "USPS"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "deliverOn"
+      }
+    },
+    "/v2/smartrate/deliver_by": {
+      "post": {
+        "tags": [
+          "Basics > Shipments > SmartRate"
+        ],
+        "summary": "Deliver By",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "from_zip": "94104",
+                  "to_zip": "90277",
+                  "planned_ship_date": "2024-07-10",
+                  "carriers": [
+                    "USPS"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "deliverBy"
+      }
+    },
+    "/v2/shipments/{SHIPMENT_ID}/buy": {
+      "post": {
+        "tags": [
+          "Basics > Shipments"
+        ],
+        "summary": "Buy Shipment",
+        "description": "[https://docs.easypost.com/docs/shipments#buy-a-shipment](https://docs.easypost.com/docs/shipments#buy-a-shipment)\n\nTo purchase a\u00a0`Shipment`, specify the\u00a0[<code>Rate</code>](https://docs.easypost.com/docs/shipments/rates)\u00a0to buy. This operation returns the\u00a0`tracking_code`\u00a0and\u00a0`postage_label`\u00a0attributes.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rate": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Rate ID from the shipment's rates array."
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ]
+                  }
+                },
+                "required": [
+                  "rate"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "SHIPMENT_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "buyShipment"
+      },
+      "parameters": [
+        {
+          "name": "SHIPMENT_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/shipments/{SHIPMENT_ID}": {
+      "get": {
+        "tags": [
+          "Basics > Shipments"
+        ],
+        "summary": "Retrieve Shipment",
+        "description": "[https://docs.easypost.com/docs/shipments#retrieve-a-shipment](https://docs.easypost.com/docs/shipments#retrieve-a-shipment)\n\nA\u00a0`Shipment`\u00a0can be retrieved by either its\u00a0`id`\u00a0or\u00a0`reference`. However, it is recommended to use EasyPost's provided identifiers because uniqueness on\u00a0`reference`\u00a0is not enforced.",
+        "parameters": [
+          {
+            "name": "SHIPMENT_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveShipment"
+      },
+      "parameters": [
+        {
+          "name": "SHIPMENT_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/shipments/{SHIPMENT_ID}/label": {
+      "get": {
+        "tags": [
+          "Basics > Shipments"
+        ],
+        "summary": "Convert Shipment Label",
+        "description": "[https://docs.easypost.com/docs/shipments#converting-the-label-format-of-a-shipment](https://docs.easypost.com/docs/shipments#converting-the-label-format-of-a-shipment)\n\nA\u00a0`Shipment`'s\u00a0[<code>PostageLabel</code>](https://docs.easypost.com/docs/shipments#postage-label-object)\u00a0can be converted from PNG to other formats. To convert a\u00a0`PostageLabel`, the original must be a PNG. Converting labels works best when they are 4x6 labels converted from PNG to ZPL.",
+        "parameters": [
+          {
+            "name": "SHIPMENT_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "convertShipmentLabel"
+      },
+      "parameters": [
+        {
+          "name": "SHIPMENT_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/trackers": {
+      "post": {
+        "tags": [
+          "Basics > Trackers"
+        ],
+        "summary": "Create Tracker",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tracker": {
+                    "type": "object",
+                    "properties": {
+                      "tracking_code": {
+                        "type": "string"
+                      },
+                      "carrier": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "tracking_code"
+                    ]
+                  }
+                },
+                "required": [
+                  "tracker"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createTracker"
+      },
+      "get": {
+        "tags": [
+          "Basics > Trackers"
+        ],
+        "summary": "Retrieve All Trackers",
+        "parameters": [
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "5"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveAllTrackers"
+      }
+    },
+    "/v2/trackers/{TRACKER_ID}": {
+      "get": {
+        "tags": [
+          "Basics > Trackers"
+        ],
+        "summary": "Retrieve Tracker",
+        "parameters": [
+          {
+            "name": "TRACKER_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveTracker"
+      },
+      "parameters": [
+        {
+          "name": "TRACKER_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/trackers/batch": {
+      "post": {
+        "tags": [
+          "Basics > Trackers"
+        ],
+        "summary": "Create Tracker Batch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "trackers": [
+                    {
+                      "tracking_code": "EZ1000000001",
+                      "carrier": "USPS"
+                    },
+                    {
+                      "tracking_code": "EZ1000000002",
+                      "carrier": "UPS"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createTrackerBatch"
+      }
+    },
+    "/v2/batches": {
+      "post": {
+        "tags": [
+          "Advanced > Batches"
+        ],
+        "summary": "Create Batch",
+        "description": "[https://docs.easypost.com/docs/batches#create-a-batch](https://docs.easypost.com/docs/batches#create-a-batch)\n\nA\u00a0`Batch`\u00a0can be created with or without\u00a0[<code>Shipments</code>](https://docs.easypost.com/docs/shipments). When created with\u00a0`Shipments`, the initial\u00a0`state`\u00a0will be \"creating\". Once the\u00a0`state`\u00a0changes to \"created\", a webhook\u00a0[<code>Event</code>](https://docs.easypost.com/docs/events)\u00a0will be sent. When created with no\u00a0[<code>Shipments</code>](https://docs.easypost.com/docs/shipments), the initial state will be \"created\" and webhook will be sent.\n\n**Note:**\u00a0It is recommended to keep each batch under 1,000 shipments. This best practice helps avoid timeout errors during the batch buying process.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "batch": {
+                    "type": "object",
+                    "properties": {
+                      "shipments": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "batch"
+                ],
+                "description": "No fields are required \u2014 a Batch can be created empty and shipments added afterward."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createBatch"
+      },
+      "get": {
+        "tags": [
+          "Advanced > Batches"
+        ],
+        "summary": "Retrieve All Batches",
+        "description": "[https://docs.easypost.com/docs/batches#retrieve-all-batches](https://docs.easypost.com/docs/batches#retrieve-all-batches)\n\nA list of all\u00a0`Batch`\u00a0objects associated with the given\u00a0[<code>API Key</code>](https://docs.easypost.com/docs/api-keys)\u00a0can also be retrieved. See the\u00a0[Pagination](https://docs.easypost.com/docs/pagination)\u00a0section of our docs for more details on retrieving all records when multiple pages are available.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveAllBatches"
+      }
+    },
+    "/v2/batches/{BATCH_ID}/add_shipments": {
+      "post": {
+        "tags": [
+          "Advanced > Batches"
+        ],
+        "summary": "Add Shipments to Batch",
+        "description": "[https://docs.easypost.com/docs/batches#add-shipments-to-a-batch](https://docs.easypost.com/docs/batches#add-shipments-to-a-batch)\n\n[Shipments](https://docs.easypost.com/docs/shipments)\u00a0can be added to a\u00a0`Batch`\u00a0throughout its life cycle. Just remember that the state change of a\u00a0`Batch`\u00a0is asynchronous and will fire a webhook\u00a0[Event](https://docs.easypost.com/docs/events)\u00a0when the state change is completed.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "shipments": [
+                    {
+                      "id": "shp_..."
+                    },
+                    {
+                      "id": "shp_..."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "BATCH_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "addShipmentsToBatch"
+      },
+      "parameters": [
+        {
+          "name": "BATCH_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/batches/{BATCH_ID}/remove_shipments": {
+      "post": {
+        "tags": [
+          "Advanced > Batches"
+        ],
+        "summary": "Remove Shipments from Batch",
+        "description": "[https://docs.easypost.com/docs/batches#remove-shipments-from-a-batch](https://docs.easypost.com/docs/batches#remove-shipments-from-a-batch)\n\nThere could be times when a\u00a0[<code>Shipment</code>](https://docs.easypost.com/docs/shipments)\u00a0needs to be removed from the\u00a0`Batch`\u00a0during its life cycle. Removing a\u00a0`Shipment`\u00a0does not remove it from the consolidated label or\u00a0[<code>ScanForm</code>](https://docs.easypost.com/docs/scan-form).",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "shipments": [
+                    {
+                      "id": "shp_..."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "BATCH_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "removeShipmentsFromBatch"
+      },
+      "parameters": [
+        {
+          "name": "BATCH_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/batches/{BATCH_ID}/buy": {
+      "post": {
+        "tags": [
+          "Advanced > Batches"
+        ],
+        "summary": "Buy Batch",
+        "description": "[https://docs.easypost.com/docs/batches#buy-a-batch](https://docs.easypost.com/docs/batches#buy-a-batch)\n\nOnce you have added all of your\u00a0[<code>Shipments</code>](https://docs.easypost.com/docs/shipments)\u00a0to a\u00a0`Batch`, issue a buy request to enqueue a background job to purchase the shipments and generate all necessary labels.",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "BATCH_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "buyBatch"
+      },
+      "parameters": [
+        {
+          "name": "BATCH_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/batches/{BATCH_ID}/label": {
+      "post": {
+        "tags": [
+          "Advanced > Batches"
+        ],
+        "summary": "Batch Labels",
+        "description": "[https://docs.easypost.com/docs/batches#batch-labels](https://docs.easypost.com/docs/batches#batch-labels)\n\nOne of the advantages of processing\u00a0[<code>Shipments</code>](https://docs.easypost.com/docs/shipments)\u00a0in batches is the ability to consolidate the\u00a0`PostageLabel`\u00a0into one file. This can only be done once for each batch, and all\u00a0`Shipments`\u00a0must have a status of \"postage_purchased\".",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "file_format": "PDF"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "BATCH_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "batchLabels"
+      },
+      "parameters": [
+        {
+          "name": "BATCH_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/batches/{BATCH_ID}/scan_form": {
+      "post": {
+        "tags": [
+          "Advanced > Batches"
+        ],
+        "summary": "Manifest Batch",
+        "description": "[https://docs.easypost.com/docs/batches#manifesting-scan-form](https://docs.easypost.com/docs/batches#manifesting-scan-form)\n\nA\u00a0[<code>ScanForm</code>](https://docs.easypost.com/docs/scan-form)\u00a0can be created for a\u00a0`Batch`\u00a0by its\u00a0`id`.",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "BATCH_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "manifestBatch"
+      },
+      "parameters": [
+        {
+          "name": "BATCH_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/batches/{BATCH_ID}": {
+      "get": {
+        "tags": [
+          "Advanced > Batches"
+        ],
+        "summary": "Retrieve Batch",
+        "description": "[https://docs.easypost.com/docs/batches#retrieve-batch](https://docs.easypost.com/docs/batches#retrieve-batch)\n\nA\u00a0`Batch`\u00a0can be retrieved by either its\u00a0`id`\u00a0or\u00a0`reference`. However it is recommended to use EasyPost's provided identifiers because uniqueness on\u00a0`reference`\u00a0is not enforced.",
+        "parameters": [
+          {
+            "name": "BATCH_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveBatch"
+      },
+      "parameters": [
+        {
+          "name": "BATCH_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/metadata/carriers": {
+      "get": {
+        "tags": [
+          "Advanced > Carrier Metadata"
+        ],
+        "summary": "Retrieve Carrier Metadata",
+        "description": "[https://docs.easypost.com/docs/carrier-metadata](https://docs.easypost.com/docs/carrier-metadata)\n\nRetrieve all\u00a0`CarrierMetadata`\u00a0for all carriers on the EasyPost platform. Optionally, filter the response by specifying a list of carriers or metadata types.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveCarrierMetadata"
+      }
+    },
+    "/v2/customs_infos": {
+      "post": {
+        "tags": [
+          "Advanced > CustomsInfo"
+        ],
+        "summary": "Create Customs Info",
+        "description": "[https://docs.easypost.com/docs/customs-infos#create-a-customsinfo](https://docs.easypost.com/docs/customs-infos#create-a-customsinfo)\n\nA\u00a0`CustomsInfo`\u00a0object contains all administrative information for processing customs, as well as a list of\u00a0[<code>CustomsItems</code>](https://docs.easypost.com/docs/customs-items). When creating a\u00a0`CustomsInfo`, you may store the\u00a0`id`\u00a0from the response for use later in\u00a0[<code>Shipment</code>&nbsp;creation](https://docs.easypost.com/docs/shipments#create-a-shipment).",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customs_info": {
+                    "type": "object",
+                    "properties": {
+                      "customs_certify": {
+                        "type": "boolean"
+                      },
+                      "customs_signer": {
+                        "type": "string"
+                      },
+                      "contents_type": {
+                        "type": "string"
+                      },
+                      "contents_explanation": {
+                        "type": "string"
+                      },
+                      "restriction_type": {
+                        "type": "string"
+                      },
+                      "eel_pfc": {
+                        "type": "string"
+                      },
+                      "customs_items": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "description": {
+                              "type": "string"
+                            },
+                            "quantity": {
+                              "type": "integer"
+                            },
+                            "weight": {
+                              "type": "number",
+                              "description": "Ounces."
+                            },
+                            "value": {
+                              "type": "number"
+                            },
+                            "hs_tariff_number": {
+                              "type": "string"
+                            },
+                            "origin_country": {
+                              "type": "string"
+                            },
+                            "code": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": [
+                      "contents_type",
+                      "customs_items"
+                    ]
+                  }
+                },
+                "required": [
+                  "customs_info"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createCustomsInfo"
+      }
+    },
+    "/v2/customs_infos/{CUSTOMS_INFO_ID}": {
+      "get": {
+        "tags": [
+          "Advanced > CustomsInfo"
+        ],
+        "summary": "Retrieve Customs Info",
+        "description": "[https://docs.easypost.com/docs/customs-infos#retrieve-a-customsinfo](https://docs.easypost.com/docs/customs-infos#retrieve-a-customsinfo)\n\nA\u00a0`CustomsInfo`\u00a0can be retrieved by its\u00a0`id`.",
+        "parameters": [
+          {
+            "name": "CUSTOMS_INFO_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveCustomsInfo"
+      },
+      "parameters": [
+        {
+          "name": "CUSTOMS_INFO_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/customs_items": {
+      "post": {
+        "tags": [
+          "Advanced > CustomsItem"
+        ],
+        "summary": "Create Customs Item",
+        "description": "[https://docs.easypost.com/docs/customs-items#create-a-customsitem](https://docs.easypost.com/docs/customs-items#create-a-customsitem)\n\nA\u00a0`CustomsItem`\u00a0contains information relating to each product within the package. When creating a\u00a0`CustomsItem`, you may store the\u00a0`id`\u00a0from the response for use later in\u00a0[<code>CustomsInfo</code>&nbsp;creation](https://docs.easypost.com/docs/customs-infos#create-a-customsinfo).",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customs_item": {
+                    "type": "object",
+                    "properties": {
+                      "description": {
+                        "type": "string"
+                      },
+                      "quantity": {
+                        "type": "integer"
+                      },
+                      "weight": {
+                        "type": "number",
+                        "description": "Ounces."
+                      },
+                      "value": {
+                        "type": "number"
+                      },
+                      "hs_tariff_number": {
+                        "type": "string"
+                      },
+                      "origin_country": {
+                        "type": "string"
+                      },
+                      "code": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "description",
+                      "quantity",
+                      "weight",
+                      "value"
+                    ]
+                  }
+                },
+                "required": [
+                  "customs_item"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createCustomsItem"
+      }
+    },
+    "/v2/customs_items/{CUSTOMS_ITEM_ID}": {
+      "get": {
+        "tags": [
+          "Advanced > CustomsItem"
+        ],
+        "summary": "Retrieve Customs Item",
+        "description": "[https://docs.easypost.com/docs/customs-items#retrieve-a-customsitem](https://docs.easypost.com/docs/customs-items#retrieve-a-customsitem)\n\nA\u00a0`CustomsItem`\u00a0can be retrieved by its\u00a0`id`.",
+        "parameters": [
+          {
+            "name": "CUSTOMS_ITEM_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveCustomsItem"
+      },
+      "parameters": [
+        {
+          "name": "CUSTOMS_ITEM_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/end_shippers": {
+      "post": {
+        "tags": [
+          "Advanced > EndShipper"
+        ],
+        "summary": "Create EndShipper",
+        "description": "[https://docs.easypost.com/docs/endshippers#create-an-endshipper](https://docs.easypost.com/docs/endshippers#create-an-endshipper)\n\nThe\u00a0`EndShipper`\u00a0object is meant to represent the person or business entity responsible for the shipment and not necessarily the shipping location.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "address": {
+                    "type": "object",
+                    "properties": {
+                      "street1": {
+                        "type": "string"
+                      },
+                      "street2": {
+                        "type": "string"
+                      },
+                      "city": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "zip": {
+                        "type": "string"
+                      },
+                      "country": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "company": {
+                        "type": "string"
+                      },
+                      "phone": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "federal_tax_id": {
+                        "type": "string"
+                      },
+                      "residential": {
+                        "type": "boolean"
+                      },
+                      "carrier_facility": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "address"
+                ],
+                "description": "Same shape as Address creation; street1, city, state, zip, country, name and phone are needed for a usable EndShipper."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createEndshipper"
+      },
+      "get": {
+        "tags": [
+          "Advanced > EndShipper"
+        ],
+        "summary": "Retrieve All EndShippers",
+        "description": "[https://docs.easypost.com/docs/endshippers#retrieve-all-endshippers](https://docs.easypost.com/docs/endshippers#retrieve-all-endshippers)\n\nList the\u00a0`EndShippers`\u00a0that have been created.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveAllEndshippers"
+      }
+    },
+    "/v2/end_shippers/{ENDSHIPPER_ID}": {
+      "put": {
+        "tags": [
+          "Advanced > EndShipper"
+        ],
+        "summary": "Update EndShipper",
+        "description": "[https://docs.easypost.com/docs/endshippers#update-an-endshipper](https://docs.easypost.com/docs/endshippers#update-an-endshipper)\n\nAn\u00a0`EndShipper`\u00a0object may be updated using the EndShipper API. All required fields for creating an\u00a0`EndShipper`\u00a0are required in an update request. Partial updates are not supported.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "address": {
+                    "name": "NEW NAME",
+                    "company": "BAZ",
+                    "street1": "164 TOWNSEND STREET UNIT 1",
+                    "street2": "UNIT 1",
+                    "city": "SAN FRANCISCO",
+                    "state": "CA",
+                    "zip": "94107",
+                    "country": "US",
+                    "phone": "555 555-5555",
+                    "email": "FOO@EXAMPLE.COM"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ENDSHIPPER_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "updateEndshipper"
+      },
+      "get": {
+        "tags": [
+          "Advanced > EndShipper"
+        ],
+        "summary": "Retrieve EndShipper",
+        "description": "[https://docs.easypost.com/docs/endshippers#retrieve-an-endshipper](https://docs.easypost.com/docs/endshippers#retrieve-an-endshipper)\n\nSimilar to retrieving a list of\u00a0`EndShippers`, you can retrieve an individual\u00a0`EndShipper`.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveEndshipper"
+      },
+      "parameters": [
+        {
+          "name": "ENDSHIPPER_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/events": {
+      "get": {
+        "tags": [
+          "Advanced > Events"
+        ],
+        "summary": "Retrieve All Events",
+        "description": "[https://docs.easypost.com/docs/events#retrieve-all-events](https://docs.easypost.com/docs/events#retrieve-all-events)\n\nA list of all\u00a0`Event`\u00a0objects associated with the given\u00a0[<code>API Key</code>](https://docs.easypost.com/docs/api-keys)\u00a0can also be retrieved. See the\u00a0[Pagination](https://docs.easypost.com/docs/pagination)\u00a0section of our docs for more details on retrieving all records when multiple pages are available.",
+        "parameters": [
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "5"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveAllEvents"
+      }
+    },
+    "/v2/events/{EVENT_ID}": {
+      "get": {
+        "tags": [
+          "Advanced > Events"
+        ],
+        "summary": "Retrieve Event",
+        "description": "[https://docs.easypost.com/docs/events#retrieve-an-event](https://docs.easypost.com/docs/events#retrieve-an-event)\n\nAn\u00a0`Event`\u00a0can be retrieved by its\u00a0`id`.",
+        "parameters": [
+          {
+            "name": "EVENT_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveEvent"
+      },
+      "parameters": [
+        {
+          "name": "EVENT_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/events/{EVENT_ID}/payloads": {
+      "get": {
+        "tags": [
+          "Advanced > Events"
+        ],
+        "summary": "Retrieve All Event Payloads",
+        "description": "[https://docs.easypost.com/docs/events/payloads#retrieve-all-payloads](https://docs.easypost.com/docs/events/payloads#retrieve-all-payloads)\n\nRetrieve all\u00a0`Payloads`\u00a0by\u00a0[<code>Event</code>](https://docs.easypost.com/docs/events)\u00a0ID.",
+        "parameters": [
+          {
+            "name": "EVENT_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveAllEventPayloads"
+      },
+      "parameters": [
+        {
+          "name": "EVENT_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/events/{EVENT_ID}/payloads/{PAYLOAD_ID}": {
+      "get": {
+        "tags": [
+          "Advanced > Events"
+        ],
+        "summary": "Retrieve Event Payload",
+        "description": "[https://docs.easypost.com/docs/events/payloads#retrieve-a-payload](https://docs.easypost.com/docs/events/payloads#retrieve-a-payload)\n\nA\u00a0`Payload`\u00a0must be retrieved with both an\u00a0[<code>Event</code>](https://docs.easypost.com/docs/events)\u00a0ID and\u00a0`Payload`\u00a0ID.",
+        "parameters": [
+          {
+            "name": "EVENT_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "PAYLOAD_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveEventPayload"
+      },
+      "parameters": [
+        {
+          "name": "EVENT_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "PAYLOAD_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/orders": {
+      "post": {
+        "tags": [
+          "Advanced > Orders"
+        ],
+        "summary": "One-Call Buy Order",
+        "description": "[https://docs.easypost.com/docs/orders#buy-an-order-without-rating-one-call-buy](https://docs.easypost.com/docs/orders#buy-an-order-without-rating-one-call-buy)\n\nThere is an alternative way to purchase orders that is known as the \"one-call buy\" method. This method is often used if you have a flat-rate set with a mail carrier for a given service level, or if you know your desired service level without needing to see the rate first.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "order": {
+                    "type": "object",
+                    "properties": {
+                      "to_address": {
+                        "type": "object",
+                        "properties": {
+                          "street1": {
+                            "type": "string"
+                          },
+                          "street2": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "zip": {
+                            "type": "string"
+                          },
+                          "country": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "company": {
+                            "type": "string"
+                          },
+                          "phone": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "federal_tax_id": {
+                            "type": "string"
+                          },
+                          "residential": {
+                            "type": "boolean"
+                          },
+                          "carrier_facility": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "from_address": {
+                        "type": "object",
+                        "properties": {
+                          "street1": {
+                            "type": "string"
+                          },
+                          "street2": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "zip": {
+                            "type": "string"
+                          },
+                          "country": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "company": {
+                            "type": "string"
+                          },
+                          "phone": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "federal_tax_id": {
+                            "type": "string"
+                          },
+                          "residential": {
+                            "type": "boolean"
+                          },
+                          "carrier_facility": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "shipments": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        }
+                      },
+                      "carrier_accounts": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "required": [
+                      "shipments"
+                    ]
+                  }
+                },
+                "required": [
+                  "order"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "oneCallBuyOrder"
+      },
+      "get": {
+        "tags": [
+          "Advanced > Orders"
+        ],
+        "summary": "Retrieve Order",
+        "description": "[https://docs.easypost.com/docs/orders#retrieve-an-order](https://docs.easypost.com/docs/orders#retrieve-an-order)\n\nAn\u00a0`Order`\u00a0can be retrieved by either its\u00a0`id`\u00a0or\u00a0`reference`. However, it is recommended to use EasyPost's provided identifiers because uniqueness on\u00a0`reference`\u00a0is not enforced.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveOrder"
+      }
+    },
+    "/v2/orders/{ORDER_ID}/buy": {
+      "post": {
+        "tags": [
+          "Advanced > Orders"
+        ],
+        "summary": "Buy Order",
+        "description": "[https://docs.easypost.com/docs/orders#buy-an-order](https://docs.easypost.com/docs/orders#buy-an-order)\n\nTo purchase an\u00a0`Order`, you only need to specify the\u00a0`carrier`\u00a0and\u00a0`service`. This operation populates the\u00a0`tracking_code`\u00a0and\u00a0`postage_label`\u00a0attributes of each\u00a0[<code>Shipment</code>](https://docs.easypost.com/docs/shipments)\u00a0in the order.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "carrier": "FedEx",
+                  "service": "FEDEX_GROUND"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ORDER_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "buyOrder"
+      },
+      "parameters": [
+        {
+          "name": "ORDER_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/pickups": {
+      "post": {
+        "tags": [
+          "Advanced > Pickup"
+        ],
+        "summary": "Create Pickup",
+        "description": "[https://docs.easypost.com/docs/pickups#create-a-pickup](https://docs.easypost.com/docs/pickups#create-a-pickup)\n\nCreating a\u00a0`Pickup`\u00a0will automatically fetch rates for the given time frame and location.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "pickup": {
+                    "type": "object",
+                    "properties": {
+                      "address": {
+                        "type": "object",
+                        "properties": {
+                          "street1": {
+                            "type": "string"
+                          },
+                          "street2": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "zip": {
+                            "type": "string"
+                          },
+                          "country": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "company": {
+                            "type": "string"
+                          },
+                          "phone": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "federal_tax_id": {
+                            "type": "string"
+                          },
+                          "residential": {
+                            "type": "boolean"
+                          },
+                          "carrier_facility": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "shipment": {
+                        "type": "object",
+                        "description": "Shipment (or use \"batch\") the pickup is for."
+                      },
+                      "min_datetime": {
+                        "type": "string"
+                      },
+                      "max_datetime": {
+                        "type": "string"
+                      },
+                      "is_account_address": {
+                        "type": "boolean"
+                      },
+                      "instructions": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "address",
+                      "min_datetime",
+                      "max_datetime"
+                    ]
+                  }
+                },
+                "required": [
+                  "pickup"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createPickup"
+      },
+      "get": {
+        "tags": [
+          "Advanced > Pickup"
+        ],
+        "summary": "Retrieve All Pickups",
+        "description": "[https://docs.easypost.com/docs/pickups#retrieve-all-pickups](https://docs.easypost.com/docs/pickups#retrieve-all-pickups)\n\nA list of all\u00a0`Pickup`\u00a0objects associated with the given\u00a0[<code>API Key</code>](https://docs.easypost.com/docs/api-keys)\u00a0can be retrieved.",
+        "parameters": [
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "5"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveAllPickups"
+      }
+    },
+    "/v2/pickups/{PICKUP_ID}/buy": {
+      "post": {
+        "tags": [
+          "Advanced > Pickup"
+        ],
+        "summary": "Buy Pickup",
+        "description": "[https://docs.easypost.com/docs/pickups#buy-a-pickup](https://docs.easypost.com/docs/pickups#buy-a-pickup)\n\nTo purchase a\u00a0`Pickup`, a\u00a0[<code>PickupRate</code>](https://docs.easypost.com/docs/pickups#pickuprate-object)\u00a0must be specified by its\u00a0`carrier`\u00a0and\u00a0`service`\u00a0name, instead of its\u00a0`id`.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "carrier": "UPS",
+                  "service": "Same-Day Pickup"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "PICKUP_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "buyPickup"
+      },
+      "parameters": [
+        {
+          "name": "PICKUP_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/pickups/{PICKUP_ID}/cancel": {
+      "post": {
+        "tags": [
+          "Advanced > Pickup"
+        ],
+        "summary": "Cancel Pickup",
+        "description": "[https://docs.easypost.com/docs/pickups#cancel-a-pickup](https://docs.easypost.com/docs/pickups#cancel-a-pickup)\n\nYou may cancel a\u00a0`Pickup`\u00a0any time before it has been completed.",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "PICKUP_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "cancelPickup"
+      },
+      "parameters": [
+        {
+          "name": "PICKUP_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/pickups/{PICKUP_ID}": {
+      "get": {
+        "tags": [
+          "Advanced > Pickup"
+        ],
+        "summary": "Retrieve Pickup",
+        "description": "[https://docs.easypost.com/docs/pickups#retrieve-a-pickup](https://docs.easypost.com/docs/pickups#retrieve-a-pickup)\n\nA\u00a0`Pickup`\u00a0object can be retrieved by either an\u00a0`id`\u00a0or\u00a0`reference`.",
+        "parameters": [
+          {
+            "name": "PICKUP_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrievePickup"
+      },
+      "parameters": [
+        {
+          "name": "PICKUP_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/readydocs/packslip": {
+      "post": {
+        "tags": [
+          "Advanced > ReadyDocs"
+        ],
+        "summary": "Create Document",
+        "description": "Creates a packing slip using a predefined ReadyDocs template.\n\nThe\u00a0`project`\u00a0identifies the packing slip template to generate. ReadyDocs supports vendor-specific templates as well as generic packing slip templates.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "pack_slip_data": {
+                    "pack_slip": {
+                      "project": "hsn_8x11",
+                      "output_type": "S3",
+                      "order": {
+                        "ship_to": {
+                          "address": {
+                            "name": "Dr. Steve Brule",
+                            "company": "EasyPost",
+                            "street1": "417 Montgomery Street",
+                            "street2": "5th Floor",
+                            "city": "San Francisco",
+                            "state": "CA",
+                            "zip": "94104",
+                            "country": "US",
+                            "phone": "4155559999",
+                            "email": "dr_steve_brule@example.com"
+                          }
+                        },
+                        "ship_from": {
+                          "address": {
+                            "name": "EasyPost",
+                            "company": "EasyPost",
+                            "street1": "417 Montgomery Street",
+                            "street2": "5th Floor",
+                            "city": "San Francisco",
+                            "state": "CA",
+                            "zip": "94104",
+                            "country": "US",
+                            "phone": "4155559999",
+                            "email": "support@example.com"
+                          }
+                        },
+                        "bill_to": {
+                          "address": {
+                            "name": "Dr. Steve Brule",
+                            "street1": "179 N Harbor Dr",
+                            "city": "Redondo Beach",
+                            "state": "CA",
+                            "zip": "90277",
+                            "country": "US",
+                            "phone": "8575551212",
+                            "email": "dr_steve_brule@example.com"
+                          }
+                        },
+                        "customer_service": {
+                          "phone": "4155559999",
+                          "email": "support@example.com",
+                          "website": "https://www.example.com"
+                        },
+                        "customer_id": "customer_123",
+                        "customer_order": "order_123",
+                        "order_number": "123456",
+                        "po_number": "PO-123456",
+                        "invoice_number": "INV-123456",
+                        "warehouse_id": "warehouse_123",
+                        "ship_date": "08/11/2026",
+                        "order_date": "08/10/2026",
+                        "delivery_date": "08/14/2026",
+                        "ship_method": "Ground",
+                        "pay_method": "Credit Card",
+                        "order_message": "Thank you for your order.",
+                        "sub_total": "$25.00",
+                        "sales_tax": "$2.00",
+                        "shipping_handling": "$5.00",
+                        "credit": "$0.00",
+                        "total": "$32.00",
+                        "currency_uom": "$",
+                        "sales_person": "Steve Brule",
+                        "order_lines": {
+                          "line": [
+                            {
+                              "item_id": "item_123",
+                              "upc": "012345678905",
+                              "merchant_sku": "SKU-123",
+                              "customer_part_number": "PART-123",
+                              "description": "T-shirt",
+                              "item_style": "Blue / Medium",
+                              "qty": {
+                                "ord": 2,
+                                "ship": 2,
+                                "bo": 0,
+                                "uom": "each"
+                              },
+                              "unit_price": "$12.50",
+                              "total_price": "$25.00",
+                              "gift_message": "Happy Birthday!"
+                            }
+                          ]
+                        }
+                      },
+                      "shipping_label": {
+                        "data": "test",
+                        "format": "PNG",
+                        "encoding": "base64"
+                      },
+                      "print_commands": {
+                        "print": {
+                          "type": "text",
+                          "encoding": "base64",
+                          "encoding_character_set": "UTF-8",
+                          "data": "test",
+                          "size": "4x6",
+                          "format": "ZPL"
+                        }
+                      },
+                      "image": {
+                        "char_set": "ISO-8859-1",
+                        "image_data": "/9j/4AAQS.......QhCA/",
+                        "image_format": "JPEG"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createDocument"
+      }
+    },
+    "/v2/reports/{REPORT_TYPE}": {
+      "post": {
+        "tags": [
+          "Advanced > Reports"
+        ],
+        "summary": "Create Report",
+        "description": "[https://docs.easypost.com/docs/reports#create-a-report](https://docs.easypost.com/docs/reports#create-a-report)\n\nTo create a\u00a0`Report`, provide a\u00a0`start_date`\u00a0and\u00a0`end_date`\u00a0that are less than 31 days apart along with any other optional parameter that you would like to specify.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "start_date": "2016-10-01",
+                  "end_date": "2016-10-31"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "REPORT_TYPE",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createReport"
+      },
+      "get": {
+        "tags": [
+          "Advanced > Reports"
+        ],
+        "summary": "Retrieve All Reports",
+        "description": "[https://docs.easypost.com/docs/reports#retrieve-all-reports](https://docs.easypost.com/docs/reports#retrieve-all-reports)\n\nA list of all\u00a0`Report`\u00a0objects associated with the given\u00a0[<code>API Key</code>](https://docs.easypost.com/docs/api-keys)\u00a0can also be retrieved.\n\nNote: the vendor's collection also models a separate \"Retrieve Report\" call on this same path shape, passing a specific report ID instead of a type \u2014 pass a `rpt_...` ID here to retrieve that single report instead of listing by type.",
+        "parameters": [
+          {
+            "name": "REPORT_TYPE",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveAllReports"
+      },
+      "parameters": [
+        {
+          "name": "REPORT_TYPE",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/scan_forms": {
+      "post": {
+        "tags": [
+          "Advanced > ScanForms"
+        ],
+        "summary": "Create ScanForm",
+        "description": "[https://docs.easypost.com/docs/scan-form#create-a-scanform](https://docs.easypost.com/docs/scan-form#create-a-scanform)\n\nA\u00a0`ScanForm`\u00a0can be created in two ways:\n\n- Create a\u00a0`ScanForm`\u00a0for\u00a0[<code>Shipments</code>](https://docs.easypost.com/docs/shipments)\u00a0directly\n    \n- [Create a&nbsp;<code>ScanForm</code>&nbsp;for a&nbsp;<code>Batch</code>](https://docs.easypost.com/docs/batches#manifesting-scan-form)\u00a0of\u00a0`Shipments`",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "scan_form": {
+                    "type": "object",
+                    "properties": {
+                      "shipments": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        }
+                      }
+                    },
+                    "required": [
+                      "shipments"
+                    ]
+                  }
+                },
+                "required": [
+                  "scan_form"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createScanform"
+      },
+      "get": {
+        "tags": [
+          "Advanced > ScanForms"
+        ],
+        "summary": "Retrieve All ScanForms",
+        "description": "[https://docs.easypost.com/docs/scan-form#retrieve-all-scanforms](https://docs.easypost.com/docs/scan-form#retrieve-all-scanforms)\n\nA list of all\u00a0`ScanForm`\u00a0objects associated with the given\u00a0[<code>API Key</code>](https://docs.easypost.com/docs/api-keys)\u00a0can also be retrieved.",
+        "parameters": [
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "5"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveAllScanforms"
+      }
+    },
+    "/v2/scan_forms/{SCANFORM_ID}": {
+      "get": {
+        "tags": [
+          "Advanced > ScanForms"
+        ],
+        "summary": "Retrieve ScanForm",
+        "description": "[https://docs.easypost.com/docs/scan-form#retrieve-a-scanform](https://docs.easypost.com/docs/scan-form#retrieve-a-scanform)\n\nRetrieve a\u00a0`ScanForm`\u00a0by its\u00a0`id`.",
+        "parameters": [
+          {
+            "name": "SCANFORM_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveScanform"
+      },
+      "parameters": [
+        {
+          "name": "SCANFORM_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/webhooks": {
+      "post": {
+        "tags": [
+          "Advanced > Webhook"
+        ],
+        "summary": "Create Webhook",
+        "description": "[https://docs.easypost.com/docs/webhooks#create-a-webhook](https://docs.easypost.com/docs/webhooks#create-a-webhook)\n\nTo create a\u00a0`Webhook`, provide a\u00a0`url`\u00a0parameter to designate where notifications are sent.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "webhook": {
+                    "type": "object",
+                    "properties": {
+                      "url": {
+                        "type": "string"
+                      },
+                      "webhook_secret": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "url"
+                    ]
+                  }
+                },
+                "required": [
+                  "webhook"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createWebhook"
+      },
+      "get": {
+        "tags": [
+          "Advanced > Webhook"
+        ],
+        "summary": "Retrieve All Webhooks",
+        "description": "[https://docs.easypost.com/docs/webhooks#retrieve-all-webhooks](https://docs.easypost.com/docs/webhooks#retrieve-all-webhooks)\n\nRetrieve an unpaginated list of all\u00a0`Webhooks`\u00a0associated with the\u00a0[<code>API Key</code>](https://docs.easypost.com/docs/api-keys).",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveAllWebhooks"
+      }
+    },
+    "/v2/webhooks/{WEBHOOK_ID}": {
+      "get": {
+        "tags": [
+          "Advanced > Webhook"
+        ],
+        "summary": "Retrieve Webhook",
+        "description": "[https://docs.easypost.com/docs/webhooks#retrieve-a-webhook](https://docs.easypost.com/docs/webhooks#retrieve-a-webhook)\n\nRetrieve a\u00a0`Webhook`\u00a0by\u00a0`id`.",
+        "parameters": [
+          {
+            "name": "WEBHOOK_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveWebhook"
+      },
+      "patch": {
+        "tags": [
+          "Advanced > Webhook"
+        ],
+        "summary": "Update Webhook",
+        "description": "[https://docs.easypost.com/docs/webhooks#update-a-webhook](https://docs.easypost.com/docs/webhooks#update-a-webhook)\n\nRe-enable a disabled\u00a0`Webhook`\u00a0or update the\u00a0[<code>webhook_secret</code>](https://docs.easypost.com/docs/webhooks#hmac-validation)\u00a0and\u00a0`custom_headers`.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "webhook_secret": "A1B2C3",
+                  "custom_headers": [
+                    {
+                      "name": "X-Header-Name",
+                      "value": "header_value"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "WEBHOOK_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "updateWebhook"
+      },
+      "delete": {
+        "tags": [
+          "Advanced > Webhook"
+        ],
+        "summary": "Delete Webhook",
+        "description": "[https://docs.easypost.com/docs/webhooks#delete-a-webhook](https://docs.easypost.com/docs/webhooks#delete-a-webhook)\n\nDelete a\u00a0`Webhook`\u00a0by\u00a0`id`.",
+        "parameters": [
+          {
+            "name": "WEBHOOK_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "deleteWebhook"
+      },
+      "parameters": [
+        {
+          "name": "WEBHOOK_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/api_keys": {
+      "get": {
+        "tags": [
+          "Account Management > API Keys"
+        ],
+        "summary": "Retrieve API Keys",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveApiKeys"
+      }
+    },
+    "/v2/carrier_accounts": {
+      "post": {
+        "tags": [
+          "Account Management > Carrier Accounts"
+        ],
+        "summary": "Create Carrier Account",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "carrier_account": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "description": "Carrier account type, e.g. \"UpsAccount\", \"FedexAccount\", \"UspsAccount\"."
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "reference": {
+                        "type": "string"
+                      },
+                      "credentials": {
+                        "type": "object"
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ]
+                  }
+                },
+                "required": [
+                  "carrier_account"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createCarrierAccount"
+      },
+      "get": {
+        "tags": [
+          "Account Management > Carrier Accounts"
+        ],
+        "summary": "Retrieve All Carrier Accounts",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveAllCarrierAccounts"
+      }
+    },
+    "/v2/carrier_accounts/register": {
+      "post": {
+        "tags": [
+          "Account Management > Carrier Accounts"
+        ],
+        "summary": "Create FedEx Carrier Account",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "carrier_account": {
+                    "type": "FedexAccount",
+                    "description": "FedEx Description Account",
+                    "reference": "FedEx Reference",
+                    "registration_data": {
+                      "account_number": "ACCOUNT_NUMBER",
+                      "shipping_streets": "SHIPPING_STREETS",
+                      "shipping_city": "SHIPPING_CITY",
+                      "shipping_state": "SHIPPING_STATE",
+                      "shipping_postal_code": "SHIPPING_POSTAL_CODE",
+                      "shipping_country_code": "SHIPPING_COUNTRY_CODE",
+                      "corporate_first_name": "CORPORATE_FIRST_NAME",
+                      "corporate_last_name": "CORPORATE_LAST_NAME",
+                      "corporate_job_title": "CORPORATE_JOB_TITLE",
+                      "corporate_company_name": "CORPORATE_COMPANY_NAME",
+                      "corporate_phone_number": "CORPORATE_PHONE_NUMBER",
+                      "corporate_email_address": "CORPORATE_EMAIL_ADDRESS",
+                      "corporate_streets": "CORPORATE_STREETS",
+                      "corporate_city": "CORPORATE_CITY",
+                      "corporate_state": "CORPORATE_STATE",
+                      "corporate_postal_code": "CORPORATE_POSTAL_CODE",
+                      "corporate_country_code": "CORPORATE_COUNTRY_CODE"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createFedexCarrierAccount"
+      }
+    },
+    "/v2/ups_oauth_registrations": {
+      "post": {
+        "tags": [
+          "Account Management > Carrier Accounts"
+        ],
+        "summary": "Create UPS Carrier Account",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "ups_oauth_registrations": {
+                    "type": "UpsAccount",
+                    "account_number": "CUSTOMERS UPS ACCOUNT NUMBER",
+                    "description": "CUSTOMERS ACCOUNT DESCRIPTION (OPTIONAL)",
+                    "reference": "UNIQUE ACCOUNT REFERENCE (OPTIONAL)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createUpsCarrierAccount"
+      }
+    },
+    "/v2/carrier_accounts/register_oauth": {
+      "post": {
+        "tags": [
+          "Account Management > Carrier Accounts"
+        ],
+        "summary": "Create Oauth Carrier Account",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "carrier_account_oauth_registrations": {
+                    "type": "AmazonShippingAccount",
+                    "description": "Amazon Shipping Account"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createOauthCarrierAccount"
+      }
+    },
+    "/v2/carrier_accounts/{CARRIER_ACCOUNT_ID}": {
+      "get": {
+        "tags": [
+          "Account Management > Carrier Accounts"
+        ],
+        "summary": "Retrieve Carrier Account",
+        "parameters": [
+          {
+            "name": "CARRIER_ACCOUNT_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveCarrierAccount"
+      },
+      "patch": {
+        "tags": [
+          "Account Management > Carrier Accounts"
+        ],
+        "summary": "Update Carrier Account",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "carrier_account": {
+                    "credentials": {
+                      "pickup_id": "abc123"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "CARRIER_ACCOUNT_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "updateCarrierAccount"
+      },
+      "delete": {
+        "tags": [
+          "Account Management > Carrier Accounts"
+        ],
+        "summary": "Delete Carrier Account",
+        "parameters": [
+          {
+            "name": "CARRIER_ACCOUNT_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "deleteCarrierAccount"
+      },
+      "parameters": [
+        {
+          "name": "CARRIER_ACCOUNT_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/ups_oauth_registrations/{CARRIER_ACCOUNT_ID}": {
+      "patch": {
+        "tags": [
+          "Account Management > Carrier Accounts"
+        ],
+        "summary": "Update UPS Carrier Account",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "ups_oauth_registrations": {
+                    "account_number": "CUSTOMERS UPS ACCOUNT NUMBER",
+                    "description": "CUSTOMERS ACCOUNT DESCRIPTION (OPTIONAL)",
+                    "reference": "UNIQUE ACCOUNT REFERENCE (OPTIONAL)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "CARRIER_ACCOUNT_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "updateUpsCarrierAccount"
+      },
+      "parameters": [
+        {
+          "name": "CARRIER_ACCOUNT_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/carrier_types": {
+      "get": {
+        "tags": [
+          "Account Management > Carrier Types"
+        ],
+        "summary": "Retrieve Carrier Types",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveCarrierTypes"
+      }
+    },
+    "/v2/referral_customers": {
+      "post": {
+        "tags": [
+          "Account Management > Users > Billing > Partner White Label (Referrals) > Referral Users"
+        ],
+        "summary": "Create Referral User",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "user": {
+                    "name": "Firstname Lastname",
+                    "email": "email@example.com",
+                    "phone": "8888888888"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Partner",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{PARTNER_NAME}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createReferralUser"
+      },
+      "get": {
+        "tags": [
+          "Account Management > Users > Billing > Partner White Label (Referrals) > Referral Users"
+        ],
+        "summary": "Retrieve Referral Users",
+        "parameters": [
+          {
+            "name": "Partner",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{PARTNER_NAME}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveReferralUsers"
+      }
+    },
+    "/v2/referral_customers/{REFERRAL_USER_ID}": {
+      "put": {
+        "tags": [
+          "Account Management > Users > Billing > Partner White Label (Referrals) > Referral Users"
+        ],
+        "summary": "Update Referral User Email",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "user": {
+                    "email": "email@example.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Partner",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{PARTNER_NAME}}"
+          },
+          {
+            "name": "REFERRAL_USER_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "updateReferralUserEmail"
+      },
+      "parameters": [
+        {
+          "name": "REFERRAL_USER_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/partners/stripe_public_key": {
+      "get": {
+        "tags": [
+          "Account Management > Users > Billing > Partner White Label (Referrals) > Billing"
+        ],
+        "summary": "Step 1a: Retrieve EasyPost's Public Stripe API Key",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "step1aRetrieveEasypostSPublicStripeApiKey"
+      }
+    },
+    "/v1/tokens": {
+      "post": {
+        "tags": [
+          "Account Management > Users > Billing > Partner White Label (Referrals) > Billing"
+        ],
+        "summary": "Step 1b: Get Token from Stripe",
+        "description": "You can visit the stripe collection for this step:\n\n[https://www.postman.com/stripedev/workspace/stripe-developers/request/665823-9a7a1c69-1a12-47a6-b38d-095e5069e0b8](https://www.postman.com/stripedev/workspace/stripe-developers/request/665823-9a7a1c69-1a12-47a6-b38d-095e5069e0b8)",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "card[number]": {
+                    "type": "integer",
+                    "example": "4242424242424242"
+                  },
+                  "card[exp_month]": {
+                    "type": "integer",
+                    "example": "6"
+                  },
+                  "card[exp_year]": {
+                    "type": "integer",
+                    "example": "2023"
+                  },
+                  "card[cvc]": {
+                    "type": "integer",
+                    "example": "314"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "step1bGetTokenFromStripe"
+      }
+    },
+    "/v2/credit_cards": {
+      "post": {
+        "tags": [
+          "Account Management > Users > Billing > Partner White Label (Referrals) > Billing"
+        ],
+        "summary": "Add Stripe Credit Card",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "credit_card": {
+                    "payment_method_id": "pm_...",
+                    "priority": "primary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "addStripeCreditCard"
+      }
+    },
+    "/beta/setup_intents": {
+      "post": {
+        "tags": [
+          "Account Management > Users > Billing > Partner White Label (Referrals) > Billing"
+        ],
+        "summary": "Create Stripe Bank Account Secret",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createStripeBankAccountSecret"
+      }
+    },
+    "/beta/financial_connections_sessions": {
+      "post": {
+        "tags": [
+          "Account Management > Users > Billing > Partner White Label (Referrals) > Billing"
+        ],
+        "summary": "Create Stripe Credit Card Secret",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createStripeCreditCardSecret"
+      }
+    },
+    "/v2/bank_accounts": {
+      "post": {
+        "tags": [
+          "Account Management > Users > Billing > Partner White Label (Referrals) > Billing"
+        ],
+        "summary": "Add Stripe Bank Account",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "financial_connections_id": "fca_...",
+                  "mandate_data": {
+                    "ip_address": "127.0.0.1",
+                    "user_agent": "Mozilla/5.0",
+                    "accepted_at": 1722510730
+                  },
+                  "priority": "primary"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "addStripeBankAccount"
+      }
+    },
+    "/v2/users": {
+      "post": {
+        "tags": [
+          "Account Management > Users"
+        ],
+        "summary": "Create Child User",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "user": {
+                    "name": "Child Account Name"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "createChildUser"
+      },
+      "get": {
+        "tags": [
+          "Account Management > Users"
+        ],
+        "summary": "Retrieve Authenticated User",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveAuthenticatedUser"
+      },
+      "patch": {
+        "tags": [
+          "Account Management > Users"
+        ],
+        "summary": "Update Authenticated User",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "user": {
+                    "recharge_threshold": "50.00"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "updateAuthenticatedUser"
+      }
+    },
+    "/v2/credit_cards/{CREDIT_CARD_ID}/charges": {
+      "post": {
+        "tags": [
+          "Account Management > Users > Billing"
+        ],
+        "summary": "Fund Wallet via Credit Card",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "amount": "2000"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "CREDIT_CARD_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "fundWalletViaCreditCard"
+      },
+      "parameters": [
+        {
+          "name": "CREDIT_CARD_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/bank_accounts/{BANK_ACCOUNT_ID}/charges": {
+      "post": {
+        "tags": [
+          "Account Management > Users > Billing"
+        ],
+        "summary": "Fund Wallet via Bank Account",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "amount": "2000"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "BANK_ACCOUNT_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "fundWalletViaBankAccount"
+      },
+      "parameters": [
+        {
+          "name": "BANK_ACCOUNT_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/payment_methods": {
+      "get": {
+        "tags": [
+          "Account Management > Users > Billing"
+        ],
+        "summary": "Retrieve Payment Methods",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrievePaymentMethods"
+      }
+    },
+    "/v2/credit_cards/{CREDIT_CARD_ID}": {
+      "delete": {
+        "tags": [
+          "Account Management > Users > Billing"
+        ],
+        "summary": "Delete Credit Card",
+        "parameters": [
+          {
+            "name": "CREDIT_CARD_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "deleteCreditCard"
+      },
+      "parameters": [
+        {
+          "name": "CREDIT_CARD_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/bank_accounts/{BANK_ACCOUNT_ID}": {
+      "delete": {
+        "tags": [
+          "Account Management > Users > Billing"
+        ],
+        "summary": "Delete Bank Account",
+        "parameters": [
+          {
+            "name": "BANK_ACCOUNT_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "deleteBankAccount"
+      },
+      "parameters": [
+        {
+          "name": "BANK_ACCOUNT_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/users/{USER_ID}/brand": {
+      "patch": {
+        "tags": [
+          "Account Management > Users > Brand"
+        ],
+        "summary": "Update Brand",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "brand": {
+                    "background_color": "#FFFFFF",
+                    "color": "#303F9F",
+                    "logo": "data:image/png;base64,iVBORw0K...",
+                    "logo_href": "https://www.easypost.com",
+                    "ad": "null",
+                    "ad_href": "null",
+                    "theme": "theme1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "USER_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "updateBrand"
+      },
+      "parameters": [
+        {
+          "name": "USER_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/users/{USER_ID}": {
+      "get": {
+        "tags": [
+          "Account Management > Users"
+        ],
+        "summary": "Retrieve User",
+        "parameters": [
+          {
+            "name": "USER_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "retrieveUser"
+      },
+      "patch": {
+        "tags": [
+          "Account Management > Users"
+        ],
+        "summary": "Update Child User",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "user": {
+                    "name": "Test Child"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "USER_ID",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "updateChildUser"
+      },
+      "delete": {
+        "tags": [
+          "Account Management > Users"
+        ],
+        "summary": "Delete Child User",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "deleteChildUser"
+      },
+      "parameters": [
+        {
+          "name": "USER_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/v2/shipments/{SHIPMENT_ID}/luma": {
+      "post": {
+        "tags": [
+          "Basics > Shipments > Luma"
+        ],
+        "summary": "Buy Shipment",
+        "description": "[https://docs.easypost.com/docs/luma#standard-buy](https://docs.easypost.com/docs/luma#standard-buy)\n\nA\u00a0[shipment object](https://docs.easypost.com/docs/shipments#shipment-object)\u00a0must be created with the following details before calling the Luma Standard Buy API:\n\n- `from_address`: The origin address.\n    \n- `to_address`: The destination address.\n    \n- `parcel`: Package weight, dimensions, and other relevant information.\n    \n\nThis step returns all available carrier rates associated with the EasyPost account.\n\nAfter creating the shipment, pass the\u00a0`shipment_id`\u00a0into the Luma API to purchase a label based on the predefined ruleset.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": "{\n    \"ruleset_name\": \"\"ruleset_...\"\",\n    \"planned_ship_date\": \"YYYY-MM-DD\",\n    \"deliver_by_date\": \"YYYY-MM-DD\"\n}"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "postV2ShipmentsShipmentLuma"
+      },
+      "parameters": [
+        {
+          "name": "SHIPMENT_ID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    }
+  }
+}
