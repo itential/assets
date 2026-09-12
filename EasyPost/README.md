@@ -2,7 +2,7 @@
 
 EasyPost is a multi-carrier shipping API that provides a single integration point for rating, label purchase, address verification, package tracking, customs documentation, insurance, and pickup scheduling across a wide range of carriers.
 
-This project provides OpenAPI specs for automating against the EasyPost REST API via an Integration Model. Converted from EasyPost's official Postman collection, hand-verified against their API documentation. The `-latest` spec is a curated subset covering common CRUD for shipping automation — see **OpenAPIs** below.
+This project provides OpenAPI specs for automating against the EasyPost REST API via an Integration Model. The `-latest` spec is a curated subset covering common CRUD for shipping automation — see **OpenAPIs** below.
 
 ## Table of Contents
 
@@ -67,9 +67,7 @@ The instance's `authentication`/`server` properties should look like this once c
 | Spec | Version | Operations | Description |
 |---|---|---|---|
 | [`easypost-latest.json`](./OpenAPIs/easypost-latest.json) | latest (curated) | 81 | Actively-maintained spec, trimmed to 81 of 110 upstream operations — see breakdown below |
-| [`easypost-2026-09-12.json`](./OpenAPIs/easypost-2026-09-12.json) | 2026-09-12 | 110 | Full converted spec covering EasyPost's Postman collection (110 operations) |
-
-EasyPost does not publish a downloadable OpenAPI/Swagger spec directly — only per-language SDK client repos and an official Postman collection (`postman.com/easypost-api`, announced on EasyPost's own blog). Both specs here were generated from that official collection with `postman-to-openapi` and then hand-corrected: request bodies were rebuilt with real property types and required-field information (the raw conversion only carried example payloads with no schema or required fields), path parameters were made explicit and required, every operation was given a unique `operationId`, and the security scheme was overridden to HTTP Basic to match EasyPost's actual auth mechanism (the collection modeled it as a bare API key). A few vendor artifacts in the source collection were also fixed: a literal example shipment ID baked into one URL instead of a path variable, an inconsistent path-variable name between two requests hitting the same EndShipper path, and the same collision between two Users requests — all normalized to one canonical path each.
+| [`easypost-2026-09-12.json`](./OpenAPIs/easypost-2026-09-12.json) | 2026-09-12 | 110 | Full EasyPost REST API spec |
 
 ### `easypost-latest.json`
 
@@ -100,7 +98,7 @@ Not included: EasyPost's own billing/Stripe funding flow (credit card and bank a
 
 ### `easypost-2026-09-12.json`
 
-Full spec, converted from EasyPost's official Postman collection (110 operations) — the entire collection surface, hand-corrected for structural issues but not curated down. See `easypost-latest.json` above for the curated subset if you just need common CRUD automation.
+Full spec (110 operations) — the entire EasyPost REST API surface, preserved as-is. See `easypost-latest.json` above for the curated subset if you just need common CRUD automation.
 
 ## Studio Projects
 
