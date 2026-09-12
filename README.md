@@ -41,6 +41,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **dbt Cloud** | Analytics engineering / data transformation |
 | **Delinea** | Secret Server (secrets management) |
 | **Docker** | Docker Engine · Docker Hub |
+| **EasyPost** | Shipping / logistics |
 | **EfficientIP** | SOLIDserver (DDI) |
 | **F5** | BIG-IP · BIG-IQ · Insight |
 | **Fortinet** | FortiGate |
