@@ -1,0 +1,3148 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Mattermost",
+    "version": "latest",
+    "x-vendor-api-version": "4.0.0",
+    "x-itential-curated": "Trimmed to 33 of 598 upstream operations, covering Channels, Posts, Users, and Teams CRUD and membership management for automation. See the repo README for the full breakdown and the full spec.",
+    "description": "Mattermost is an open-source, self-hostable team collaboration and messaging platform, providing channels, direct messaging, and integrations for engineering and IT operations teams."
+  },
+  "servers": [
+    {
+      "url": "{your-mattermost-url}",
+      "variables": {
+        "your-mattermost-url": {
+          "default": "http://localhost:8065"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/v4/channels": {
+      "get": {
+        "tags": [
+          "channels"
+        ],
+        "summary": "Get a list of all channels",
+        "description": "##### Permissions\n`manage_system`\n",
+        "operationId": "GetAllChannels",
+        "parameters": [
+          {
+            "name": "not_associated_to_group",
+            "in": "query",
+            "description": "A group id to exclude channels that are associated with that group via GroupChannel records. This can also be left blank with `not_associated_to_group=`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The page to select.",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "The number of channels per page.",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "exclude_default_channels",
+            "in": "query",
+            "description": "Whether to exclude default channels (ex Town Square, Off-Topic) from the results.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "include_deleted",
+            "in": "query",
+            "description": "Include channels that have been archived. This correlates to the `DeleteAt` flag being set in the database.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "include_total_count",
+            "in": "query",
+            "description": "Appends a total count of returned channels inside the response object - ex: `{ \"channels\": [], \"total_count\" : 0 }`.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "exclude_policy_constrained",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "If set to true, channels which are part of a data retention policy will be excluded. The `sysconsole_read_compliance` permission is required to use this parameter.\n__Minimum server version__: 5.35"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Channel list retrieval successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChannelListWithTeamData"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "channels"
+        ],
+        "summary": "Create a channel",
+        "description": "Create a new channel.\n##### Permissions\nIf creating a public channel, `create_public_channel` permission is required. If creating a private channel, `create_private_channel` permission is required.\n",
+        "operationId": "CreateChannel",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "display_name",
+                  "type",
+                  "team_id"
+                ],
+                "properties": {
+                  "team_id": {
+                    "type": "string",
+                    "description": "The team ID of the team to create the channel on"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "The unique handle for the channel, will be present in the channel URL"
+                  },
+                  "display_name": {
+                    "type": "string",
+                    "description": "The non-unique UI name for the channel"
+                  },
+                  "purpose": {
+                    "type": "string",
+                    "description": "A short description of the purpose of the channel"
+                  },
+                  "header": {
+                    "type": "string",
+                    "description": "Markdown-formatted text to display in the header of the channel"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "'O' for a public channel, 'P' for a private channel"
+                  },
+                  "managed_category_name": {
+                    "type": "string",
+                    "description": "The name of the managed category to assign this channel to. Requires an Enterprise license and the `ManagedChannelCategories` feature flag to be enabled."
+                  },
+                  "default_category_name": {
+                    "type": "string",
+                    "description": "Default sidebar category name for members when joining this channel. Requires `EnableChannelCategorySorting` to be enabled on the server."
+                  }
+                }
+              }
+            }
+          },
+          "description": "Channel object to be created",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Channel creation successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Channel"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/api/v4/channels/{channel_id}": {
+      "get": {
+        "tags": [
+          "channels"
+        ],
+        "summary": "Get a channel",
+        "description": "Get channel from the provided channel id string.\n##### Permissions\n`read_channel` permission for the channel.\n",
+        "operationId": "GetChannel",
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "Channel GUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Channel retrieval successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Channel"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "channels"
+        ],
+        "summary": "Update a channel",
+        "description": "Update a channel. The fields that can be updated are listed as parameters. Omitted fields will be treated as blanks.\n##### Permissions\nIf updating a public channel, `manage_public_channel_members` permission is required. If updating a private channel, `manage_private_channel_members` permission is required.\n",
+        "operationId": "UpdateChannel",
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "Channel GUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "The channel's id, not updatable"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "The unique handle for the channel, will be present in the channel URL"
+                  },
+                  "display_name": {
+                    "type": "string",
+                    "description": "The non-unique UI name for the channel"
+                  },
+                  "purpose": {
+                    "type": "string",
+                    "description": "A short description of the purpose of the channel"
+                  },
+                  "header": {
+                    "type": "string",
+                    "description": "Markdown-formatted text to display in the header of the channel"
+                  }
+                }
+              }
+            }
+          },
+          "description": "Channel object to be updated",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Channel update successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Channel"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "channels"
+        ],
+        "summary": "Delete a channel",
+        "description": "Archives a channel. This will set the `deleteAt` to the current timestamp in the database. Soft deleted channels may not be accessible in the user interface. They can be viewed and unarchived in the **System Console > User Management > Channels** based on your license. Direct and group message channels cannot be deleted.\n\nAs of server version 5.28, optionally use the `permanent=true` query parameter to permanently delete the channel for compliance reasons. To use this feature `ServiceSettings.EnableAPIChannelDeletion` must be set to `true` in the server's configuration. If you permanently delete a channel this action is not recoverable outside of a database backup.\n\n##### Permissions\n`delete_public_channel` permission if the channel is public,\n`delete_private_channel` permission if the channel is private,\nor have `manage_system` permission.\n",
+        "operationId": "DeleteChannel",
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "Channel GUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Channel deletion successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusOK"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/api/v4/channels/{channel_id}/members": {
+      "get": {
+        "tags": [
+          "channels"
+        ],
+        "summary": "Get channel members",
+        "description": "Get a page of members for a channel.\n##### Permissions\n`read_channel` permission for the channel.\n",
+        "operationId": "GetChannelMembers",
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "Channel GUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The page to select.",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "The number of members per page.",
+            "schema": {
+              "type": "integer",
+              "default": 60
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Channel members retrieval successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChannelMember"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "channels"
+        ],
+        "summary": "Add user(s) to channel",
+        "description": "Add a user(s) to a channel by creating a channel member object(s).",
+        "operationId": "AddChannelMember",
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "The channel ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "string",
+                    "description": "The ID of user to add into the channel, for backwards compatibility."
+                  },
+                  "user_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "maxItems": 1000,
+                    "description": "The IDs of users to add into the channel, required if 'user_id' doess not exist."
+                  },
+                  "post_root_id": {
+                    "type": "string",
+                    "description": "The ID of root post where link to add channel member originates"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Channel member creation successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChannelMember"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/api/v4/channels/{channel_id}/members/{user_id}": {
+      "delete": {
+        "tags": [
+          "channels"
+        ],
+        "summary": "Remove user from channel",
+        "description": "Delete a channel member, effectively removing them from a channel.\n\nIn server version 5.3 and later, channel members can only be deleted from public or private channels.\n##### Permissions\n`manage_public_channel_members` permission if the channel is public.\n`manage_private_channel_members` permission if the channel is private.\n",
+        "operationId": "RemoveUserFromChannel",
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "Channel GUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "User GUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Channel member deletion successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusOK"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/api/v4/posts": {
+      "post": {
+        "tags": [
+          "posts"
+        ],
+        "summary": "Create a post",
+        "description": "Create a new post in a channel. To create the post as a comment on another post, provide `root_id`.\n##### Permissions\nMust have `create_post` permission for the channel the post is being created in.\n",
+        "operationId": "CreatePost",
+        "parameters": [
+          {
+            "name": "set_online",
+            "in": "query",
+            "description": "Whether to set the user status as online or not.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "silent",
+            "in": "query",
+            "description": "When `true`, the post is delivered silently: visible in the channel and broadcast over WebSocket, but produces no desktop/push/email notifications, no unread or mention count increments, and no \"New Messages\" line. Only bot accounts, OAuth apps, incoming webhooks, and plugins may set this; non-integration senders receive HTTP 403. `force_notification` overrides `silent`.\n",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "channel_id",
+                  "message"
+                ],
+                "properties": {
+                  "channel_id": {
+                    "type": "string",
+                    "description": "The channel ID to post in"
+                  },
+                  "message": {
+                    "type": "string",
+                    "description": "The message contents, can be formatted with Markdown"
+                  },
+                  "root_id": {
+                    "type": "string",
+                    "description": "The post ID to comment on"
+                  },
+                  "file_ids": {
+                    "type": "array",
+                    "description": "A list of file IDs to associate with the post. Note that posts are limited to 5 files maximum. Please use additional posts for more files.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "props": {
+                    "description": "A general JSON property bag to attach to the post",
+                    "type": "object"
+                  },
+                  "metadata": {
+                    "description": "A JSON object to add post metadata, e.g the post's priority",
+                    "type": "object",
+                    "properties": {
+                      "priority": {
+                        "type": "object",
+                        "description": "An object containing the post's priority properties",
+                        "properties": {
+                          "priority": {
+                            "type": "string",
+                            "description": "The priority label of the post, could empty, important, or urgent"
+                          },
+                          "requested_ack": {
+                            "type": "boolean",
+                            "description": "Set to true to request for acknowledgements"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "description": "Post object to create",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Post creation successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/api/v4/posts/{post_id}": {
+      "get": {
+        "tags": [
+          "posts"
+        ],
+        "summary": "Get a post",
+        "description": "Get a single post.\n##### Permissions\nMust have `read_channel` permission for the channel the post is in or if the channel is public, have the `read_public_channels` permission for the team.\n",
+        "operationId": "GetPost",
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "description": "ID of the post to get",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "include_deleted",
+            "in": "query",
+            "description": "Defines if result should include deleted posts, must have 'manage_system' (admin) permission.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post retrieval successful",
+            "headers": {
+              "Has-Inaccessible-Posts": {
+                "schema": {
+                  "type": "boolean"
+                },
+                "description": "This header is included with the value \"true\" if the post is past the cloud's plan limit."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "posts"
+        ],
+        "summary": "Update a post",
+        "description": "Update a post. Only the fields listed below are updatable, omitted fields will be treated as blank.\n##### Permissions\nMust have `edit_post` permission for the channel the post is in.\n",
+        "operationId": "UpdatePost",
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "description": "ID of the post to update",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "description": "ID of the post to update",
+                    "type": "string"
+                  },
+                  "is_pinned": {
+                    "description": "Set to `true` to pin the post to the channel it is in",
+                    "type": "boolean"
+                  },
+                  "message": {
+                    "description": "The message text of the post",
+                    "type": "string"
+                  },
+                  "has_reactions": {
+                    "description": "Set to `true` if the post has reactions to it",
+                    "type": "boolean"
+                  },
+                  "props": {
+                    "description": "A general JSON property bag to attach to the post",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "description": "Post object that is to be updated",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Post update successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "posts"
+        ],
+        "summary": "Delete a post",
+        "description": "Soft deletes a post, by marking the post as deleted in the database. Soft deleted posts will not be returned in post queries.\n##### Permissions\nMust be logged in as the user or have `delete_others_posts` permission.\n",
+        "operationId": "DeletePost",
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "description": "ID of the post to delete",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post deletion successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusOK"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/api/v4/channels/{channel_id}/posts": {
+      "get": {
+        "tags": [
+          "posts"
+        ],
+        "summary": "Get posts for a channel",
+        "description": "Get a page of posts in a channel. Use the query parameters to modify the behaviour of this endpoint. The parameter `since` must not be used with any of `before`, `after`, `page`, and `per_page` parameters.\nIf `since` is used, it will always return all posts modified since that time, ordered by their create time limited till 1000. A caveat with this parameter is that there is no guarantee that the returned posts will be consecutive. It is left to the clients to maintain state and fill any missing holes in the post order.\n##### Permissions\nMust have `read_channel` permission for the channel.\n",
+        "operationId": "GetPostsForChannel",
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "description": "The channel ID to get the posts for",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The page to select",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "The number of posts per page",
+            "schema": {
+              "type": "integer",
+              "default": 60
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "description": "Provide a non-zero value in Unix time milliseconds to select posts modified after that time",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "description": "A post id to select the posts that came before this one",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "description": "A post id to select the posts that came after this one",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "include_deleted",
+            "in": "query",
+            "description": "Whether to include deleted posts or not. Must have system admin permissions.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Filter posts by type.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post list retrieval successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostList"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/api/v4/posts/search": {
+      "post": {
+        "tags": [
+          "posts"
+        ],
+        "summary": "Search posts across all teams",
+        "description": "Search posts visible to the current user across all teams.\n##### Permissions\nMust be authenticated.\n",
+        "operationId": "SearchPostsInAllTeams",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "terms"
+                ],
+                "properties": {
+                  "terms": {
+                    "type": "string"
+                  },
+                  "is_or_search": {
+                    "type": "boolean"
+                  },
+                  "time_zone_offset": {
+                    "type": "integer"
+                  },
+                  "include_deleted_channels": {
+                    "type": "boolean"
+                  },
+                  "page": {
+                    "type": "integer"
+                  },
+                  "per_page": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Post search successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostListWithSearchMatches"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/api/v4/users": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get users",
+        "description": "Get a page of a list of users. Based on query string parameters, select users from a team, channel, or select users not in a specific channel.\nSince server version 4.0, some basic sorting is available using the `sort` query parameter. Sorting is currently only supported when selecting users on a team.\nSome fields, like `email_verified` and `notify_props`, are only visible for the authorized user or if the authorized user has the `manage_system` permission.\n##### Permissions\nRequires an active session and (if specified) membership to the channel or team being selected from.\n",
+        "operationId": "GetUsers",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The page to select.",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "The number of users per page.",
+            "schema": {
+              "type": "integer",
+              "default": 60
+            }
+          },
+          {
+            "name": "in_team",
+            "in": "query",
+            "description": "The ID of the team to get users for.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "not_in_team",
+            "in": "query",
+            "description": "The ID of the team to exclude users for. Must not be used with \"in_team\" query parameter.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "in_channel",
+            "in": "query",
+            "description": "The ID of the channel to get users for.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "not_in_channel",
+            "in": "query",
+            "description": "The ID of the channel to exclude users for. Must be used with \"in_channel\" query parameter.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "in_group",
+            "in": "query",
+            "description": "The ID of the group to get users for. Must have `manage_system` permission.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "group_constrained",
+            "in": "query",
+            "description": "When used with `not_in_channel` or `not_in_team`, returns only the users that are allowed to join the channel or team based on its group constrains.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "abac_match_only",
+            "in": "query",
+            "description": "When used with `not_in_channel`, restricts the result to users whose attributes satisfy the channel's Attribute-Based Access Control (ABAC) membership policy.\n\nOn private channels with an ABAC policy this filter is always applied regardless of this parameter (hard gate). On public channels with an advisory ABAC policy the full not_in_channel candidate list is returned by default; set this to `true` to fetch only the matching subset of candidates (for example to annotate recommended members in the invite UI).\n\n__Minimum server version__: 11.8\n",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "without_team",
+            "in": "query",
+            "description": "Whether or not to list users that are not on any team. This option takes precendence over `in_team`, `in_channel`, and `not_in_channel`.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "active",
+            "in": "query",
+            "description": "Whether or not to list only users that are active. This option cannot be used along with the `inactive` option.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "inactive",
+            "in": "query",
+            "description": "Whether or not to list only users that are deactivated. This option cannot be used along with the `active` option.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "description": "Returns users that have this role.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sort is only available in conjunction with certain options below. The paging parameter is also always available.\n\n##### `in_team`\nCan be \"\", \"last_activity_at\" or \"create_at\".\nWhen left blank, sorting is done by username.\nNote that when \"last_activity_at\" is specified, an additional \"last_activity_at\" field will be returned in the response packet.\n__Minimum server version__: 4.0\n##### `in_channel`\nCan be \"\", \"status\".\nWhen left blank, sorting is done by username. `status` will sort by User's current status (Online, Away, DND, Offline), then by Username.\n__Minimum server version__: 4.7\n##### `in_group`\nCan be \"\", \"display_name\".\nWhen left blank, sorting is done by username. `display_name` will sort alphabetically by user's display name.\n__Minimum server version__: 7.7\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "roles",
+            "in": "query",
+            "description": "Comma separated string used to filter users based on any of the specified system roles\n\nExample: `?roles=system_admin,system_user` will return users that are either system admins or system users\n\n__Minimum server version__: 5.26\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channel_roles",
+            "in": "query",
+            "description": "Comma separated string used to filter users based on any of the specified channel roles, can only be used in conjunction with `in_channel`\n\nExample: `?in_channel=4eb6axxw7fg3je5iyasnfudc5y&channel_roles=channel_user` will return users that are only channel users and not admins or guests\n\n__Minimum server version__: 5.26\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "team_roles",
+            "in": "query",
+            "description": "Comma separated string used to filter users based on any of the specified team roles, can only be used in conjunction with `in_team`\n\nExample: `?in_team=4eb6axxw7fg3je5iyasnfudc5y&team_roles=team_user` will return users that are only team users and not admins or guests\n\n__Minimum server version__: 5.26\n",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User page retrieval successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Create a user",
+        "description": "Create a new user on the system. Password is required for email login. For other authentication types such as LDAP or SAML, auth_data and auth_service fields are required.\n##### Permissions\nNo permission required for creating email/username accounts on an open server. Auth Token is required for other authentication types such as LDAP or SAML.\n",
+        "operationId": "CreateUser",
+        "parameters": [
+          {
+            "name": "t",
+            "in": "query",
+            "description": "Token id from an email invitation",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "iid",
+            "in": "query",
+            "description": "Token id from an invitation link",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "username"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "first_name": {
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "type": "string"
+                  },
+                  "nickname": {
+                    "type": "string"
+                  },
+                  "position": {
+                    "type": "string"
+                  },
+                  "timezone": {
+                    "$ref": "#/components/schemas/Timezone"
+                  },
+                  "auth_data": {
+                    "description": "Service-specific authentication data, such as email address.",
+                    "type": "string"
+                  },
+                  "auth_service": {
+                    "description": "The authentication service, one of \"email\", \"gitlab\", \"ldap\", \"saml\", \"office365\", \"google\", and \"\".",
+                    "type": "string"
+                  },
+                  "password": {
+                    "description": "The password used for email authentication.",
+                    "type": "string"
+                  },
+                  "locale": {
+                    "type": "string"
+                  },
+                  "props": {
+                    "type": "object"
+                  },
+                  "notify_props": {
+                    "$ref": "#/components/schemas/UserNotifyProps"
+                  }
+                }
+              }
+            }
+          },
+          "description": "User object to be created",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "User creation successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/api/v4/users/{user_id}": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get a user",
+        "description": "Get a user a object. Sensitive information will be sanitized out.\n##### Permissions\nRequires an active session but no other permissions.\n",
+        "operationId": "GetUser",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "User GUID. This can also be \"me\" which will point to the current user.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User retrieval successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Update a user",
+        "description": "Update a user by providing the user object. The fields that can be updated are defined in the request body, all other provided fields will be ignored. Any fields not included in the request body will be set to null or reverted to default values.\n##### Permissions\nMust be logged in as the user being updated or have the `edit_other_users` permission.\n",
+        "operationId": "UpdateUser",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "User GUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "email",
+                  "username"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "first_name": {
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "type": "string"
+                  },
+                  "nickname": {
+                    "type": "string"
+                  },
+                  "locale": {
+                    "type": "string"
+                  },
+                  "position": {
+                    "type": "string"
+                  },
+                  "timezone": {
+                    "$ref": "#/components/schemas/Timezone"
+                  },
+                  "props": {
+                    "type": "object"
+                  },
+                  "notify_props": {
+                    "$ref": "#/components/schemas/UserNotifyProps"
+                  }
+                }
+              }
+            }
+          },
+          "description": "User object that is to be updated",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "User update successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Deactivate a user account.",
+        "description": "Deactivates the user and revokes all its sessions by archiving its user object.\n\nAs of server version 5.28, optionally use the `permanent=true` query parameter to permanently delete the user for compliance reasons. To use this feature `ServiceSettings.EnableAPIUserDeletion` must be set to `true` in the server's configuration.\n##### Permissions\nMust be logged in as the user being deactivated or have the `edit_other_users` permission.\n",
+        "operationId": "DeleteUser",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "User GUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deactivation successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusOK"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v4/users/username/{username}": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get a user by username",
+        "description": "Get a user object by providing a username. Sensitive information will be sanitized out.\n##### Permissions\nRequires an active session but no other permissions.\n",
+        "operationId": "GetUserByUsername",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "Username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User retrieval successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v4/users/email/{email}": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get a user by email",
+        "description": "Get a user object by providing a user email. Sensitive information will be sanitized out.\n##### Permissions\nRequires an active session and for the current session to be able to view another user's email based on the server's privacy settings.\n",
+        "operationId": "GetUserByEmail",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "description": "User Email",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User retrieval successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v4/users/search": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Search users",
+        "description": "Get a list of users based on search criteria provided in the request body. Searches are typically done against username, full name, nickname and email unless otherwise configured by the server.\n##### Permissions\nRequires an active session and `read_channel` and/or `view_team` permissions for any channels or teams specified in the request body.\n",
+        "operationId": "SearchUsers",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "term"
+                ],
+                "properties": {
+                  "term": {
+                    "description": "The term to match against username, full name, nickname and email",
+                    "type": "string"
+                  },
+                  "team_id": {
+                    "description": "If provided, only search users on this team",
+                    "type": "string"
+                  },
+                  "not_in_team_id": {
+                    "description": "If provided, only search users not on this team",
+                    "type": "string"
+                  },
+                  "in_channel_id": {
+                    "description": "If provided, only search users in this channel",
+                    "type": "string"
+                  },
+                  "not_in_channel_id": {
+                    "description": "If provided, only search users not in this channel. Must specifiy `team_id` when using this option",
+                    "type": "string"
+                  },
+                  "in_group_id": {
+                    "description": "If provided, only search users in this group. Must have `manage_system` permission.",
+                    "type": "string"
+                  },
+                  "group_constrained": {
+                    "description": "When used with `not_in_channel_id` or `not_in_team_id`, returns only the users that are allowed to join the channel or team based on its group constrains.",
+                    "type": "boolean"
+                  },
+                  "allow_inactive": {
+                    "description": "When `true`, include deactivated users in the results",
+                    "type": "boolean"
+                  },
+                  "without_team": {
+                    "type": "boolean",
+                    "description": "Set this to `true` if you would like to search for users that are not on a team. This option takes precendence over `team_id`, `in_channel_id`, and `not_in_channel_id`."
+                  },
+                  "limit": {
+                    "description": "The maximum number of users to return in the results\n\n__Available as of server version 5.6. Defaults to `100` if not provided or on an earlier server version.__\n",
+                    "type": "integer",
+                    "default": 100
+                  }
+                }
+              }
+            }
+          },
+          "description": "Search criteria",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "User list retrieval successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/api/v4/users/{user_id}/active": {
+      "put": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Activate or deactivate a user",
+        "description": "Activate or deactivate a user's account. A deactivated user can't log into Mattermost or use it without being reactivated.\n\n__Since server version 4.6, users using a SSO provider to login can be activated or deactivated with this endpoint. However, if their activation status in Mattermost does not reflect their status in the SSO provider, the next synchronization or login by that user will reset the activation status to that of their account in the SSO provider. Server versions 4.5 and before do not allow activation or deactivation of SSO users from this endpoint.__\n##### Permissions\nUser can deactivate themselves.\nUser with `manage_system` permission can activate or deactivate a user.\n",
+        "operationId": "UpdateUserActive",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "User GUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "active"
+                ],
+                "properties": {
+                  "active": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          },
+          "description": "Use `true` to activate the user or `false` to deactivate them",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "User activation/deactivation update successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusOK"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/api/v4/teams": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "summary": "Get teams",
+        "description": "For regular users only returns open teams. Users with the \"manage_system\" permission will return teams regardless of type. The result is based on query string parameters - page and per_page.\n##### Permissions\nMust be authenticated. \"manage_system\" permission is required to show all teams.\n",
+        "operationId": "GetAllTeams",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The page to select.",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "The number of teams per page.",
+            "schema": {
+              "type": "integer",
+              "default": 60
+            }
+          },
+          {
+            "name": "include_total_count",
+            "description": "Appends a total count of returned teams inside the response object - ex: `{ \"teams\": [], \"total_count\" : 0 }`.      ",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "exclude_policy_constrained",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "If set to true, teams which are part of a data retention policy will be excluded. The `sysconsole_read_compliance` permission is required to use this parameter.\n__Minimum server version__: 5.35"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Team list retrieval successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Team"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "summary": "Create a team",
+        "description": "Create a new team on the system.\n##### Permissions\nMust be authenticated and have the `create_team` permission.\n",
+        "operationId": "CreateTeam",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "display_name",
+                  "type"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Unique handler for a team, will be present in the team URL"
+                  },
+                  "display_name": {
+                    "type": "string",
+                    "description": "Non-unique UI name for the team"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "`'O'` for open, `'I'` for invite only"
+                  }
+                }
+              }
+            }
+          },
+          "description": "Team that is to be created",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Team creation successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/api/v4/teams/{team_id}": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "summary": "Get a team",
+        "description": "Get a team on the system.\n##### Permissions\nMust be authenticated and have the `view_team` permission.\n",
+        "operationId": "GetTeam",
+        "parameters": [
+          {
+            "name": "team_id",
+            "in": "path",
+            "description": "Team GUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Team retrieval successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "teams"
+        ],
+        "summary": "Update a team",
+        "description": "Update a team by providing the team object. The fields that can be updated are defined in the request body, all other provided fields will be ignored.\n##### Permissions\nMust have the `manage_team` permission.\n",
+        "operationId": "UpdateTeam",
+        "parameters": [
+          {
+            "name": "team_id",
+            "in": "path",
+            "description": "Team GUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "display_name",
+                  "description",
+                  "company_name",
+                  "allowed_domains",
+                  "invite_id",
+                  "allow_open_invite"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "display_name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "company_name": {
+                    "type": "string"
+                  },
+                  "allowed_domains": {
+                    "type": "string"
+                  },
+                  "invite_id": {
+                    "type": "string"
+                  },
+                  "allow_open_invite": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "description": "Team to update",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Team update successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "teams"
+        ],
+        "summary": "Delete a team",
+        "description": "Soft deletes a team, by marking the team as deleted in the database. Soft deleted teams will not be accessible in the user interface.\n\nOptionally use the permanent query parameter to hard delete the team for compliance reasons. As of server version 5.0, to use this feature `ServiceSettings.EnableAPITeamDeletion` must be set to `true` in the server's configuration.\n##### Permissions\nMust have the `manage_team` permission.\n",
+        "operationId": "SoftDeleteTeam",
+        "parameters": [
+          {
+            "name": "team_id",
+            "in": "path",
+            "description": "Team GUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "permanent",
+            "in": "query",
+            "description": "Permanently delete the team, to be used for compliance reasons only. As of server version 5.0, `ServiceSettings.EnableAPITeamDeletion` must be set to `true` in the server's configuration.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Team deletion successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusOK"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v4/teams/{team_id}/members": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "summary": "Get team members",
+        "description": "Get a page team members list based on query string parameters - team id, page and per page.\n##### Permissions\nMust be authenticated and have the `view_team` permission.\n",
+        "operationId": "GetTeamMembers",
+        "parameters": [
+          {
+            "name": "team_id",
+            "in": "path",
+            "description": "Team GUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The page to select.",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "The number of users per page.",
+            "schema": {
+              "type": "integer",
+              "default": 60
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "To sort by Username, set to 'Username', otherwise sort is by 'UserID'",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "exclude_deleted_users",
+            "in": "query",
+            "description": "Excludes deleted users from the results",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Team members retrieval successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TeamMember"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "summary": "Add user to team",
+        "description": "Add user to the team by user_id.\n##### Permissions\nMust be authenticated and team be open to add self. For adding another user, authenticated user must have the `add_user_to_team` permission.\n",
+        "operationId": "AddTeamMember",
+        "parameters": [
+          {
+            "name": "team_id",
+            "in": "path",
+            "description": "Team GUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "team_id": {
+                    "type": "string"
+                  },
+                  "user_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Team member creation successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamMember"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v4/teams/{team_id}/members/{user_id}": {
+      "delete": {
+        "tags": [
+          "teams"
+        ],
+        "summary": "Remove user from team",
+        "description": "Delete the team member object for a user, effectively removing them from a team.\n##### Permissions\nMust be logged in as the user or have the `remove_user_from_team` permission.\n",
+        "operationId": "RemoveTeamMember",
+        "parameters": [
+          {
+            "name": "team_id",
+            "in": "path",
+            "description": "Team GUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "User GUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Team member deletion successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusOK"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v4/teams/name/{team_name}": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "summary": "Get a team by name",
+        "description": "Get a team based on provided name string\n##### Permissions\nMust be authenticated, team type is open and have the `view_team` permission.\n",
+        "operationId": "GetTeamByName",
+        "parameters": [
+          {
+            "name": "team_name",
+            "in": "path",
+            "description": "Team Name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Team retrieval successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v4/teams/{team_id}/channels": {
+      "get": {
+        "tags": [
+          "channels"
+        ],
+        "summary": "Get public channels",
+        "description": "Get a page of public channels on a team based on query string parameters - page and per_page.\n##### Permissions\nMust be authenticated and have the `list_team_channels` permission.\n",
+        "operationId": "GetPublicChannelsForTeam",
+        "parameters": [
+          {
+            "name": "team_id",
+            "in": "path",
+            "description": "Team GUID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The page to select.",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "The number of public channels per page.",
+            "schema": {
+              "type": "integer",
+              "default": 60
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Channels retrieval successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Channel"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Static Mattermost Personal Access Token, sent as `Authorization: Bearer <token>`. No login call is used."
+      }
+    },
+    "responses": {
+      "NotFound": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AppError"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Do not have appropriate permissions",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AppError"
+            }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "Invalid or missing parameters in URL or request body",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AppError"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "No access token provided",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AppError"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "UserNotifyProps": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Set to \"true\" to enable email notifications, \"false\" to disable. Defaults to \"true\"."
+          },
+          "push": {
+            "type": "string",
+            "description": "Set to \"all\" to receive push notifications for all activity, \"mention\" for mentions and direct messages only, and \"none\" to disable. Defaults to \"mention\"."
+          },
+          "desktop": {
+            "type": "string",
+            "description": "Set to \"all\" to receive desktop notifications for all activity, \"mention\" for mentions and direct messages only, and \"none\" to disable. Defaults to \"all\"."
+          },
+          "desktop_sound": {
+            "type": "string",
+            "description": "Set to \"true\" to enable sound on desktop notifications, \"false\" to disable. Defaults to \"true\"."
+          },
+          "mention_keys": {
+            "type": "string",
+            "description": "A comma-separated list of words to count as mentions. Defaults to username and @username."
+          },
+          "channel": {
+            "type": "string",
+            "description": "Set to \"true\" to enable channel-wide notifications (@channel, @all, etc.), \"false\" to disable. Defaults to \"true\"."
+          },
+          "first_name": {
+            "type": "string",
+            "description": "Set to \"true\" to enable mentions for first name. Defaults to \"true\" if a first name is set, \"false\" otherwise."
+          },
+          "auto_responder_message": {
+            "type": "string",
+            "description": "The message sent to users when they are auto-responded to. Defaults to \"\"."
+          },
+          "push_threads": {
+            "type": "string",
+            "description": "Set to \"all\" to enable mobile push notifications for followed threads and \"none\" to disable. Defaults to \"all\"."
+          },
+          "comments": {
+            "type": "string",
+            "description": "Set to \"any\" to enable notifications for comments to any post you have replied to, \"root\" for comments on your posts, and \"never\" to disable. Only affects users with collapsed reply threads disabled. Defaults to \"never\"."
+          },
+          "desktop_threads": {
+            "type": "string",
+            "description": "Set to \"all\" to enable desktop notifications for followed threads and \"none\" to disable. Defaults to \"all\"."
+          },
+          "email_threads": {
+            "type": "string",
+            "description": "Set to \"all\" to enable email notifications for followed threads and \"none\" to disable. Defaults to \"all\"."
+          }
+        }
+      },
+      "FileInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique identifier for this file",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "The ID of the user that uploaded this file",
+            "type": "string"
+          },
+          "post_id": {
+            "description": "If this file is attached to a post, the ID of that post",
+            "type": "string"
+          },
+          "create_at": {
+            "description": "The time in milliseconds a file was created",
+            "type": "integer",
+            "format": "int64"
+          },
+          "update_at": {
+            "description": "The time in milliseconds a file was last updated",
+            "type": "integer",
+            "format": "int64"
+          },
+          "delete_at": {
+            "description": "The time in milliseconds a file was deleted",
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "description": "The name of the file",
+            "type": "string"
+          },
+          "extension": {
+            "description": "The extension at the end of the file name",
+            "type": "string"
+          },
+          "size": {
+            "description": "The size of the file in bytes",
+            "type": "integer"
+          },
+          "mime_type": {
+            "description": "The MIME type of the file",
+            "type": "string"
+          },
+          "width": {
+            "description": "If this file is an image, the width of the file",
+            "type": "integer"
+          },
+          "height": {
+            "description": "If this file is an image, the height of the file",
+            "type": "integer"
+          },
+          "has_preview_image": {
+            "description": "If this file is an image, whether or not it has a preview-sized version",
+            "type": "boolean"
+          }
+        }
+      },
+      "Channel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "create_at": {
+            "description": "The time in milliseconds a channel was created",
+            "type": "integer",
+            "format": "int64"
+          },
+          "update_at": {
+            "description": "The time in milliseconds a channel was last updated",
+            "type": "integer",
+            "format": "int64"
+          },
+          "delete_at": {
+            "description": "The time in milliseconds a channel was deleted",
+            "type": "integer",
+            "format": "int64"
+          },
+          "team_id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "header": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "last_post_at": {
+            "description": "The time in milliseconds of the last post of a channel",
+            "type": "integer",
+            "format": "int64"
+          },
+          "total_msg_count": {
+            "type": "integer"
+          },
+          "extra_update_at": {
+            "description": "Deprecated in Mattermost 5.0 release",
+            "type": "integer",
+            "format": "int64"
+          },
+          "creator_id": {
+            "type": "string"
+          }
+        }
+      },
+      "PostListWithSearchMatches": {
+        "type": "object",
+        "properties": {
+          "order": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "post_id1",
+              "post_id12"
+            ]
+          },
+          "posts": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Post"
+            }
+          },
+          "matches": {
+            "description": "A mapping of post IDs to a list of matched terms within the post. This field will only be populated on servers running version 5.1 or greater with Elasticsearch enabled.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "example": {
+              "post_id1": [
+                "search match 1",
+                "search match 2"
+              ]
+            }
+          }
+        }
+      },
+      "Team": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "create_at": {
+            "description": "The time in milliseconds a team was created",
+            "type": "integer",
+            "format": "int64"
+          },
+          "update_at": {
+            "description": "The time in milliseconds a team was last updated",
+            "type": "integer",
+            "format": "int64"
+          },
+          "delete_at": {
+            "description": "The time in milliseconds a team was deleted",
+            "type": "integer",
+            "format": "int64"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "allowed_domains": {
+            "type": "string"
+          },
+          "invite_id": {
+            "type": "string"
+          },
+          "allow_open_invite": {
+            "type": "boolean"
+          },
+          "policy_id": {
+            "type": "string",
+            "description": "The data retention policy to which this team has been assigned. If no such policy exists, or the caller does not have the `sysconsole_read_compliance_data_retention` permission, this field will be null."
+          }
+        }
+      },
+      "PostPriority": {
+        "type": "object",
+        "description": "Priority metadata associated with a post or draft.",
+        "properties": {
+          "priority": {
+            "type": "string",
+            "description": "The priority label of a post, either empty, important, or urgent.",
+            "enum": [
+              "",
+              "important",
+              "urgent"
+            ]
+          },
+          "requested_ack": {
+            "type": "boolean",
+            "description": "Whether the post author has requested acknowledgements."
+          },
+          "persistent_notifications": {
+            "type": "boolean",
+            "description": "Whether persistent notifications are enabled for the post."
+          }
+        }
+      },
+      "ChannelListWithTeamData": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ChannelWithTeamData"
+        }
+      },
+      "Reaction": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "description": "The ID of the user that made this reaction",
+            "type": "string"
+          },
+          "post_id": {
+            "description": "The ID of the post to which this reaction was made",
+            "type": "string"
+          },
+          "emoji_name": {
+            "description": "The name of the emoji that was used for this reaction",
+            "type": "string"
+          },
+          "create_at": {
+            "description": "The time in milliseconds this reaction was made",
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Emoji": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The ID of the emoji",
+            "type": "string"
+          },
+          "creator_id": {
+            "description": "The ID of the user that made the emoji",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of the emoji",
+            "type": "string"
+          },
+          "create_at": {
+            "description": "The time in milliseconds the emoji was made",
+            "type": "integer",
+            "format": "int64"
+          },
+          "update_at": {
+            "description": "The time in milliseconds the emoji was last updated",
+            "type": "integer",
+            "format": "int64"
+          },
+          "delete_at": {
+            "description": "The time in milliseconds the emoji was deleted",
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Timezone": {
+        "type": "object",
+        "properties": {
+          "useAutomaticTimezone": {
+            "type": "string",
+            "description": "Set to \"true\" to use the browser/system timezone, \"false\" to set manually. Defaults to \"true\"."
+          },
+          "manualTimezone": {
+            "type": "string",
+            "description": "Value when setting manually the timezone, i.e. \"Europe/Berlin\"."
+          },
+          "automaticTimezone": {
+            "type": "string",
+            "description": "This value is set automatically when the \"useAutomaticTimezone\" is set to \"true\"."
+          }
+        }
+      },
+      "ChannelMember": {
+        "type": "object",
+        "properties": {
+          "channel_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "string"
+          },
+          "last_viewed_at": {
+            "description": "The time in milliseconds the channel was last viewed by the user. This field is omitted when the membership belongs to a user other than the requester, as the value is private to that user.",
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "msg_count": {
+            "type": "integer"
+          },
+          "mention_count": {
+            "type": "integer"
+          },
+          "notify_props": {
+            "$ref": "#/components/schemas/ChannelNotifyProps"
+          },
+          "last_update_at": {
+            "description": "The time in milliseconds the channel member was last updated. This field is omitted when the membership belongs to a user other than the requester, as the value is private to that user.",
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          }
+        }
+      },
+      "PostAcknowledgement": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "description": "The ID of the user that made this acknowledgement.",
+            "type": "string"
+          },
+          "post_id": {
+            "description": "The ID of the post to which this acknowledgement was made.",
+            "type": "string"
+          },
+          "acknowledged_at": {
+            "description": "The time in milliseconds in which this acknowledgement was made.",
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "PostMetadata": {
+        "type": "object",
+        "description": "Additional information used to display a post.",
+        "properties": {
+          "embeds": {
+            "type": "array",
+            "description": "Information about content embedded in the post including OpenGraph previews, image link previews, and message attachments. This field will be null if the post does not contain embedded content.\n",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "The type of content that is embedded in this point.",
+                  "enum": [
+                    "image",
+                    "message_attachment",
+                    "opengraph",
+                    "link"
+                  ]
+                },
+                "url": {
+                  "type": "string",
+                  "description": "The URL of the embedded content, if one exists."
+                },
+                "data": {
+                  "type": "object",
+                  "description": "Any additional information about the embedded content. Only used at this time to store OpenGraph metadata.\nThis field will be null for non-OpenGraph embeds.\n"
+                }
+              }
+            }
+          },
+          "emojis": {
+            "type": "array",
+            "description": "The custom emojis that appear in this point or have been used in reactions to this post. This field will be null if the post does not contain custom emojis.\n",
+            "items": {
+              "$ref": "#/components/schemas/Emoji"
+            }
+          },
+          "files": {
+            "type": "array",
+            "description": "The FileInfo objects for any files attached to the post. This field will be null if the post does not have any file attachments.\n",
+            "items": {
+              "$ref": "#/components/schemas/FileInfo"
+            }
+          },
+          "images": {
+            "type": "object",
+            "description": "An object mapping the URL of an external image to an object containing the dimensions of that image. This field will be null if the post or its embedded content does not reference any external images.\n",
+            "items": {
+              "type": "object",
+              "properties": {
+                "height": {
+                  "type": "integer"
+                },
+                "width": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "reactions": {
+            "type": "array",
+            "description": "Any reactions made to this point. This field will be null if no reactions have been made to this post.\n",
+            "items": {
+              "$ref": "#/components/schemas/Reaction"
+            }
+          },
+          "priority": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PostPriority"
+              }
+            ],
+            "description": "Post priority set for this post. This field will be null if no priority metadata has been set.\n"
+          },
+          "acknowledgements": {
+            "type": "array",
+            "description": "Any acknowledgements made to this point.\n",
+            "items": {
+              "$ref": "#/components/schemas/PostAcknowledgement"
+            }
+          }
+        }
+      },
+      "ChannelNotifyProps": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Set to \"true\" to enable email notifications, \"false\" to disable, or \"default\" to use the global user notification setting."
+          },
+          "push": {
+            "type": "string",
+            "description": "Set to \"all\" to receive push notifications for all activity, \"mention\" for mentions and direct messages only, \"none\" to disable, or \"default\" to use the global user notification setting."
+          },
+          "desktop": {
+            "type": "string",
+            "description": "Set to \"all\" to receive desktop notifications for all activity, \"mention\" for mentions and direct messages only, \"none\" to disable, or \"default\" to use the global user notification setting."
+          },
+          "mark_unread": {
+            "type": "string",
+            "description": "Set to \"all\" to mark the channel unread for any new message, \"mention\" to mark unread for new mentions only. Defaults to \"all\"."
+          }
+        }
+      },
+      "PostList": {
+        "type": "object",
+        "properties": {
+          "order": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "post_id1",
+              "post_id12"
+            ]
+          },
+          "posts": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Post"
+            }
+          },
+          "next_post_id": {
+            "type": "string",
+            "description": "The ID of next post. Not omitted when empty or not relevant."
+          },
+          "prev_post_id": {
+            "type": "string",
+            "description": "The ID of previous post. Not omitted when empty or not relevant."
+          },
+          "has_next": {
+            "type": "boolean",
+            "description": "Whether there are more items after this page."
+          }
+        }
+      },
+      "StatusOK": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "description": "Will contain \"ok\" if the request was successful and there was nothing else to return",
+            "type": "string"
+          }
+        }
+      },
+      "AppError": {
+        "type": "object",
+        "properties": {
+          "status_code": {
+            "type": "integer"
+          },
+          "id": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          }
+        }
+      },
+      "TeamMember": {
+        "type": "object",
+        "properties": {
+          "team_id": {
+            "description": "The ID of the team this member belongs to.",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "The ID of the user this member relates to.",
+            "type": "string"
+          },
+          "roles": {
+            "description": "The complete list of roles assigned to this team member, as a space-separated list of role names, including any roles granted implicitly through permissions schemes.",
+            "type": "string"
+          },
+          "delete_at": {
+            "description": "The time in milliseconds that this team member was deleted.",
+            "type": "integer"
+          },
+          "scheme_user": {
+            "description": "Whether this team member holds the default user role defined by the team's permissions scheme.",
+            "type": "boolean"
+          },
+          "scheme_admin": {
+            "description": "Whether this team member holds the default admin role defined by the team's permissions scheme.",
+            "type": "boolean"
+          },
+          "explicit_roles": {
+            "description": "The list of roles explicitly assigned to this team member, as a space separated list of role names. This list does *not* include any roles granted implicitly through permissions schemes.",
+            "type": "string"
+          }
+        }
+      },
+      "ChannelWithTeamData": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Channel"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "team_display_name": {
+                "type": "string",
+                "description": "The display name of the team to which this channel belongs."
+              },
+              "team_name": {
+                "type": "string",
+                "description": "The name of the team to which this channel belongs."
+              },
+              "team_update_at": {
+                "type": "integer",
+                "description": "The time at which the team to which this channel belongs was last updated."
+              },
+              "policy_id": {
+                "type": "string",
+                "description": "The data retention policy to which this team has been assigned. If no such policy exists, or the caller does not have the `sysconsole_read_compliance_data_retention` permission, this field will be null."
+              }
+            }
+          }
+        ]
+      },
+      "Post": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "create_at": {
+            "description": "The time in milliseconds a post was created",
+            "type": "integer",
+            "format": "int64"
+          },
+          "update_at": {
+            "description": "The time in milliseconds a post was last updated",
+            "type": "integer",
+            "format": "int64"
+          },
+          "delete_at": {
+            "description": "The time in milliseconds a post was deleted",
+            "type": "integer",
+            "format": "int64"
+          },
+          "edit_at": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "channel_id": {
+            "type": "string"
+          },
+          "root_id": {
+            "type": "string"
+          },
+          "original_id": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "props": {
+            "type": "object"
+          },
+          "hashtag": {
+            "type": "string"
+          },
+          "file_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "pending_post_id": {
+            "type": "string"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/PostMetadata"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "create_at": {
+            "description": "The time in milliseconds a user was created",
+            "type": "integer",
+            "format": "int64"
+          },
+          "update_at": {
+            "description": "The time in milliseconds a user was last updated",
+            "type": "integer",
+            "format": "int64"
+          },
+          "delete_at": {
+            "description": "The time in milliseconds a user was deleted",
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "email_verified": {
+            "type": "boolean"
+          },
+          "auth_service": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "notify_props": {
+            "$ref": "#/components/schemas/UserNotifyProps"
+          },
+          "props": {
+            "type": "object"
+          },
+          "last_password_update": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "last_picture_update": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "failed_attempts": {
+            "type": "integer"
+          },
+          "mfa_active": {
+            "type": "boolean"
+          },
+          "timezone": {
+            "$ref": "#/components/schemas/Timezone"
+          },
+          "terms_of_service_id": {
+            "description": "ID of accepted terms of service, if any. This field is not present if empty.",
+            "type": "string"
+          },
+          "terms_of_service_create_at": {
+            "description": "The time in milliseconds the user accepted the terms of service",
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      }
+    }
+  }
+}
