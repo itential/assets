@@ -1,0 +1,1337 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "NVD",
+    "description": "The National Vulnerability Database (NVD) is the U.S. government's public repository of standards-based vulnerability management data, built on the CVE (Common Vulnerabilities and Exposures) and CPE (Common Platform Enumeration) standards. It provides CVE records, CVE change history, the CPE dictionary, CPE match criteria, and information on its contributing data sources via a small set of public REST APIs.",
+    "version": "latest",
+    "x-vendor-api-version": "2.0",
+    "x-itential-curated": "Reviewed against the repo's common-CRUD-for-automation policy: all 5 upstream operations (CVE, CVE Change History, CPE, CPE Match Criteria, Source) are already in scope, so the full spec is carried through as -latest. See the repo README for the operation breakdown."
+  },
+  "servers": [
+    {
+      "url": "https://services.nvd.nist.gov"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/rest/json/cves/2.0": {
+      "get": {
+        "tags": [
+          "CVEs"
+        ],
+        "operationId": "getCves",
+        "summary": "List / Get CVEs",
+        "description": "Retrieves a single CVE (via cveId/cveIds) or a filtered, paginated collection of CVE records.",
+        "parameters": [
+          {
+            "name": "cpeName",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Returns all CVEs associated with a specific CPE Name (e.g. cpe:2.3:o:microsoft:windows_10:1607:*:*:*:*:*:*:*). The part, vendor, product, and version components must be non-wildcard. Incompatible with virtualMatchString if both are supplied (cpeName wins)."
+          },
+          {
+            "name": "cveId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Deprecated in favor of cveIds. Returns a single CVE by its CVE-ID (e.g. CVE-2019-1010218). Will not match a CVE not yet received by the NVD."
+          },
+          {
+            "name": "cveIds",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of up to 100 CVE-IDs (e.g. CVE-2019-1010218,CVE-2019-1010). Supersedes cveId."
+          },
+          {
+            "name": "cveTag",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "disputed",
+                "unsupported-when-assigned",
+                "exclusively-hosted-service"
+              ]
+            },
+            "description": "Returns only CVE records that include the given CVE Tag."
+          },
+          {
+            "name": "cvssV2Metrics",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Full or partial CVSSv2 vector string (e.g. AV:N/AC:H/Au:N/C:C/I:C/A:C). Cannot be combined with cvssV3Metrics or cvssV4Metrics."
+          },
+          {
+            "name": "cvssV2Severity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+              ]
+            },
+            "description": "CVSSv2 qualitative severity rating. Cannot be combined with cvssV3Severity or cvssV4Severity."
+          },
+          {
+            "name": "cvssV3Metrics",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Full or partial CVSSv3 vector string (e.g. AV:L/AC:L/PR:L/UI:R/S:U/C:N/I:L/A:L). Cannot be combined with cvssV2Metrics or cvssV4Metrics."
+          },
+          {
+            "name": "cvssV3Severity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "LOW",
+                "MEDIUM",
+                "HIGH",
+                "CRITICAL"
+              ]
+            },
+            "description": "CVSSv3 qualitative severity rating. Cannot be combined with cvssV2Severity or cvssV4Severity."
+          },
+          {
+            "name": "cvssV4Metrics",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Full or partial CVSSv4 vector string (e.g. AV:A/AC:H/PR:H/UI:N). Cannot be combined with cvssV2Metrics or cvssV3Metrics."
+          },
+          {
+            "name": "cvssV4Severity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "LOW",
+                "MEDIUM",
+                "HIGH",
+                "CRITICAL"
+              ]
+            },
+            "description": "CVSSv4 qualitative severity rating. Cannot be combined with cvssV2Severity or cvssV3Severity."
+          },
+          {
+            "name": "cweId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Returns CVEs that include the given weakness (e.g. CWE-287). NVD-CWE-Other and NVD-CWE-noinfo placeholder values are also accepted."
+          },
+          {
+            "name": "hasCertAlerts",
+            "in": "query",
+            "required": false,
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Presence-only flag (no value). Returns only CVEs that contain a US-CERT Technical Alert."
+          },
+          {
+            "name": "hasCertNotes",
+            "in": "query",
+            "required": false,
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Presence-only flag (no value). Returns only CVEs that contain a CERT/CC Vulnerability Note."
+          },
+          {
+            "name": "hasKev",
+            "in": "query",
+            "required": false,
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Presence-only flag (no value). Returns only CVEs in CISA's Known Exploited Vulnerabilities (KEV) catalog."
+          },
+          {
+            "name": "hasOval",
+            "in": "query",
+            "required": false,
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Presence-only flag (no value). Returns only CVEs that contain a MITRE OVAL record."
+          },
+          {
+            "name": "isVulnerable",
+            "in": "query",
+            "required": false,
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Presence-only flag (no value). Returns only CVEs where the CPE given in cpeName is also considered vulnerable. Requires cpeName; cannot be combined with virtualMatchString."
+          },
+          {
+            "name": "kevStartDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Start of the kev date/time range, extended ISO-8601 (e.g. 2021-08-04T13:00:00.000Z). Must be paired with kevEndDate. Both kevStartDate and kevEndDate are required together when filtering on KEV inclusion date."
+          },
+          {
+            "name": "kevEndDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "End of the kev date/time range, extended ISO-8601. Must be paired with kevStartDate. Both kevStartDate and kevEndDate are required together when filtering on KEV inclusion date."
+          },
+          {
+            "name": "keywordSearch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Returns CVEs where a word or phrase is found in the current description. Multiple keywords act as AND. A trailing wildcard is implied on each keyword."
+          },
+          {
+            "name": "keywordExactMatch",
+            "in": "query",
+            "required": false,
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Presence-only flag (no value). Requires keywordSearch. Returns only CVEs matching the keywordSearch phrase exactly, instead of any-term matching."
+          },
+          {
+            "name": "lastModStartDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Start of the lastMod date/time range, extended ISO-8601 (e.g. 2021-08-04T13:00:00.000Z). Must be paired with lastModEndDate. Maximum allowable range is 120 consecutive days. Both lastModStartDate and lastModEndDate are required together."
+          },
+          {
+            "name": "lastModEndDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "End of the lastMod date/time range, extended ISO-8601. Must be paired with lastModStartDate. Maximum allowable range is 120 consecutive days. Both lastModStartDate and lastModEndDate are required together."
+          },
+          {
+            "name": "noRejected",
+            "in": "query",
+            "required": false,
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Presence-only flag (no value). Excludes CVE records with a REJECT/Rejected status (included by default)."
+          },
+          {
+            "name": "pubStartDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Start of the pub date/time range, extended ISO-8601 (e.g. 2021-08-04T13:00:00.000Z). Must be paired with pubEndDate. Maximum allowable range is 120 consecutive days. Both pubStartDate and pubEndDate are required together."
+          },
+          {
+            "name": "pubEndDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "End of the pub date/time range, extended ISO-8601. Must be paired with pubStartDate. Maximum allowable range is 120 consecutive days. Both pubStartDate and pubEndDate are required together."
+          },
+          {
+            "name": "resultsPerPage",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of CVE records to return in one response. Default and maximum allowable value is 2000."
+          },
+          {
+            "name": "startIndex",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based index of the first CVE record to return, for pagination."
+          },
+          {
+            "name": "sourceIdentifier",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Returns CVEs where the exact value of sourceIdentifier appears as a data source in the CVE record (e.g. cve@mitre.org). See the Source API for valid values."
+          },
+          {
+            "name": "versionEnd",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Ending version of a CPE version range. Must be paired with versionEndType and virtualMatchString (without a version component)."
+          },
+          {
+            "name": "versionEndType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "including",
+                "excluding"
+              ]
+            },
+            "description": "Whether versionEnd is inclusive or exclusive. Required when versionEnd is used."
+          },
+          {
+            "name": "versionStart",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Starting version of a CPE version range. Must be paired with versionStartType and virtualMatchString (without a version component)."
+          },
+          {
+            "name": "versionStartType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "including",
+                "excluding"
+              ]
+            },
+            "description": "Whether versionStart is inclusive or exclusive. Required when versionStart is used."
+          },
+          {
+            "name": "virtualMatchString",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Broader CPE Match Criteria filter than cpeName (e.g. cpe:2.3:o:linux:linux_kernel). May be combined with versionStart/versionStartType and/or versionEnd/versionEndType. If cpeName is also supplied, cpeName wins."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List / Get CVEs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CveApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/json/cvehistory/2.0": {
+      "get": {
+        "tags": [
+          "CVE Change History"
+        ],
+        "operationId": "getCveHistory",
+        "summary": "List CVE change history",
+        "description": "Retrieves the change events recorded against one or more CVE records (or all CVE records in a date range).",
+        "parameters": [
+          {
+            "name": "changeStartDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Start of the change date/time range, extended ISO-8601 (e.g. 2021-08-04T13:00:00.000Z). Must be paired with changeEndDate. Maximum allowable range is 120 consecutive days. Both changeStartDate and changeEndDate are required together."
+          },
+          {
+            "name": "changeEndDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "End of the change date/time range, extended ISO-8601. Must be paired with changeStartDate. Maximum allowable range is 120 consecutive days. Both changeStartDate and changeEndDate are required together."
+          },
+          {
+            "name": "cveId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Deprecated in favor of cveIds. Returns the complete change history for a single CVE-ID."
+          },
+          {
+            "name": "cveIds",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of up to 100 CVE-IDs. Returns the complete change history for each. Supersedes cveId."
+          },
+          {
+            "name": "eventName",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CVE Received",
+                "Initial Analysis",
+                "Reanalysis",
+                "CVE Modified",
+                "Modified Analysis",
+                "CVE Translated",
+                "Vendor Comment",
+                "CVE Source Update",
+                "CPE Deprecation Remap",
+                "CWE Remap",
+                "Reference Tag Update",
+                "CVE Rejected",
+                "CVE Unrejected",
+                "CVE CISA KEV Update",
+                "Data Remediation",
+                "CVE Status Change"
+              ]
+            },
+            "description": "Filters to a single change-event type (only one value per request)."
+          },
+          {
+            "name": "resultsPerPage",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of change events to return in one response. Default and maximum allowable value is 5000."
+          },
+          {
+            "name": "startIndex",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based index of the first change event to return, for pagination."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List CVE change history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CveHistoryApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/json/cpes/2.0": {
+      "get": {
+        "tags": [
+          "CPEs"
+        ],
+        "operationId": "getCpes",
+        "summary": "List / Get CPEs",
+        "description": "Retrieves a single CPE record (via cpeNameId) or a filtered, paginated collection of CPE Names from the Official CPE Dictionary.",
+        "parameters": [
+          {
+            "name": "cpeNameId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Returns the specific CPE record identified by this UUID."
+          },
+          {
+            "name": "cpeMatchString",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Returns CPE Names in the Official CPE Dictionary matching this CPE match string (e.g. cpe:2.3:o:microsoft:windows_10), full or partial."
+          },
+          {
+            "name": "keywordSearch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Returns CPE records where a word or phrase is found in the metadata title or reference links. Multiple keywords act as AND."
+          },
+          {
+            "name": "keywordExactMatch",
+            "in": "query",
+            "required": false,
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Presence-only flag (no value). Requires keywordSearch. Returns only CPEs matching the keywordSearch phrase exactly."
+          },
+          {
+            "name": "lastModStartDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Start of the lastMod date/time range, extended ISO-8601 (e.g. 2021-08-04T13:00:00.000Z). Must be paired with lastModEndDate. Maximum allowable range is 120 consecutive days. Both lastModStartDate and lastModEndDate are required together."
+          },
+          {
+            "name": "lastModEndDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "End of the lastMod date/time range, extended ISO-8601. Must be paired with lastModStartDate. Maximum allowable range is 120 consecutive days. Both lastModStartDate and lastModEndDate are required together."
+          },
+          {
+            "name": "matchCriteriaId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Returns all CPE records associated with the CPE Match Criteria identified by this UUID."
+          },
+          {
+            "name": "resultsPerPage",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of CPE records to return in one response. Default and maximum allowable value is 10000."
+          },
+          {
+            "name": "startIndex",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based index of the first CPE record to return, for pagination."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List / Get CPEs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CpeApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/json/cpematch/2.0": {
+      "get": {
+        "tags": [
+          "CPE Match Criteria"
+        ],
+        "operationId": "getCpeMatches",
+        "summary": "List / Get CPE Match Criteria",
+        "description": "Retrieves CPE Match Strings and CPE Match String Ranges -- the abstract match criteria that CVE applicability statements reference and that correlate to concrete CPE Names in the dictionary.",
+        "parameters": [
+          {
+            "name": "cveId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Returns all non-deprecated CPE Match Strings in the applicability statement of the given CVE-ID (e.g. CVE-2022-32223)."
+          },
+          {
+            "name": "lastModStartDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Start of the lastMod date/time range, extended ISO-8601 (e.g. 2021-08-04T13:00:00.000Z). Must be paired with lastModEndDate. Maximum allowable range is 120 consecutive days. Both lastModStartDate and lastModEndDate are required together. Compared against the match criteria's lastModified or cpeLastModified date, whichever is more recent."
+          },
+          {
+            "name": "lastModEndDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "End of the lastMod date/time range, extended ISO-8601. Must be paired with lastModStartDate. Maximum allowable range is 120 consecutive days. Both lastModStartDate and lastModEndDate are required together. Compared against the match criteria's lastModified or cpeLastModified date, whichever is more recent."
+          },
+          {
+            "name": "matchCriteriaId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Returns the CPE Match String record identified by this UUID."
+          },
+          {
+            "name": "matchStringSearch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Returns all CPE Match Strings matching the pattern of this CPE match string (e.g. cpe:2.3:*:cisco:adaptive_security_appliance:*). Does not support CPE Match String Ranges."
+          },
+          {
+            "name": "resultsPerPage",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of match records to return in one response. Default and maximum allowable value is 500."
+          },
+          {
+            "name": "startIndex",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based index of the first match string to return, for pagination."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List / Get CPE Match Criteria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CpeMatchApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/json/source/2.0": {
+      "get": {
+        "tags": [
+          "Sources"
+        ],
+        "operationId": "getSources",
+        "summary": "List sources",
+        "description": "Retrieves detailed information on the organizations that provide the data contained in the NVD dataset, including every valid sourceIdentifier value.",
+        "parameters": [
+          {
+            "name": "lastModStartDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Start of the lastMod date/time range, extended ISO-8601 (e.g. 2021-08-04T13:00:00.000Z). Must be paired with lastModEndDate. Maximum allowable range is 120 consecutive days. Both lastModStartDate and lastModEndDate are required together."
+          },
+          {
+            "name": "lastModEndDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "End of the lastMod date/time range, extended ISO-8601. Must be paired with lastModStartDate. Maximum allowable range is 120 consecutive days. Both lastModStartDate and lastModEndDate are required together."
+          },
+          {
+            "name": "resultsPerPage",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of source records to return in one response. Default and maximum allowable value is 1000."
+          },
+          {
+            "name": "sourceIdentifier",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Returns the source record(s) where the exact value of sourceIdentifiers matches this identifier (e.g. cve@mitre.org)."
+          },
+          {
+            "name": "startIndex",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based index of the first source record to return, for pagination."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List sources",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "name": "apiKey",
+        "in": "header"
+      }
+    },
+    "schemas": {
+      "CveApiResponse": {
+        "type": "object",
+        "properties": {
+          "resultsPerPage": {
+            "type": "integer"
+          },
+          "startIndex": {
+            "type": "integer"
+          },
+          "totalResults": {
+            "type": "integer"
+          },
+          "format": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "vulnerabilities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "cve": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "sourceIdentifier": {
+                      "type": "string"
+                    },
+                    "published": {
+                      "type": "string"
+                    },
+                    "lastModified": {
+                      "type": "string"
+                    },
+                    "vulnStatus": {
+                      "type": "string"
+                    },
+                    "evaluatorComment": {
+                      "type": "string"
+                    },
+                    "evaluatorSolution": {
+                      "type": "string"
+                    },
+                    "evaluatorImpact": {
+                      "type": "string"
+                    },
+                    "cisaExploitAdd": {
+                      "type": "string"
+                    },
+                    "cisaActionDue": {
+                      "type": "string"
+                    },
+                    "cisaRequiredAction": {
+                      "type": "string"
+                    },
+                    "cisaVulnerabilityName": {
+                      "type": "string"
+                    },
+                    "cveTags": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "sourceIdentifier": {
+                            "type": "string"
+                          },
+                          "tags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "descriptions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "lang": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "metrics": {
+                      "type": "object",
+                      "description": "cvssMetricV2 / cvssMetricV31 / cvssMetricV30 / cvssMetricV40 arrays, each with source, type, cvssData (CVSS vector + sub-scores), baseSeverity, exploitabilityScore, impactScore."
+                    },
+                    "weaknesses": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "source": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "lang": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "configurations": {
+                      "type": "array",
+                      "description": "CPE applicability statements. Each entry contains nodes with an operator (OR/AND), optional negate flag, and cpeMatch entries (criteria, matchCriteriaId, vulnerable, version range bounds).",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "references": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "url": {
+                            "type": "string"
+                          },
+                          "source": {
+                            "type": "string"
+                          },
+                          "tags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "vendorComments": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "organization": {
+                            "type": "string"
+                          },
+                          "comment": {
+                            "type": "string"
+                          },
+                          "lastModified": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "ssvc": {
+                      "type": "object",
+                      "description": "Stakeholder-Specific Vulnerability Categorization assessment data."
+                    },
+                    "affected": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "source": {
+                            "type": "string"
+                          },
+                          "affectedData": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "vendor": {
+                                  "type": "string"
+                                },
+                                "product": {
+                                  "type": "string"
+                                },
+                                "versions": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "version": {
+                                        "type": "string"
+                                      },
+                                      "status": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "CveHistoryApiResponse": {
+        "type": "object",
+        "properties": {
+          "resultsPerPage": {
+            "type": "integer"
+          },
+          "startIndex": {
+            "type": "integer"
+          },
+          "totalResults": {
+            "type": "integer"
+          },
+          "format": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "cveChanges": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "change": {
+                  "type": "object",
+                  "properties": {
+                    "cveId": {
+                      "type": "string"
+                    },
+                    "eventName": {
+                      "type": "string"
+                    },
+                    "cveChangeId": {
+                      "type": "string"
+                    },
+                    "sourceIdentifier": {
+                      "type": "string"
+                    },
+                    "created": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "action": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "oldValue": {
+                            "type": "string"
+                          },
+                          "newValue": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "CpeApiResponse": {
+        "type": "object",
+        "properties": {
+          "resultsPerPage": {
+            "type": "integer"
+          },
+          "startIndex": {
+            "type": "integer"
+          },
+          "totalResults": {
+            "type": "integer"
+          },
+          "format": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "cpe": {
+                  "type": "object",
+                  "properties": {
+                    "deprecated": {
+                      "type": "boolean"
+                    },
+                    "cpeName": {
+                      "type": "string"
+                    },
+                    "cpeNameId": {
+                      "type": "string"
+                    },
+                    "lastModified": {
+                      "type": "string"
+                    },
+                    "created": {
+                      "type": "string"
+                    },
+                    "titles": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          },
+                          "lang": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "refs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "ref": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "deprecatedBy": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "cpeName": {
+                            "type": "string"
+                          },
+                          "cpeNameId": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "deprecates": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "cpeName": {
+                            "type": "string"
+                          },
+                          "cpeNameId": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "CpeMatchApiResponse": {
+        "type": "object",
+        "properties": {
+          "resultsPerPage": {
+            "type": "integer"
+          },
+          "startIndex": {
+            "type": "integer"
+          },
+          "totalResults": {
+            "type": "integer"
+          },
+          "format": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "matchStrings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "matchString": {
+                  "type": "object",
+                  "properties": {
+                    "matchCriteriaId": {
+                      "type": "string"
+                    },
+                    "criteria": {
+                      "type": "string"
+                    },
+                    "lastModified": {
+                      "type": "string"
+                    },
+                    "cpeLastModified": {
+                      "type": "string"
+                    },
+                    "created": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "versionStartIncluding": {
+                      "type": "string"
+                    },
+                    "versionStartExcluding": {
+                      "type": "string"
+                    },
+                    "versionEndIncluding": {
+                      "type": "string"
+                    },
+                    "versionEndExcluding": {
+                      "type": "string"
+                    },
+                    "matches": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "cpeName": {
+                            "type": "string"
+                          },
+                          "cpeNameId": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SourceApiResponse": {
+        "type": "object",
+        "properties": {
+          "resultsPerPage": {
+            "type": "integer"
+          },
+          "startIndex": {
+            "type": "integer"
+          },
+          "totalResults": {
+            "type": "integer"
+          },
+          "format": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "contactEmail": {
+                  "type": "string"
+                },
+                "sourceIdentifiers": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "lastModified": {
+                  "type": "string"
+                },
+                "created": {
+                  "type": "string"
+                },
+                "v2AcceptanceLevel": {
+                  "type": "object",
+                  "properties": {
+                    "description": {
+                      "type": "string"
+                    },
+                    "lastModified": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "v3AcceptanceLevel": {
+                  "type": "object",
+                  "properties": {
+                    "description": {
+                      "type": "string"
+                    },
+                    "lastModified": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "cweAcceptanceLevel": {
+                  "type": "object",
+                  "properties": {
+                    "description": {
+                      "type": "string"
+                    },
+                    "lastModified": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
