@@ -46,6 +46,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **EasyPost** | Shipping / logistics |
 | **EfficientIP** | SOLIDserver (DDI) |
 | **F5** | BIG-IP · BIG-IQ · Insight |
+| **ForeScout** | Web API (CounterACT / eyeSight) |
 | **Fortinet** | FortiGate |
 | **GitHub** | GitHub |
 | **GitLab** | GitLab |
