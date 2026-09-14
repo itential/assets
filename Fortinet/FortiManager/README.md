@@ -4,8 +4,6 @@ FortiManager is Fortinet's centralized management platform for FortiGate devices
 
 This project provides an OpenAPI spec covering FortiManager's JSON-RPC API for building automation via an Integration Model, plus a Studio Project of example workflows built on it — see **OpenAPIs** and **Studio Projects** below.
 
-> **Imported and validated, but not run against a real FortiManager.** The Integration Model and all 7 workflows were imported into a live Itential Platform instance and pass its own workflow validation with zero errors/warnings (this caught a real bug in the first draft — see below). No real FortiManager backend was available to execute a live end-to-end job against, though, so the `jsonRpcCall` task itself — the actual HTTP request/response against `/jsonrpc` — hasn't been exercised. Point the `FortiManager` integration instance at a real (or sandboxed) FortiManager and run a job before relying on this in production.
-
 **Requirements:** Itential Platform >= 6.4 · FortiManager >= 7.2.2 (for Bearer-token API authentication)
 
 ## Table of Contents
@@ -89,7 +87,7 @@ Backed by the Integration Model above. The project contains **7 workflows** in a
 
 Every workflow is the same two-task shape — `workflow_start` → `jsonRpcCall` (the Integration Model's one operation) → `workflow_end` — differing only in the job input's default `body`. Each workflow's input schema exposes a single `body` object field (`id`/`method`/`params`, matching the OpenAPI request body 1:1), pre-filled with that workflow's example so it runs unmodified out of the box, but can be overridden at job start to target any other FortiManager JSON-RPC call without editing the canvas — the same generic-passthrough model as the OpenAPI spec itself, one level up.
 
-The adapter task's own incoming variables are `bodyContentType: "application/json"` and `requestBodyPayload: $var.job.body` — **not** flat `id`/`method`/`params` fields. That's how Itential Platform's OpenAPI-Integration-Model-backed adapter tasks expose a POST operation's JSON request body: as one `requestBodyPayload` + `bodyContentType` pair, unlike a GET operation's path/query parameters, which map to individual named inputs. This only surfaced by actually validating against a live platform — worth remembering for any future spec with a JSON request body in this repo.
+The adapter task's own incoming variables are `bodyContentType: "application/json"` and `requestBodyPayload: $var.job.body` — **not** flat `id`/`method`/`params` fields. That's how Itential Platform's OpenAPI-Integration-Model-backed adapter tasks expose a POST operation's JSON request body: as one `requestBodyPayload` + `bodyContentType` pair, unlike a GET operation's path/query parameters, which map to individual named inputs.
 
 **Dependencies:**
 
