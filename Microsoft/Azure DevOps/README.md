@@ -9,6 +9,7 @@ Azure DevOps Services is Microsoft's cloud-hosted platform for the software deve
 - [Integration Configuration](#integration-configuration)
 - [OpenAPIs](#openapis)
   - [`azure_devops-latest.json`](#azure_devops-latestjson)
+  - [`azure_devops-7.1.json`](#azure_devops-71json)
 - [Studio Projects](#studio-projects)
   - [Azure DevOps Project](#azure-devops-project)
     - [Folder Structure](#folder-structure)
@@ -17,7 +18,7 @@ Azure DevOps Services is Microsoft's cloud-hosted platform for the software deve
 
 | Asset | Description |
 |---|---|
-| [OpenAPIs/](./OpenAPIs/) | Azure DevOps Services REST API OpenAPI spec, curated for automation |
+| [OpenAPIs/](./OpenAPIs/) | Azure DevOps Services REST API OpenAPI specs — curated `-latest` plus the full derived spec |
 | [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing 55 workflows in 7 folders |
 
 ## Requirements
@@ -60,13 +61,14 @@ Every operation in the spec requires an `api-version` query parameter; it defaul
 
 ## OpenAPIs
 
+Microsoft does not publish a static OpenAPI/Swagger document for Azure DevOps Services, and there is no live introspection endpoint to generate one from (it's a multi-tenant SaaS). Both specs below are derived directly from [`microsoft/azure-devops-node-api`](https://github.com/microsoft/azure-devops-node-api) (v17.0.1), Microsoft's own officially-maintained TypeScript client library — its interface files and API client classes define the exact request/response shapes, REST paths, HTTP methods, and API version for every operation, scoped to the same 5 SDK API areas: `CoreApi.ts` (Projects & Teams), `GitApi.ts`, `BuildApi.ts`, `PipelinesApi.ts`, and `WorkItemTrackingApi.ts`.
+
 | Spec | Version | Operations | Description |
 |---|---|---|---|
 | [`azure_devops-latest.json`](./OpenAPIs/azure_devops-latest.json) | latest (curated) | 55 | Curated across Projects & Teams, Git, Build, Pipelines, and Work Item Tracking — see breakdown below |
+| [`azure_devops-7.1.json`](./OpenAPIs/azure_devops-7.1.json) | 7.1 | 345 | Full spec covering the complete operation surface of those 5 SDK API areas |
 
 ### `azure_devops-latest.json`
-
-Microsoft does not publish a static OpenAPI/Swagger document for Azure DevOps Services, and there is no live introspection endpoint to generate one from (it's a multi-tenant SaaS). This spec is derived directly from [`microsoft/azure-devops-node-api`](https://github.com/microsoft/azure-devops-node-api) (v17.0.1), Microsoft's own officially-maintained TypeScript client library — its interface files and API client classes define the exact request/response shapes, REST paths, HTTP methods, and API version for every operation.
 
 Curated to 55 of the several hundred operations across the SDK's Git, Build, Pipelines, and Work Item Tracking API areas alone (the full SDK surface also covers Release, Test Plans, Wiki, Service Endpoints, Task Agent pools, Security Roles, and more, none of which are included here).
 
@@ -79,6 +81,12 @@ Resources included, by category:
 - **Build Definitions**: list/create/get/update/delete build (pipeline) definitions
 - **Pipelines**: list/create/get pipelines, list/run pipeline runs, get a run
 - **Work Item Tracking**: create/get/update/delete work items, list work items by ID, query by WIQL, list/add comments
+
+### `azure_devops-7.1.json`
+
+Full spec (345 operations) enumerating every method exposed by `CoreApi.ts`, `GitApi.ts`, `BuildApi.ts`, `PipelinesApi.ts`, and `WorkItemTrackingApi.ts` — not just the 55 curated for the Studio Project. This includes areas the curated spec omits entirely: Git annotated tags, cherry-picks, reverts, forks, and import requests; Build source providers, retention, templates, and webhooks; Work Item Tracking classification nodes, saved queries, fields, comment reactions, and work item type administration.
+
+The SDK resolves each operation's REST route dynamically at runtime (via a server-side locations lookup keyed by a GUID, not a static template in the client code), so paths for the operations beyond the curated 55 were reconstructed from the Azure DevOps Services REST API reference and the SDK's own route/query parameter names — the 55 curated operations are carried into this spec unchanged, already hand-verified. Request/response bodies for the rest use generic object schemas rather than fully-typed models; consult the linked SDK method for the exact shape. As with the NetScaler NITRO full spec, this is a structurally-derived operation surface, not hand-verified per operation.
 
 ## Studio Projects
 
