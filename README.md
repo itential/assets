@@ -46,6 +46,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **EasyPost** | Shipping / logistics |
 | **EfficientIP** | SOLIDserver (DDI) |
 | **F5** | BIG-IP · BIG-IQ · Insight |
+| **ForeScout** | Web API (CounterACT / eyeSight) |
 | **Fortinet** | FortiGate |
 | **GitHub** | GitHub |
 | **GitLab** | GitLab |
@@ -67,6 +68,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **NetScaler** | ADC |
 | **Netskope** | Cloud security platform APIs |
 | **New Relic** | Observability |
+| **NVD** | National Vulnerability Database (CVE / CPE) |
 | **Okta** | Identity management |
 | **OpenAI** | AI / LLM APIs |
 | **Paessler** | PRTG monitoring |
