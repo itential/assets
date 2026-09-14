@@ -1,0 +1,314 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "FortiManager",
+    "description": "Fortinet FortiManager's JSON-RPC 2.0 API for centralized management of FortiGate devices -- policy and object configuration (pm/config), device management (dvmdb), and provisioning workflows (securityconsole). The entire API is addressed through a single generic RPC endpoint rather than per-resource REST paths. Authentication: static API-administrator token (Bearer). Requires FortiManager >= 7.2.2.",
+    "version": "latest",
+    "x-vendor-api-version": "7.2.2",
+    "x-itential-curated": "FortiManager's JSON-RPC API is a single generic endpoint (POST /jsonrpc), not a resource-per-path REST surface, so there is no larger vendor OpenAPI/Swagger spec to trim from. This spec exposes that one endpoint with a generic request/response envelope -- the `method` and `params[].url` fields (see the request body examples below, and the repo README) are how a workflow task selects the actual FortiManager object or operation, the same role `fortigate-rest-call` plays for FortiOS's REST surface from IG5."
+  },
+  "servers": [
+    {
+      "url": "https://{fmg_host}",
+      "variables": {
+        "fmg_host": {
+          "default": "fortimanager.example.com",
+          "description": "FortiManager management IP or hostname"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "jsonrpc",
+      "description": "Generic FortiManager JSON-RPC 2.0 endpoint"
+    }
+  ],
+  "paths": {
+    "/jsonrpc": {
+      "post": {
+        "tags": [
+          "jsonrpc"
+        ],
+        "operationId": "jsonRpcCall",
+        "summary": "Execute a FortiManager JSON-RPC request",
+        "description": "Single entry point for every FortiManager operation -- policy/object CRUD under `/pm/config/adom/{adom}/...`, device inventory under `/dvmdb/...` and `/dvm/cmd/...`, and provisioning tasks (install, workflow) under `/securityconsole/...`. Set `method` to the RPC verb and `params[].url` to the target resource path. See the request body examples for common patterns, and the repo README for a fuller list of `url` values by use case.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JsonRpcRequest"
+              },
+              "examples": {
+                "getSystemStatus": {
+                  "summary": "Get FortiManager system status",
+                  "value": {
+                    "id": 1,
+                    "method": "get",
+                    "params": [
+                      {
+                        "url": "/sys/status"
+                      }
+                    ]
+                  }
+                },
+                "getAdomList": {
+                  "summary": "List ADOMs",
+                  "value": {
+                    "id": 1,
+                    "method": "get",
+                    "params": [
+                      {
+                        "url": "/dvmdb/adom"
+                      }
+                    ]
+                  }
+                },
+                "getManagedDevices": {
+                  "summary": "List devices managed in an ADOM",
+                  "value": {
+                    "id": 1,
+                    "method": "get",
+                    "params": [
+                      {
+                        "url": "/dvmdb/adom/root/device"
+                      }
+                    ]
+                  }
+                },
+                "addFirewallAddress": {
+                  "summary": "Add a firewall address object",
+                  "value": {
+                    "id": 1,
+                    "method": "add",
+                    "params": [
+                      {
+                        "url": "/pm/config/adom/root/obj/firewall/address",
+                        "data": {
+                          "name": "web-server-01",
+                          "subnet": "10.0.0.5/32"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "getFirewallPolicies": {
+                  "summary": "Get firewall policies from a policy package",
+                  "value": {
+                    "id": 1,
+                    "method": "get",
+                    "params": [
+                      {
+                        "url": "/pm/config/adom/root/pkg/default/firewall/policy"
+                      }
+                    ]
+                  }
+                },
+                "addManagedDevice": {
+                  "summary": "Add (promote) a FortiGate into management by this FortiManager",
+                  "value": {
+                    "id": 1,
+                    "method": "exec",
+                    "params": [
+                      {
+                        "url": "/dvm/cmd/add/device",
+                        "data": {
+                          "adom": "root",
+                          "device": {
+                            "ip": "192.0.2.10",
+                            "name": "FGT-01",
+                            "mgmt_mode": "fmg",
+                            "adm_usr": "admin",
+                            "adm_pass": "changeme"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "installDeviceConfig": {
+                  "summary": "Install the assigned policy package to a managed device",
+                  "value": {
+                    "id": 1,
+                    "method": "exec",
+                    "params": [
+                      {
+                        "url": "/securityconsole/install/device",
+                        "data": {
+                          "adom": "root",
+                          "scope": [
+                            {
+                              "name": "FGT-01",
+                              "vdom": "root"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JSON-RPC response envelope. FortiManager returns HTTP 200 for RPC-level errors too -- check `result[].status.code` (0 is success), not the HTTP status code.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JsonRpcResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "FortiManager API-administrator token, generated on the FortiManager for an API user (System Settings > Admin > Administrators, or `execute api-user generate-key <name>` in the CLI). Requires FortiManager >= 7.2.2 -- older releases only support session-based JSON-RPC auth (a session token embedded in every request body), which can't be expressed as an OpenAPI security scheme."
+      }
+    },
+    "schemas": {
+      "JsonRpcRequest": {
+        "type": "object",
+        "required": [
+          "method",
+          "params"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "default": 1,
+            "description": "Request correlation id, echoed back in the response."
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "get",
+              "add",
+              "set",
+              "update",
+              "delete",
+              "exec",
+              "clone",
+              "move"
+            ],
+            "description": "RPC verb. `get` reads; `add`/`set`/`update`/`delete` are config CRUD; `exec` runs an action (install, device add, reboot, etc.); `clone`/`move` duplicate or reorder objects (e.g. policy rules)."
+          },
+          "params": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/JsonRpcParam"
+            }
+          },
+          "verbose": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ],
+            "nullable": true,
+            "description": "Set to 1 for verbose (name-based, human-readable) response data instead of the default ID-based form."
+          }
+        }
+      },
+      "JsonRpcParam": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Target resource path. Common roots: `/pm/config/adom/{adom}/...` (policy/object config), `/pm/config/adom/{adom}/pkg/{package}/...` (policy packages), `/dvmdb/...` (device/ADOM inventory), `/dvm/cmd/...` (device management actions), `/securityconsole/...` (install and provisioning workflows), `/sys/status` (system info).",
+            "example": "/pm/config/adom/root/obj/firewall/address"
+          },
+          "data": {
+            "description": "Object payload for `add`/`set`/`update`, or action parameters for `exec`. Shape depends entirely on `url` and `method` -- see the request body examples.",
+            "nullable": true
+          },
+          "filter": {
+            "type": "array",
+            "nullable": true,
+            "items": {},
+            "description": "Optional filter expression for `get`, e.g. `[\"name\", \"==\", \"web-server-01\"]`."
+          },
+          "fields": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional field projection for `get` -- limits the response to these attribute names."
+          },
+          "loadsub": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ],
+            "nullable": true,
+            "description": "Whether to load child/sub-objects for `get` (default 1)."
+          },
+          "option": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional `get` modifiers, e.g. `[\"get meta\"]` or `[\"get reference\"]`."
+          }
+        }
+      },
+      "JsonRpcResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "0 on success; non-zero FortiManager error code otherwise."
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "data": {
+                  "description": "Result payload for `get`/`exec` calls. Shape depends entirely on the request's `url` and `method`.",
+                  "nullable": true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
