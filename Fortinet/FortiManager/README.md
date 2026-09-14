@@ -14,7 +14,7 @@ This project provides an OpenAPI spec covering FortiManager's JSON-RPC API for b
 - [Integration Configuration](#integration-configuration)
   - [Connection Properties](#connection-properties)
 - [OpenAPIs](#openapis)
-  - [`fortimanager_json_api-latest.json`](#fortimanager_json_api-latestjson)
+  - [`fortimanager-latest.json`](#fortimanager-latestjson)
   - [Why One Operation, and Why Bearer-Only](#why-one-operation-and-why-bearer-only)
 - [Studio Projects](#studio-projects)
   - [FortiManager Project](#fortimanager-project)
@@ -23,12 +23,12 @@ This project provides an OpenAPI spec covering FortiManager's JSON-RPC API for b
 
 | Asset | Description |
 |---|---|
-| [OpenAPIs/fortimanager_json_api-latest.json](./OpenAPIs/fortimanager_json_api-latest.json) | Single-endpoint Integration Model spec covering FortiManager's JSON-RPC API |
+| [OpenAPIs/fortimanager-latest.json](./OpenAPIs/fortimanager-latest.json) | Single-endpoint Integration Model spec covering FortiManager's JSON-RPC API |
 | [Studio Projects/FortiManager](./Studio%20Projects/FortiManager.project.json) | 7 example workflows, one per common JSON-RPC pattern (status, inventory, object CRUD, device onboarding, install) |
 
 ## Integration Configuration
 
-Import `fortimanager_json_api-latest.json` as an Integration Model in **Admin > Integrations**, then create an integration instance pointed at your FortiManager, authenticating with an API-administrator Bearer token (System Settings > Administrators, or `execute api-user generate-key <name>` in the FortiManager CLI).
+Import `fortimanager-latest.json` as an Integration Model in **Admin > Integrations**, then create an integration instance pointed at your FortiManager, authenticating with an API-administrator Bearer token (System Settings > Administrators, or `execute api-user generate-key <name>` in the FortiManager CLI).
 
 ### Connection Properties
 
@@ -57,7 +57,7 @@ Requires FortiManager >= 7.2.2 — older releases only support session-based JSO
 
 ## OpenAPIs
 
-### `fortimanager_json_api-latest.json`
+### `fortimanager-latest.json`
 
 FortiManager's entire API surface — policy and object configuration (`pm/config`), device inventory and management (`dvmdb`, `dvm/cmd`), and provisioning workflows (`securityconsole`) — is addressed through **one JSON-RPC 2.0 endpoint** (`POST /jsonrpc`), not per-resource REST paths. This spec exposes that one operation (`jsonRpcCall`) with a generic request/response envelope; a workflow task selects the actual object or action by setting the request body's `method` (the RPC verb — `get`/`add`/`set`/`update`/`delete`/`exec`/`clone`/`move`) and `params[].url` (the target resource path).
 
@@ -95,5 +95,5 @@ The adapter task's own incoming variables are `bodyContentType: "application/jso
 
 | Dependency | Notes |
 |---|---|
-| `FortiManager JSON API:latest` Integration Model | Import from [`fortimanager_json_api-latest.json`](./OpenAPIs/fortimanager_json_api-latest.json) before importing the project |
+| `FortiManager:latest` Integration Model | Import from [`fortimanager-latest.json`](./OpenAPIs/fortimanager-latest.json) before importing the project |
 | `FortiManager` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an instance named `FortiManager` — update `adapter_id` in each task if yours is named differently |

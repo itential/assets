@@ -1,10 +1,10 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "FortiManager JSON API",
+    "title": "FortiManager",
     "description": "Fortinet FortiManager's JSON-RPC 2.0 API for centralized management of FortiGate devices -- policy and object configuration (pm/config), device management (dvmdb), and provisioning workflows (securityconsole). The entire API is addressed through a single generic RPC endpoint rather than per-resource REST paths. Authentication: static API-administrator token (Bearer). Requires FortiManager >= 7.2.2.",
     "version": "latest",
-    "x-vendor-api-version": "FortiManager JSON API (7.2.2+, token-based auth)",
+    "x-vendor-api-version": "7.2.2",
     "x-itential-curated": "FortiManager's JSON-RPC API is a single generic endpoint (POST /jsonrpc), not a resource-per-path REST surface, so there is no larger vendor OpenAPI/Swagger spec to trim from. This spec exposes that one endpoint with a generic request/response envelope -- the `method` and `params[].url` fields (see the request body examples below, and the repo README) are how a workflow task selects the actual FortiManager object or operation, the same role `fortigate-rest-call` plays for FortiOS's REST surface from IG5."
   },
   "servers": [
@@ -32,7 +32,9 @@
   "paths": {
     "/jsonrpc": {
       "post": {
-        "tags": ["jsonrpc"],
+        "tags": [
+          "jsonrpc"
+        ],
         "operationId": "jsonRpcCall",
         "summary": "Execute a FortiManager JSON-RPC request",
         "description": "Single entry point for every FortiManager operation -- policy/object CRUD under `/pm/config/adom/{adom}/...`, device inventory under `/dvmdb/...` and `/dvm/cmd/...`, and provisioning tasks (install, workflow) under `/securityconsole/...`. Set `method` to the RPC verb and `params[].url` to the target resource path. See the request body examples for common patterns, and the repo README for a fuller list of `url` values by use case.",
@@ -50,7 +52,9 @@
                     "id": 1,
                     "method": "get",
                     "params": [
-                      { "url": "/sys/status" }
+                      {
+                        "url": "/sys/status"
+                      }
                     ]
                   }
                 },
@@ -60,7 +64,9 @@
                     "id": 1,
                     "method": "get",
                     "params": [
-                      { "url": "/dvmdb/adom" }
+                      {
+                        "url": "/dvmdb/adom"
+                      }
                     ]
                   }
                 },
@@ -70,7 +76,9 @@
                     "id": 1,
                     "method": "get",
                     "params": [
-                      { "url": "/dvmdb/adom/root/device" }
+                      {
+                        "url": "/dvmdb/adom/root/device"
+                      }
                     ]
                   }
                 },
@@ -96,7 +104,9 @@
                     "id": 1,
                     "method": "get",
                     "params": [
-                      { "url": "/pm/config/adom/root/pkg/default/firewall/policy" }
+                      {
+                        "url": "/pm/config/adom/root/pkg/default/firewall/policy"
+                      }
                     ]
                   }
                 },
@@ -133,7 +143,10 @@
                         "data": {
                           "adom": "root",
                           "scope": [
-                            { "name": "FGT-01", "vdom": "root" }
+                            {
+                              "name": "FGT-01",
+                              "vdom": "root"
+                            }
                           ]
                         }
                       }
@@ -170,7 +183,10 @@
     "schemas": {
       "JsonRpcRequest": {
         "type": "object",
-        "required": ["method", "params"],
+        "required": [
+          "method",
+          "params"
+        ],
         "properties": {
           "id": {
             "type": "integer",
@@ -179,7 +195,16 @@
           },
           "method": {
             "type": "string",
-            "enum": ["get", "add", "set", "update", "delete", "exec", "clone", "move"],
+            "enum": [
+              "get",
+              "add",
+              "set",
+              "update",
+              "delete",
+              "exec",
+              "clone",
+              "move"
+            ],
             "description": "RPC verb. `get` reads; `add`/`set`/`update`/`delete` are config CRUD; `exec` runs an action (install, device add, reboot, etc.); `clone`/`move` duplicate or reorder objects (e.g. policy rules)."
           },
           "params": {
@@ -191,7 +216,10 @@
           },
           "verbose": {
             "type": "integer",
-            "enum": [0, 1],
+            "enum": [
+              0,
+              1
+            ],
             "nullable": true,
             "description": "Set to 1 for verbose (name-based, human-readable) response data instead of the default ID-based form."
           }
@@ -199,7 +227,9 @@
       },
       "JsonRpcParam": {
         "type": "object",
-        "required": ["url"],
+        "required": [
+          "url"
+        ],
         "additionalProperties": true,
         "properties": {
           "url": {
@@ -220,19 +250,26 @@
           "fields": {
             "type": "array",
             "nullable": true,
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "description": "Optional field projection for `get` -- limits the response to these attribute names."
           },
           "loadsub": {
             "type": "integer",
-            "enum": [0, 1],
+            "enum": [
+              0,
+              1
+            ],
             "nullable": true,
             "description": "Whether to load child/sub-objects for `get` (default 1)."
           },
           "option": {
             "type": "array",
             "nullable": true,
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "description": "Optional `get` modifiers, e.g. `[\"get meta\"]` or `[\"get reference\"]`."
           }
         }
