@@ -56,6 +56,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Infoblox** | NIOS WAPI · Threat Defense BloxOne · Universal DDI BloxOne |
 | **IP Fabric** | Network intelligence |
 | **Itential** | Platform automation (self-service) |
+| **Jenkins** | Jenkins |
 | **JFrog** | Artifactory |
 | **Juniper** | JUNOS · Mist |
 | **Kentik** | Network observability |
