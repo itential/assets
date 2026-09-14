@@ -52,7 +52,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **GitLab** | GitLab |
 | **GoDaddy** | Domain management |
 | **Google** | Cloud Compute Engine · Drive |
-| **HashiCorp** | Vault (secrets management) |
+| **HashiCorp** | Terraform Enterprise (HCP Terraform) · Vault (secrets management) |
 | **Infoblox** | NIOS WAPI · Threat Defense BloxOne · Universal DDI BloxOne |
 | **IP Fabric** | Network intelligence |
 | **Itential** | Platform automation (self-service) |
