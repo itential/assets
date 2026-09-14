@@ -1,0 +1,4928 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Azure DevOps",
+    "description": "Authentication: HTTP Basic (Personal Access Token as the password, blank username). Azure DevOps Services is Microsoft's SaaS platform for source control (Git), build/release pipelines, work item tracking, and project/team administration.",
+    "version": "latest",
+    "x-vendor-api-version": "7.1",
+    "x-itential-curated": "Trimmed to 55 of the upstream Azure DevOps Services REST API's several hundred operations across Git, Build, Pipelines, and Work Item Tracking areas alone. Covers Projects & Teams, Git Repositories/Pull Requests, Build Builds/Definitions, Pipelines, and Work Item Tracking CRUD. See the repo README for the full operation breakdown."
+  },
+  "servers": [
+    {
+      "url": "https://dev.azure.com/ORGANIZATION",
+      "description": "Itential Platform Integration Models require a static server URL rather than OpenAPI server variables, so the actual organization is set per-instance instead \u2014 see the Integration Configuration section in the README."
+    }
+  ],
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic",
+        "description": "HTTP Basic auth using a blank username and an Azure DevOps Personal Access Token (PAT) as the password."
+      }
+    },
+    "schemas": {
+      "IdentityRef": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "uniqueName": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "TeamProjectReference": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Project identifier."
+          },
+          "name": {
+            "type": "string",
+            "description": "Project name."
+          },
+          "description": {
+            "type": "string",
+            "description": "The project's description (if any)."
+          },
+          "url": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "description": "Project state."
+          },
+          "revision": {
+            "type": "integer",
+            "description": "Project revision."
+          },
+          "visibility": {
+            "type": "string",
+            "description": "Project visibility."
+          },
+          "lastUpdateTime": {
+            "type": "string",
+            "description": "Project last update time.",
+            "format": "date-time"
+          }
+        }
+      },
+      "TeamProject": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Project identifier."
+          },
+          "name": {
+            "type": "string",
+            "description": "Project name."
+          },
+          "description": {
+            "type": "string",
+            "description": "The project's description (if any)."
+          },
+          "url": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "description": "Project state."
+          },
+          "revision": {
+            "type": "integer",
+            "description": "Project revision."
+          },
+          "visibility": {
+            "type": "string",
+            "description": "Project visibility."
+          },
+          "lastUpdateTime": {
+            "type": "string",
+            "description": "Project last update time.",
+            "format": "date-time"
+          },
+          "capabilities": {
+            "type": "object",
+            "description": "Set of capabilities this project has (version control, process template)."
+          },
+          "defaultTeam": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "TeamProjectList": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeamProjectReference"
+            }
+          }
+        }
+      },
+      "WebApiTeam": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Team (Identity) GUID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Team name."
+          },
+          "url": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "description": "Team description."
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "projectName": {
+            "type": "string"
+          },
+          "identityUrl": {
+            "type": "string"
+          }
+        }
+      },
+      "WebApiTeamList": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebApiTeam"
+            }
+          }
+        }
+      },
+      "OperationReference": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Operation ID."
+          },
+          "status": {
+            "type": "string",
+            "description": "Operation status."
+          },
+          "url": {
+            "type": "string"
+          },
+          "pluginId": {
+            "type": "string"
+          }
+        }
+      },
+      "GitRepository": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "project": {
+            "$ref": "#/components/schemas/TeamProjectReference"
+          },
+          "defaultBranch": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer",
+            "description": "Compressed size (bytes) of the repository."
+          },
+          "remoteUrl": {
+            "type": "string"
+          },
+          "sshUrl": {
+            "type": "string"
+          },
+          "webUrl": {
+            "type": "string"
+          },
+          "isDisabled": {
+            "type": "boolean",
+            "description": "True if the repository is disabled."
+          },
+          "isFork": {
+            "type": "boolean",
+            "description": "True if the repository was created as a fork."
+          }
+        }
+      },
+      "GitRepositoryList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/GitRepository"
+        }
+      },
+      "GitRef": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Fully-qualified ref name, e.g. refs/heads/main."
+          },
+          "objectId": {
+            "type": "string",
+            "description": "SHA1 hash of the object the ref points to."
+          },
+          "peeledObjectId": {
+            "type": "string"
+          },
+          "isLocked": {
+            "type": "boolean"
+          },
+          "isLockedBy": {
+            "$ref": "#/components/schemas/IdentityRef"
+          },
+          "url": {
+            "type": "string"
+          },
+          "creator": {
+            "$ref": "#/components/schemas/IdentityRef"
+          }
+        }
+      },
+      "GitRefList": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GitRef"
+            }
+          }
+        }
+      },
+      "GitCommitRef": {
+        "type": "object",
+        "properties": {
+          "commitId": {
+            "type": "string",
+            "description": "SHA1 of the commit."
+          },
+          "author": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "committer": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "comment": {
+            "type": "string",
+            "description": "Comment or message of the commit."
+          },
+          "commentTruncated": {
+            "type": "boolean"
+          },
+          "url": {
+            "type": "string"
+          },
+          "remoteUrl": {
+            "type": "string"
+          },
+          "changeCounts": {
+            "type": "object",
+            "properties": {
+              "Add": {
+                "type": "integer"
+              },
+              "Edit": {
+                "type": "integer"
+              },
+              "Delete": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+      "GitCommitRefList": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GitCommitRef"
+            }
+          }
+        }
+      },
+      "GitPush": {
+        "type": "object",
+        "properties": {
+          "pushId": {
+            "type": "integer"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "pushedBy": {
+            "$ref": "#/components/schemas/IdentityRef"
+          },
+          "url": {
+            "type": "string"
+          },
+          "repository": {
+            "$ref": "#/components/schemas/GitRepository"
+          },
+          "commits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GitCommitRef"
+            }
+          },
+          "refUpdates": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Ref name being updated, e.g. refs/heads/main."
+                },
+                "oldObjectId": {
+                  "type": "string"
+                },
+                "newObjectId": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "GitPushList": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GitPush"
+            }
+          }
+        }
+      },
+      "GitPushRequest": {
+        "type": "object",
+        "properties": {
+          "refUpdates": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Ref name being updated, e.g. refs/heads/main."
+                },
+                "oldObjectId": {
+                  "type": "string",
+                  "description": "Current object ID the ref points to (all-zeros SHA for a new branch)."
+                },
+                "newObjectId": {
+                  "type": "string",
+                  "description": "New object ID for the ref to point to."
+                }
+              }
+            }
+          },
+          "commits": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "comment": {
+                  "type": "string",
+                  "description": "Commit message."
+                },
+                "changes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "changeType": {
+                        "type": "string",
+                        "description": "add, edit, delete, rename."
+                      },
+                      "item": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "newContent": {
+                        "type": "object",
+                        "properties": {
+                          "content": {
+                            "type": "string"
+                          },
+                          "contentType": {
+                            "type": "string",
+                            "description": "rawtext or base64encoded."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "refUpdates",
+          "commits"
+        ]
+      },
+      "GitItem": {
+        "type": "object",
+        "properties": {
+          "objectId": {
+            "type": "string",
+            "description": "Git object ID."
+          },
+          "commitId": {
+            "type": "string",
+            "description": "SHA1 of commit item was fetched at."
+          },
+          "gitObjectType": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string",
+            "description": "File content, present when the request includes includeContent."
+          }
+        }
+      },
+      "IdentityRefWithVote": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "uniqueName": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "vote": {
+            "type": "integer",
+            "description": "Vote on a pull request: 10 approved, 5 approved with suggestions, 0 no vote, -5 waiting, -10 rejected."
+          },
+          "isRequired": {
+            "type": "boolean"
+          }
+        }
+      },
+      "GitPullRequest": {
+        "type": "object",
+        "properties": {
+          "pullRequestId": {
+            "type": "integer"
+          },
+          "codeReviewId": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string",
+            "description": "active, abandoned, completed, notSet."
+          },
+          "createdBy": {
+            "$ref": "#/components/schemas/IdentityRef"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "closedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sourceRefName": {
+            "type": "string"
+          },
+          "targetRefName": {
+            "type": "string"
+          },
+          "mergeStatus": {
+            "type": "string"
+          },
+          "isDraft": {
+            "type": "boolean"
+          },
+          "mergeId": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "repository": {
+            "$ref": "#/components/schemas/GitRepository"
+          },
+          "reviewers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IdentityRefWithVote"
+            }
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "active": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "GitPullRequestList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/GitPullRequest"
+        }
+      },
+      "GitPullRequestCreate": {
+        "type": "object",
+        "properties": {
+          "sourceRefName": {
+            "type": "string",
+            "description": "Fully-qualified source branch ref, e.g. refs/heads/feature-1."
+          },
+          "targetRefName": {
+            "type": "string",
+            "description": "Fully-qualified target branch ref, e.g. refs/heads/main."
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "isDraft": {
+            "type": "boolean"
+          },
+          "reviewers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "workItemRefs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "sourceRefName",
+          "targetRefName",
+          "title"
+        ]
+      },
+      "GitPullRequestUpdate": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "active, abandoned, or completed."
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "targetRefName": {
+            "type": "string"
+          },
+          "isDraft": {
+            "type": "boolean"
+          },
+          "lastMergeSourceCommit": {
+            "type": "object",
+            "properties": {
+              "commitId": {
+                "type": "string"
+              }
+            }
+          },
+          "completionOptions": {
+            "type": "object",
+            "properties": {
+              "deleteSourceBranch": {
+                "type": "boolean"
+              },
+              "mergeCommitMessage": {
+                "type": "string"
+              },
+              "squashMerge": {
+                "type": "boolean"
+              },
+              "bypassPolicy": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "Comment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "parentCommentId": {
+            "type": "integer"
+          },
+          "content": {
+            "type": "string"
+          },
+          "commentType": {
+            "type": "string",
+            "description": "text, codeChange, system."
+          },
+          "author": {
+            "$ref": "#/components/schemas/IdentityRef"
+          },
+          "publishedDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "GitPullRequestCommentThread": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string",
+            "description": "active, fixed, wontFix, closed, byDesign, pending."
+          },
+          "comments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Comment"
+            }
+          },
+          "threadContext": {
+            "type": "object",
+            "properties": {
+              "filePath": {
+                "type": "string"
+              },
+              "rightFileStart": {
+                "type": "object",
+                "properties": {
+                  "line": {
+                    "type": "integer"
+                  },
+                  "offset": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "rightFileEnd": {
+                "type": "object",
+                "properties": {
+                  "line": {
+                    "type": "integer"
+                  },
+                  "offset": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          },
+          "publishedDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "GitPullRequestCommentThreadList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/GitPullRequestCommentThread"
+        }
+      },
+      "GitPullRequestCommentThreadCreate": {
+        "type": "object",
+        "properties": {
+          "comments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string"
+                },
+                "commentType": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Comments in the new thread."
+          },
+          "status": {
+            "type": "string",
+            "description": "active, fixed, wontFix, closed, byDesign, pending."
+          },
+          "threadContext": {
+            "type": "object",
+            "properties": {
+              "filePath": {
+                "type": "string"
+              },
+              "rightFileStart": {
+                "type": "object",
+                "properties": {
+                  "line": {
+                    "type": "integer"
+                  },
+                  "offset": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "rightFileEnd": {
+                "type": "object",
+                "properties": {
+                  "line": {
+                    "type": "integer"
+                  },
+                  "offset": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "comments"
+        ]
+      },
+      "WebApiTagDefinition": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DefinitionReference": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string",
+            "description": "Folder path of the definition."
+          },
+          "type": {
+            "type": "string",
+            "description": "build or xaml."
+          },
+          "queueStatus": {
+            "type": "string",
+            "description": "enabled or paused or disabled."
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "project": {
+            "$ref": "#/components/schemas/TeamProjectReference"
+          }
+        }
+      },
+      "BuildDefinitionList": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DefinitionReference"
+            }
+          }
+        }
+      },
+      "BuildRepository": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Repository ID, or full URL for external repos."
+          },
+          "type": {
+            "type": "string",
+            "description": "TfsGit, GitHub, Bitbucket, etc."
+          },
+          "name": {
+            "type": "string"
+          },
+          "defaultBranch": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "BuildDefinition": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string",
+            "description": "Folder path of the definition."
+          },
+          "type": {
+            "type": "string",
+            "description": "build or xaml."
+          },
+          "queueStatus": {
+            "type": "string",
+            "description": "enabled or paused or disabled."
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "project": {
+            "$ref": "#/components/schemas/TeamProjectReference"
+          },
+          "repository": {
+            "$ref": "#/components/schemas/BuildRepository"
+          },
+          "process": {
+            "type": "object",
+            "description": "Build process, e.g. YAML pipeline file path.",
+            "properties": {
+              "yamlFilename": {
+                "type": "string"
+              }
+            }
+          },
+          "queue": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "variables": {
+            "type": "object",
+            "description": "Map of pipeline variable name to {value, allowOverride, isSecret}."
+          },
+          "triggers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "triggerType": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Build": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "buildNumber": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "description": "none, inProgress, completed, cancelling, postponed, notStarted, all."
+          },
+          "result": {
+            "type": "string",
+            "description": "succeeded, partiallySucceeded, failed, canceled, none."
+          },
+          "queueTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "finishTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "url": {
+            "type": "string"
+          },
+          "definition": {
+            "$ref": "#/components/schemas/DefinitionReference"
+          },
+          "project": {
+            "$ref": "#/components/schemas/TeamProjectReference"
+          },
+          "sourceBranch": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string",
+            "description": "Commit/changeset the build was built from."
+          },
+          "reason": {
+            "type": "string",
+            "description": "manual, individualCI, batchedCI, schedule, pullRequest, etc."
+          },
+          "requestedFor": {
+            "$ref": "#/components/schemas/IdentityRef"
+          },
+          "repository": {
+            "$ref": "#/components/schemas/BuildRepository"
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "priority": {
+            "type": "string"
+          }
+        }
+      },
+      "BuildList": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Build"
+            }
+          }
+        }
+      },
+      "BuildRequest": {
+        "type": "object",
+        "properties": {
+          "definition": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "sourceBranch": {
+            "type": "string",
+            "description": "Branch to build, e.g. refs/heads/main."
+          },
+          "parameters": {
+            "type": "string",
+            "description": "JSON-encoded string of pipeline variable overrides."
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "definition"
+        ]
+      },
+      "Change": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Commit/changeset ID."
+          },
+          "message": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "git commit, TFVC changeset, etc."
+          },
+          "author": {
+            "$ref": "#/components/schemas/IdentityRef"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ChangeList": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Change"
+            }
+          }
+        }
+      },
+      "BuildLogList": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "lineCount": {
+                  "type": "integer"
+                },
+                "createdOn": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        }
+      },
+      "TimelineRecord": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "parentId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "Stage, Phase, Job, Task, Checkpoint, etc."
+          },
+          "name": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "finishTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "state": {
+            "type": "string",
+            "description": "pending, inProgress, completed."
+          },
+          "result": {
+            "type": "string",
+            "description": "succeeded, failed, canceled, skipped, abandoned."
+          },
+          "percentComplete": {
+            "type": "integer"
+          },
+          "log": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "url": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "Timeline": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "changeId": {
+            "type": "integer"
+          },
+          "lastChangedOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimelineRecord"
+            }
+          }
+        }
+      },
+      "Pipeline": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "folder": {
+            "type": "string"
+          },
+          "configuration": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "yaml or designerJson."
+              },
+              "path": {
+                "type": "string",
+                "description": "Path to the YAML pipeline file."
+              },
+              "repository": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "PipelineList": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Pipeline"
+            }
+          }
+        }
+      },
+      "PipelineCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "folder": {
+            "type": "string"
+          },
+          "configuration": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "yaml"
+              },
+              "path": {
+                "type": "string",
+                "description": "Path to the YAML pipeline file, e.g. /azure-pipelines.yml."
+              },
+              "repository": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "azureReposGit, gitHub, etc."
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "type"
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "path",
+              "repository"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "configuration"
+        ]
+      },
+      "Run": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "description": "unknown, inProgress, canceling, completed."
+          },
+          "result": {
+            "type": "string",
+            "description": "unknown, succeeded, failed, canceled."
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "finishedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "url": {
+            "type": "string"
+          },
+          "pipeline": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "revision": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+      "RunList": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Run"
+            }
+          }
+        }
+      },
+      "RunPipelineParameters": {
+        "type": "object",
+        "properties": {
+          "resources": {
+            "type": "object",
+            "properties": {
+              "repositories": {
+                "type": "object",
+                "description": "Map of repository resource name to {refName, version}."
+              }
+            }
+          },
+          "templateParameters": {
+            "type": "object",
+            "description": "Map of pipeline template parameter name to value."
+          },
+          "variables": {
+            "type": "object",
+            "description": "Map of runtime variable name to {value, isSecret}."
+          },
+          "stagesToSkip": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "WorkItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The work item ID."
+          },
+          "rev": {
+            "type": "integer",
+            "description": "Revision number of the work item."
+          },
+          "fields": {
+            "type": "object",
+            "description": "Map of field reference name to value, e.g. System.Title, System.State, System.WorkItemType."
+          },
+          "url": {
+            "type": "string"
+          },
+          "relations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "rel": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "attributes": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "WorkItemList": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkItem"
+            }
+          }
+        }
+      },
+      "WorkItemDelete": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string"
+          },
+          "deletedDate": {
+            "type": "string"
+          },
+          "deletedBy": {
+            "type": "string"
+          },
+          "project": {
+            "type": "string"
+          }
+        }
+      },
+      "JsonPatchOperation": {
+        "type": "object",
+        "properties": {
+          "op": {
+            "type": "string",
+            "description": "add, remove, replace, move, copy, test."
+          },
+          "path": {
+            "type": "string",
+            "description": "JSON Pointer path, e.g. /fields/System.Title."
+          },
+          "value": {}
+        },
+        "required": [
+          "op",
+          "path"
+        ]
+      },
+      "JsonPatchDocument": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/JsonPatchOperation"
+        }
+      },
+      "Wiql": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Work Item Query Language (WIQL) SELECT statement."
+          }
+        },
+        "required": [
+          "query"
+        ]
+      },
+      "WorkItemQueryResult": {
+        "type": "object",
+        "properties": {
+          "queryType": {
+            "type": "string"
+          },
+          "queryResultType": {
+            "type": "string"
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "referenceName": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "workItems": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CommentCreate": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Comment text."
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "WorkItemComment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "workItemId": {
+            "type": "integer"
+          },
+          "version": {
+            "type": "integer"
+          },
+          "text": {
+            "type": "string"
+          },
+          "createdBy": {
+            "$ref": "#/components/schemas/IdentityRef"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "WorkItemCommentList": {
+        "type": "object",
+        "properties": {
+          "totalCount": {
+            "type": "integer"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "comments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkItemComment"
+            }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "$id": {
+            "type": "string"
+          },
+          "innerException": {},
+          "message": {
+            "type": "string"
+          },
+          "typeName": {
+            "type": "string"
+          },
+          "typeKey": {
+            "type": "string"
+          },
+          "errorCode": {
+            "type": "integer"
+          },
+          "eventId": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/_apis/projects": {
+      "get": {
+        "summary": "List Projects",
+        "description": "Get a list of projects visible to the caller's organization.",
+        "tags": [
+          "Projects & Teams"
+        ],
+        "operationId": "Projects_List",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "stateFilter",
+            "in": "query",
+            "required": false,
+            "description": "Filter on team project state (wellFormed, deleting, new, all).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of projects to return.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "required": false,
+            "description": "Number of projects to skip.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamProjectList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Project",
+        "description": "Queue creation of a new team project.",
+        "tags": [
+          "Projects & Teams"
+        ],
+        "operationId": "Projects_Create",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationReference"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamProject"
+              }
+            }
+          },
+          "description": "Project to create (name, description, capabilities)."
+        }
+      }
+    },
+    "/_apis/projects/{projectId}": {
+      "get": {
+        "summary": "Get Project",
+        "description": "Get a team project by ID or name.",
+        "tags": [
+          "Projects & Teams"
+        ],
+        "operationId": "Projects_Get",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "includeCapabilities",
+            "in": "query",
+            "required": false,
+            "description": "Include capabilities (such as source control) in the team project result.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamProject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Project",
+        "description": "Queue deletion of a team project.",
+        "tags": [
+          "Projects & Teams"
+        ],
+        "operationId": "Projects_Delete",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "description": "Project ID.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationReference"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/_apis/projects/{projectId}/teams": {
+      "get": {
+        "summary": "List Teams",
+        "description": "Get a list of teams for a project.",
+        "tags": [
+          "Projects & Teams"
+        ],
+        "operationId": "Teams_List",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebApiTeamList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Team",
+        "description": "Create a team in a team project.",
+        "tags": [
+          "Projects & Teams"
+        ],
+        "operationId": "Teams_Create",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebApiTeam"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebApiTeam"
+              }
+            }
+          },
+          "description": "Team to create (name, description)."
+        }
+      }
+    },
+    "/_apis/projects/{projectId}/teams/{teamId}": {
+      "get": {
+        "summary": "Get Team",
+        "description": "Get a specific team.",
+        "tags": [
+          "Projects & Teams"
+        ],
+        "operationId": "Teams_Get",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "teamId",
+            "in": "path",
+            "required": true,
+            "description": "Team ID or team name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebApiTeam"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update Team",
+        "description": "Update a team's name and/or description.",
+        "tags": [
+          "Projects & Teams"
+        ],
+        "operationId": "Teams_Update",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "teamId",
+            "in": "path",
+            "required": true,
+            "description": "Team ID or team name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebApiTeam"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebApiTeam"
+              }
+            }
+          },
+          "description": "Fields to update."
+        }
+      },
+      "delete": {
+        "summary": "Delete Team",
+        "description": "Delete a team.",
+        "tags": [
+          "Projects & Teams"
+        ],
+        "operationId": "Teams_Delete",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "teamId",
+            "in": "path",
+            "required": true,
+            "description": "Team ID or team name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/{project}/_apis/git/repositories": {
+      "get": {
+        "summary": "List Repositories",
+        "description": "Get a list of Git repositories in a project.",
+        "tags": [
+          "Git Repositories"
+        ],
+        "operationId": "Git_ListRepositories",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "includeLinks",
+            "in": "query",
+            "required": false,
+            "description": "True to include reference links.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "includeHidden",
+            "in": "query",
+            "required": false,
+            "description": "True to include hidden repositories.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitRepositoryList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Repository",
+        "description": "Create a Git repository in a project.",
+        "tags": [
+          "Git Repositories"
+        ],
+        "operationId": "Git_CreateRepository",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitRepository"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GitRepository"
+              }
+            }
+          },
+          "description": "Repository name and optional parent for a fork."
+        }
+      }
+    },
+    "/{project}/_apis/git/repositories/{repositoryId}": {
+      "get": {
+        "summary": "Get Repository",
+        "description": "Retrieve a Git repository.",
+        "tags": [
+          "Git Repositories"
+        ],
+        "operationId": "Git_GetRepository",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "description": "The name or ID of the repository.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitRepository"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update Repository",
+        "description": "Update a Git repository's name or default branch.",
+        "tags": [
+          "Git Repositories"
+        ],
+        "operationId": "Git_UpdateRepository",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "description": "The name or ID of the repository.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitRepository"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GitRepository"
+              }
+            }
+          },
+          "description": "Fields to update (name, defaultBranch, isDisabled)."
+        }
+      },
+      "delete": {
+        "summary": "Delete Repository",
+        "description": "Delete a Git repository.",
+        "tags": [
+          "Git Repositories"
+        ],
+        "operationId": "Git_DeleteRepository",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "description": "The name or ID of the repository.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/{project}/_apis/git/repositories/{repositoryId}/refs": {
+      "get": {
+        "summary": "List Refs",
+        "description": "Queries the provided repository for its refs (branches and tags) and returns them.",
+        "tags": [
+          "Git Repositories"
+        ],
+        "operationId": "Git_ListRefs",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "description": "The name or ID of the repository.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "description": "A filter to apply to the refs, e.g. heads/ or tags/.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitRefList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{project}/_apis/git/repositories/{repositoryId}/commits": {
+      "get": {
+        "summary": "List Commits",
+        "description": "Retrieve git commits for a project.",
+        "tags": [
+          "Git Repositories"
+        ],
+        "operationId": "Git_ListCommits",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "description": "The name or ID of the repository.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "searchCriteria.itemVersion.version",
+            "in": "query",
+            "required": false,
+            "description": "Branch/tag/commit to filter on.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "searchCriteria.top",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of commits to return.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitCommitRefList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{project}/_apis/git/repositories/{repositoryId}/items": {
+      "get": {
+        "summary": "Get Item",
+        "description": "Get an item (file or folder) from a repository, optionally including its content.",
+        "tags": [
+          "Git Repositories"
+        ],
+        "operationId": "Git_GetItem",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "description": "The name or ID of the repository.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "path",
+            "in": "query",
+            "required": true,
+            "description": "Path to the item, e.g. /README.md.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "versionDescriptor.version",
+            "in": "query",
+            "required": false,
+            "description": "Branch, tag, or commit to read from.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeContent",
+            "in": "query",
+            "required": false,
+            "description": "True to include item content.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitItem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{project}/_apis/git/repositories/{repositoryId}/pushes": {
+      "get": {
+        "summary": "List Pushes",
+        "description": "Retrieves a list of pushes made to a repository.",
+        "tags": [
+          "Git Repositories"
+        ],
+        "operationId": "Git_ListPushes",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "description": "The name or ID of the repository.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of pushes to return.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitPushList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Push",
+        "description": "Push changes (new commits, ref updates) to a repository.",
+        "tags": [
+          "Git Repositories"
+        ],
+        "operationId": "Git_CreatePush",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "description": "The name or ID of the repository.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitPush"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GitPushRequest"
+              }
+            }
+          },
+          "description": "Ref updates and commits to push."
+        }
+      }
+    },
+    "/{project}/_apis/git/repositories/{repositoryId}/pullrequests": {
+      "get": {
+        "summary": "List Pull Requests",
+        "description": "Retrieve all pull requests matching a specified criteria.",
+        "tags": [
+          "Git Pull Requests"
+        ],
+        "operationId": "Git_ListPullRequests",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "description": "The repository ID of the pull request's target branch.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "searchCriteria.status",
+            "in": "query",
+            "required": false,
+            "description": "active, abandoned, completed, or all.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "searchCriteria.creatorId",
+            "in": "query",
+            "required": false,
+            "description": "Filter by creator identity.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of pull requests to return.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitPullRequestList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Pull Request",
+        "description": "Create a pull request.",
+        "tags": [
+          "Git Pull Requests"
+        ],
+        "operationId": "Git_CreatePullRequest",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "description": "The repository ID of the pull request's target branch.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitPullRequest"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GitPullRequestCreate"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{project}/_apis/git/repositories/{repositoryId}/pullrequests/{pullRequestId}": {
+      "get": {
+        "summary": "Get Pull Request",
+        "description": "Retrieve a pull request.",
+        "tags": [
+          "Git Pull Requests"
+        ],
+        "operationId": "Git_GetPullRequest",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "description": "The repository ID of the pull request's target branch.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pullRequestId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the pull request.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitPullRequest"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update Pull Request",
+        "description": "Update a pull request (complete, abandon, retarget, edit title/description).",
+        "tags": [
+          "Git Pull Requests"
+        ],
+        "operationId": "Git_UpdatePullRequest",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "description": "The repository ID of the pull request's target branch.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pullRequestId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the pull request to update.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitPullRequest"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GitPullRequestUpdate"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{project}/_apis/git/repositories/{repositoryId}/pullrequests/{pullRequestId}/reviewers": {
+      "get": {
+        "summary": "List Pull Request Reviewers",
+        "description": "Retrieve the reviewers for a pull request.",
+        "tags": [
+          "Git Pull Requests"
+        ],
+        "operationId": "Git_ListPullRequestReviewers",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "description": "The repository ID of the pull request's target branch.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pullRequestId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the pull request.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IdentityRefWithVote"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{project}/_apis/git/repositories/{repositoryId}/pullrequests/{pullRequestId}/reviewers/{reviewerId}": {
+      "put": {
+        "summary": "Add Pull Request Reviewer",
+        "description": "Add a reviewer to a pull request, or vote on it, by identity ID.",
+        "tags": [
+          "Git Pull Requests"
+        ],
+        "operationId": "Git_AddPullRequestReviewer",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "description": "The repository ID of the pull request's target branch.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pullRequestId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the pull request.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "reviewerId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the reviewer.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentityRefWithVote"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IdentityRefWithVote"
+              }
+            }
+          },
+          "description": "Vote to cast (isRequired flag or vote value)."
+        }
+      }
+    },
+    "/{project}/_apis/git/repositories/{repositoryId}/pullrequests/{pullRequestId}/labels": {
+      "post": {
+        "summary": "Add Pull Request Label",
+        "description": "Add a label to a pull request.",
+        "tags": [
+          "Git Pull Requests"
+        ],
+        "operationId": "Git_AddPullRequestLabel",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "description": "The repository ID of the pull request's target branch.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pullRequestId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the pull request.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebApiTagDefinition"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebApiTagDefinition"
+              }
+            }
+          },
+          "description": "Label name to add."
+        }
+      }
+    },
+    "/{project}/_apis/git/repositories/{repositoryId}/pullrequests/{pullRequestId}/threads": {
+      "get": {
+        "summary": "List Pull Request Threads",
+        "description": "Retrieve all comment threads (code review comments) on a pull request.",
+        "tags": [
+          "Git Pull Requests"
+        ],
+        "operationId": "Git_ListPullRequestThreads",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "description": "The repository ID of the pull request's target branch.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pullRequestId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the pull request.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitPullRequestCommentThreadList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Pull Request Thread",
+        "description": "Create a comment thread on a pull request.",
+        "tags": [
+          "Git Pull Requests"
+        ],
+        "operationId": "Git_CreatePullRequestThread",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "description": "The repository ID of the pull request's target branch.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pullRequestId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the pull request.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GitPullRequestCommentThread"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GitPullRequestCommentThreadCreate"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{project}/_apis/build/builds": {
+      "get": {
+        "summary": "List Builds",
+        "description": "Get a list of builds.",
+        "tags": [
+          "Build"
+        ],
+        "operationId": "Build_List",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "definitions",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated list of definition IDs to filter on.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "statusFilter",
+            "in": "query",
+            "required": false,
+            "description": "inProgress, completed, cancelling, postponed, notStarted, all.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "resultFilter",
+            "in": "query",
+            "required": false,
+            "description": "succeeded, partiallySucceeded, failed, canceled.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of builds to return.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Queue Build",
+        "description": "Queue a build.",
+        "tags": [
+          "Build"
+        ],
+        "operationId": "Build_Queue",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Build"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BuildRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{project}/_apis/build/builds/{buildId}": {
+      "get": {
+        "summary": "Get Build",
+        "description": "Get a build.",
+        "tags": [
+          "Build"
+        ],
+        "operationId": "Build_Get",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "buildId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the build.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Build"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update Build",
+        "description": "Update a build (e.g. cancel it by setting status to cancelling).",
+        "tags": [
+          "Build"
+        ],
+        "operationId": "Build_Update",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "buildId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the build.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Build"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Build"
+              }
+            }
+          },
+          "description": "Fields to update, e.g. {\"status\": \"cancelling\"}."
+        }
+      },
+      "delete": {
+        "summary": "Delete Build",
+        "description": "Delete a build.",
+        "tags": [
+          "Build"
+        ],
+        "operationId": "Build_Delete",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "buildId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the build.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/{project}/_apis/build/builds/{buildId}/changes": {
+      "get": {
+        "summary": "Get Build Changes",
+        "description": "Get the changes (commits) associated with a build.",
+        "tags": [
+          "Build"
+        ],
+        "operationId": "Build_GetChanges",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "buildId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the build.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of changes to return.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{project}/_apis/build/builds/{buildId}/logs": {
+      "get": {
+        "summary": "Get Build Logs",
+        "description": "Get the logs for a build.",
+        "tags": [
+          "Build"
+        ],
+        "operationId": "Build_GetLogs",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "buildId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the build.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildLogList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{project}/_apis/build/builds/{buildId}/timeline": {
+      "get": {
+        "summary": "Get Build Timeline",
+        "description": "Get the timeline (stages/phases/jobs/tasks and their status) for a build.",
+        "tags": [
+          "Build"
+        ],
+        "operationId": "Build_GetTimeline",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "buildId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the build.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Timeline"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{project}/_apis/build/definitions": {
+      "get": {
+        "summary": "List Build Definitions",
+        "description": "Get a list of build definitions.",
+        "tags": [
+          "Build Definitions"
+        ],
+        "operationId": "BuildDefinitions_List",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "description": "Filter by definition name.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildDefinitionList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Build Definition",
+        "description": "Create a build (pipeline) definition.",
+        "tags": [
+          "Build Definitions"
+        ],
+        "operationId": "BuildDefinitions_Create",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildDefinition"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BuildDefinition"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{project}/_apis/build/definitions/{definitionId}": {
+      "get": {
+        "summary": "Get Build Definition",
+        "description": "Get a build definition.",
+        "tags": [
+          "Build Definitions"
+        ],
+        "operationId": "BuildDefinitions_Get",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "definitionId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the definition.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "revision",
+            "in": "query",
+            "required": false,
+            "description": "Specific revision to retrieve.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildDefinition"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Build Definition",
+        "description": "Update a build definition.",
+        "tags": [
+          "Build Definitions"
+        ],
+        "operationId": "BuildDefinitions_Update",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "definitionId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the definition.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildDefinition"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BuildDefinition"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Build Definition",
+        "description": "Delete a build definition.",
+        "tags": [
+          "Build Definitions"
+        ],
+        "operationId": "BuildDefinitions_Delete",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "definitionId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the definition.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/{project}/_apis/pipelines": {
+      "get": {
+        "summary": "List Pipelines",
+        "description": "Get a list of pipelines.",
+        "tags": [
+          "Pipelines"
+        ],
+        "operationId": "Pipelines_List",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of pipelines to return.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PipelineList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Pipeline",
+        "description": "Create a YAML pipeline.",
+        "tags": [
+          "Pipelines"
+        ],
+        "operationId": "Pipelines_Create",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pipeline"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PipelineCreate"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{project}/_apis/pipelines/{pipelineId}": {
+      "get": {
+        "summary": "Get Pipeline",
+        "description": "Get a pipeline.",
+        "tags": [
+          "Pipelines"
+        ],
+        "operationId": "Pipelines_Get",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pipelineId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the pipeline.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "pipelineVersion",
+            "in": "query",
+            "required": false,
+            "description": "Pipeline definition revision to retrieve.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pipeline"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{project}/_apis/pipelines/{pipelineId}/runs": {
+      "get": {
+        "summary": "List Pipeline Runs",
+        "description": "Get a list of runs for a pipeline.",
+        "tags": [
+          "Pipelines"
+        ],
+        "operationId": "Pipelines_ListRuns",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pipelineId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the pipeline.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Run Pipeline",
+        "description": "Run a pipeline.",
+        "tags": [
+          "Pipelines"
+        ],
+        "operationId": "Pipelines_RunPipeline",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pipelineId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the pipeline.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunPipelineParameters"
+              }
+            }
+          },
+          "description": "Runtime parameters, variables, and resources for the run."
+        }
+      }
+    },
+    "/{project}/_apis/pipelines/{pipelineId}/runs/{runId}": {
+      "get": {
+        "summary": "Get Pipeline Run",
+        "description": "Get a specific run for a pipeline.",
+        "tags": [
+          "Pipelines"
+        ],
+        "operationId": "Pipelines_GetRun",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pipelineId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the pipeline.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "runId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the run.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{project}/_apis/wit/workitems/${type}": {
+      "post": {
+        "summary": "Create Work Item",
+        "description": "Create a single work item of the given type.",
+        "tags": [
+          "Work Item Tracking"
+        ],
+        "operationId": "WorkItems_Create",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "description": "The work item type of the work item to create, e.g. Bug, Task, User Story.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "bypassRules",
+            "in": "query",
+            "required": false,
+            "description": "Do not enforce the work item type rules on this create.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "suppressNotifications",
+            "in": "query",
+            "required": false,
+            "description": "Do not fire any notifications for this change.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkItem"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JsonPatchDocument"
+              }
+            }
+          },
+          "description": "JSON Patch document describing the fields to set, e.g. [{\"op\": \"add\", \"path\": \"/fields/System.Title\", \"value\": \"...\"}]. Content-Type must be application/json-patch+json."
+        }
+      }
+    },
+    "/_apis/wit/workitems/{id}": {
+      "get": {
+        "summary": "Get Work Item",
+        "description": "Get a single work item by ID.",
+        "tags": [
+          "Work Item Tracking"
+        ],
+        "operationId": "WorkItems_Get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The work item ID.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated list of requested fields.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "$expand",
+            "in": "query",
+            "required": false,
+            "description": "None, Relations, Fields, Links, or All.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkItem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update Work Item",
+        "description": "Update a single work item.",
+        "tags": [
+          "Work Item Tracking"
+        ],
+        "operationId": "WorkItems_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the work item to update.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "bypassRules",
+            "in": "query",
+            "required": false,
+            "description": "Do not enforce the work item type rules on this update.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "suppressNotifications",
+            "in": "query",
+            "required": false,
+            "description": "Do not fire any notifications for this change.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkItem"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JsonPatchDocument"
+              }
+            }
+          },
+          "description": "JSON Patch document describing the fields to update. Content-Type must be application/json-patch+json."
+        }
+      },
+      "delete": {
+        "summary": "Delete Work Item",
+        "description": "Delete a work item (sends it to the Recycle Bin unless destroy is set).",
+        "tags": [
+          "Work Item Tracking"
+        ],
+        "operationId": "WorkItems_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the work item to delete.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "destroy",
+            "in": "query",
+            "required": false,
+            "description": "Permanently destroy the work item instead of moving it to the Recycle Bin.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkItemDelete"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/_apis/wit/workitems": {
+      "get": {
+        "summary": "List Work Items",
+        "description": "Returns a list of work items by ID (maximum 200).",
+        "tags": [
+          "Work Item Tracking"
+        ],
+        "operationId": "WorkItems_List",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "ids",
+            "in": "query",
+            "required": true,
+            "description": "Comma-separated list of requested work item IDs (maximum 200).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated list of requested fields.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkItemList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{project}/_apis/wit/wiql": {
+      "post": {
+        "summary": "Query By WIQL",
+        "description": "Get a list of work items matching a Work Item Query Language (WIQL) query.",
+        "tags": [
+          "Work Item Tracking"
+        ],
+        "operationId": "WorkItems_QueryByWiql",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of results to return.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkItemQueryResult"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Wiql"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{project}/_apis/wit/workitems/{id}/comments": {
+      "get": {
+        "summary": "List Work Item Comments",
+        "description": "Get comments for a work item.",
+        "tags": [
+          "Work Item Tracking"
+        ],
+        "operationId": "WorkItems_ListComments",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the work item.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of comments to return.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkItemCommentList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add Work Item Comment",
+        "description": "Add a comment to a work item.",
+        "tags": [
+          "Work Item Tracking"
+        ],
+        "operationId": "WorkItems_AddComment",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "Project ID or project name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the work item.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "Azure DevOps REST API version.",
+            "schema": {
+              "type": "string",
+              "default": "7.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkItemComment"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentCreate"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -62,7 +62,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Kubernetes** | Container orchestration |
 | **LogicMonitor** | Observability |
 | **Mattermost** | Team collaboration & messaging |
-| **Microsoft** | 365 IP and URL Web Service · Azure Key Vault · Graph Mail · Teams |
+| **Microsoft** | 365 IP and URL Web Service · Azure DevOps · Azure Key Vault · Graph Mail · Teams |
 | **Nautobot** | Nautobot 2.4 |
 | **NetBox** | IPAM / DCIM |
 | **NetScaler** | ADC |
