@@ -1,0 +1,493 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "ForeScout",
+    "version": "latest",
+    "description": "ForeScout Platform (CounterACT / eyeSight) discovers, classifies, and assesses the compliance posture of every device connecting to the network. The Web API exposes read-only visibility into discovered hosts, the host field definitions those hosts are classified against, and the policies/rules driving that classification.",
+    "x-itential-curated": "ForeScout does not publish a downloadable OpenAPI/Swagger reference for the Web API, so there is no larger upstream spec to trim from -- this spec was authored directly against the Web API's read-only visibility surface: host lookup by ID, IP, and MAC, host listing, host field definitions, and policy/rule listing (6 operations). The separate Data Exchange (DEX) module (list and host-field updates) uses HTTP Basic auth and XML request/response bodies -- a different, incompatible auth method from the Web API's JWT header, so it's out of scope for this spec per the repo's one-securityScheme-per-spec rule. See the repo README for details."
+  },
+  "servers": [
+    {
+      "url": "https://{host}",
+      "description": "ForeScout Enterprise Manager or standalone Appliance.",
+      "variables": {
+        "host": {
+          "default": "forescout.example.com"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/api/hosts/{id}": {
+      "get": {
+        "tags": [
+          "Hosts"
+        ],
+        "summary": "Get host by ForeScout ID",
+        "description": "Retrieves details of a single host identified by its ForeScout object ID.",
+        "operationId": "getHostById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ForeScout ID number for the host.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated list of host field names to include in the response. If omitted, all fields are returned. Field names can be discovered via GET /api/hostfields.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HostResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or expired Authorization JWT."
+          },
+          "404": {
+            "description": "No host found matching the specified ID."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/api/hosts/ip/{ip}": {
+      "get": {
+        "tags": [
+          "Hosts"
+        ],
+        "summary": "Get host by IP address",
+        "description": "Retrieves details of a single host identified by its IPv4 address.",
+        "operationId": "getHostByIp",
+        "parameters": [
+          {
+            "name": "ip",
+            "in": "path",
+            "required": true,
+            "description": "IPv4 address of the host.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated list of host field names to include in the response. If omitted, all fields are returned. Field names can be discovered via GET /api/hostfields.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HostResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or expired Authorization JWT."
+          },
+          "404": {
+            "description": "No host found matching the specified IP address."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/api/hosts/mac/{mac}": {
+      "get": {
+        "tags": [
+          "Hosts"
+        ],
+        "summary": "Get host by MAC address",
+        "description": "Retrieves details of a single host identified by its MAC address.",
+        "operationId": "getHostByMac",
+        "parameters": [
+          {
+            "name": "mac",
+            "in": "path",
+            "required": true,
+            "description": "MAC address of the host.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated list of host field names to include in the response. If omitted, all fields are returned. Field names can be discovered via GET /api/hostfields.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HostResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or expired Authorization JWT."
+          },
+          "404": {
+            "description": "No host found matching the specified MAC address."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/api/hosts": {
+      "get": {
+        "tags": [
+          "Hosts"
+        ],
+        "summary": "List active hosts",
+        "description": "Retrieves a list of active endpoints known to ForeScout, optionally filtered by the policies/rules that matched them.",
+        "operationId": "listHosts",
+        "parameters": [
+          {
+            "name": "matchRuleId",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated list of policy and/or rule IDs. Only hosts matched by all of the specified policies/rules are returned. Policy and rule IDs can be discovered via GET /api/policies.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated list of host field names to filter/include. Field names can be discovered via GET /api/hostfields.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HostsListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or expired Authorization JWT."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/api/hostfields": {
+      "get": {
+        "tags": [
+          "Host Fields"
+        ],
+        "summary": "List host field definitions",
+        "description": "Retrieves the index of host fields (properties) that ForeScout can report on for a host, including each field's label, internal name, description, and data type.",
+        "operationId": "listHostFields",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HostFieldsListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or expired Authorization JWT."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/api/policies": {
+      "get": {
+        "tags": [
+          "Policies"
+        ],
+        "summary": "List policies",
+        "description": "Retrieves the policies configured in ForeScout, including each policy's rules.",
+        "operationId": "listPolicies",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoliciesListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or expired Authorization JWT."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HostFieldValue": {
+        "description": "A host field's value as returned under Host.fields. Single-value fields are a single {value} object; list-type fields are an array of {value} objects.",
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "value": {
+                "description": "The field's value."
+              }
+            }
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "description": "One element of the list-type field's value."
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Host": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ForeScout ID number for the host."
+          },
+          "ip": {
+            "type": "string",
+            "description": "Host IP address."
+          },
+          "mac": {
+            "type": "string",
+            "description": "Host MAC address."
+          },
+          "fields": {
+            "type": "object",
+            "description": "Map of host field internal name to its value(s). Only the fields requested (or all fields, if none were requested) are included.",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/HostFieldValue"
+            }
+          }
+        }
+      },
+      "HostResponse": {
+        "type": "object",
+        "properties": {
+          "host": {
+            "$ref": "#/components/schemas/Host"
+          }
+        }
+      },
+      "HostSummary": {
+        "type": "object",
+        "properties": {
+          "hostId": {
+            "type": "string",
+            "description": "ForeScout ID number for the host."
+          },
+          "ip": {
+            "type": "string",
+            "description": "Host IP address."
+          },
+          "mac": {
+            "type": "string",
+            "description": "Host MAC address."
+          }
+        }
+      },
+      "HostsListResponse": {
+        "type": "object",
+        "properties": {
+          "hosts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HostSummary"
+            }
+          }
+        }
+      },
+      "HostField": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "Display label of the host field."
+          },
+          "name": {
+            "type": "string",
+            "description": "Internal name of the host field, as used in the 'fields' query parameter and in Host.fields keys."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the host field."
+          },
+          "type": {
+            "type": "string",
+            "description": "Data type of the host field's value, e.g. string, integer, ip, boolean, date, list."
+          }
+        }
+      },
+      "HostFieldsListResponse": {
+        "type": "object",
+        "properties": {
+          "hostFields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HostField"
+            }
+          }
+        }
+      },
+      "PolicyRule": {
+        "type": "object",
+        "properties": {
+          "ruleId": {
+            "type": "string",
+            "description": "ForeScout ID for the rule."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the rule."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the rule."
+          }
+        }
+      },
+      "Policy": {
+        "type": "object",
+        "properties": {
+          "policyId": {
+            "type": "string",
+            "description": "ForeScout ID for the policy."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the policy."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the policy."
+          },
+          "rules": {
+            "type": "array",
+            "description": "List of rules that make up the policy.",
+            "items": {
+              "$ref": "#/components/schemas/PolicyRule"
+            }
+          }
+        }
+      },
+      "PoliciesListResponse": {
+        "type": "object",
+        "properties": {
+          "policies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Policy"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "webApiAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "JWT retrieved dynamically by POSTing username/password (as application/x-www-form-urlencoded body fields) to the Web API's login endpoint. Unlike a typical dynamic-retrieval target, the login response body is a raw plain-text JWT rather than a JSON envelope -- Itential Platform's dynamic retrieval treats an empty/root JSONPointer ('') as 'use the whole raw response body', so responsePointer is intentionally blank here rather than pointing at a field. The JWT is used verbatim on the Authorization header, with no 'Bearer ' prefix, and is valid for 5 minutes before ForeScout expires it -- Itential Platform re-retrieves it automatically before each request.",
+        "x-itential-dynamic-retrieval": {
+          "method": "POST",
+          "url": "https://<forescout-host>/api/login",
+          "responsePointer": ""
+        },
+        "x-itential-parameters": [
+          {
+            "name": "username",
+            "in": "body",
+            "x-itential-use-in": [
+              "key"
+            ],
+            "schema": {
+              "type": "string"
+            },
+            "description": "ForeScout Web API username, configured in the ForeScout console under Tools > Options > Web API > User Settings."
+          },
+          {
+            "name": "password",
+            "in": "body",
+            "x-itential-use-in": [
+              "key"
+            ],
+            "schema": {
+              "type": "string"
+            },
+            "description": "ForeScout Web API password, configured alongside the username."
+          }
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "webApiAuth": []
+    }
+  ]
+}
