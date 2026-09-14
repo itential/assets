@@ -9,7 +9,7 @@ Jenkins is an open source automation server used to build, test, and deploy soft
 - [Integration Configuration](#integration-configuration)
 - [OpenAPIs](#openapis)
   - [`jenkins-latest.json`](#jenkins-latestjson)
-  - [`jenkins-3.4.1-pre.0.json`](#jenkins-341-pre0json)
+  - [`jenkins-2026-09-14.json`](#jenkins-20260914json)
 - [Studio Projects](#studio-projects)
   - [Jenkins Project](#jenkins-project)
     - [Folder Structure](#folder-structure)
@@ -63,11 +63,11 @@ Jenkins itself publishes no official OpenAPI/Swagger spec or automated REST API 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
 | [`jenkins-latest.json`](./OpenAPIs/jenkins-latest.json) | latest (curated) | 21 | Actively-maintained spec, trimmed to 21 of 58 upstream operations — see breakdown below |
-| [`jenkins-3.4.1-pre.0.json`](./OpenAPIs/jenkins-3.4.1-pre.0.json) | 3.4.1-pre.0 | 58 | Full spec, including the Blue Ocean REST API (58 operations) |
+| [`jenkins-2026-09-14.json`](./OpenAPIs/jenkins-2026-09-14.json) | 2026-09-14 | 58 | Full spec, including the Blue Ocean REST API (58 operations) |
 
 ### `jenkins-latest.json`
 
-Actively-maintained spec (`x-vendor-api-version: 3.4.1-pre.0`). Trimmed to 21 of 58 upstream operations covering common CRUD for automation.
+Actively-maintained spec (`x-vendor-api-version: 2026-09-14`). Trimmed to 21 of 58 upstream operations covering common CRUD for automation.
 
 Resources included, by category:
 
@@ -78,9 +78,9 @@ Resources included, by category:
 - **Queue**: Get Queue, Get Queue Item
 - **Views**: Create, Get, Get Configuration, Update Configuration
 
-### `jenkins-3.4.1-pre.0.json`
+### `jenkins-2026-09-14.json`
 
-Full, unmodified vendor-sourced spec (58 operations) — the complete `swaggy-jenkins` surface, including Blue Ocean. See `jenkins-latest.json` above for the curated subset if you just need common CRUD automation.
+Full spec (58 operations) — the complete `swaggy-jenkins` surface, including Blue Ocean, captured 2026-09-14. See `jenkins-latest.json` above for the curated subset if you just need common CRUD automation.
 
 ## Studio Projects
 
