@@ -78,6 +78,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **RingCentral** | Unified communications |
 | **Ruckus** | Fastiron |
 | **Rundeck** | Job automation & orchestration |
+| **Sectigo** | Certificate Manager |
 | **Selector** | AIOps |
 | **SendGrid** | Transactional & marketing email |
 | **ServiceNow** | Change management · Incident management · RITM |
