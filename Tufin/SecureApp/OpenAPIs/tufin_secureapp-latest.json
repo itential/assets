@@ -1,0 +1,4425 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Tufin SecureApp",
+    "description": "Tufin SecureApp application connectivity and application-centric policy management REST API.",
+    "version": "latest",
+    "x-vendor-api-version": "25.2",
+    "x-itential-curated": "Trimmed to 56 of 104 upstream operations covering application CRUD, application connection CRUD (including repair), application interfaces, per-application servers, and local/global application services. See the repo README for the full scope and the full spec."
+  },
+  "servers": [
+    {
+      "url": "https://{host}/securechangeworkflow/api",
+      "variables": {
+        "host": {
+          "default": "tufin.example.com"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "DomainDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the domain"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The ID of the domain"
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the domain"
+          }
+        },
+        "required": [
+          "name",
+          "id",
+          "description"
+        ]
+      },
+      "TicketExternalDataDTO": {
+        "type": "object",
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "description": "The request ID"
+          },
+          "requester": {
+            "type": "string",
+            "description": "The requester"
+          }
+        }
+      },
+      "ConnectionFullResourcesListDTO": {
+        "type": "object",
+        "properties": {
+          "connection_extended": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectionFullResourcesDTO"
+            },
+            "description": "List of connections"
+          }
+        }
+      },
+      "RoleDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the role"
+          },
+          "permissions": {
+            "$ref": "#/components/schemas/PermissionListDTO"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The ID of the role"
+          },
+          "role_link": {
+            "$ref": "#/components/schemas/LinkDTO"
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the role"
+          }
+        },
+        "required": [
+          "name",
+          "id"
+        ]
+      },
+      "TicketDTO": {
+        "type": "object",
+        "properties": {
+          "priority": {
+            "type": "string",
+            "description": "The priority of the request"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The ID of the ticket"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the ticket"
+          },
+          "application_details": {
+            "$ref": "#/components/schemas/ObjectReferenceDTO"
+          },
+          "comments": {
+            "$ref": "#/components/schemas/TicketCommentListDTO"
+          },
+          "expiration_date": {
+            "type": "string",
+            "description": "Request is valid until this date"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The subject of the ticket"
+          },
+          "referenced_ticket": {
+            "$ref": "#/components/schemas/ObjectReferenceDTO"
+          },
+          "requester": {
+            "type": "string",
+            "description": "The name of the requester"
+          },
+          "create_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The ticket creation date"
+          },
+          "update_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The ticket last update date"
+          },
+          "close_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The ticket close date"
+          },
+          "notification_group": {
+            "$ref": "#/components/schemas/group"
+          },
+          "sla_status": {
+            "type": "string",
+            "description": "The Tickets current SLA status"
+          },
+          "sla_outcome": {
+            "type": "string",
+            "description": "The outcome of the SLA"
+          },
+          "sla_tracking_state": {
+            "type": "string",
+            "description": "The Tickets current SLA tracking state"
+          },
+          "steps": {
+            "$ref": "#/components/schemas/TicketStagesListDTO"
+          },
+          "business_duration": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The ticket business duration"
+          },
+          "expiration_field_name": {
+            "type": "string",
+            "description": "The Request is required until"
+          },
+          "expiration_status": {
+            "$ref": "#/components/schemas/ExpirationStatusDTO"
+          },
+          "external_data": {
+            "$ref": "#/components/schemas/TicketExternalDataDTO"
+          },
+          "current_step": {
+            "$ref": "#/components/schemas/TicketCurrentStageReferenceDTO"
+          },
+          "workflow": {
+            "$ref": "#/components/schemas/WorkflowReferenceDTO"
+          },
+          "domain_name": {
+            "type": "string",
+            "description": "The domain in which the ticket is posted"
+          },
+          "requester_id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The user id which the ticket is created on behalf of (used for 'on-behalf' feature)"
+          },
+          "application_changes": {
+            "$ref": "#/components/schemas/TicketApplicationChangeListDTO"
+          },
+          "completion_details": {
+            "$ref": "#/components/schemas/CompletionDetailsDTO"
+          }
+        },
+        "required": [
+          "priority",
+          "subject",
+          "workflow",
+          "domain_name"
+        ]
+      },
+      "sa_network_object": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The type of the network object"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the object"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The ID of the object"
+          },
+          "display_name": {
+            "type": "string",
+            "description": "The display name of the object"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The comment of the object"
+          },
+          "global": {
+            "type": "boolean",
+            "description": "Is a global object"
+          },
+          "uid": {
+            "type": "string",
+            "description": "The UID of the object"
+          },
+          "application_id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Application ID for object"
+          },
+          "original_instance_id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID for the original instance of this object, if this connection is based on a published interface"
+          },
+          "cloned": {
+            "type": "boolean",
+            "description": "Indicates whether it is a cloned Object"
+          }
+        },
+        "required": [
+          "name",
+          "id",
+          "global",
+          "uid",
+          "application_id",
+          "original_instance_id"
+        ]
+      },
+      "TicketStageDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The step name"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The step ID"
+          },
+          "tasks": {
+            "$ref": "#/components/schemas/TicketTaskListDTO"
+          },
+          "skipped": {
+            "type": "boolean",
+            "description": "whether the task was skipped"
+          },
+          "redone": {
+            "type": "boolean",
+            "description": "whether the task was redone"
+          },
+          "business_duration": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The step business duration"
+          }
+        },
+        "required": [
+          "tasks"
+        ]
+      },
+      "CompletionDetailsDTO": {
+        "type": "object",
+        "properties": {
+          "stepId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The completion step id "
+          }
+        }
+      },
+      "PartyDTOType": {
+        "type": "object"
+      },
+      "ObjectReferenceUIDDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the referenced object"
+          },
+          "uid": {
+            "$ref": "#/components/schemas/UUID"
+          },
+          "link": {
+            "$ref": "#/components/schemas/LinkDTO"
+          }
+        }
+      },
+      "MembersListDTO": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PartyDTO"
+            },
+            "description": "The list of members"
+          },
+          "partial_list": {
+            "type": "boolean",
+            "description": "Partial list; true if only a partial list is returned"
+          }
+        }
+      },
+      "ObjectReferenceDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the referenced object"
+          },
+          "id": {
+            "type": "string",
+            "description": "ID"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the referenced object"
+          },
+          "display_name": {
+            "type": "string",
+            "description": "The display name of the referenced object"
+          },
+          "management_domain": {
+            "type": "string",
+            "description": "The management domain from which the referenced object comes from"
+          },
+          "uid": {
+            "type": "string",
+            "description": "The unique identifier of the referenced object"
+          },
+          "ip": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FQDNIpDTO"
+            }
+          },
+          "link": {
+            "$ref": "#/components/schemas/LinkDTO"
+          },
+          "member": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "List of references to a DM_INLINE group members"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "sa_service": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The type of the service"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the object"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The ID of the object"
+          },
+          "display_name": {
+            "type": "string",
+            "description": "The display name of the object"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The comment of the object"
+          },
+          "global": {
+            "type": "boolean",
+            "description": "Is a global object"
+          },
+          "uid": {
+            "type": "string",
+            "description": "The UID of the object"
+          },
+          "application_id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Application ID for object"
+          },
+          "original_instance_id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID for the original instance of this object, if this connection is based on a published interface"
+          },
+          "cloned": {
+            "type": "boolean",
+            "description": "Indicates whether it is a cloned Object"
+          }
+        },
+        "required": [
+          "name",
+          "id",
+          "global",
+          "uid",
+          "application_id",
+          "original_instance_id"
+        ]
+      },
+      "TicketStagesListDTO": {
+        "type": "object",
+        "properties": {
+          "step": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TicketStageDTO"
+            },
+            "description": "The list of steps"
+          }
+        },
+        "required": [
+          "step"
+        ]
+      },
+      "LinkDTO": {
+        "type": "object",
+        "properties": {
+          "@href": {
+            "type": "string",
+            "description": "The location of the referenced object"
+          }
+        },
+        "required": [
+          "@href"
+        ]
+      },
+      "TicketApplicationChangeListDTO": {
+        "type": "object",
+        "properties": {
+          "application_change": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TicketApplicationChangeDTO"
+            },
+            "description": "The application changes list"
+          }
+        },
+        "required": [
+          "application_change"
+        ]
+      },
+      "TicketCommentDTO": {
+        "type": "object",
+        "properties": {
+          "origin": {
+            "$ref": "#/components/schemas/CommentOriginDTO"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "id"
+          },
+          "type": {
+            "type": "string",
+            "description": "The comment type"
+          },
+          "content": {
+            "type": "string",
+            "description": "The comment"
+          },
+          "user": {
+            "type": "string",
+            "description": "The commenter"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date created"
+          },
+          "task_name": {
+            "type": "string",
+            "description": "The task name connected with this comment"
+          },
+          "attachment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceUIDDTO"
+            },
+            "description": "The attachments"
+          },
+          "visible_to_requester": {
+            "type": "boolean",
+            "description": "Specifies whether the comment is visible to the requester"
+          },
+          "user_id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The commenter id"
+          }
+        }
+      },
+      "ExpirationStatusDTO": {
+        "type": "object"
+      },
+      "FQDNIpDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "ipType": {
+            "type": "string"
+          },
+          "ip": {
+            "type": "string"
+          },
+          "subnetMask": {
+            "type": "string"
+          }
+        }
+      },
+      "ConnectionFullResourcesDTO": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/sa_network_object"
+            },
+            "description": "List of source's objects"
+          },
+          "destination": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/sa_network_object"
+            },
+            "description": "List of destination's objects"
+          },
+          "service": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/sa_service"
+            },
+            "description": "List of service's objects"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status"
+          },
+          "external": {
+            "type": "boolean",
+            "description": "is external"
+          },
+          "connection_to_application": {
+            "$ref": "#/components/schemas/ObjectReferenceDTO"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name"
+          },
+          "id": {
+            "type": "string",
+            "description": "The ID"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The comment"
+          },
+          "uid": {
+            "type": "string",
+            "description": "The UID"
+          },
+          "applicationId": {
+            "type": "string"
+          },
+          "ticket": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "The opened tickets"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "TicketCommentListDTO": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TicketCommentDTO"
+            },
+            "description": "The comment"
+          }
+        }
+      },
+      "TicketTaskFieldDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The task field name"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The task field ID"
+          },
+          "read_only": {
+            "type": "boolean",
+            "description": "Is the field readonly"
+          }
+        },
+        "required": [
+          "name",
+          "read_only"
+        ]
+      },
+      "ApplicationConnectionListDTO": {
+        "type": "object",
+        "properties": {
+          "connection": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectionDTO"
+            }
+          }
+        }
+      },
+      "ConnectionDTO": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "List of source's objects ref"
+          },
+          "destination": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "List of destination's objects ref"
+          },
+          "service": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "List of service's objects ref"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status"
+          },
+          "external": {
+            "type": "boolean",
+            "description": "is external"
+          },
+          "connection_to_application": {
+            "$ref": "#/components/schemas/ObjectReferenceDTO"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name"
+          },
+          "id": {
+            "type": "string",
+            "description": "The ID"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The comment"
+          },
+          "uid": {
+            "type": "string",
+            "description": "The UID"
+          },
+          "applicationId": {
+            "type": "string"
+          },
+          "ticket": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "The opened tickets"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "UnlicensedDevicesForAutomationDTO": {
+        "type": "object",
+        "properties": {
+          "unlicensed_device_for_automation": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "unlicensed devices for automation"
+          }
+        }
+      },
+      "PermissionDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the permission"
+          },
+          "value": {
+            "type": "boolean",
+            "description": "The permission setting"
+          },
+          "key": {
+            "type": "string",
+            "description": "The Enum that represents the permission"
+          }
+        },
+        "required": [
+          "name",
+          "value"
+        ]
+      },
+      "TicketCurrentStageReferenceDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The current step name"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The current step id"
+          }
+        }
+      },
+      "RolesListDTO": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RoleDTO"
+            },
+            "description": "The list of roles of the user"
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
+      "TicketTaskListDTO": {
+        "type": "object",
+        "properties": {
+          "task": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TicketTaskDTO"
+            },
+            "description": "The list of tasks"
+          }
+        },
+        "required": [
+          "task"
+        ]
+      },
+      "MembersOfListDTO": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PartyDTO"
+            },
+            "description": "The group to which the user belongs"
+          }
+        }
+      },
+      "SecurityPolicyViolationSeverity": {
+        "type": "object"
+      },
+      "WorkflowReferenceDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The workflow name"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The workflow ID"
+          },
+          "uses_topology": {
+            "type": "boolean",
+            "description": "When the value is true, the Access Request tools in the workflow use Topology. When the value is false, the Access Request tools in the workflow do not use Topology."
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "PartyDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the user"
+          },
+          "permissions": {
+            "$ref": "#/components/schemas/PermissionListDTO"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The ID of the user"
+          },
+          "type": {
+            "$ref": "#/components/schemas/PartyDTOType"
+          },
+          "display_name": {
+            "type": "string",
+            "description": "The display name of the user"
+          },
+          "email": {
+            "type": "string",
+            "description": "The email of the user"
+          },
+          "ldapDn": {
+            "type": "string",
+            "description": "The LDAP DN of the user"
+          },
+          "ldap_configuration": {
+            "$ref": "#/components/schemas/LdapConfigurationDTO"
+          },
+          "roles": {
+            "$ref": "#/components/schemas/RolesListDTO"
+          },
+          "authentication_method": {
+            "type": "string",
+            "description": "The method of authentication for the user"
+          },
+          "origin_type": {
+            "type": "string",
+            "description": "The origin type of the user, 'Local' is available to GET only"
+          },
+          "link": {
+            "$ref": "#/components/schemas/LinkDTO"
+          },
+          "member_of": {
+            "$ref": "#/components/schemas/MembersOfListDTO"
+          },
+          "domains": {
+            "$ref": "#/components/schemas/DomainsListDTO"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "DomainsListDTO": {
+        "type": "object",
+        "properties": {
+          "domain": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DomainDTO"
+            },
+            "description": "The list of domains"
+          }
+        },
+        "required": [
+          "domain"
+        ]
+      },
+      "TicketApplicationChangeDTO": {
+        "type": "object"
+      },
+      "CommentOriginDTO": {
+        "type": "object"
+      },
+      "UUID": {
+        "type": "object"
+      },
+      "GroupPermissionDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the permission"
+          },
+          "value": {
+            "type": "boolean",
+            "description": "The permission setting"
+          }
+        }
+      },
+      "group": {
+        "type": "object",
+        "properties": {
+          "members": {
+            "$ref": "#/components/schemas/MembersListDTO"
+          },
+          "groupPermissions": {
+            "$ref": "#/components/schemas/GroupPermissionsListDTO"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the group"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the user"
+          },
+          "permissions": {
+            "$ref": "#/components/schemas/PermissionListDTO"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The ID of the user"
+          },
+          "type": {
+            "$ref": "#/components/schemas/PartyDTOType"
+          },
+          "display_name": {
+            "type": "string",
+            "description": "The display name of the user"
+          },
+          "email": {
+            "type": "string",
+            "description": "The email of the user"
+          },
+          "ldapDn": {
+            "type": "string",
+            "description": "The LDAP DN of the user"
+          },
+          "ldap_configuration": {
+            "$ref": "#/components/schemas/LdapConfigurationDTO"
+          },
+          "roles": {
+            "$ref": "#/components/schemas/RolesListDTO"
+          },
+          "authentication_method": {
+            "type": "string",
+            "description": "The method of authentication for the user"
+          },
+          "origin_type": {
+            "type": "string",
+            "description": "The origin type of the user, 'Local' is available to GET only"
+          },
+          "link": {
+            "$ref": "#/components/schemas/LinkDTO"
+          },
+          "member_of": {
+            "$ref": "#/components/schemas/MembersOfListDTO"
+          },
+          "domains": {
+            "$ref": "#/components/schemas/DomainsListDTO"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "TicketTaskDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The task name"
+          },
+          "fields": {
+            "$ref": "#/components/schemas/TicketTaskFieldListDTO"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The task ID"
+          },
+          "status": {
+            "type": "string",
+            "description": "The task status"
+          },
+          "unlicensed_devices_for_automation": {
+            "$ref": "#/components/schemas/UnlicensedDevicesForAutomationDTO"
+          },
+          "pending_reason": {
+            "type": "string",
+            "description": "The task pending reason"
+          },
+          "assignee_id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The assignee ID"
+          },
+          "task_business_duration": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The task business duration"
+          },
+          "assignee": {
+            "type": "string",
+            "description": "The task assignee"
+          },
+          "is_assigner": {
+            "type": "boolean",
+            "description": "Indicates whether the handler is the assigner"
+          },
+          "assignee_participant_id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The ID of the participant the assignee is based on"
+          },
+          "pending_reason_description": {
+            "type": "string",
+            "description": "The task pending reason description"
+          },
+          "potential_handlers": {
+            "$ref": "#/components/schemas/PartyListDTO"
+          }
+        },
+        "required": [
+          "fields",
+          "id",
+          "status",
+          "assignee"
+        ]
+      },
+      "PermissionListDTO": {
+        "type": "object",
+        "properties": {
+          "permission": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PermissionDTO"
+            },
+            "description": "The list of permissions"
+          }
+        },
+        "required": [
+          "permission"
+        ]
+      },
+      "PartyListDTO": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PartyDTO"
+            },
+            "description": "The list of users"
+          }
+        },
+        "required": [
+          "user"
+        ]
+      },
+      "TicketTaskFieldListDTO": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TicketTaskFieldDTO"
+            },
+            "description": "The field parameter"
+          }
+        },
+        "required": [
+          "field"
+        ]
+      },
+      "GroupPermissionsListDTO": {
+        "type": "object",
+        "properties": {
+          "groupPermission": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GroupPermissionDTO"
+            },
+            "description": "The list of permissions for this group"
+          }
+        }
+      },
+      "LdapConfigurationDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the LDAP server"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The ID of the LDAP server"
+          },
+          "port": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The port of the LDAP server"
+          },
+          "server": {
+            "type": "string",
+            "description": "The server (host) of the LDAP server"
+          },
+          "trust_any_certificate": {
+            "type": "boolean",
+            "description": "Should the LDAP server trust any certificate"
+          },
+          "ldap_vendor": {
+            "type": "string",
+            "description": "The vendor of the LDAP server"
+          },
+          "base_dn": {
+            "type": "string",
+            "description": "The base dn of the LDAP server"
+          },
+          "user_dn": {
+            "type": "string",
+            "description": "The user dn of the LDAP server"
+          },
+          "connect_using_ssl": {
+            "type": "boolean",
+            "description": "Should the LDAP server connect using SSL"
+          },
+          "connect_timeout": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The timeout for connecting the LDAP server"
+          }
+        },
+        "required": [
+          "name",
+          "id",
+          "port",
+          "server",
+          "trust_any_certificate",
+          "ldap_vendor",
+          "base_dn",
+          "user_dn",
+          "connect_using_ssl",
+          "connect_timeout"
+        ]
+      },
+      "ApplicationInterfaceListDTO": {
+        "type": "object",
+        "properties": {
+          "application_interface": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationInterfaceDTO"
+            },
+            "description": "List of application interfaces"
+          }
+        }
+      },
+      "ApplicationInterfaceDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the application interface"
+          },
+          "id": {
+            "type": "string",
+            "description": "The ID of the application interface"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The comment of the application interface"
+          },
+          "uid": {
+            "type": "string",
+            "description": "The uid of the application interface"
+          },
+          "application_id": {
+            "type": "string",
+            "description": "The application ID of the application interface"
+          },
+          "interface_connections": {
+            "$ref": "#/components/schemas/ConnectionInterfaceListDTO"
+          },
+          "is_published": {
+            "type": "boolean",
+            "description": "The current is_published status"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "ConnectionListDTO": {
+        "type": "object",
+        "properties": {
+          "connection": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectionDTO"
+            },
+            "description": "List of connections"
+          }
+        }
+      },
+      "ConnectionInterfaceDTO": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "List of source's objects ref"
+          },
+          "destination": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "List of destination's objects ref"
+          },
+          "server": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "The servers in the interface connection that connected to the interface"
+          },
+          "service": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "List of service's objects ref"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name"
+          },
+          "id": {
+            "type": "string",
+            "description": "The ID"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The comment"
+          },
+          "uid": {
+            "type": "string",
+            "description": "The UID"
+          },
+          "applicationId": {
+            "type": "string"
+          },
+          "ticket": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "The opened tickets"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "ApplicationInterfaceInstanceDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the connection to application"
+          },
+          "id": {
+            "type": "string",
+            "description": "The ID of the connection to application"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The comment of the connection to application"
+          },
+          "uid": {
+            "type": "string",
+            "description": "The Uid of the connection to application"
+          },
+          "application_id": {
+            "type": "string",
+            "description": "The application ID of the connection to application"
+          },
+          "server": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "The servers of the connection to application that connected to the application interface"
+          },
+          "connections": {
+            "$ref": "#/components/schemas/ConnectionListDTO"
+          },
+          "application_interface_id": {
+            "type": "string",
+            "description": "The application interface ID of the connection to application"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "ConnectionInterfaceListDTO": {
+        "type": "object",
+        "properties": {
+          "interface_connection": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectionInterfaceDTO"
+            },
+            "description": "List of interface connections"
+          }
+        }
+      },
+      "ApplicationInterfaceInstanceListDTO": {
+        "type": "object",
+        "properties": {
+          "connection_to_application": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationInterfaceInstanceDTO"
+            },
+            "description": "List of connections to application"
+          }
+        }
+      },
+      "NetworkObjectListDTO": {
+        "type": "object",
+        "properties": {
+          "network_object": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/sa_network_object"
+            },
+            "description": "List of network objects"
+          }
+        },
+        "required": [
+          "network_object"
+        ]
+      },
+      "ServiceListDTO": {
+        "type": "object",
+        "properties": {
+          "service": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/sa_service"
+            },
+            "description": "List of services"
+          }
+        }
+      },
+      "sa_application": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the application"
+          },
+          "id": {
+            "type": "string",
+            "description": "The ID of the application"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/ObjectReferenceDTO"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The comment of the application"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the application"
+          },
+          "vendor": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The vendors that are associated with servers contained in the application"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/ObjectReferenceDTO"
+          },
+          "connection": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "The connections of the application"
+          },
+          "connection_to_application_pack": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "The connections to application pack of the application"
+          },
+          "decommissioned": {
+            "type": "boolean",
+            "description": "Is the application decommissioned"
+          },
+          "editors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "The editors of the application"
+          },
+          "viewers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "The viewers of the application"
+          },
+          "openTickets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "The open tickets of the application"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date the application was created"
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date the last change was made"
+          }
+        },
+        "required": [
+          "name",
+          "id",
+          "owner"
+        ]
+      },
+      "SASecurityPolicyViolationDTO": {
+        "type": "object",
+        "properties": {
+          "security_policy_violation": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SAViolationDTO"
+            }
+          }
+        }
+      },
+      "HistoryListDTO": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The count of the specific list of history records, by the current filter"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The total number of the records in the history"
+          },
+          "history_record": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HistoryDTO"
+            },
+            "description": "List of history records"
+          }
+        }
+      },
+      "SAViolationDTO": {
+        "type": "object",
+        "properties": {
+          "severity": {
+            "$ref": "#/components/schemas/SecurityPolicyViolationSeverity"
+          }
+        }
+      },
+      "HistoryDetailsDTO": {
+        "type": "object"
+      },
+      "ApplicationToDomainListDTO": {
+        "type": "object",
+        "properties": {
+          "move_application": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationToDomainDTO"
+            },
+            "description": "List of customers and applications to move"
+          }
+        }
+      },
+      "HistoryDTO": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date the change was made"
+          },
+          "object_name": {
+            "type": "string",
+            "description": "new server name - for request to access application with group"
+          },
+          "user": {
+            "$ref": "#/components/schemas/ObjectReferenceDTO"
+          },
+          "type": {
+            "type": "string",
+            "description": "Either a group, network object or subnet"
+          },
+          "modified_object": {
+            "$ref": "#/components/schemas/ObjectReferenceDTO"
+          },
+          "change_description": {
+            "type": "string",
+            "description": "Description of the change made"
+          },
+          "change_details": {
+            "$ref": "#/components/schemas/HistoryDetailsDTO"
+          }
+        }
+      },
+      "ComplianceResultListDTO": {
+        "type": "object",
+        "properties": {
+          "compliance_violations_result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComplianceResultDTO"
+            },
+            "description": "compliance violations results"
+          }
+        }
+      },
+      "ApplicationToDomainDTO": {
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/ObjectReferenceDTO"
+          },
+          "application": {
+            "$ref": "#/components/schemas/ObjectReferenceDTO"
+          }
+        }
+      },
+      "ComplianceResultDTO": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "cannot compute risk reason"
+          },
+          "status": {
+            "type": "string",
+            "description": "risk status"
+          },
+          "security_policy_violations": {
+            "$ref": "#/components/schemas/SASecurityPolicyViolationDTO"
+          },
+          "connection": {
+            "$ref": "#/components/schemas/ObjectReferenceDTO"
+          }
+        }
+      },
+      "ApplicationListDTO": {
+        "type": "object",
+        "properties": {
+          "application": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/sa_application"
+            },
+            "description": "The list of applications and their details"
+          }
+        }
+      },
+      "attachment": {
+        "type": "object",
+        "description": "Placeholder: the vendor's published Swagger 1.2 docs reference this type by name but do not define it."
+      }
+    }
+  },
+  "paths": {
+    "/securechangeworkflow/api/secureapp/repository/applications/": {
+      "get": {
+        "tags": [
+          "Applications"
+        ],
+        "operationId": "getApplications",
+        "summary": "List all applications",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Applications by user ID, if not given the default is logged in user id"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the application"
+          },
+          {
+            "name": "app_permissions",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter applications by the given permissions (separated with commas):\napp_owner - returns applications where the user is the owner\napp_editor - returns applications where the user has been explicitly added as an editor\napp_viewer - returns applications where the user has been explicitly added as a viewer\napp_adminonly - returns applications where the user only has editor access because user has \"edit all applications\" permission, and does not include applications where this user is either the app_owner, app_editor, or app_viewer"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid app_permissions value: 'appPermissions'."
+          },
+          "403": {
+            "description": "You can't use the parameter 'userId' because you don't have 'View all applications' permission."
+          },
+          "404": {
+            "description": "User with ID 'userId' was not found."
+          },
+          "200": {
+            "description": "List all applications",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationListDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Applications"
+        ],
+        "operationId": "addApplications",
+        "summary": "Create new applications",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationListDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "There is an editor without an ID or name."
+          },
+          "403": {
+            "description": "Access is denied"
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "There is no editor with the name NAME."
+          },
+          "200": {
+            "description": "Create new applications"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Applications"
+        ],
+        "operationId": "modifyApplications",
+        "summary": "Update applications",
+        "description": "This API can be used to delete or decommission an application.\nTo decommission an application, send true in decommissioned tag.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationListDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "User cannot be both an editor and a viewer of the application."
+          },
+          "403": {
+            "description": "You do not have permissions to decommission this application."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "There is no application with the specified ID."
+          },
+          "200": {
+            "description": "Update applications"
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/move_applications": {
+      "put": {
+        "tags": [
+          "Applications"
+        ],
+        "operationId": "moveApplications",
+        "summary": "Move applications to another customer",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationToDomainListDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Applications were moved successfully."
+          },
+          "400": {
+            "description": "There are no applications to move."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "There is no application with the specified ID."
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{applicationId}": {
+      "get": {
+        "tags": [
+          "Applications"
+        ],
+        "operationId": "getApplication",
+        "summary": "Retrieve an existing application by ID",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of an application to retrieve"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "The application was already deleted."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "403": {
+            "description": "You do not have permission to access application with ID"
+          },
+          "404": {
+            "description": "There is no application with the specified ID."
+          },
+          "200": {
+            "description": "Retrieve an existing application by ID",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/sa_application"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Applications"
+        ],
+        "operationId": "modifyApplication",
+        "summary": "Change an application",
+        "description": "This API can be used to delete or decommission an application.\nTo decommission an application, send true in decommissioned tag.",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of an application to change"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/sa_application"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "User cannot be both an editor and a viewer of the application."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "There is no application with the specified ID."
+          },
+          "200": {
+            "description": "Change an application"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Applications"
+        ],
+        "operationId": "deleteApplication",
+        "summary": "Delete an application",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application to delete"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "You cannot delete application NAME because there are connection changes pending a ticket in other application."
+          },
+          "403": {
+            "description": "Access is denied"
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "200": {
+            "description": "Delete an application"
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{applicationId}/application_interfaces": {
+      "get": {
+        "tags": [
+          "Application Interfaces"
+        ],
+        "operationId": "getApplicationInterfaces",
+        "summary": "Retrieve existing application interfaces",
+        "description": "To improve response time, set 'calculateIsPublished = false' to avoid calculating 'is_published'.",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the application interface"
+          },
+          {
+            "name": "calculateIsPublished",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Should calculate is_published value"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "There is no application with the specified ID."
+          },
+          "403": {
+            "description": "You do not have permission to access application with ID"
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "There are no application interfaces with the name NAME."
+          },
+          "200": {
+            "description": "Retrieve existing application interfaces",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationInterfaceListDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Application Interfaces"
+        ],
+        "operationId": "addApplicationInterface",
+        "summary": "Create application interface",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationInterfaceDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Application interface was created."
+          },
+          "400": {
+            "description": "You cannot add to application NAME because it was decommissioned."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "Application interface with ID was not found for application with ID."
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{applicationId}/application_interfaces/{applicationInterfaceId}": {
+      "get": {
+        "tags": [
+          "Application Interfaces"
+        ],
+        "operationId": "getApplicationInterface",
+        "summary": "Retrieve an existing application interface by ID",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "applicationInterfaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application interface"
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "You do not have permission to access application with ID"
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "Application interface with ID was not found for application with ID."
+          },
+          "200": {
+            "description": "Retrieve an existing application interface by ID",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationInterfaceDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Application Interfaces"
+        ],
+        "operationId": "modifyApplicationInterface",
+        "summary": "Update an application interface",
+        "description": "Update the application interface properties. If is_published is set to true, the application interface is published for use by other users.",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "applicationInterfaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of The application interface"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationInterfaceDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Application interface was modified."
+          },
+          "400": {
+            "description": "Name cannot be empty."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "Application interface with ID was not found for application with ID."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Application Interfaces"
+        ],
+        "operationId": "deleteApplicationInterface",
+        "summary": "Delete application interface",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "applicationInterfaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application interface"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Application interface was deleted."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "Application interface with ID was not found for application with ID."
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{applicationId}/application_interfaces/{applicationInterfaceId}/interface_connections": {
+      "get": {
+        "tags": [
+          "Application Interfaces"
+        ],
+        "operationId": "getConnectionInterfaces",
+        "summary": "Retrieve existing interface connections",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "applicationInterfaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application interface"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the interface connection"
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "You do not have permission to access application with ID"
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "Application interface with ID was not found for application with ID."
+          },
+          "200": {
+            "description": "Retrieve existing interface connections",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionInterfaceListDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Application Interfaces"
+        ],
+        "operationId": "addConnectionInterfaces",
+        "summary": "Create interface connections",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "applicationInterfaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application interface"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectionInterfaceListDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Interface connections were created."
+          },
+          "201": {
+            "description": "Interface connection was created."
+          },
+          "400": {
+            "description": "Reference to service ID is invalid."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "Application interface with ID was not found for application with ID."
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{applicationId}/application_interfaces/{applicationInterfaceId}/interface_connections/{connectionInterfaceId}": {
+      "get": {
+        "tags": [
+          "Application Interfaces"
+        ],
+        "operationId": "getConnectionInterface",
+        "summary": "Retrieve an existing interface connection by ID",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "applicationInterfaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application interface"
+          },
+          {
+            "name": "connectionInterfaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the interface connection"
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "You do not have permission to access application with ID"
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "Connection interface with ID was not found for application interface with ID."
+          },
+          "200": {
+            "description": "Retrieve an existing interface connection by ID",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionInterfaceDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Application Interfaces"
+        ],
+        "operationId": "modifyConnectionInterface",
+        "summary": "Update an interface connection",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "applicationInterfaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application interface"
+          },
+          {
+            "name": "connectionInterfaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the interface connection"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectionInterfaceDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Interface connection was modified."
+          },
+          "400": {
+            "description": "Reference to service ID is invalid."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "Connection interface with ID was not found for application interface with ID."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Application Interfaces"
+        ],
+        "operationId": "deleteConnectionInterface",
+        "summary": "Delete interface connection",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "applicationInterfaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application interface"
+          },
+          {
+            "name": "connectionInterfaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the interface connection"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Interface connection was deleted."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "Connection interface with ID was not found for application interface with ID."
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{applicationId}/compliance_violations": {
+      "get": {
+        "tags": [
+          "Applications"
+        ],
+        "operationId": "getSPComplianceViolations",
+        "summary": "Retrieve security policy violations from SecureTrack",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Security policy compliance check is not available because a security policy has not been defined."
+          },
+          "403": {
+            "description": "You do not have permission to access application with ID"
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "There is no application with the specified ID."
+          },
+          "503": {
+            "description": "Timeout occurred while waiting for response from SecureTrack."
+          },
+          "500": {
+            "description": "An error occurred in SecureTrack when running the security compliance check."
+          },
+          "200": {
+            "description": "Retrieve security policy violations from SecureTrack",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComplianceResultListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{applicationId}/connections": {
+      "get": {
+        "tags": [
+          "Application Connections"
+        ],
+        "operationId": "getConnections",
+        "summary": "Retrieve existing connections",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the connection"
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "403": {
+            "description": "You do not have permission to access application with ID"
+          },
+          "404": {
+            "description": "There are no connections with the name NAME."
+          },
+          "200": {
+            "description": "Retrieve existing connections",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationConnectionListDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Application Connections"
+        ],
+        "operationId": "addConnections",
+        "summary": "Create connections",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationConnectionListDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connections were created."
+          },
+          "201": {
+            "description": "Connection was created."
+          },
+          "400": {
+            "description": "Connections can only include objects within the same customer."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "There is no application with the specified ID."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Application Connections"
+        ],
+        "operationId": "modifyConnections",
+        "summary": "Update connections",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationConnectionListDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connections were modified."
+          },
+          "400": {
+            "description": "You cannot modify this connection using the Update connection API function. To modify the connection, use the Update connection to application API function."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "404": {
+            "description": "Connection with ID was not found for application with ID."
+          },
+          "406": {
+            "description": " This field cannot be empty / contain only spaces / have a null value. Enter a value with the relevant tags"
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{applicationId}/connections/{connectionId}": {
+      "get": {
+        "tags": [
+          "Application Connections"
+        ],
+        "operationId": "getConnection",
+        "summary": "Retrieve an existing connection by ID",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the connection"
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "403": {
+            "description": "You do not have permission to access application with ID"
+          },
+          "404": {
+            "description": "Connection with ID was not found for application with ID."
+          },
+          "200": {
+            "description": "Retrieve an existing connection by ID",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Application Connections"
+        ],
+        "operationId": "modifyConnection",
+        "summary": "Update a connection",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the connection"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectionDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connection was modified."
+          },
+          "400": {
+            "description": "You cannot modify this connection using the Update connection API function. To modify the connection, use the Update connection to application API function."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "404": {
+            "description": "Connection with ID was not found for application with ID."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Application Connections"
+        ],
+        "operationId": "deleteConnection",
+        "summary": "Delete connection",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the connection"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Connection was deleted."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "404": {
+            "description": "Connection with ID was not found for application with ID."
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{applicationId}/connections_extended": {
+      "get": {
+        "tags": [
+          "Application Connections"
+        ],
+        "operationId": "getConnectionFullResources",
+        "summary": "Retrieve existing connections, with extended resources information",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the connection"
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Return results starting only from the specified index; 0-based index; default value = 0"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Return the specified number of results. Returns all results if no value specified"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Count value must be greater than 0."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "403": {
+            "description": "Access is denied."
+          },
+          "404": {
+            "description": "There are no connections with the name NAME."
+          },
+          "200": {
+            "description": "Retrieve existing connections, with extended resources information",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionFullResourcesListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{applicationId}/connections_to_applications": {
+      "get": {
+        "tags": [
+          "Application Interfaces"
+        ],
+        "operationId": "getApplicationInterfaceInstances",
+        "summary": "Retrieve existing connections to application",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the connection to application"
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "You do not have permission to access application with ID"
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "Connection interface with ID was not found for application interface with ID."
+          },
+          "200": {
+            "description": "Retrieve existing connections to application",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationInterfaceInstanceListDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Application Interfaces"
+        ],
+        "operationId": "addApplicationInterfaceInstance",
+        "summary": "Create connection to application",
+        "description": "Create a connection from this application to an application interface.",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationInterfaceInstanceDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Connection to application was created."
+          },
+          "400": {
+            "description": "You cannot add Internet to connection to application."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "Application interface with ID was not found."
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{applicationId}/connections_to_applications/{connectionToApplicationId}": {
+      "get": {
+        "tags": [
+          "Application Interfaces"
+        ],
+        "operationId": "getApplicationInterfaceInstance",
+        "summary": "Retrieve an existing connection to application by ID",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "connectionToApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the connection to application"
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "You do not have permission to access application with ID"
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "Connection to application with ID was not found for application interface with ID."
+          },
+          "200": {
+            "description": "Retrieve an existing connection to application by ID",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationInterfaceInstanceDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Application Interfaces"
+        ],
+        "operationId": "modifyApplicationInterfaceInstance",
+        "summary": "Update a connection to application",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "connectionToApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the connection to application"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationInterfaceInstanceDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connection to application was modified."
+          },
+          "400": {
+            "description": "You cannot add Internet to connection to application."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "Connection to application with ID was not found for application interface with ID."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Application Interfaces"
+        ],
+        "operationId": "deleteApplicationInterfaceInstance",
+        "summary": "Delete connection to application",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "connectionToApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the connection to application"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Connection to application was deleted."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "Connection to application with ID was not found for application interface with ID."
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{applicationId}/history": {
+      "get": {
+        "tags": [
+          "Applications"
+        ],
+        "operationId": "getApplicationHistory",
+        "summary": "Retrieve application history",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "States starting date to fetch history since. Date format expected: yyyy-mm-dd"
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Get history until this date. Date format expected: yyyy-mm-dd"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "History list length"
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Offset the count starting point"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "States the history type to fetch"
+          },
+          {
+            "name": "user",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The username of the user made the changes"
+          },
+          {
+            "name": "showMembers",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Whether or not to show group members of server/service groups"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "User not found"
+          },
+          "403": {
+            "description": "You do not have permission to access application with ID"
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "There is no application with the specified ID."
+          },
+          "200": {
+            "description": "Retrieve application history",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{applicationId}/network_objects": {
+      "get": {
+        "tags": [
+          "Application Servers (by application)"
+        ],
+        "operationId": "getServers_2",
+        "summary": "Retrieve existing servers",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the server"
+          },
+          {
+            "name": "ip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ip of the server"
+          },
+          {
+            "name": "show_cloned_servers",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Parameter typeOnDevice is not valid."
+          },
+          "403": {
+            "description": "You do not have permission to access application with ID"
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "There are no servers  with the typeOnDevice TYPEONDEVICE "
+          },
+          "200": {
+            "description": "Retrieve existing servers",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkObjectListDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Application Servers (by application)"
+        ],
+        "operationId": "addServers",
+        "summary": "Create servers",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/NetworkObjectListDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "The type_on_device value is not valid "
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "Virtual server was not found in SecureTrack."
+          },
+          "503": {
+            "description": "Not connected to SecureTrack."
+          },
+          "200": {
+            "description": "Create servers"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Application Servers (by application)"
+        ],
+        "operationId": "modifyServers",
+        "summary": "Update servers",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/NetworkObjectListDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "The virtual server already exists in SecureApp as resource NAME: VIRTUAL SERVER NAME VIRTUAL SERVER DEVICE NAME."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "Server with ID was not found in application with ID."
+          },
+          "503": {
+            "description": "Not connected to SecureTrack."
+          },
+          "200": {
+            "description": "Update servers"
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{applicationId}/network_objects/{serverId}": {
+      "delete": {
+        "tags": [
+          "Application Servers (by application)"
+        ],
+        "operationId": "deleteServer",
+        "summary": "Delete server",
+        "description": "To decommission a serer use force=true.",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "serverId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the server"
+          },
+          {
+            "name": "force",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Force delete"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Cannot delete a predefined object."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "Server with ID was not found in application with ID."
+          },
+          "200": {
+            "description": "Delete server"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Application Servers (by application)"
+        ],
+        "operationId": "getServer_2",
+        "summary": "Retrieve an existing server by ID",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "serverId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the server"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "The application was already deleted."
+          },
+          "403": {
+            "description": "You do not have permission to access application with ID"
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "Server with ID was not found in application with ID."
+          },
+          "200": {
+            "description": "Retrieve an existing server by ID",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/sa_network_object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{applicationId}/network_objects/{serverId}/impact_analysis_csv": {
+      "get": {
+        "tags": [
+          "Application Servers (by application)"
+        ],
+        "operationId": "exportDependencies",
+        "summary": "Export Server Impact Analysis to a CSV file.",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "serverId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Server with ID was not found."
+          },
+          "403": {
+            "description": "You do not have permissions to edit this application."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "There is no application with the specified ID."
+          },
+          "200": {
+            "description": "Export Server Impact Analysis to a CSV file."
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{applicationId}/network_objects/{serverId}/members": {
+      "get": {
+        "tags": [
+          "Application Servers (by application)"
+        ],
+        "operationId": "getServerMembers",
+        "summary": "If the identified server is a group, return a list of its members. When the media type is 'text/plain' (default), print each member on a separate line.",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "serverId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Server with ID is not of type group"
+          },
+          "403": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance"
+          },
+          "404": {
+            "description": "Server with ID was not found"
+          },
+          "200": {
+            "description": "If the identified server is a group, return a list of its members. When the media type is 'text/plain' (default), print each member on a separate line."
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{applicationId}/services": {
+      "get": {
+        "tags": [
+          "Application Services (local)"
+        ],
+        "operationId": "getServices_2",
+        "summary": "Retrieve existing services",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the service"
+          },
+          {
+            "name": "show_cloned_services",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "The application was already deleted."
+          },
+          "403": {
+            "description": "You do not have permission to access application with ID"
+          },
+          "404": {
+            "description": "There are no services with the name NAME."
+          },
+          "200": {
+            "description": "Retrieve existing services",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceListDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Application Services (local)"
+        ],
+        "operationId": "addServices_2",
+        "summary": "Create services",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceListDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Service was created."
+          },
+          "200": {
+            "description": "Services were created."
+          },
+          "400": {
+            "description": "Can not have application identity in group"
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "404": {
+            "description": "There is no application with the specified ID."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Application Services (local)"
+        ],
+        "operationId": "modifyServices_2",
+        "summary": "Update services",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceListDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Services were modified."
+          },
+          "400": {
+            "description": "Application identity cannot be a member of a group."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "404": {
+            "description": "Service with ID &lt;ID&gt; was not found."
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{applicationId}/services/{serviceId}": {
+      "get": {
+        "tags": [
+          "Application Services (local)"
+        ],
+        "operationId": "getService_2",
+        "summary": "Retrieve an existing service by ID",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "serviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the service"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "The application was already deleted."
+          },
+          "403": {
+            "description": "You do not have permission to access application with ID"
+          },
+          "404": {
+            "description": "Service with ID was not found."
+          },
+          "200": {
+            "description": "Retrieve an existing service by ID",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/sa_service"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Application Services (local)"
+        ],
+        "operationId": "deleteService",
+        "summary": "Delete service",
+        "description": "Use force=true to delete a service with decommission.",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "serviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the service"
+          },
+          {
+            "name": "force",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Force delete"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Cannot delete a predefined object."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "404": {
+            "description": "Service with ID &lt;SERVICE_ID&gt; was not found in application with id &lt;APPLICATION_ID&gt;"
+          },
+          "200": {
+            "description": "Delete service"
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{application_id}/connections/{connection_id}/repair": {
+      "post": {
+        "tags": [
+          "Application Connections"
+        ],
+        "operationId": "repairConnection",
+        "summary": "Create a ticket to repair a connection",
+        "parameters": [
+          {
+            "name": "application_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The application ID"
+          },
+          {
+            "name": "connection_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The connection ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/TicketDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ticket was created."
+          },
+          "400": {
+            "description": "You cannot change the value of a field because it is read-only."
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "Connection with ID was not found for application with ID."
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{application_id}/history/export_pdf": {
+      "get": {
+        "tags": [
+          "Applications"
+        ],
+        "operationId": "exportApplicationHistory",
+        "summary": "Export application history to PDF",
+        "parameters": [
+          {
+            "name": "application_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "States starting date to fetch history since. Date format expected: yyyy-mm-dd"
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Get history until this date. Date format expected: yyyy-mm-dd"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "History max rows"
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "You do not have permission to access application with ID"
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "There is no application with the specified ID."
+          },
+          "400": {
+            "description": "Start date must be before End date"
+          },
+          "200": {
+            "description": "Export application history to PDF"
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{application_id}/impact_analysis_csv": {
+      "get": {
+        "tags": [
+          "Applications"
+        ],
+        "operationId": "exportImpactAnalysisToCsv",
+        "summary": "Export Impact Analysis to a CSV file.",
+        "description": "To prevent a CSV injection attack when exporting Impact Analysis to a CSV file, if a special character ( = - + @ ) appears at the beginning of any field, a single quote (') is added before the character.",
+        "parameters": [
+          {
+            "name": "application_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "You do not have permissions to edit this application."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "There is no application with the specified ID."
+          },
+          "200": {
+            "description": "Export Impact Analysis to a CSV file."
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/applications/{application_id}/move_server": {
+      "post": {
+        "tags": [
+          "Application Servers (by application)"
+        ],
+        "operationId": "moveServer",
+        "summary": "Move server",
+        "parameters": [
+          {
+            "name": "application_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the application"
+          },
+          {
+            "name": "server_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the server"
+          },
+          {
+            "name": "target_application_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The unique identifier of the target application"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Group/Server cannot be moved because it or at least one of its group members is used in these connections with another external resource: CONNECTION_NAME"
+          },
+          "403": {
+            "description": "This application is publishing and therefore cannot be edited. Redo your changes after publishing is completed."
+          },
+          "401": {
+            "description": "No available licenses. Ask your SecureApp administrator for assistance."
+          },
+          "404": {
+            "description": "There is no application with the specified ID."
+          },
+          "200": {
+            "description": "Move server"
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/import_applications/download_template": {
+      "get": {
+        "tags": [
+          "Applications"
+        ],
+        "operationId": "downloadEmptyExcel",
+        "summary": "Download a Microsoft Excel spreadsheet from your SecureApp server where you can enter the details of your servers, server groups, and connections",
+        "responses": {
+          "400": {
+            "description": "Cannot create import application excel"
+          },
+          "403": {
+            "description": "Access is denied"
+          },
+          "200": {
+            "description": "Download a Microsoft Excel spreadsheet from your SecureApp server where you can enter the details of your servers, server groups, and connections"
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/import_applications/upload": {
+      "get": {
+        "tags": [
+          "Applications"
+        ],
+        "operationId": "openUploadForm",
+        "summary": "Import the spreadsheet into SecureApp to create the specified servers, server groups, and connections",
+        "responses": {
+          "400": {
+            "description": "Failed to create upload form."
+          },
+          "403": {
+            "description": "Access is denied"
+          },
+          "200": {
+            "description": "Import the spreadsheet into SecureApp to create the specified servers, server groups, and connections"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Applications"
+        ],
+        "operationId": "uploadExcel",
+        "summary": "Import the spreadsheet into SecureApp to create the specified servers, server groups, and connections",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/attachment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Failed to create upload form."
+          },
+          "403": {
+            "description": "Access is denied"
+          },
+          "200": {
+            "description": "Import the spreadsheet into SecureApp to create the specified servers, server groups, and connections"
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/services": {
+      "get": {
+        "tags": [
+          "Application Services (global)"
+        ],
+        "operationId": "getServices",
+        "summary": "Fetches services",
+        "parameters": [
+          {
+            "name": "globals_only",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "get only globals"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the service"
+          },
+          {
+            "name": "show_cloned_services",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "There are no services with the name NAME."
+          },
+          "403": {
+            "description": "Access is denied."
+          },
+          "200": {
+            "description": "Fetches services",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceListDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Application Services (global)"
+        ],
+        "operationId": "addServices",
+        "summary": "Create global services",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceListDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Service was created."
+          },
+          "200": {
+            "description": "Services were created."
+          },
+          "400": {
+            "description": "Application identity cannot be a member of a group."
+          },
+          "404": {
+            "description": "Service with ID &lt;ID&gt; was not found."
+          },
+          "403": {
+            "description": "Access is denied."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Application Services (global)"
+        ],
+        "operationId": "deleteUnusedNonPredefinedServiceByName",
+        "summary": "Delete unused and non predefined global service by name",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the service"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Service was deleted."
+          },
+          "404": {
+            "description": "There are no services with the name NAME."
+          },
+          "400": {
+            "description": "Cannot delete a predefined object."
+          },
+          "403": {
+            "description": "Access is denied."
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/services/": {
+      "put": {
+        "tags": [
+          "Application Services (global)"
+        ],
+        "operationId": "modifyServices",
+        "summary": "Modify unused and non predefined global services",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceListDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Services were modified."
+          },
+          "400": {
+            "description": "Application identity cannot be a member of a group."
+          },
+          "404": {
+            "description": "Service with ID &lt;ID&gt; was not found."
+          },
+          "403": {
+            "description": "Access is denied."
+          }
+        }
+      }
+    },
+    "/securechangeworkflow/api/secureapp/repository/services/{serviceId}": {
+      "get": {
+        "tags": [
+          "Application Services (global)"
+        ],
+        "operationId": "getService",
+        "summary": "Fetches service by ID",
+        "parameters": [
+          {
+            "name": "serviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The ID of the service"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Service with ID &lt;ID&gt; was not found."
+          },
+          "403": {
+            "description": "Access is denied."
+          },
+          "200": {
+            "description": "Fetches service by ID",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/sa_service"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Application Services (global)"
+        ],
+        "operationId": "deleteUnusedNonPredefinedService",
+        "summary": "Delete unused and non predefined global service",
+        "parameters": [
+          {
+            "name": "serviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The ID of the service"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Service was deleted."
+          },
+          "404": {
+            "description": "Global Service with ID was not found."
+          },
+          "400": {
+            "description": "You cannot delete a predefined object."
+          },
+          "403": {
+            "description": "Access is denied."
+          }
+        }
+      }
+    }
+  }
+}

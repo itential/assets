@@ -1,0 +1,5995 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Tufin SecureTrack",
+    "description": "Tufin SecureTrack network security policy management and visibility REST API.",
+    "version": "latest",
+    "x-vendor-api-version": "25.2",
+    "x-itential-curated": "Trimmed to 66 of 275 upstream operations covering device inventory/lifecycle (Monitored Devices), security rule search and documentation (Security Rules, Policy Browser), policy/sub-policy listing (Policies and Sub-Policies), network object and service/port CRUD, NAT policy listing, and device config revisions. See the repo README for the full scope and the full spec."
+  },
+  "servers": [
+    {
+      "url": "https://{host}/securetrack/api",
+      "variables": {
+        "host": {
+          "default": "tufin.example.com"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "NatInfoDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Object ID of NAT info"
+          },
+          "interface_name": {
+            "type": "string",
+            "description": "Interface name of NAT info"
+          }
+        },
+        "required": [
+          "id",
+          "interface_name"
+        ]
+      },
+      "LinkDTO": {
+        "type": "object",
+        "properties": {
+          "@href": {
+            "type": "string",
+            "description": "The location of the referenced object"
+          }
+        },
+        "required": [
+          "@href"
+        ]
+      },
+      "InterfaceIpListDTO": {
+        "type": "object",
+        "properties": {
+          "interface_ip": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InterfaceIpDTO"
+            },
+            "description": "Interface IPs"
+          }
+        },
+        "required": [
+          "interface_ip"
+        ]
+      },
+      "InterfaceIpDTO": {
+        "type": "object",
+        "properties": {
+          "visibility": {
+            "type": "string",
+            "description": "ip visibility (private/public)"
+          },
+          "ip": {
+            "type": "string",
+            "description": "IP address of interface"
+          },
+          "precedence": {
+            "type": "string",
+            "description": "ip precedence (primary/secondary)"
+          },
+          "vendorAttachmentPolicy": {
+            "type": "string",
+            "description": "ip vendor attachment policy"
+          },
+          "netmask": {
+            "type": "string",
+            "description": "Network mask of interface"
+          }
+        },
+        "required": [
+          "ip",
+          "netmask"
+        ]
+      },
+      "NetworkIpType": {
+        "type": "object"
+      },
+      "CloudSecurityGroupDTO": {
+        "type": "object",
+        "properties": {
+          "member": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "The members"
+          },
+          "namespace": {
+            "type": "string"
+          },
+          "exclusion": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "The exclusions"
+          },
+          "access_allowed": {
+            "type": "boolean",
+            "description": "access allowed"
+          },
+          "match_criteria": {
+            "type": "string"
+          },
+          "properties": {
+            "type": "string",
+            "format": "map"
+          },
+          "overrides": {
+            "type": "boolean",
+            "description": "Original value override, applicable only for Panorama NG"
+          },
+          "ip_type": {
+            "$ref": "#/components/schemas/NetworkIpType"
+          },
+          "type_on_device": {
+            "type": "string",
+            "description": "The type of device"
+          },
+          "management_domain": {
+            "type": "string"
+          },
+          "any_zone": {
+            "type": "boolean"
+          },
+          "implicit": {
+            "type": "boolean"
+          },
+          "domain_name": {
+            "type": "string"
+          },
+          "management_domain_securetrack_name": {
+            "type": "string"
+          },
+          "nat_info": {
+            "$ref": "#/components/schemas/NatInfoDTO"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the device object"
+          },
+          "id": {
+            "type": "string",
+            "description": "The ID of the device object"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the device object"
+          },
+          "class_name": {
+            "type": "string",
+            "description": "The class name of the device object"
+          },
+          "display_name": {
+            "type": "string",
+            "description": "The display name of the device object"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The comment of the device object"
+          },
+          "global": {
+            "type": "boolean",
+            "description": "Is a global device object"
+          },
+          "uid": {
+            "type": "string",
+            "description": "The uid of the device object"
+          },
+          "device_id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The device ID of the device object"
+          },
+          "application_id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Application ID of the device object"
+          },
+          "deviceName": {
+            "type": "string",
+            "description": "Device name for device object"
+          }
+        },
+        "required": [
+          "member",
+          "exclusion",
+          "access_allowed",
+          "nat_info",
+          "name",
+          "id",
+          "type",
+          "class_name",
+          "display_name",
+          "comment",
+          "global",
+          "uid",
+          "device_id",
+          "application_id",
+          "deviceName"
+        ]
+      },
+      "FQDNIpDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "ip": {
+            "type": "string"
+          },
+          "subnetMask": {
+            "type": "string"
+          },
+          "ipType": {
+            "type": "string"
+          }
+        }
+      },
+      "ObjectReferenceDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the referenced object"
+          },
+          "id": {
+            "type": "string",
+            "description": "ID"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the referenced object"
+          },
+          "display_name": {
+            "type": "string",
+            "description": "The display name of the referenced object"
+          },
+          "uid": {
+            "type": "string",
+            "description": "The unique identifier of the referenced object"
+          },
+          "ip": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FQDNIpDTO"
+            }
+          },
+          "management_domain": {
+            "type": "string",
+            "description": "The management domain from which the referenced object comes from"
+          },
+          "link": {
+            "$ref": "#/components/schemas/LinkDTO"
+          },
+          "member": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceDTO"
+            },
+            "description": "List of references to a DM_INLINE group members"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "BindingDTO": {
+        "type": "object",
+        "properties": {
+          "direction": {
+            "type": "string",
+            "description": "Direction of rule set"
+          },
+          "uid": {
+            "type": "string"
+          },
+          "ip_type": {
+            "$ref": "#/components/schemas/IpType"
+          },
+          "acl": {
+            "$ref": "#/components/schemas/AclDTO"
+          },
+          "nat_type": {
+            "type": "string",
+            "description": "Junos SRX NAT only - Type of NAT used [SOURCE, DESTINATION, STATIC_DESTINATION, STATIC_SOURCE]"
+          },
+          "from_zone": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PolicyZoneDTO"
+            },
+            "description": "Source zones of rule set"
+          },
+          "to_zone": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PolicyZoneDTO"
+            },
+            "description": "Destination zones of rule set"
+          },
+          "postnat_iface": {
+            "type": "string",
+            "description": "External interfaces for rule set"
+          },
+          "device_policy_id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "StoneSoft only"
+          },
+          "rule_count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of rules for this rule set"
+          },
+          "binding_type": {
+            "$ref": "#/components/schemas/BindingType"
+          },
+          "nat_stage": {
+            "type": "string",
+            "description": "NAT stage for rule set"
+          },
+          "policy": {
+            "$ref": "#/components/schemas/ManagementPolicyDTO"
+          },
+          "from_collection": {
+            "type": "string",
+            "description": "Junos SRX NAT only - A group of sources for the NAT rule-set [Interface, Zone, Routing Instance]"
+          },
+          "to_collection": {
+            "type": "string",
+            "description": "Junos SRX NAT only - A group of destinations for the NAT rule-set [Interface, Zone, Routing Instance]"
+          },
+          "policy_map_name": {
+            "type": "string",
+            "description": "Policy map name of rule set"
+          },
+          "cloudSecurityGroupDTO": {
+            "$ref": "#/components/schemas/CloudSecurityGroupDTO"
+          },
+          "security_rule_count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of security rules for this rule set"
+          },
+          "default": {
+            "type": "boolean",
+            "description": "Is default rule set"
+          },
+          "prenat_iface": {
+            "type": "string",
+            "description": "Internal interfaces for rule set"
+          },
+          "from_type": {
+            "type": "string",
+            "description": "Junos SRX NAT only - Type of source for rule-set [Interface, Zone, Routing Instance]"
+          },
+          "to_type": {
+            "type": "string",
+            "description": "Junos SRX NAT only - Type of destination for rule-set [Interface, Zone, Routing Instance]"
+          }
+        },
+        "required": [
+          "direction",
+          "acl",
+          "from_zone",
+          "to_zone",
+          "postnat_iface",
+          "rule_count",
+          "nat_stage",
+          "policy",
+          "policy_map_name",
+          "security_rule_count",
+          "default",
+          "prenat_iface"
+        ]
+      },
+      "TicketDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The id of the ticket"
+          },
+          "source": {
+            "type": "string",
+            "description": "The source of the ticket"
+          }
+        },
+        "required": [
+          "id",
+          "source"
+        ]
+      },
+      "RevisionManualAuthorizationDTO": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "The last authorization status given manually to the revision"
+          },
+          "user": {
+            "type": "string",
+            "description": "The user who last changed the authorization status"
+          },
+          "dateTime": {
+            "type": "string",
+            "description": "The date and time of the last manual authorization status"
+          }
+        },
+        "required": [
+          "status",
+          "user",
+          "dateTime"
+        ]
+      },
+      "RevisionCommentDTO": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Date of revision comment"
+          },
+          "comment": {
+            "type": "string",
+            "description": "Revision comment"
+          },
+          "editor": {
+            "type": "string",
+            "description": "Editor of revision comment"
+          }
+        },
+        "required": [
+          "date",
+          "comment",
+          "editor"
+        ]
+      },
+      "BindingType": {
+        "type": "object"
+      },
+      "InterfaceDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The ID of interface"
+          },
+          "implicit": {
+            "type": "boolean",
+            "description": "Is an implicit interface"
+          },
+          "direction": {
+            "type": "string",
+            "description": "The direction of the interface"
+          },
+          "zone_id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The ID of the mapped zone"
+          },
+          "uid": {
+            "type": "string",
+            "description": "The UID of interface"
+          },
+          "global": {
+            "type": "boolean",
+            "description": "Is a global interface"
+          },
+          "device_id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Device ID for interface"
+          },
+          "interface_ips": {
+            "$ref": "#/components/schemas/InterfaceIpListDTO"
+          },
+          "acl_name": {
+            "type": "string",
+            "description": "ACL name of the interface"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the object"
+          }
+        },
+        "required": [
+          "id",
+          "implicit",
+          "direction",
+          "zone_id",
+          "uid",
+          "global",
+          "device_id",
+          "interface_ips",
+          "acl_name",
+          "name"
+        ]
+      },
+      "RuleDocumentationDTO": {
+        "type": "object",
+        "properties": {
+          "last_modified": {
+            "type": "string",
+            "description": "The date this rule was last modified"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The rule comment"
+          },
+          "legacy_rule": {
+            "type": "boolean",
+            "description": "Designer and Verifier will treat the specified rule as a shadowed rule when making recommendations or verifying access"
+          },
+          "stealth_rule": {
+            "type": "boolean",
+            "description": "Designer and Verifier will treat the specified rule as a stealth rule when making recommendations or verifying access"
+          },
+          "tech_owner": {
+            "type": "string",
+            "description": "The techinal owner"
+          },
+          "record_set": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RuleDocumentationRecordDTO"
+            },
+            "description": "Documentation records for this rule"
+          },
+          "violation": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ViolationMetadataDTO"
+            },
+            "description": "List of violations for this rule"
+          },
+          "last_hit": {
+            "type": "string",
+            "description": " The date of rule last hit"
+          },
+          "permissiveness_level": {
+            "type": "string",
+            "description": "The rule permissiveness score"
+          },
+          "certification_status": {
+            "$ref": "#/components/schemas/CertificationStatus"
+          },
+          "certification_date": {
+            "$ref": "#/components/schemas/LocalDateTime"
+          },
+          "certification_expiration_date": {
+            "$ref": "#/components/schemas/LocalDateTime"
+          },
+          "shadowed": {
+            "type": "string",
+            "description": "The rule shadowed status"
+          },
+          "secure_app_application": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaApplicationDTO"
+            },
+            "description": "SecureApp applications for this rule"
+          }
+        },
+        "required": [
+          "comment",
+          "legacy_rule",
+          "stealth_rule",
+          "tech_owner",
+          "record_set",
+          "violation",
+          "permissiveness_level",
+          "shadowed",
+          "secure_app_application"
+        ]
+      },
+      "CertificationStatus": {
+        "type": "object"
+      },
+      "IpType": {
+        "type": "object",
+        "properties": {
+          "ipv4": {
+            "type": "boolean"
+          },
+          "ipv6": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RuleDocumentationRecordDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Rule documentation ID"
+          },
+          "expireDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration date for rule tickets"
+          },
+          "ticketStatus": {
+            "$ref": "#/components/schemas/WorkflowTicketStatusType"
+          },
+          "ticketCr": {
+            "type": "string",
+            "description": "Ticket information for rule"
+          },
+          "businessOwnerName": {
+            "type": "string",
+            "description": "Business owner name for rule"
+          },
+          "businessOwnerEmail": {
+            "type": "string",
+            "description": "Business owner Email address for rule"
+          },
+          "ticketOrigin": {
+            "type": "string",
+            "description": "Ticketing system source of the specified ID. Supported values: 'scw'"
+          }
+        },
+        "required": [
+          "id",
+          "expireDate",
+          "ticketStatus",
+          "ticketCr",
+          "businessOwnerName",
+          "businessOwnerEmail"
+        ]
+      },
+      "SaApplicationDTO": {
+        "type": "object",
+        "properties": {
+          "app_name": {
+            "type": "string",
+            "description": "Application name"
+          },
+          "app_owner": {
+            "type": "string",
+            "description": "Application owner"
+          }
+        }
+      },
+      "AclDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name for ACL"
+          },
+          "interfaces": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InterfaceDTO"
+            },
+            "description": "Interfaces for ACL"
+          },
+          "global": {
+            "type": "boolean",
+            "description": "Is ACL global"
+          },
+          "ipv6_only": {
+            "type": "boolean",
+            "description": "Is ipv6 only ACL "
+          }
+        },
+        "required": [
+          "name",
+          "interfaces",
+          "global",
+          "ipv6_only"
+        ]
+      },
+      "WorkflowTicketStatusType": {
+        "type": "object"
+      },
+      "LocalDateTime": {
+        "type": "object"
+      },
+      "ManagementPolicyDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "package": {
+            "type": "string",
+            "description": "Package that the policy belons to. Relevant only Fortinet"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID"
+          },
+          "admin_domain": {
+            "type": "string",
+            "description": "Admin domain name"
+          },
+          "itg_id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Installation target group ID"
+          },
+          "itg": {
+            "type": "string",
+            "description": "Installation target group name"
+          },
+          "unique_active_in_itg": {
+            "type": "boolean",
+            "description": "Unique active installation target group"
+          },
+          "admin_domain_id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Admin domain ID"
+          }
+        },
+        "required": [
+          "name",
+          "id",
+          "admin_domain",
+          "itg_id",
+          "itg",
+          "unique_active_in_itg",
+          "admin_domain_id"
+        ]
+      },
+      "NatRuleDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "order": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "uid": {
+            "type": "string"
+          },
+          "binding": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BindingDTO"
+            },
+            "description": "Bindings list for NAT rule"
+          }
+        },
+        "required": [
+          "binding"
+        ]
+      },
+      "RevisionDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The globally unique ID of the revision,  may be used for get /revisions/id API "
+          },
+          "time": {
+            "type": "string",
+            "description": "The time of the revision"
+          },
+          "date": {
+            "type": "string",
+            "description": "The date of the revision"
+          },
+          "comment": {
+            "$ref": "#/components/schemas/RevisionCommentDTO"
+          },
+          "action": {
+            "type": "string",
+            "description": "The action upon this revision was retrieved"
+          },
+          "revisionId": {
+            "type": "string",
+            "description": "The order of the revision in the device (for example - will be 3 for the third revision in this device)"
+          },
+          "modules_and_policy": {
+            "type": "string",
+            "format": "map",
+            "description": "The modules and policy names of the revision"
+          },
+          "admin": {
+            "type": "string",
+            "description": "The administrator user which caused this revision"
+          },
+          "guiClient": {
+            "type": "string",
+            "description": "The GUI client for revision"
+          },
+          "auditLog": {
+            "type": "string",
+            "description": "The audit log of the revision"
+          },
+          "policyPackage": {
+            "type": "string",
+            "description": "The policy package of the revision"
+          },
+          "automaticAuthorizationStatus": {
+            "type": "string",
+            "description": "The authorization status calculated automatically for the revision"
+          },
+          "firewall_status": {
+            "type": "boolean"
+          },
+          "ready": {
+            "type": "boolean",
+            "description": "The status of the revision"
+          },
+          "ticket": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TicketDTO"
+            },
+            "description": "The tickets of the revision"
+          },
+          "authorizationStatus": {
+            "type": "string",
+            "description": "The authorization status of the changes in the revision"
+          },
+          "manualAuthorization": {
+            "$ref": "#/components/schemas/RevisionManualAuthorizationDTO"
+          }
+        },
+        "required": [
+          "id",
+          "time",
+          "date",
+          "comment",
+          "action",
+          "revisionId",
+          "modules_and_policy",
+          "admin",
+          "guiClient",
+          "auditLog",
+          "policyPackage",
+          "automaticAuthorizationStatus",
+          "ready",
+          "ticket",
+          "authorizationStatus",
+          "manualAuthorization"
+        ]
+      },
+      "PolicyZoneDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the zone"
+          },
+          "global": {
+            "type": "boolean",
+            "description": "Is a global zone"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the object"
+          }
+        },
+        "required": [
+          "id",
+          "global",
+          "name"
+        ]
+      },
+      "ViolationMetadataDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the violation"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the violation"
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ]
+      },
+      "StatusDTO": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "DeviceLicenseStatusDTO": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The license category or feature type (4 options are available: SecureTrack, SecureChange, Provisioning, OS Monitoring)"
+          },
+          "expiration": {
+            "type": "string",
+            "description": "ISO date of the license expiration date (last day when this license is valid)"
+          },
+          "used": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of used units"
+          },
+          "status": {
+            "type": "string",
+            "description": "License status, e.g., licensed, expired, plug&play, unlicensed, etc."
+          },
+          "sku": {
+            "type": "string",
+            "description": "The actual SKU name used by this device"
+          }
+        },
+        "required": [
+          "type",
+          "status"
+        ]
+      },
+      "DeviceTasksDTO": {
+        "type": "object",
+        "properties": {
+          "task_count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "device_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "device_name": {
+            "type": "string"
+          }
+        }
+      },
+      "TaskResultDTO": {
+        "type": "object",
+        "properties": {
+          "in_progress": {
+            "$ref": "#/components/schemas/DevicesResultsDTO"
+          },
+          "failed": {
+            "$ref": "#/components/schemas/DevicesResultsDTO"
+          },
+          "succeeded": {
+            "$ref": "#/components/schemas/DevicesResultsDTO"
+          }
+        }
+      },
+      "QueueSizeConfigDTO": {
+        "type": "object",
+        "properties": {
+          "config": {
+            "type": "string",
+            "format": "map"
+          }
+        }
+      },
+      "DeviceDataDTO": {
+        "type": "object",
+        "properties": {
+          "vaultServer": {
+            "type": "string"
+          },
+          "collectRuleUsage": {
+            "type": "boolean"
+          },
+          "collectObjectUsage": {
+            "type": "boolean"
+          },
+          "deviceDataChangeFields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldNames"
+            }
+          },
+          "ruleOptimizerUsage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DevicesResultsDTO": {
+        "type": "object",
+        "properties": {
+          "devices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeviceResultDTO"
+            }
+          }
+        }
+      },
+      "DevicesListDTO": {
+        "type": "object",
+        "properties": {
+          "devices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeviceDTO"
+            }
+          }
+        }
+      },
+      "TaskDTO": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "ticketId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "taskId": {
+            "type": "string"
+          },
+          "insertionTimestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DetailedDeviceListDTO": {
+        "type": "object",
+        "properties": {
+          "device": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DetailedDeviceDTO"
+            },
+            "description": "The devices list"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of returned elements"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Number of total available elements"
+          }
+        },
+        "required": [
+          "device",
+          "count",
+          "total"
+        ]
+      },
+      "TasksListDTO": {
+        "type": "object",
+        "properties": {
+          "task": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskDTO"
+            }
+          }
+        }
+      },
+      "DetailedDeviceDTO": {
+        "type": "object",
+        "properties": {
+          "OS_Version": {
+            "type": "string",
+            "description": "The OS version of the firewall"
+          },
+          "rule_usage_mode": {
+            "type": "string",
+            "description": "Rule usage mode"
+          },
+          "status": {
+            "type": "string",
+            "description": "Device status"
+          },
+          "context_name": {
+            "type": "string",
+            "description": "The context name of the device"
+          },
+          "ip": {
+            "type": "string",
+            "description": "IP address of device"
+          },
+          "latest_revision": {
+            "type": "string",
+            "description": "Latest revision of device"
+          },
+          "virtual_type": {
+            "type": "string",
+            "description": "The virtual type of the device"
+          },
+          "parent_id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The parent ID of the device"
+          },
+          "module_type": {
+            "type": "string",
+            "description": "Module type"
+          },
+          "object_usage_mode": {
+            "type": "string",
+            "description": "Object usage mode"
+          },
+          "rule_optimizer_mode": {
+            "type": "string",
+            "description": "Rule optimizer mode"
+          },
+          "installed_policy": {
+            "type": "string",
+            "description": "Installed policy currently active on the device"
+          },
+          "license": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeviceLicenseStatusDTO"
+            },
+            "description": "Licensing information"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the device"
+          },
+          "id": {
+            "type": "string",
+            "description": "The ID of the device"
+          },
+          "offline": {
+            "type": "boolean",
+            "description": "Device is offline"
+          },
+          "model": {
+            "type": "string",
+            "description": "The model of the device"
+          },
+          "vendor": {
+            "type": "string",
+            "description": "The vendor of the device"
+          },
+          "domain_id": {
+            "type": "string",
+            "description": "The domain identifier of the device"
+          },
+          "domain_name": {
+            "type": "string",
+            "description": "The domain name of the device"
+          },
+          "module_uid": {
+            "type": "string"
+          },
+          "topology": {
+            "type": "boolean",
+            "description": "Device has topology"
+          }
+        },
+        "required": [
+          "status",
+          "ip",
+          "latest_revision",
+          "name",
+          "offline",
+          "model",
+          "vendor",
+          "domain_id",
+          "domain_name",
+          "topology"
+        ]
+      },
+      "FieldNames": {
+        "type": "object"
+      },
+      "st_device": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the device"
+          },
+          "id": {
+            "type": "string",
+            "description": "The ID of the device"
+          },
+          "offline": {
+            "type": "boolean",
+            "description": "Device is offline"
+          },
+          "model": {
+            "type": "string",
+            "description": "The model of the device"
+          },
+          "vendor": {
+            "type": "string",
+            "description": "The vendor of the device"
+          },
+          "domain_id": {
+            "type": "string",
+            "description": "The domain identifier of the device"
+          },
+          "domain_name": {
+            "type": "string",
+            "description": "The domain name of the device"
+          },
+          "module_uid": {
+            "type": "string"
+          },
+          "topology": {
+            "type": "boolean",
+            "description": "Device has topology"
+          }
+        },
+        "required": [
+          "name",
+          "offline",
+          "model",
+          "vendor",
+          "domain_id",
+          "domain_name",
+          "topology"
+        ]
+      },
+      "WaitingTasksListDTO": {
+        "type": "object",
+        "properties": {
+          "device": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeviceTasksDTO"
+            }
+          }
+        }
+      },
+      "DeviceDTO": {
+        "type": "object",
+        "properties": {
+          "display_name": {
+            "type": "string",
+            "description": "required for POST, optional for PATCH"
+          },
+          "device_id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "required for PATCH"
+          },
+          "ip_address": {
+            "type": "string",
+            "description": "required for POST, optional for PATCH"
+          },
+          "virtual_type": {
+            "type": "string"
+          },
+          "vendor": {
+            "type": "string",
+            "description": "required for POST"
+          },
+          "securetrack_server": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string",
+            "description": "required for POST"
+          },
+          "securetrack_domain": {
+            "type": "string"
+          },
+          "deviceDataDTO": {
+            "$ref": "#/components/schemas/DeviceDataDTO"
+          },
+          "enable_vault": {
+            "type": "boolean"
+          },
+          "enable_topology": {
+            "type": "boolean"
+          },
+          "sslCertificateIdOnRC": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sslCertificateOnRC": {
+            "type": "string"
+          },
+          "vpc_auto_import": {
+            "type": "boolean"
+          },
+          "vnet_auto_import": {
+            "type": "boolean"
+          },
+          "importedDomainName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "display_name",
+          "device_id",
+          "ip_address",
+          "vendor",
+          "model"
+        ]
+      },
+      "DeviceResultDTO": {
+        "type": "object",
+        "properties": {
+          "display_name": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/StatusDTO"
+          },
+          "device_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ip_address": {
+            "type": "string"
+          }
+        }
+      },
+      "AbortTaskRequestDTO": {
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "taskId": {
+            "type": "string"
+          }
+        }
+      },
+      "NatRuleListDTO": {
+        "type": "object",
+        "properties": {
+          "natRuleListDTO": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NatRuleDTO"
+            }
+          }
+        }
+      },
+      "NetworkObjectListDTO": {
+        "type": "object",
+        "properties": {
+          "network_object": {
+            "$ref": "#/components/schemas/void"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of returned elements"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Number of items that can be retrieved"
+          }
+        },
+        "required": [
+          "network_object",
+          "count",
+          "total"
+        ]
+      },
+      "RuleListDTO": {
+        "type": "object",
+        "properties": {
+          "rule": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RuleDTO"
+            },
+            "description": "The rules list"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of returned elements"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Number of total available elements"
+          }
+        },
+        "required": [
+          "rule",
+          "count",
+          "total"
+        ]
+      },
+      "NetworkObjectLimitedListDTO": {
+        "type": "object",
+        "properties": {
+          "network_object": {
+            "$ref": "#/components/schemas/void"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of returned elements"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Number of total available elements"
+          }
+        },
+        "required": [
+          "network_object",
+          "count",
+          "total"
+        ]
+      },
+      "RuleDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the rule"
+          },
+          "order": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The Order of the rule"
+          },
+          "uid": {
+            "type": "string",
+            "description": "The UID of the rule"
+          },
+          "binding": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BindingDTO"
+            },
+            "description": "The bindings of the rule"
+          },
+          "device_id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The device ID for this rule"
+          },
+          "cp_uid": {
+            "type": "string",
+            "description": "The CheckPoint UID of the rule"
+          }
+        },
+        "required": [
+          "id",
+          "order",
+          "uid",
+          "binding",
+          "cp_uid"
+        ]
+      },
+      "TopologyBindingRuleListDTO": {
+        "type": "object",
+        "properties": {
+          "rules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RuleListDTO"
+            }
+          }
+        }
+      },
+      "RouteActionDTO": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "$ref": "#/components/schemas/routeAction"
+          },
+          "interfaceName": {
+            "type": "string"
+          },
+          "nextHop": {
+            "type": "string"
+          },
+          "vrf": {
+            "type": "string"
+          }
+        }
+      },
+      "route_map": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "route_map_entry": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RouteMapEntryDTO"
+            }
+          },
+          "interfacesName": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "route_map_entry": {
+        "type": "object",
+        "properties": {
+          "seqNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "aclName": {
+            "type": "string"
+          },
+          "entryAction": {
+            "type": "string"
+          },
+          "routeActions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RouteActionDTO"
+            }
+          },
+          "pbrEntryRules": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "route_maps": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "routeMapEntries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/route_map_entry"
+            }
+          }
+        }
+      },
+      "routeAction": {
+        "type": "object"
+      },
+      "RouteMapsDTO": {
+        "type": "object",
+        "properties": {
+          "route_map": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/route_map"
+            }
+          }
+        }
+      },
+      "ManagementPolicyListDTO": {
+        "type": "object",
+        "properties": {
+          "managementPolicyListDTO": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ManagementPolicyDTO"
+            }
+          }
+        }
+      },
+      "RouteMapEntryDestinationDTO": {
+        "type": "object",
+        "properties": {
+          "interfaceName": {
+            "type": "string"
+          },
+          "nextHop": {
+            "type": "string"
+          },
+          "vrf": {
+            "type": "string"
+          },
+          "destinationType": {
+            "type": "string"
+          }
+        }
+      },
+      "RouteMapEntryDTO": {
+        "type": "object",
+        "properties": {
+          "match": {
+            "type": "string"
+          },
+          "route_map_entry_destination": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RouteMapEntryDestinationDTO"
+            }
+          },
+          "entryAction": {
+            "type": "string"
+          },
+          "matchType": {
+            "type": "string"
+          }
+        }
+      },
+      "BindingListDTO": {
+        "type": "object",
+        "properties": {
+          "bindingListDTO": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BindingDTO"
+            }
+          }
+        }
+      },
+      "RevisionListDTO": {
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RevisionDTO"
+            }
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of returned elements"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Number of total available elements"
+          }
+        },
+        "required": [
+          "count",
+          "total"
+        ]
+      },
+      "RuleCountDevice": {
+        "type": "object",
+        "properties": {
+          "device_id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Device id"
+          },
+          "revision_id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Revision id"
+          },
+          "rule_count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Rule count"
+          }
+        }
+      },
+      "RuleCountDeviceList": {
+        "type": "object",
+        "properties": {
+          "device": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RuleCountDevice"
+            },
+            "description": "Device list"
+          }
+        }
+      },
+      "ServiceListDTO": {
+        "type": "object",
+        "properties": {
+          "service": {
+            "$ref": "#/components/schemas/void"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of returned elements"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Number of items that can be retrieved"
+          }
+        },
+        "required": [
+          "count",
+          "total"
+        ]
+      },
+      "attachment": {
+        "type": "object",
+        "description": "Placeholder: the vendor's published Swagger 1.2 docs reference this type by name but do not define it."
+      },
+      "void": {
+        "type": "object",
+        "description": "Placeholder: the vendor's published Swagger 1.2 docs reference this type by name but do not define it."
+      }
+    }
+  },
+  "paths": {
+    "/securetrack/api/bindings/{device_id}/PBR_rules": {
+      "get": {
+        "tags": [
+          "Policies and Sub-Policies"
+        ],
+        "operationId": "getPBRRules",
+        "summary": "Get PBR routes of a specified device and interface name ",
+        "description": "This API returns  PBR routes and ACL in the topology map",
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "The unique identifier of target device"
+          },
+          {
+            "name": "inputInterfaceName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Interface name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns PBR routes of a specified device and interface name",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/route_maps"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Input params are not well formatted"
+          },
+          "404": {
+            "description": "Entity not found"
+          }
+        }
+      }
+    },
+    "/securetrack/api/bindings/{device_id}/binding_query": {
+      "get": {
+        "tags": [
+          "Policies and Sub-Policies"
+        ],
+        "operationId": "getLastInstalledVersionBindingsByVersionId",
+        "summary": "Get list of sub-policies (bindings) with input and/or output interfaces",
+        "description": "Retrieve list of bindings of input and/or output interfaces",
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "The unique identifier of target device"
+          },
+          {
+            "name": "supremum_version_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "The unique identifier of target revision"
+          },
+          {
+            "name": "inputInterfaceName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Input interface name"
+          },
+          {
+            "name": "outputInterfaceName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Output interface name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get list of sub-policies (bindings) with input and/or output interfaces",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/BindingListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/bindings/{device_id}/topology_interfaces": {
+      "get": {
+        "tags": [
+          "Policies and Sub-Policies"
+        ],
+        "operationId": "getBindingsForTopologyInterfaces",
+        "summary": "Get rules by input and output interfaces",
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "The unique identifier of target device"
+          },
+          {
+            "name": "inputInterfaceName",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Input interface name"
+          },
+          {
+            "name": "outputInterfaceName",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Output interface name"
+          },
+          {
+            "name": "isIpv6",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Is ipv6 policy"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get rules by input and output interfaces",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/TopologyBindingRuleListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/": {
+      "get": {
+        "tags": [
+          "Monitored Devices"
+        ],
+        "operationId": "getDevices",
+        "summary": "Get devices",
+        "description": "Returns the list of devices that are configured in SecureTrack, including the vendor, model, name, domain and device ID.\nThe results can be sorted by ip, name, vendor and model.\nFor more information on supported devices, supported models and virtual types please refer to 'Device and Revision Resources' section in the Tufin Knowledge Center .",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device name"
+          },
+          {
+            "name": "ip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device IP address"
+          },
+          {
+            "name": "vendor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device vendor"
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device model"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort ascending or descending allowable types are: asc or desc "
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Starting page for query allowable type is numeric"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Number of pages for query starting from starting page allowable type in numeric"
+          },
+          {
+            "name": "show_os_version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Show os version as apart of the response"
+          },
+          {
+            "name": "show_license",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Show license information for each device"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device status, allowable values are: started, stopped, connected, disabled or error"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get devices",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/DetailedDeviceListDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Monitored Devices"
+        ],
+        "operationId": "addDevice",
+        "summary": "Add offline device",
+        "description": "You can choose to select the domain either by name or id using the domain_id or domain_name tags.\nDevice name should contain only Lower and upper case letters, digits, space, dot, backward slash, forward slash, underscore or one of the following signs: #@:;=!^()",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/st_device"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Add offline device"
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/bulk/": {
+      "post": {
+        "tags": [
+          "Monitored Devices"
+        ],
+        "operationId": "addDevices",
+        "summary": "Add devices to SecureTrack",
+        "description": "Use this API to add a single device or a list of devices to SecureTrack. \nThe following devices can be added: Check Point CMA R80, SMC R80, Smart 1 Cloud; Cisco ASA; Cisco Router; Cisco Nexus; Cisco XR; Cisco Meraki; Palo Alto Panorama NG; Fortinet FortiManager; Microsoft Azure; Amazon AWS; Arista CVP and EOS \nThe API body should include a JSON file with the mandatory parameters for the operation. \nString parameters contain only lower and upper case letters, digits, space, dot, backward slash, forward slash, underscore or one of the following signs: #@:;=!^(). \nCurrently supported types: CMA, SMC, Smart 1 Cloud, ASA, Cisco Router, Nexus, XR, Cisco Meraki, Panorama NG, FortiManager, Azure, AWS, Arista CVP and EOS\n\nThis API verifies connection to the provided device, before adding a device.\nThis is done by:\n&nbsp;&nbsp;Cisco - Connect with SSH and see that the credentials are correct.\n&nbsp;&nbsp;Check Point (Excluding  Smart 1 Cloud) - Test OPSEC connectivity. For R80 devices, this also verifies the connectivity for API login.\n&nbsp;&nbsp;Panorama - Login through the API to check connectivity.\n&nbsp;&nbsp;Fortimanager - Login through the API to check connectivity.\n&nbsp;&nbsp;Arista - The SSL certificate is retrieved.\nIf the connection test fails the device will not be added.\nThe connection is not verified for Smart 1 Cloud, Cisco Router,Nexus and XR. \nOnly \"live\" device with correct credentials can be added using this API.\nFor Cisco Router, Nexus and XR there are 2 usage examples : one only with mandatory fields (device name example : Router-Cisco-mandatory-fields) and one with both mandatory and optional fields ( device name example : Router-Cisco-all-fields). \n Only for Cisco Router, the 'router_operating_system' field can take the following values: IOS, IOS-XE and IOS-XE-SDWAN. The latter corresponds to Cisco Viptela cEdge routers. \n\nWhen adding a new AWS or Azure device and the field use_cloud_organization is set to true, than the cloud_organization and account_id or subscription _id fields become mandatory. \nThe value for cloud_organization must match the name defined in the Cloud Organization settings within TOS. \nOnly users with Super Admin privileges are authorized to use this setting. \nWhen adding a new Azure subscription using the API, the usage analysis feature will be turned off by default, unless you explicitly specify \"collect_rule_usage_traffic_logs\" : true and also \"collect_object_usage_traffic_logs\" : true and also \"rule_optimizer_usage\" : true. See Azure example body - \"azure_device\"",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DevicesListDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "408": {
+            "description": "Request timed out"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "503": {
+            "description": "Task with UID already running"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Monitored Devices"
+        ],
+        "operationId": "editDevices",
+        "summary": "Edit Securetrack device",
+        "description": "Use this API to edit the settings of a management device, including changing multiple parameters in the same call.\nThe API body should include a JSON file with the mandatory parameters for the operation.\nString parameters contain only lower and upper case letters, digits, space, dot, backward slash, forward slash, underscore or one of the following signs: #@:;=!^().\nThe following devices can be edited: Check Point R80+,Check Point Smart-1, Cisco ASA, Cisco Meraki, Panorama NG, Fortinet FortiManager, Microsoft Azure, Juniper MX and SRX, Amazon AWS, Arista CVP and EOS.\nMicrosoft Azure (we currently support editing vnet and management device).\nNote: This API cannot be used to edit SecureTrack Domains and SecureTrack Servers.\nThis API verifies connection to the provided device, before updating a device. For Juniper MX only the username and password update is supported. No validation is done for these fields.\nFor Juniper SRX only the username, password and vault update is supported. Only the vault name is validated.\nFor the supported devices the validation is done by:\n&nbsp;&nbsp;Cisco - Connect with SSH and see that the credentials are correct.\n&nbsp;&nbsp;Check Point - Test OPSEC connectivity and verifies the connectivity for API login.\n&nbsp;&nbsp;Panorama - Login through the API to check connectivity.\n&nbsp;&nbsp;Fortimanager - Login through the API to check connectivity.\n&nbsp;&nbsp;Arista - The SSL certificate is retrieved.\nIf the connection test fails the device will not be updated.\nOnly \"live\" device with correct credentials can be updated using this API. \nOnly for Cisco Router, the 'router_operating_system' field can take the following values: IOS, IOS-XE and IOS-XE-SDWAN. The latter corresponds to Cisco Viptela cEdge routers.\nWhen editing an AWS or Azure device and the field use_cloud_organization is set to true, then the field cloud_organization becomes mandatory. Additionally, the account_id or subscription_id fields can no longer be used.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DevicesListDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "408": {
+            "description": "Request timed out"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "503": {
+            "description": "Task with UID already running"
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/bulk/delete": {
+      "delete": {
+        "tags": [
+          "Monitored Devices"
+        ],
+        "operationId": "deleteDevices",
+        "summary": "Delete SecureTrack devices in bulk",
+        "description": "Use this API to delete SecureTrack devices in bulk.\nThis function is supported for all devices.\nThe input for API is the Management ID (mgmt_ID).\nUse the mgmt_ID of a management device to delete it and its managed devices.\nUse multiple mgmt_IDs to delete individual devices in bulk.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DevicesListDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "408": {
+            "description": "Request timed out"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "503": {
+            "description": "Task with UID already running"
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/bulk/import": {
+      "post": {
+        "tags": [
+          "Monitored Devices"
+        ],
+        "operationId": "importDevices",
+        "summary": "Import managed devices",
+        "description": "Use this API to import more managed devices to SecureTrack.\nThe following devices can be added: Device Groups (for Panorama), Administrative Domains (for FortiManager), Account (for Meraki).\nCurrently supported types: Panorama, FortiManager, Cisco ASA, Microsoft Azure, Cisco Meraki, Amazon AWS, Arista Eos.\nPlease see examples below per device id: device id 1 for Panorama, device 2 for FortiManager, device id 3 for Cisco ASA, device id 4 for Azure, device id 5 for Meraki, device id 6 for Amazon, device id 7 for Arista Eos.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DevicesListDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "408": {
+            "description": "Request timed out"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "503": {
+            "description": "Task with UID already running"
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/bulk/tasks/{task_uid}": {
+      "get": {
+        "tags": [
+          "Monitored Devices"
+        ],
+        "operationId": "showTask",
+        "summary": "Get specific task results of bulk operations on devices",
+        "description": "Use this API to track in-progress actions involving monitored devices. A list of devices and their status is displayed.\nThe API supports actions initiated by:\n- /securetrack/api/devices/bulk - in the case of failure, the relevant device is added to the \"failed\" list with the status element containing the description. Example: \"No connection to device. \"\n- /securetrack/api/devices/bulk/update_topology_data",
+        "parameters": [
+          {
+            "name": "task_uid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Task UID"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "The task with the given UID was not found"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "200": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskResultDTO"
+                }
+              }
+            }
+          },
+          "408": {
+            "description": "Request timed out"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/bulk/update_topology_data": {
+      "post": {
+        "tags": [
+          "Monitored Devices"
+        ],
+        "operationId": "updateTopologyData",
+        "summary": "Update topology data",
+        "description": "Use this API to manually trigger retrieval of topology data collection.\nThis functionality is applicable to all root devices with dynamic topology setting enabled.\nThe topology data will be retrieved for the root device and all of its managed devices.\nUse /securetrack/api/devices/bulk/tasks/{task_uid} API to track the progress of the retrieval.\nAfter the task status is complete, run Fast Topology Sync to see the updated device topology on the map.<br",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DevicesListDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "408": {
+            "description": "Request timed out"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "503": {
+            "description": "Task with UID already running"
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/provisioning/abort_all_tasks": {
+      "post": {
+        "tags": [
+          "Monitored Devices"
+        ],
+        "operationId": "abortAllTasks",
+        "summary": "Abort all waiting tasks for a specific device",
+        "description": "This API requires 'Super admin' privileges",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AbortTaskRequestDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "403": {
+            "description": "User not permitted to view resource"
+          },
+          "200": {
+            "description": "Abort all waiting tasks for a specific device"
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/provisioning/abort_task": {
+      "post": {
+        "tags": [
+          "Monitored Devices"
+        ],
+        "operationId": "abort",
+        "summary": "Abort waiting task",
+        "description": "This API requires 'Super admin' privileges",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AbortTaskRequestDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "403": {
+            "description": "User not permitted to view resource"
+          },
+          "200": {
+            "description": "Abort waiting task"
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/provisioning/config/queue_size": {
+      "get": {
+        "tags": [
+          "Monitored Devices"
+        ],
+        "operationId": "getQueueSizeConfig",
+        "summary": "Get provisioning queue sizes by cpType",
+        "description": "This API requires 'Super admin' privileges",
+        "responses": {
+          "403": {
+            "description": "User not permitted to view resource"
+          },
+          "200": {
+            "description": "Get provisioning queue sizes by cpType",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueueSizeConfigDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Monitored Devices"
+        ],
+        "operationId": "updateQueueMaxSize",
+        "summary": "Update provisioning queue sizes by cpType",
+        "description": "This API requires 'Super admin' privileges",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueueSizeConfigDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "207": {
+            "description": "Monitored devices are [...] with possible values between ... - ..."
+          },
+          "403": {
+            "description": "User not permitted to view resource"
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/provisioning/waiting_tasks": {
+      "get": {
+        "tags": [
+          "Monitored Devices"
+        ],
+        "operationId": "getWaitingTasks",
+        "summary": "Get list of devices with waiting tasks in the queue",
+        "description": "This API requires 'Super admin' privileges",
+        "responses": {
+          "403": {
+            "description": "User not permitted to view resource"
+          },
+          "200": {
+            "description": "Get list of devices with waiting tasks in the queue",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaitingTasksListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/provisioning/waiting_tasks/{device_id}": {
+      "get": {
+        "tags": [
+          "Monitored Devices"
+        ],
+        "operationId": "getWaitingTasksForDevice",
+        "summary": "Get list of waiting tasks in queue for specific device",
+        "description": "This API requires 'Super admin' privileges",
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "User not permitted to view resource"
+          },
+          "404": {
+            "description": "No entity found for query"
+          },
+          "400": {
+            "description": "Device with given ID is not a management ID"
+          },
+          "200": {
+            "description": "Get list of waiting tasks in queue for specific device",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TasksListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/{device_id}": {
+      "put": {
+        "tags": [
+          "Monitored Devices"
+        ],
+        "operationId": "updateDevice",
+        "summary": "Update offline device",
+        "description": "Device name should contain only Lower and upper case letters, digits, space, dot, backward slash, forward slash, underscore or one of the following signs: #@:;=!^()",
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/st_device"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update offline device"
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/{device_id}/network_objects/{ids}": {
+      "get": {
+        "tags": [
+          "Network Objects"
+        ],
+        "operationId": "getSpecificNetworkObjects_2",
+        "summary": "Get specific network object",
+        "description": "Fetches a single or partial list of the network objects for a given device ID.\nFor group network objects, the returned results will also include full details of every group member.\nSet show_members=false to return only the name and ID of the members, and omit the full details of the group members.\nNote: This API retrieves the information from the latest revision.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          },
+          {
+            "name": "ids",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network object IDs separated by commas"
+          },
+          {
+            "name": "show_members",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Set to false to return only the name and ID of the members"
+          },
+          {
+            "name": "identity_awareness",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Get access role objects as \"identity_awareness\" if identity_awareness parameter is \"supported\". Default type returned is \"identity_role\""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get specific network object",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkObjectListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/{device_id}/route_maps": {
+      "get": {
+        "tags": [
+          "Policies and Sub-Policies"
+        ],
+        "operationId": "getRouteMaps",
+        "summary": "Get route maps by device ID",
+        "description": "Returns a list of the route maps for the specified Cisco IOS device.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/RouteMapsDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Insufficient user permissions"
+          },
+          "404": {
+            "description": "No route maps for device with ID"
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/{device_id}/rules/{ids}": {
+      "get": {
+        "tags": [
+          "Security Rules"
+        ],
+        "operationId": "getSpecificRules_2",
+        "summary": "Get specific rule",
+        "description": "Returns a list of rules by device ID, rule IDs and additional criteria.\nNote: This API retrieves the information from the latest revision.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          },
+          {
+            "name": "ids",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Rule IDs"
+          },
+          {
+            "name": "policy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Policy Name"
+          },
+          {
+            "name": "interface",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Interfaces to query"
+          },
+          {
+            "name": "zone",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Zone name"
+          },
+          {
+            "name": "is_global",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Get global rules only(device dependent, see implementation Notes)"
+          },
+          {
+            "name": "add",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "If set to \"documentation\" result will include rule documentation"
+          },
+          {
+            "name": "groupBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Rules grouping criteria, can be set only to \"bindings\""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get specific rule"
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/{device_id}/services/{ids}": {
+      "get": {
+        "tags": [
+          "Services and Ports"
+        ],
+        "operationId": "getSpecificService_2",
+        "summary": "Get specific service",
+        "description": "Fetches list of specific service objects defined in device given by device ID and specified by their IDs.\nNote: This API retrieves the information from the latest revision.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          },
+          {
+            "name": "ids",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Service object IDs separated by commas"
+          },
+          {
+            "name": "show_members",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Set to false to return only the name and ID of the members"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get specific service",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/{id}": {
+      "get": {
+        "tags": [
+          "Monitored Devices"
+        ],
+        "operationId": "getDevice",
+        "summary": "Get specific device",
+        "description": "Returns the vendor, model, name, domain and ID for the specified device.\nFor more information on supported devices, supported models and virtual types please refer to 'Device and Revision Resources' section in the Tufin Knowledge Center .",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          },
+          {
+            "name": "show_os_version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Show os version as apart of the response"
+          },
+          {
+            "name": "show_license",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Show license information"
+          },
+          {
+            "name": "usage",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Device usage collection state"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get specific device",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/DetailedDeviceDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/{id}/bindings": {
+      "get": {
+        "tags": [
+          "Policies and Sub-Policies"
+        ],
+        "operationId": "getBindings_2",
+        "summary": "Get sub-policies (bindings) by device",
+        "description": "Returns a list of all of the subpolicies (bindings) for a given device.\nThe definition of subpolicy is different for each vendor:\nCheck Point - policy package and inline layer (inline layer will be returned only when the optional include_subpolicy parameter is set to true)\nCisco - ACL\nJuniper/Fortinet/Palo Alto/Stonesoft - zone-to-zone policy\nCloud platforms - Security Groups",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          },
+          {
+            "name": "ipType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Policy ip Type, values can be 'ipv4' or 'ipv6', supported only for Stonesoft"
+          },
+          {
+            "name": "include_subpolicy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "when set to true, includes sub policies in the returned result, supported only for Checkpoint"
+          },
+          {
+            "name": "include_policyblocks",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "when set to true, includes policy blocks in the returned result, supported only for Fortimanager"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get sub-policies (bindings) by device",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/BindingListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/{id}/config": {
+      "get": {
+        "tags": [
+          "Monitored Devices"
+        ],
+        "operationId": "getRunningConfig_2",
+        "summary": "Get textual configuration by device",
+        "description": "Get latest revision of running configuration for a given device Id.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get textual configuration by device",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/{id}/latest_revision": {
+      "get": {
+        "tags": [
+          "Revisions"
+        ],
+        "operationId": "getLatestRevision",
+        "summary": "Get latest revision by device",
+        "description": "Fetches latest revision for a given device",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          },
+          {
+            "name": "lastReady",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Last ready"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get latest revision by device",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevisionDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/{id}/nat_objects": {
+      "get": {
+        "tags": [
+          "NAT Policies"
+        ],
+        "operationId": "getNatObjects_2",
+        "summary": "Get NAT objects by device",
+        "description": "Fetches a list of NAT objects defined on device given by device ID\nNote: NAT objects are only relevant for Check Point management servers and Juniper Netscreen devices.\nThe default value for get_total is false. For API calls that have pagination, set get_total to true on the first call. Use the value to returned in total to determine how many additional calls are required to retrieve all the desired results. To improve performance, omit or set get_total to false on any subsequent calls.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Starting page for query allowable value is numeric"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Starting page for query allowable value is numeric"
+          },
+          {
+            "name": "get_total",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Set to true to get the total number of items that can be retrieved"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get NAT objects by device",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkObjectListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/{id}/nat_rules/bindings": {
+      "get": {
+        "tags": [
+          "NAT Policies"
+        ],
+        "operationId": "getBoundNatRulesByModule",
+        "summary": "Get NAT rules by device",
+        "description": "Fetches list of NAT rules for device given by device ID\n\ninput_interface and output_interface are not supported for Panorama running in Advanced management mode\nnat_stage is supported for Netscreen and JunOS\nnat_type is supported for FortiManager\nNote: For Check Point, NAT rules are available from the modules (not managements)\nNote: For Palo Alto, filtering NAT rules by interface is only available for firewall devices",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          },
+          {
+            "name": "input_interface",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Input interface for NAT rules, \"any\" for all interfaces"
+          },
+          {
+            "name": "output_interface",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "output interface for NAT rules, \"any\" for all interfaces"
+          },
+          {
+            "name": "nat_stage",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "NAT stage for NAT rules allowable values: \"pre_policy\" , \"post_policy\" or \"both\""
+          },
+          {
+            "name": "nat_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "NAT stage for NAT rules allowable values: \"vip\" or \"reverse_vip\" "
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get NAT rules by device",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/NatRuleListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/{id}/network_objects": {
+      "get": {
+        "tags": [
+          "Network Objects"
+        ],
+        "operationId": "getNetworkObjects_2",
+        "summary": "Get network objects by device",
+        "description": "Fetches list of network objects defined on device given by ID\nThe default value for get_total is false. For API calls that have pagination, set get_total to true on the first call. Use the value to returned in total to determine how many additional calls are required to retrieve all the desired results. To improve performance, omit or set get_total to false on any subsequent calls.\nThe show_members parameter is only relevant if type=group.\nIf type=group, the returned results will also include full details of every group member.\nSet show_members=false to return only the name and ID of the members, and omit the full details of the group members.\nEach UID in the 'uids' parameter can be given either with or without curly braces ('{}'). In case braces are used, they should be encoded. Example:\nInstead of uids={58F8FA19-8A4F-7081-72D8-84ACAFD10D1B}, write uids=%7B58F8FA19-8A4F-7081-72D8-84ACAFD10D1B%7D ('{' encoded to '%7B' and '}' encoded to '%7D')",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Starting page for query, allowable type is numeric"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Number of pages for query starting from starting page, allowable type is numeric"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network object name"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network object type"
+          },
+          {
+            "name": "show_members",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Set to false to return only the name and ID of the members for relevant types like \"group\""
+          },
+          {
+            "name": "contains_ip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Get only network objects containing this IP"
+          },
+          {
+            "name": "identity_awareness",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Get access role objects as \"identity_awareness\" if identity_awareness parameter is \"supported\". Default type returned is \"identity_role\""
+          },
+          {
+            "name": "typeOnDevice",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Get only objects having this type_on_device"
+          },
+          {
+            "name": "get_total",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Set to true to get the total number of items that can be retrieved"
+          },
+          {
+            "name": "add_parent_objects",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Panorama only: Get objects from parent DGs (default true)"
+          },
+          {
+            "name": "uids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Get only objects with the provided uids (single or comma separated)"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "The typeOnDevice value is not valid"
+          },
+          "200": {
+            "description": "Get network objects by device",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkObjectListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/{id}/policies": {
+      "get": {
+        "tags": [
+          "Policies and Sub-Policies"
+        ],
+        "operationId": "getPolicies_2",
+        "summary": "Get policies by device",
+        "description": "Fetches list of policies defined on a given device ID. \nSupported devices: CheckPoint, Panorama Advanced, FortiManager Basic and Advanced, FMC and NSX.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get policies by device",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementPolicyListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/{id}/revisions": {
+      "get": {
+        "tags": [
+          "Revisions"
+        ],
+        "operationId": "getRevisions",
+        "summary": "Get revisions by device",
+        "description": "Fetches revisions for a given device",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Starting page for query allowable type is numeric"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Number of pages for query starting from starting page allowable type is numeric"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get revisions by device",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevisionListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/{id}/rules": {
+      "get": {
+        "tags": [
+          "Security Rules"
+        ],
+        "operationId": "getRules_2",
+        "summary": "Get rules by device",
+        "description": "Returns a list of all of the security rules for the specified device.\n Use add=documentation to retrieve rule documentation.\n The is_global parameter is device dependent. For ACL devices, only global rules are returned when set to true. For Check Point R80, only global layers are returned when set to true, and specify a layer name in the subpolicy_name parameter This parameter is ignored for all other vendors. The default value is false.\n The subpolicy_name parameter is device dependent. For Check Point R80, only rules that use the specified layer are returned. You can only specify the name of a single layer. This parameter is ignored for all other vendors.\n For Cisco ASA devices, when applying a filter you must also add the direction.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          },
+          {
+            "name": "policyId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Policy ID"
+          },
+          {
+            "name": "policy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Policy Name"
+          },
+          {
+            "name": "interface",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Interfaces to query"
+          },
+          {
+            "name": "zone",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Zone name"
+          },
+          {
+            "name": "is_global",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Get global rules (Only for: ACL devices)"
+          },
+          {
+            "name": "add",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "If set to \"documentation\" result will include rule documentation"
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Starting page for query, allowable type is numeric"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Number of pages for query starting from starting page, allowable type is numeric"
+          },
+          {
+            "name": "groupBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Show rules grouping criteria. Can be set only to \"bindings\". Output will be grouped by bindings and section header for Check Point devices, ACL for Cisco devices, and Zones for Juniper, Palo Alto, and Fortinet device"
+          },
+          {
+            "name": "with_zb",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Include zone based rules, values can be 'true' or 'false'"
+          },
+          {
+            "name": "uid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Binding UID"
+          },
+          {
+            "name": "ipType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Policy ip Type, values can be 'ipv4' or 'ipv6', supported only for Stonesoft"
+          },
+          {
+            "name": "subpolicy_name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by sub policy name (see implementation notes)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get rules by device"
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/{id}/rules/{rule_id}/documentation": {
+      "get": {
+        "tags": [
+          "Policy Browser (formerly Rule Documentation)"
+        ],
+        "operationId": "getRuleDocumentation_2",
+        "summary": "Get specific rule documentation",
+        "description": "Fetches rule documentation for a single rule given by device ID and rule ID",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          },
+          {
+            "name": "rule_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Rule ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get specific rule documentation"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Policy Browser (formerly Rule Documentation)"
+        ],
+        "operationId": "modifyRuleDocumentation_2",
+        "summary": "Modify specific rule documentation",
+        "description": "Modify rule documentation for a single rule given by device ID and rule ID\nA single rule can be set as either a stealth rule or legacy rule. If both flags are set, an error will be returned (error 400, Bad request).\nIf there is no existing rule documentation for the rule, the specified documentation is added to the rule and the response code is: 201 Created.\nIf there is existing rule documentation for the rule, the specified documentation replaces the existing documentation and the response code is: 204 No Content.\nRecord set entries that are automatically created or calculated, for example automatic mapping to a SecureChange ticket, cannot be modified.\nThe following fields are automatically calculated, and cannot be modified:\nPermissiveness, Violations, Last Hit, Last Modified, Shadowing Status, Certification Status, Certification Date, Certification Expiration Date, Application Name, Application Owner",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          },
+          {
+            "name": "rule_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Rule ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/RuleDocumentationDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Modify specific rule documentation"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Policy Browser (formerly Rule Documentation)"
+        ],
+        "operationId": "deleteRuleDocumentation_2",
+        "summary": "Delete specific rule documentation",
+        "description": "Delete rule documentation for a single rule given by device ID and rule ID",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          },
+          {
+            "name": "rule_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Rule ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete specific rule documentation"
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/{id}/sdwan_bindings": {
+      "get": {
+        "tags": [
+          "Policies and Sub-Policies"
+        ],
+        "operationId": "getSdWanBindings_2",
+        "summary": "Get sub-policies (bindings) by device",
+        "description": "Returns a list of all of the subpolicies (bindings) for a given device.\nThe definition of subpolicy is different for each vendor:\nCheck Point - policy package and inline layer (inline layer will be returned only when the optional include_subpolicy parameter is set to true)\nCisco - ACL\nJuniper/Fortinet/Palo Alto/Stonesoft - zone-to-zone policy\nCloud platforms - Security Groups",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get sub-policies (bindings) by device",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/BindingListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/{id}/services": {
+      "get": {
+        "tags": [
+          "Services and Ports"
+        ],
+        "operationId": "getServices_2",
+        "summary": "Get services by device",
+        "description": "Fetches list of service objects defined on device given by device ID.\nThe default value for get_total is false. For APIF calls that have pagination, set get_total to true on the first call. Use the value to returned in total to determine how many additional calls are required to retrieve all the desired results. To improve performance, omit or set get_total to false on any subsequent calls.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          },
+          {
+            "name": "show_members",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Set to false to return only the name and ID of the members for relevant types like \"group\""
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Starting page for query allowable types are numeric"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Number of pages for query allowable values are numeric"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Service name"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Service type, allowable values are: tcp, udp, ip or icmp"
+          },
+          {
+            "name": "port",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Service port"
+          },
+          {
+            "name": "icmp_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Service ICMP type allowable values are numeric between 0 to 40"
+          },
+          {
+            "name": "protocol",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Service protocol, allowable values are numeric between 0 to 255"
+          },
+          {
+            "name": "get_total",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Set to true to get the total number of items that can be retrieved"
+          },
+          {
+            "name": "add_parent_objects",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Panorama only: Get objects from parent DGs (default true)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get services by device",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/devices/{parentDeviceId}/version/{childVersionId}/bindings": {
+      "get": {
+        "tags": [
+          "Policies and Sub-Policies"
+        ],
+        "operationId": "getBindingsByParentDeviceAndChildVersion",
+        "summary": "Get sub-policies (bindings) by device",
+        "description": "Returns a list of all of the subpolicies (bindings) for a given device.\nThe versionId is the revision id of the child device, not one of the device!",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "parentDeviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device ID"
+          },
+          {
+            "name": "childVersionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Version ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get sub-policies (bindings) by device",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/BindingListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/network_objects/search": {
+      "get": {
+        "tags": [
+          "Network Objects"
+        ],
+        "operationId": "findNetworkObjects",
+        "summary": "Get network objects matching specified criteria",
+        "description": "You can search for network objects where the IP address, name or comment fields have a specified text string,\nor you can search for network objects that have an IP address that matches, contains or is contained in a specified IP subnet,\nor you can search for network objects by uid.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Returns results for the specified domain ID."
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Returns the results beginning with the specified result number."
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Returns the specified number of results. If this field is not added or if a number greater than 100 is specified, the query uses \"count=100\"."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\"text\" filter returns network objects where the IP address, name or comment fields have a specified text string. \"subnet\" filter returns network objects that have an IP address that matches, contains or is contained in a specified IP subnet. \"uid\" filter returns network objects with the specified uid. If no filter is specified, the \"text\" filter is used."
+          },
+          {
+            "name": "device_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Returns network objects belonging to the specified device_id."
+          },
+          {
+            "name": "ip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "(For \"text\" filter) You can specify \"ip\" to find network objects with the specified text in the IP address field."
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "(For \"text\" filter) You can specify \"name\" to find network objects with the specified text in the name field."
+          },
+          {
+            "name": "comment",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "(For \"text\" filter) You can specify \"comment\" to find network objects with the specified text in the comment field."
+          },
+          {
+            "name": "any_field",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "(For \"text\" filter) You can specify \"any_field\" to find network objects with the specified text in the IP address, name or comment fields."
+          },
+          {
+            "name": "exact_match",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "(For \"text\" filter) You can add \"exact_match=true\" to find network objects with the specified text in the comment field. If this field is not specified, the query uses \"exact_match=false\"."
+          },
+          {
+            "name": "contained_in",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "(For \"subnet\" filter) You can specify \"contained_in\" to find network objects that are contained in the specified IP subnet. For example, 10.1.0.0 is contained in 10.0.0.0."
+          },
+          {
+            "name": "contains",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "(For \"subnet\" filter) You can specify \"contains\" to find network objects that contain the specified IP subnet. For example, 10.0.0.0 contains 10.1.0.0."
+          },
+          {
+            "name": "exact_subnet",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "(For \"subnet\" filter) You can optionally specify \"exact_subnet\" to find network objects in a desired subnet mask. When not specified, a default mask is calculated according to the subnet class - e.g. 255.255.255.255 for a subnet of 1.1.1.1, 255.255.255.0 or a subnet of 1.1.1.0 etc."
+          },
+          {
+            "name": "uid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "(for \"uid\" filter) Returns network objects with the specified uid."
+          },
+          {
+            "name": "identity_awareness",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Get access role objects as \"identity_awareness\" if identity_awareness parameter is \"supported\". Default type returned is \"identity_role\""
+          },
+          {
+            "name": "typeOnDevice",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "You can specify  \"typeOnDevice\" to find network object groups that are EDL."
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "The typeOnDevice value is not valid.Use edl_ip_list as value to search EDL groups."
+          },
+          "200": {
+            "description": "Get network objects matching specified criteria",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkObjectLimitedListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/network_objects/{id}/groups": {
+      "get": {
+        "tags": [
+          "Network Objects"
+        ],
+        "operationId": "findGroupsByNetworkObject",
+        "summary": "Get network groups containing specified network object",
+        "description": "Returns groups that contain the specified network object",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Returns results for the specified domain ID."
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The SecureTrack object ID of the network object."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get network groups containing specified network object",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkObjectLimitedListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/network_objects/{id}/rules": {
+      "get": {
+        "tags": [
+          "Network Objects"
+        ],
+        "operationId": "findRulesByNetworkObject",
+        "summary": "Get rules containing specified network object",
+        "description": "Returns the security rules that contain the specified network object",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Returns results for the specified domain ID."
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The SecureTrack object ID of the network object."
+          },
+          {
+            "name": "include_groups",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "You can add \"include_groups\" to find rules that include the network object and rules that include the groups that include the network object."
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Returns the results beginning with the specified result number."
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Returns the specified number of results. If this field is not added or if a number greater than 100 is specified, the query uses \"count=100\"."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get rules containing specified network object",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/RuleListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/revisions/{id}/bindings": {
+      "get": {
+        "tags": [
+          "Policies and Sub-Policies"
+        ],
+        "operationId": "getBindings",
+        "summary": "Get sub-policies (bindings) by revision",
+        "description": "Returns a list of all of the subpolicies (bindings) for a given revision.\nThe definition of subpolicy is different for each vendor:\nCheck Point - policy package and inline layer (inline layer will be returned only when the optional include_subpolicy parameter is set to true)\nCisco - ACL\nJuniper/Fortinet/Palo Alto/Stonesoft - zone-to-zone policy\nCloud platforms - Security Groups",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Revision ID"
+          },
+          {
+            "name": "ipType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Policy ip Type, values can be 'ipv4' or 'ipv6', supported only for Stonesoft"
+          },
+          {
+            "name": "include_subpolicy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "when set to true, includes sub policies in the returned result, supported only for Checkpoint"
+          },
+          {
+            "name": "include_policyblocks",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "when set to true, includes policy blocks in the returned result, supported only for Fortimanager"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get sub-policies (bindings) by revision",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/BindingListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/revisions/{id}/comment": {
+      "get": {
+        "tags": [
+          "Policy Browser (formerly Rule Documentation)"
+        ],
+        "operationId": "getRevisionComment",
+        "summary": "Get revision comment",
+        "description": "Fetches comment for revision given by revision ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Revision id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get revision comment",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevisionCommentDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/revisions/{id}/config": {
+      "get": {
+        "tags": [
+          "Monitored Devices"
+        ],
+        "operationId": "getRunningConfig",
+        "summary": "Get textual configuration by revision",
+        "description": "Returns textual configuration for the specified revision Id.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Revision id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get textual configuration by revision",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/revisions/{id}/nat_objects": {
+      "get": {
+        "tags": [
+          "NAT Policies"
+        ],
+        "operationId": "getNatObjects",
+        "summary": "Get NAT objects by revision",
+        "description": "Fetches a list of NAT objects for a given revision\nNote: NAT objects are only relevant for Check Point management servers and Juniper Netscreen devices.\nThe default value for get_total is false. For API calls that have pagination, set get_total to true on the first call. Use the value to returned in total to determine how many additional calls are required to retrieve all the desired results. To improve performance, omit or set get_total to false on any subsequent calls.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Version ID"
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Starting page for query allowable value is numeric"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Number of pages for query starting from starting page, allowable type is numeric"
+          },
+          {
+            "name": "get_total",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Set to true to get the total number of items that can be retrieved"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get NAT objects by revision",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkObjectListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/revisions/{id}/nat_rules/bindings": {
+      "get": {
+        "tags": [
+          "NAT Policies"
+        ],
+        "operationId": "getNatRulesByRevision",
+        "summary": "Get NAT rules by revision",
+        "description": "Fetches a list of NAT rules for a given revision.\ninput_interface and output_interface are not supported for Panorama running in Advanced management mode\nnat_stage is supported for Netscreen and JunOS\nSupported devices:\nCisco (ASA), Juniper (SRX, Junos, NetScreen), and Palo Alto (Panorama management devices only, FW devices not supported).",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Revision ID"
+          },
+          {
+            "name": "input_interface",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Input interface for NAT rules, \"any\" for all interfaces"
+          },
+          {
+            "name": "output_interface",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "output interface for NAT rules, \"any\" for all interfaces"
+          },
+          {
+            "name": "nat_stage",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "NAT stage for NAT rules allowable values: \"pre_policy\" , \"post_policy\" or \"both\""
+          },
+          {
+            "name": "nat_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "NAT stage for NAT rules allowable values: \"vip\" or \"reverse_vip\" "
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get NAT rules by revision",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/NatRuleListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/revisions/{id}/network_objects": {
+      "get": {
+        "tags": [
+          "Network Objects"
+        ],
+        "operationId": "getNetworkObjects",
+        "summary": "Get network objects by revision",
+        "description": "Fetches list of network objects from specific revision\nThe default value for get_total is false. For API calls that have pagination, set get_total to true on the first call. Use the value to returned in total to determine how many additional calls are required to retrieve all the desired results. To improve performance, omit or set get_total to false on any subsequent calls.\nThe show_members parameter is only relevant if type=group.\nIf type=group, the returned results will also include full details of every group member.\nSet show_members=false to return only the name and ID of the members, and omit the full details of the group members.\nEach UID in the 'uids' parameter can be given either with or without curly braces ('{}'). In case braces are used, they should be encoded. Example:\nInstead of uids={58F8FA19-8A4F-7081-72D8-84ACAFD10D1B}, write uids=%7B58F8FA19-8A4F-7081-72D8-84ACAFD10D1B%7D ('{' encoded to '%7B' and '}' encoded to '%7D')",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Revision id"
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Starting page for query, allowable type is numeric"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Number of pages for query starting from starting page, allowable type is numeric"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network object name"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network object type"
+          },
+          {
+            "name": "show_members",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Set to false to return only the name and ID of the members for relevant types like \"group\""
+          },
+          {
+            "name": "contains_ip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Get only network objects containing this IP"
+          },
+          {
+            "name": "identity_awareness",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Get access role objects as \"identity_awareness\" if identity_awareness parameter is \"supported\". Default type returned is \"identity_role\""
+          },
+          {
+            "name": "typeOnDevice",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Get only objects having this type_on_device"
+          },
+          {
+            "name": "get_total",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Set to true to get the total number of items that can be retrieved"
+          },
+          {
+            "name": "add_parent_objects",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Panorama only: Get objects from parent DGs (default true)"
+          },
+          {
+            "name": "uids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Get only objects with the provided uids (single or comma separated)"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "The typeOnDevice value is not valid"
+          },
+          "200": {
+            "description": "Get network objects by revision",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkObjectListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/revisions/{id}/policies": {
+      "get": {
+        "tags": [
+          "Policies and Sub-Policies"
+        ],
+        "operationId": "getPolicies",
+        "summary": "Get policies by revision",
+        "description": "Fetches list of policies defined on a given revision ID",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Revision ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get policies by revision",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementPolicyListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/revisions/{id}/rules": {
+      "get": {
+        "tags": [
+          "Security Rules"
+        ],
+        "operationId": "getRules",
+        "summary": "Get rules by revision",
+        "description": "Returns a list of all of the security rules for the specified revision.\n Use add=documentation to retrieve rule documentation.\n The is_global parameter is device dependent. For ACL devices, only global rules are returned when set to true. For Check Point R80, only global layers are returned when set to true, and specify a layer name in the subpolicy_name parameter This parameter is ignored for all other vendors. The default value is false.\n The subpolicy_name parameter is device dependent. For Check Point R80, only rules that use the specified layer are returned. You can only specify the name of a single layer. This parameter is ignored for all other vendors.\n For Cisco ASA devices, when applying a filter you must also add the direction.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Revision id"
+          },
+          {
+            "name": "policyId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Policy id"
+          },
+          {
+            "name": "policy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Policy name"
+          },
+          {
+            "name": "interface",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Interfaces to query"
+          },
+          {
+            "name": "zone",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Zone name"
+          },
+          {
+            "name": "is_global",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Get global rules only(device dependent, see implementation Notes)"
+          },
+          {
+            "name": "add",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "If set to \"documentation\" result will include rule documentation"
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Starting page for query, allowable type is numeric"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Number of pages for query starting from starting page, allowable type is numeric"
+          },
+          {
+            "name": "groupBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Rules grouping criteria, can be set only to \"bindings\""
+          },
+          {
+            "name": "with_zb",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Include zone-based rules"
+          },
+          {
+            "name": "uid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Binding UID"
+          },
+          {
+            "name": "ipType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Policy ip Type, values can be 'ipv4' or 'ipv6', supported only for Stonesoft"
+          },
+          {
+            "name": "subpolicy_name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by sub policy name (see implementation notes)"
+          },
+          {
+            "name": "ignoreVpn",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "ignorePbr",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "fetchMigratedCalculations",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "is_alternate_order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "OrderBy alternate order, for display Aci rules by contracts"
+          },
+          {
+            "name": "withInterfaces",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Include interfaces in the result"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get rules by revision"
+          }
+        }
+      }
+    },
+    "/securetrack/api/revisions/{id}/rules/{rule_id}/documentation": {
+      "get": {
+        "tags": [
+          "Policy Browser (formerly Rule Documentation)"
+        ],
+        "operationId": "getRuleDocumentation",
+        "summary": "Get specific rule documentation",
+        "description": "Fetches rule documentation for a single rule given by revision ID and rule ID.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Revision id"
+          },
+          {
+            "name": "rule_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Id of the requested rule"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get specific rule documentation"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Policy Browser (formerly Rule Documentation)"
+        ],
+        "operationId": "modifyRuleDocumentation",
+        "summary": "Modify specific rule documentation",
+        "description": "Modify rule documentation for a single rule identified by revision ID and rule ID.\nA single rule can be set as either a stealth rule or legacy rule. If both flags are set, an error will be returned (error 400, Bad request).\nIf no rule documentation exists for the rule, the specified documentation is added to the rule and the response code is: 201 Created.\nIf rule documentation already exists for the rule, the specified documentation replaces the existing documentation and the response code is: 204 No Content.\nRecord set entries that are automatically created or calculated, for example automatic mapping to a SecureChange ticket, cannot be modified.\nThe following fields are automatically calculated, and cannot be modified: \nPermissiveness, Violations, Last Hit, Last Modified, Shadowing Status, Certification Status, Certification Date, Certification Expiration Date, Application Name, Application Owner",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Revision id"
+          },
+          {
+            "name": "rule_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Id of the changed rule"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/RuleDocumentationDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Modify specific rule documentation"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Policy Browser (formerly Rule Documentation)"
+        ],
+        "operationId": "deleteRuleDocumentation",
+        "summary": "Delete specific rule documentation",
+        "description": "Delete rule documentation for a single rule given by revision ID and rule ID.\nIf the rule has automatic mapping to a ticket, the record is not deleted.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Revision id"
+          },
+          {
+            "name": "rule_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Rule id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete specific rule documentation"
+          }
+        }
+      }
+    },
+    "/securetrack/api/revisions/{id}/sdwan_bindings": {
+      "get": {
+        "tags": [
+          "Policies and Sub-Policies"
+        ],
+        "operationId": "getSdWanBindings",
+        "summary": "Get sub-policies (bindings) by revision",
+        "description": "Returns a list of all of the subpolicies (bindings) for a given revision.\nThe definition of subpolicy is different for each vendor:\nCheck Point - policy package and inline layer (inline layer will be returned only when the optional include_subpolicy parameter is set to true)\nCisco - ACL\nJuniper/Fortinet/Palo Alto/Stonesoft - zone-to-zone policy\nCloud platforms - Security Groups",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Revision ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get sub-policies (bindings) by revision",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/BindingListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/revisions/{id}/services": {
+      "get": {
+        "tags": [
+          "Services and Ports"
+        ],
+        "operationId": "getServices",
+        "summary": "Get services by revision",
+        "description": "Fetches list of service objects defined in revision given by revision ID \nThe default value for get_total is false. For API calls that have pagination, set get_total to true on the first call. Use the value to returned in total to determine how many additional calls are required to retrieve all the desired results. To improve performance, omit or set get_total to false on any subsequent calls.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Revision id"
+          },
+          {
+            "name": "show_members",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Set to false to return only the name and ID of the members for relevant types like \"group\""
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Starting page for query allowable types are numeric"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Number of pages for query allowable values are numeric"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Service name"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Service type, allowable values are: tcp, udp, ip or icmp"
+          },
+          {
+            "name": "port",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Service port"
+          },
+          {
+            "name": "icmp_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Service ICMP type allowable values are numeric between 0 to 40"
+          },
+          {
+            "name": "protocol",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Service protocol, allowable values are numeric betweenm 0 to 255"
+          },
+          {
+            "name": "get_total",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Set to true to get the total number of items that can be retrieved"
+          },
+          {
+            "name": "add_parent_objects",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Panorama only: Get objects from parent DGs (default true)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get services by revision",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/revisions/{revId}": {
+      "get": {
+        "tags": [
+          "Revisions"
+        ],
+        "operationId": "getRevision",
+        "summary": "Get specific revision",
+        "description": "Fetches a revision specified by revision Id.\nTo get revId for this API, use the 'id' property of RevisionDTO that is returned by 'Get revisions by device' or 'Get latest revision by device' APIs",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "revId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Id of fetched revision"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get specific revision",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevisionDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/revisions/{revision_id}/network_objects/{ids}": {
+      "get": {
+        "tags": [
+          "Network Objects"
+        ],
+        "operationId": "getSpecificNetworkObjects",
+        "summary": "Get specific network objects by revision",
+        "description": "Fetches a single or partial list of the network objects for a given revision.\nFor group network objects, the returned results will also include full details of every group member.\nSet show_members=false to return only the name and ID of the members, and omit the full details of the group members.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "revision_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Revision id"
+          },
+          {
+            "name": "ids",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network object IDs separated by commas"
+          },
+          {
+            "name": "show_members",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Set to false to return only the name and ID of the members"
+          },
+          {
+            "name": "identity_awareness",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Get access role objects as \"identity_awareness\" if identity_awareness parameter is \"supported\". Default type returned is \"identity_role\""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get specific network objects by revision",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkObjectListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/revisions/{revision_id}/rules/{ids}": {
+      "get": {
+        "tags": [
+          "Security Rules"
+        ],
+        "operationId": "getSpecificRules",
+        "summary": "Get specific rule",
+        "description": "Returns a list of rules by revision ID, rule IDs and additional criteria",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "revision_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Revision id"
+          },
+          {
+            "name": "ids",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Rule IDs"
+          },
+          {
+            "name": "policy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Policy name"
+          },
+          {
+            "name": "interface",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Interfaces to query"
+          },
+          {
+            "name": "zone",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Zone name"
+          },
+          {
+            "name": "is_global",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Get global rules (Only for: ACL devices)"
+          },
+          {
+            "name": "add",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "If set to \\\"documentation\\\" result will include rule documentation"
+          },
+          {
+            "name": "groupBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Rules grouping criteria, can be set only to \\\"bindings\\\""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get specific rule"
+          }
+        }
+      }
+    },
+    "/securetrack/api/revisions/{revision_id}/services/{ids}": {
+      "get": {
+        "tags": [
+          "Services and Ports"
+        ],
+        "operationId": "getSpecificService",
+        "summary": "Get specific service",
+        "description": "Fetches list of specific service objects defined in revision given by revision ID and specified by their IDs",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "revision_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Revision id"
+          },
+          {
+            "name": "ids",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Rule IDs"
+          },
+          {
+            "name": "show_members",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Set to false to return only the name and ID of the members"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get specific service",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/rule_search/": {
+      "get": {
+        "tags": [
+          "Security Rules"
+        ],
+        "operationId": "findRulesOnDevices",
+        "summary": "Get rule count per device",
+        "description": "You can search for a string across all rule fields, or you can search for a combination of specific strings in specific fields.\nThe text format is for a field is &lt;fieldname&gt;:&lt;text&gt; for example uid:9259f6ee-47a0-4996-a214-ab7edc14a916.\nFor more information, see Rule Search Syntax.\nThis API will return a list of all the devices, the devices that has rules that match the search criteria will have rule_count that is bigger than 0",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "search_text",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search text"
+          },
+          {
+            "name": "devices",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Devices ids"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get rule count per device",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/RuleCountDeviceList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/rule_search/export": {
+      "get": {
+        "tags": [
+          "Security Rules"
+        ],
+        "operationId": "exportRulesToCsv",
+        "summary": "Create a CSV file for rules search results",
+        "description": "You can search for a string across all rule fields, or you can search for a combination of specific strings in specific fields.\nThe text format is for a field is : for example uid:9259f6ee-47a0-4996-a214-ab7edc14a916.\nFor more information, see Rule Search Syntax.\nThis API exports the results data as a CSV file in the SecureTrack Reports Repository.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "search_text",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search text"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Create a CSV file for rules search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/rule_search/{device_id}": {
+      "get": {
+        "tags": [
+          "Security Rules"
+        ],
+        "operationId": "findRules",
+        "summary": "Find rules",
+        "description": "You can search for a string across all rule fields, or you can search for a combination of specific strings in specific fields.\nThe text format is for a field is &lt;fieldname&gt;:&lt;text&gt; for example uid:9259f6ee-47a0-4996-a214-ab7edc14a916.\nFor more information, see Rule Search Syntax.\nTo get more information regarding objects included in the returned rules (like src_network or dst_network) use their uid, as the objects' ID might change. \n\n By default, if there are less than 3,000 rules - the API will return all the rules.\nIn case there are more than 3,000 rules the API will return an error code 413 with the error message \"There are more than 3000 rules, you must use pagination\" \n\"display_rule_number\" should return only for Check Point R80 and higher devices.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Global MSSP context"
+          },
+          {
+            "name": "search_text",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search text"
+          },
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Device id"
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "The starting rule to include in the returned results"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Number of rules to include in the results"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Value for count parameter is missing or not valid"
+          },
+          "413": {
+            "description": "There are more than 3000 rules, you must use pagination"
+          },
+          "200": {
+            "description": "Find rules"
+          }
+        }
+      }
+    },
+    "/securetrack/api/rules/{ruleId}": {
+      "get": {
+        "tags": [
+          "Security Rules"
+        ],
+        "operationId": "getRule",
+        "summary": "Get a specific rule",
+        "parameters": [
+          {
+            "name": "ruleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Rule ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get a specific rule",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/RuleDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/services/search": {
+      "get": {
+        "tags": [
+          "Services and Ports"
+        ],
+        "operationId": "findServicesObjects",
+        "summary": "Get services objects matching specified criteria",
+        "description": "You can search for service objects where the name or comment fields have a specified text string,\nor you can search for service objects that have an Port or protocol that matches,\nor you can search for service objects by uid.",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Returns results for the specified domain ID."
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Returns the results beginning with the specified result number."
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Returns the specified number of results. If this field is not added or if a number greater than 100 is specified, the query uses \"count=100\"."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\"text\" filter returns service objects where the name or comment fields have a specified text string. \n\"protocol\" filter returns service objects that have a protocol that matches specified IP protocol number.\n\"port\" filter returns service objects that have a port that matches specified port number.\n \"uid\" filter returns service objects with the specified uid.\n If no filter is specified, the \"text\" filter is used."
+          },
+          {
+            "name": "device_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Returns service objects belonging to the specified device_id."
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "(For \"text\" filter) You can specify \"name\" to find service objects with the specified text in the name field."
+          },
+          {
+            "name": "comment",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "(For \"text\" filter) You can specify \"comment\" to find service objects with the specified text in the comment field."
+          },
+          {
+            "name": "protocol",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Specify Protocolto find service objects that have the specified IP Protocol."
+          },
+          {
+            "name": "port",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Specify Portto find service objects that have the specified Port."
+          },
+          {
+            "name": "uid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "(for \"uid\" filter) Returns service objects with the specified uid."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get services objects matching specified criteria",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/services/{id}/groups": {
+      "get": {
+        "tags": [
+          "Services and Ports"
+        ],
+        "operationId": "findGroupsByServicesObject",
+        "summary": "Get service groups containing specified service objects",
+        "description": "Returns groups that contain the specified service objects",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Returns results for the specified domain ID."
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The SecureTrack object ID of the service object."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get service groups containing specified service objects",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/services/{id}/rules": {
+      "get": {
+        "tags": [
+          "Services and Ports"
+        ],
+        "operationId": "findRulesByServiceObject",
+        "summary": "Get rules containing specified service object",
+        "description": "Returns the security rules that contain the specified service object",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Returns results for the specified domain ID."
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "The SecureTrack object ID of the service object."
+          },
+          {
+            "name": "include_groups",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "You can add \"include_groups\" to find rules that include the service object and rules that include the groups that include the service object."
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Returns the results beginning with the specified result number."
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Returns the specified number of results. If this field is not added or if a number greater than 100 is specified, the query uses \"count=100\"."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get rules containing specified service object",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/RuleListDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/securetrack/api/tasks/add_device_config_task": {
+      "post": {
+        "tags": [
+          "Monitored Devices"
+        ],
+        "operationId": "addDeviceConfig",
+        "summary": "Add configuration for offline device",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/attachment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Configuration added successfully."
+          }
+        }
+      }
+    }
+  }
+}
