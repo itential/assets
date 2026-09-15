@@ -37,7 +37,7 @@ Create an Itential Platform integration instance from the `Tufin SecureTrack:lat
 | Spec | Version | Operations | Description |
 |---|---|---|---|
 | [`tufin_securetrack-latest.json`](./OpenAPIs/tufin_securetrack-latest.json) | latest (curated) | 66 | Trimmed from the full 275-operation upstream spec — see breakdown below |
-| [`tufin_securetrack-25.2.json`](./OpenAPIs/tufin_securetrack-25.2.json) | 25.2 | 275 | Full spec for SecureTrack R25-2 (275 operations) |
+| [`tufin_securetrack-25.2.json`](./OpenAPIs/tufin_securetrack-25.2.json) | 25.2 | 275 | Full spec for SecureTrack R25-2 (275 operations, Swagger 1.2, as published by the vendor) |
 
 ### `tufin_securetrack-latest.json`
 
@@ -58,7 +58,7 @@ Excluded as deep admin/analysis plumbing: network topology mapping, network zone
 
 ### `tufin_securetrack-25.2.json`
 
-Full spec for SecureTrack R25-2 (275 operations) — the vendor's complete published API surface, converted from its native Swagger 1.2 documentation format to OpenAPI 3.0. See `tufin_securetrack-latest.json` above for the curated subset if you just need common CRUD automation.
+Full, unmodified vendor spec for SecureTrack R25-2 (275 operations, Swagger 1.2, as published by Tufin) — the vendor's complete API surface, preserved as-is. Tufin publishes SecureTrack's API documentation as a Swagger 1.2 resource listing plus one declaration document per resource category (fetched from `forum.tufin.com`); this file consolidates that resource listing and all 35 per-resource declarations into a single document without altering their structure, field names, or values. See `tufin_securetrack-latest.json` above for the curated subset, converted to OpenAPI 3.0, if you just need common CRUD automation.
 
 ## Studio Projects
 
