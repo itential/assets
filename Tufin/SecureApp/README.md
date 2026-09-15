@@ -56,7 +56,7 @@ Excluded as deep admin/config plumbing or niche: application packs (bulk export/
 
 ### `tufin_secureapp-25.2.json`
 
-Full, unmodified vendor spec for SecureApp R25-2 (104 operations, Swagger 1.2, as published by Tufin) — the vendor's complete API surface, preserved as-is. Tufin publishes SecureApp's API documentation as a Swagger 1.2 resource listing plus one declaration document per resource category (fetched from `forum.tufin.com`, shared with SecureChange under the `securechangeworkflow` API path); this file consolidates the SecureApp-specific resource listing entries and declarations into a single document without altering their structure, field names, or values. See `tufin_secureapp-latest.json` above for the curated subset, converted to OpenAPI 3.0, if you just need common CRUD automation.
+Full, unmodified vendor spec for SecureApp R25-2 (104 operations) — Tufin's native Swagger 1.2 documentation, preserved as published. See `tufin_secureapp-latest.json` above for the curated OpenAPI 3.0 subset if you just need common CRUD automation.
 
 ## Studio Projects
 

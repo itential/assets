@@ -57,7 +57,7 @@ Excluded as deprecated, deep admin/config plumbing, or niche: the deprecated fre
 
 ### `tufin_securechange-25.2.json`
 
-Full, unmodified vendor spec for SecureChange R25-2 (101 operations, Swagger 1.2, as published by Tufin) — the vendor's complete API surface, preserved as-is. Tufin publishes SecureChange's API documentation as a Swagger 1.2 resource listing plus one declaration document per resource category (fetched from `forum.tufin.com`, shared with SecureApp under the `securechangeworkflow` API path); this file consolidates the SecureChange-specific resource listing entries and declarations into a single document without altering their structure, field names, or values. See `tufin_securechange-latest.json` above for the curated subset, converted to OpenAPI 3.0, if you just need common CRUD automation.
+Full, unmodified vendor spec for SecureChange R25-2 (101 operations) — Tufin's native Swagger 1.2 documentation, preserved as published. See `tufin_securechange-latest.json` above for the curated OpenAPI 3.0 subset if you just need common CRUD automation.
 
 ## Studio Projects
 
