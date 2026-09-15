@@ -1,3 +1,5 @@
+# Microsoft Graph
+
 Microsoft Graph is Microsoft's unified API for Microsoft 365 data and services, covering identity, productivity, and collaboration resources such as Users, Groups, Calendar, Files, and Microsoft Teams.
 
 ## Table of Contents
