@@ -1,0 +1,906 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Sectigo Certificate Manager",
+    "description": "Sectigo Certificate Manager (SCM) is a certificate lifecycle management platform for issuing, renewing, and revoking SSL/TLS, client, code signing, and device certificates. This spec covers SCM's REST Enrollment API, used to enroll for certificates with a CSR, check enrollment/DCV status, download issued certificates, and renew, replace, or revoke existing certificates.",
+    "contact": {},
+    "version": "latest",
+    "x-vendor-api-version": "25.11",
+    "x-itential-curated": "Reviewed against the repo's common-CRUD-for-automation policy: all 7 upstream operations (certificate enrollment, status, download, DCV recheck, renew, replace, and revoke) are already in scope, so the full spec is carried through as -latest. See the repo README for the operation breakdown and the full spec."
+  },
+  "x-proxy-enabled": false,
+  "servers": [
+    {
+      "url": "https://{customer}.enroll.{instance}.sectigo.com",
+      "description": "Sectigo Certificate Manager REST Enrollment API",
+      "variables": {
+        "customer": {
+          "description": "Each customer is assigned a unique URI",
+          "default": "customer_uri"
+        },
+        "instance": {
+          "description": "Each instance of Sectigo's services has a unique value.",
+          "enum": [
+            "enterprise",
+            "hard",
+            "eu"
+          ],
+          "default": "enterprise"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "oauth2ClientCredentials": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Enroll Certificate",
+      "description": ""
+    },
+    {
+      "name": "Manage Certificate",
+      "description": ""
+    }
+  ],
+  "paths": {
+    "/api/v1/certificates": {
+      "post": {
+        "tags": [
+          "Enroll Certificate"
+        ],
+        "summary": "Enroll certificate",
+        "description": "Enroll for new certificate using CSR and additional fields. If the request is successful the response will contain a certificate ID to be used to collect the certificate once issued.",
+        "operationId": "enroll",
+        "requestBody": {
+          "description": "Enrollment request body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CsEnrollRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/DeviceEnrollRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SslEnrollRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ClientCertEnrollRequest"
+                  }
+                ]
+              },
+              "examples": {
+                "Code Signing Certificate request": {
+                  "description": "Code Signing Certificate request",
+                  "value": {
+                    "csr": "csr value",
+                    "firstName": "Firstname",
+                    "lastName": "Lastname",
+                    "title": "Mr",
+                    "email": "email@company",
+                    "sanEmailAddress": "san.email@company",
+                    "hsmType": "LUNA | YUBIKEY | YUBIHSM2 | MARVELL_GOOGLE | FORTANIX | NSHIELD",
+                    "attestation": "attestation value",
+                    "shippingType": "STANDARD | EXPEDITED | INTERNATIONAL",
+                    "customFields": {
+                      "field_name1": "field_value1",
+                      "field_name2": "field_value2"
+                    }
+                  }
+                },
+                "Device Certificate request": {
+                  "description": "Device Certificate request",
+                  "value": {
+                    "csr": "csr value",
+                    "customFields": {
+                      "field_name1": "field_value1",
+                      "field_name2": "field_value2"
+                    },
+                    "optionalFields": [
+                      {
+                        "name": "field_name",
+                        "value": "field_value"
+                      }
+                    ]
+                  }
+                },
+                "SSL Certificate request": {
+                  "description": "SSL Certificate request",
+                  "value": {
+                    "csr": "csr value",
+                    "customFields": {
+                      "field_name1": "field_value1",
+                      "field_name2": "field_value2"
+                    }
+                  }
+                },
+                "Client Certificate request": {
+                  "description": "Client Certificate request",
+                  "value": {
+                    "csr": "csr value",
+                    "email": "user@company",
+                    "firstName": "John",
+                    "customFields": {
+                      "field_name1": "field_value1",
+                      "field_name2": "field_value2"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The request was successful and the certificate was processed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertIDResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest400Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/certificates/{certId}": {
+      "get": {
+        "tags": [
+          "Enroll Certificate"
+        ],
+        "summary": "Download certificate",
+        "description": "Download a successfully enrolled certificate. Certificate issuance is not always immediate so a 404 response is possible when issuance is pending. The reponse's 'code' field will contain -103 or -109.",
+        "operationId": "download",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/certId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Request",
+            "content": {
+              "application/x-pem-file": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest400Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Certificate Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound404Response"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Manage Certificate"
+        ],
+        "summary": "Revoke certificate",
+        "description": "Revoke a successfully enrolled certificate.",
+        "operationId": "revoke",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/certId"
+          }
+        ],
+        "requestBody": {
+          "description": "Revocation request body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevokeRequest"
+              },
+              "example": {
+                "message": "message",
+                "reasonCode": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Request"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest400Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Certificate Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound404Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/certificates/{certId}/status": {
+      "get": {
+        "tags": [
+          "Enroll Certificate"
+        ],
+        "summary": "Check certificate status",
+        "description": "Check the status of a certificate. The response will contain the status of the certificate and DCV information if applicable.",
+        "operationId": "status",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/certId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "description": "Certificate status"
+                    },
+                    "dcvInfo": {
+                      "type": "object",
+                      "description": "DCV information"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest400Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Certificate Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound404Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/certificates/{certId}/dcv-recheck": {
+      "post": {
+        "tags": [
+          "Enroll Certificate"
+        ],
+        "summary": "Initiate DCV recheck on CA",
+        "description": "Initiate DCV recheck on CA. This will trigger the CA to recheck the DCV information for the certificate.",
+        "operationId": "dcv-reckeck",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/certId"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successful Request"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest400Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Certificate Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound404Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/certificates/{certId}/renew": {
+      "post": {
+        "tags": [
+          "Manage Certificate"
+        ],
+        "summary": "Renew certificate",
+        "description": "Renew certificate. If the request is successful the response will contain a certificate ID to be used to collect the certificate once issued.",
+        "operationId": "renew",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/certId"
+          }
+        ],
+        "requestBody": {
+          "description": "Renew request body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SslRenewRequest"
+                  }
+                ]
+              },
+              "examples": {
+                "SSL Certificate request": {
+                  "description": "Renew SSL certificate",
+                  "value": {
+                    "csr": "csr value",
+                    "comments": "comments",
+                    "subjAltNames": [
+                      "dom1.com",
+                      "dom2.com"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertIDResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest400Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Certificate Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound404Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/certificates/{certId}/replace": {
+      "post": {
+        "tags": [
+          "Manage Certificate"
+        ],
+        "summary": "Replace certificate",
+        "description": "Replace certificate. If the request is successful the response will contain a certificate ID to be used to collect the certificate once issued.",
+        "operationId": "replace",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/certId"
+          }
+        ],
+        "requestBody": {
+          "description": "Replace request body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SslReplaceRequest"
+                  }
+                ]
+              },
+              "examples": {
+                "SSL Certificate request": {
+                  "description": "Replace SSL certificate",
+                  "value": {
+                    "csr": "csr value",
+                    "comments": "comments",
+                    "subjAltNames": [
+                      "dom1.com",
+                      "dom2.com"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertIDResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest400Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Certificate Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound404Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BadRequest400Response": {
+        "type": "object",
+        "description": "Bad request",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error code"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ]
+      },
+      "NotFound404Response": {
+        "type": "object",
+        "description": "Certificate not found.",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error code"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ]
+      },
+      "CsEnrollRequest": {
+        "type": "object",
+        "properties": {
+          "csr": {
+            "type": "string",
+            "description": "Certificate Signing Request in single line Base64 PKCS#10 format."
+          },
+          "customFields": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Certificate custom fields."
+          },
+          "name": {
+            "type": "string",
+            "deprecated": true,
+            "description": "Applicant Representative's full name. (Deprecated, left for backward compatibility. Please use 'firstName', 'lastName' instead)."
+          },
+          "firstName": {
+            "type": "string",
+            "description": "Applicant Representative's firstname."
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Applicant Representative's lastname."
+          },
+          "title": {
+            "type": "string",
+            "description": "Applicant Representative's title."
+          },
+          "email": {
+            "type": "string",
+            "description": "Applicant Representative's contact email."
+          },
+          "contactEmail": {
+            "type": "string",
+            "deprecated": true,
+            "description": "Certificate Email (SAN). (Deprecated, left for backward compatibility. Please use 'sanEmailAddress' instead)."
+          },
+          "sanEmailAddress": {
+            "type": "string",
+            "description": "Certificate Email (SAN)."
+          },
+          "hsmType": {
+            "type": "string",
+            "description": "HSM Type. Valid values are LUNA, YUBIKEY, YUBIHSM2, MARVELL_GOOGLE, FORTANIX, NSHIELD."
+          },
+          "shippingType": {
+            "type": "string",
+            "description": "Shipping Type. Valid values are STANDARD, EXPEDITED, INTERNATIONAL."
+          },
+          "attestation": {
+            "type": "string",
+            "description": "Attestation value."
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "DeviceEnrollRequest": {
+        "type": "object",
+        "properties": {
+          "csr": {
+            "type": "string",
+            "description": "Certificate Signing Request in single line Base64 PKCS#10 format."
+          },
+          "customFields": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Certificate custom fields in key-value format."
+          },
+          "optionalFields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NameValue"
+            }
+          },
+          "comments": {
+            "type": "string",
+            "maxLength": 1024,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "csr",
+          "customFields",
+          "optionalFields"
+        ]
+      },
+      "NameValue": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1
+          },
+          "value": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name",
+          "value"
+        ]
+      },
+      "SslEnrollRequest": {
+        "type": "object",
+        "properties": {
+          "csr": {
+            "type": "string",
+            "description": "Certificate Signing Request in single line Base64 PKCS#10 format."
+          },
+          "customFields": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Certificate custom fields in key-value format."
+          },
+          "subjAltNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "comments": {
+            "type": "string",
+            "maxLength": 1024,
+            "minLength": 0
+          },
+          "externalRequester": {
+            "type": "string",
+            "maxLength": 512,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "csr"
+        ]
+      },
+      "SslRenewRequest": {
+        "type": "object",
+        "properties": {
+          "profileId": {
+            "type": "number",
+            "description": "Certificate profile identifier (optional in case when Enrollment Endpoint contains one Profile)"
+          },
+          "csr": {
+            "type": "string",
+            "description": "Certificate Signing Request in single line Base64 PKCS#10 format.",
+            "maxLength": 32767
+          },
+          "subjAltNames": {
+            "type": "array",
+            "description": "List of Subject alternative names",
+            "items": {
+              "type": "string"
+            }
+          },
+          "email": {
+            "type": "string",
+            "description": "Requester email"
+          },
+          "term": {
+            "type": "number",
+            "description": "Term of the certificate in days."
+          },
+          "comments": {
+            "type": "string",
+            "description": "Comments",
+            "maxLength": 1024,
+            "minLength": 0
+          },
+          "dcvMode": {
+            "type": "string",
+            "description": "DCV mode selected to be processed. Possible values: EMAIL, CNAME, HTTP, HTTPS"
+          },
+          "dcvEmail": {
+            "type": "string",
+            "description": "DCV email to be used for DCV EMAIL mode."
+          },
+          "externalRequester": {
+            "type": "string",
+            "description": "External requester. Comma separated list",
+            "maxLength": 512,
+            "minLength": 0
+          },
+          "customFields": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Certificate custom fields in key-value format. Must contain mandatory custom fields."
+          }
+        },
+        "required": [
+          "customFields",
+          "profileId"
+        ]
+      },
+      "SslReplaceRequest": {
+        "type": "object",
+        "properties": {
+          "csr": {
+            "type": "string",
+            "description": "Certificate Signing Request in single line Base64 PKCS#10 format."
+          },
+          "subjAltNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "comments": {
+            "type": "string",
+            "maxLength": 1024,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "csr"
+        ]
+      },
+      "ClientCertEnrollRequest": {
+        "type": "object",
+        "properties": {
+          "csr": {
+            "type": "string",
+            "description": "Certificate Signing Request in single line Base64 PKCS#10 format."
+          },
+          "customFields": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Certificate custom fields in key-value format."
+          },
+          "firstName": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 0
+          },
+          "middleName": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 0
+          },
+          "lastName": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 0
+          },
+          "email": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 0
+          },
+          "phone": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 0,
+            "pattern": "[#|0-9|\\(|\\)|\\-|\\+| x]*"
+          },
+          "secondaryEmails": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "commonName": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 0
+          },
+          "upn": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 0
+          },
+          "comments": {
+            "type": "string",
+            "maxLength": 1024,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "csr",
+          "email"
+        ]
+      },
+      "CertIDResponse": {
+        "type": "object",
+        "properties": {
+          "certId": {
+            "type": "string"
+          }
+        }
+      },
+      "RevokeRequest": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Revocation reason in readable message form used for audits and notifications.",
+            "maxLength": 512,
+            "minLength": 1
+          },
+          "reasonCode": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Standard revocation reasons codes from RFC 5280. Not all reasons will be accepted. 0(default) = Unspecified, 1 = keyCompromise, 3 = affiliationChanged, 4 = Superseded, 5 = cessationOfOperation"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      }
+    },
+    "parameters": {
+      "certId": {
+        "name": "certId",
+        "in": "path",
+        "description": "Certificate ID returned from enrollment request.",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "securitySchemes": {
+      "oauth2ClientCredentials": {
+        "type": "oauth2",
+        "description": "OAuth 2.0 Client Credentials flow, backed by Sectigo's Keycloak authorization server.",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://auth.sso.sectigo.com/auth/realms/apiclients/protocol/openid-connect/token",
+            "scopes": {}
+          }
+        }
+      }
+    }
+  }
+}
