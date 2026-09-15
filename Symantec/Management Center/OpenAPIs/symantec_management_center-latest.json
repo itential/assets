@@ -1,0 +1,1121 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Symantec Management Center",
+    "version": "latest",
+    "description": "Symantec Management Center (Broadcom) centrally manages ProxySG, Advanced Secure Gateway, and other Symantec network security devices -- deploying and monitoring devices, and authoring shared policy content (URL lists, IP lists, and category lists) that those devices consume.",
+    "x-itential-curated": "All 13 operations covering device inventory/health/license/status, policy CRUD and content management, and tenant listing are carried through as -latest. See the repo README for the full breakdown."
+  },
+  "servers": [
+    {
+      "url": "https://{host}:8082/api",
+      "description": "Symantec Management Center appliance.",
+      "variables": {
+        "host": {
+          "default": "mc.example.com"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "apiKeyAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Devices",
+      "description": "Managed device inventory, health, license, and status."
+    },
+    {
+      "name": "Policies",
+      "description": "Shared policy objects (URL lists, IP lists, category lists) and their content."
+    },
+    {
+      "name": "Tenants",
+      "description": "Configured tenants."
+    }
+  ],
+  "paths": {
+    "/devices": {
+      "get": {
+        "tags": [
+          "Devices"
+        ],
+        "summary": "List devices",
+        "description": "Lists managed devices, optionally filtered by build, description, model, name, OS version, platform, or type.",
+        "operationId": "listDevices",
+        "parameters": [
+          {
+            "name": "build",
+            "in": "query",
+            "required": false,
+            "description": "Filter by device build number.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "required": false,
+            "description": "Filter by device description.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "required": false,
+            "description": "Filter by device model.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "description": "Filter by device name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "osVersion",
+            "in": "query",
+            "required": false,
+            "description": "Filter by device OS version.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "description": "Filter by device platform.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "description": "Filter by device type.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Device"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authentication."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/devices/{uuid}": {
+      "get": {
+        "tags": [
+          "Devices"
+        ],
+        "summary": "Get device",
+        "description": "Retrieves details for a single managed device.",
+        "operationId": "getDevice",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeviceUuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authentication."
+          },
+          "404": {
+            "description": "No device found matching the specified UUID."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/devices/{uuid}/health": {
+      "get": {
+        "tags": [
+          "Devices"
+        ],
+        "summary": "Get device health",
+        "description": "Retrieves health check results for a single managed device.",
+        "operationId": "getDeviceHealth",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeviceUuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceHealth"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authentication."
+          },
+          "404": {
+            "description": "No device found matching the specified UUID."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/devices/{uuid}/license": {
+      "get": {
+        "tags": [
+          "Devices"
+        ],
+        "summary": "Get device license",
+        "description": "Retrieves license status and component validity for a single managed device.",
+        "operationId": "getDeviceLicense",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeviceUuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceLicense"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authentication."
+          },
+          "404": {
+            "description": "No device found matching the specified UUID."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/devices/{uuid}/status": {
+      "get": {
+        "tags": [
+          "Devices"
+        ],
+        "summary": "Get device status",
+        "description": "Retrieves the current monitoring status for a single managed device.",
+        "operationId": "getDeviceStatus",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeviceUuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceStatus"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authentication."
+          },
+          "404": {
+            "description": "No device found matching the specified UUID."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/policies": {
+      "get": {
+        "tags": [
+          "Policies"
+        ],
+        "summary": "List policies",
+        "description": "Lists policies, optionally filtered by content type, description, name, reference ID, shared flag, or tenant.",
+        "operationId": "listPolicies",
+        "parameters": [
+          {
+            "name": "contentType",
+            "in": "query",
+            "required": false,
+            "description": "Filter by policy content type (URL_LIST, IP_LIST, CATEGORY_LIST, or LOCAL_CATEGORY_DB).",
+            "schema": {
+              "$ref": "#/components/schemas/PolicyContentType"
+            }
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "required": false,
+            "description": "Filter by policy description.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "description": "Filter by policy name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "referenceId",
+            "in": "query",
+            "required": false,
+            "description": "Filter by policy reference ID.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "shared",
+            "in": "query",
+            "required": false,
+            "description": "Filter by whether the policy is shared.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "tenant",
+            "in": "query",
+            "required": false,
+            "description": "Filter by tenant.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authentication."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Policies"
+        ],
+        "summary": "Create policy",
+        "description": "Creates a new policy.",
+        "operationId": "createPolicy",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Policy created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Policy"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authentication."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/policies/{uuid}": {
+      "get": {
+        "tags": [
+          "Policies"
+        ],
+        "summary": "Get policy",
+        "description": "Retrieves metadata for a single policy. Use Get Policy Content for the policy's list content.",
+        "operationId": "getPolicy",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PolicyUuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Policy"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authentication."
+          },
+          "404": {
+            "description": "No policy found matching the specified UUID."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Policies"
+        ],
+        "summary": "Update policy",
+        "description": "Updates a policy's metadata (name, description, reference ID, replace-variables flag).",
+        "operationId": "updatePolicy",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PolicyUuid"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Policy updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Policy"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authentication."
+          },
+          "404": {
+            "description": "No policy found matching the specified UUID."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Policies"
+        ],
+        "summary": "Delete policy",
+        "description": "Deletes a policy.",
+        "operationId": "deletePolicy",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PolicyUuid"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "boolean",
+                "description": "Force deletion even if the policy is referenced elsewhere."
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Policy deleted."
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authentication."
+          },
+          "404": {
+            "description": "No policy found matching the specified UUID."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/policies/{uuid}/content": {
+      "get": {
+        "tags": [
+          "Policies"
+        ],
+        "summary": "Get policy content",
+        "description": "Retrieves the current content (URL, IP, or category entries) and revision info for a single policy.",
+        "operationId": "getPolicyContent",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PolicyUuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyContent"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authentication."
+          },
+          "404": {
+            "description": "No policy found matching the specified UUID."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Policies"
+        ],
+        "summary": "Replace policy content",
+        "description": "Replaces the content (URL, IP, or category entries) of a single policy. Callers read the current content first (Get Policy Content), modify the entry list client-side, then post the full resulting content back -- there is no separate add/remove-single-entry endpoint.",
+        "operationId": "replacePolicyContent",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PolicyUuid"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyContentUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Policy content updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyContent"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authentication."
+          },
+          "404": {
+            "description": "No policy found matching the specified UUID."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/tenants": {
+      "get": {
+        "tags": [
+          "Tenants"
+        ],
+        "summary": "List tenants",
+        "description": "Lists configured tenants.",
+        "operationId": "listTenants",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tenant"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authentication."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Auth-Token",
+        "description": "Static API token generated in the Management Center console under Administration > Users > Generate Token (up to 360-day validity)."
+      }
+    },
+    "parameters": {
+      "DeviceUuid": {
+        "name": "uuid",
+        "in": "path",
+        "required": true,
+        "description": "UUID of the device.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PolicyUuid": {
+        "name": "uuid",
+        "in": "path",
+        "required": true,
+        "description": "UUID of the policy.",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "schemas": {
+      "PolicyContentType": {
+        "type": "string",
+        "enum": [
+          "URL_LIST",
+          "IP_LIST",
+          "CATEGORY_LIST",
+          "LOCAL_CATEGORY_DB"
+        ]
+      },
+      "Device": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "lastChanged": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastChangedBy": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "osVersion": {
+            "type": "string"
+          },
+          "build": {
+            "type": "string"
+          },
+          "serialNumber": {
+            "type": "string"
+          },
+          "host": {
+            "type": "string"
+          },
+          "managementStatus": {
+            "type": "string"
+          },
+          "deploymentStatus": {
+            "type": "string"
+          }
+        }
+      },
+      "DeviceHealth": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "health": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "DeviceLicense": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "deviceType": {
+            "type": "string"
+          },
+          "licenseStatus": {
+            "type": "string"
+          },
+          "components": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "componentName": {
+                  "type": "string"
+                },
+                "activationDate": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "expirationDate": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "validity": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "DeviceStatus": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "checkDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "monitorState": {
+            "type": "string"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Policy": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "contentType": {
+            "$ref": "#/components/schemas/PolicyContentType"
+          },
+          "author": {
+            "type": "string"
+          },
+          "shared": {
+            "type": "boolean"
+          },
+          "referenceId": {
+            "type": "string"
+          },
+          "tenant": {
+            "type": "string"
+          },
+          "replaceVariables": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PolicyCreate": {
+        "type": "object",
+        "required": [
+          "name",
+          "contentType"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "contentType": {
+            "$ref": "#/components/schemas/PolicyContentType"
+          },
+          "description": {
+            "type": "string"
+          },
+          "referenceId": {
+            "type": "string"
+          },
+          "tenant": {
+            "type": "string"
+          },
+          "shared": {
+            "type": "boolean"
+          },
+          "replaceVariables": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PolicyUpdate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "referenceId": {
+            "type": "string"
+          },
+          "replaceVariables": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PolicyContent": {
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "revisionInfo": {
+            "type": "object",
+            "properties": {
+              "revisionNumber": {
+                "type": "integer"
+              },
+              "revisionDescription": {
+                "type": "string"
+              },
+              "author": {
+                "type": "string"
+              },
+              "revisionDate": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "content": {
+            "type": "object",
+            "properties": {
+              "urls": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "enabled": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              },
+              "ipAddresses": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "ipAddress": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "enabled": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              },
+              "categories": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "categoryName": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "entries": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "comment": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "PolicyContentUpdate": {
+        "type": "object",
+        "required": [
+          "contentType",
+          "changeDescription",
+          "content"
+        ],
+        "properties": {
+          "contentType": {
+            "$ref": "#/components/schemas/PolicyContentType"
+          },
+          "changeDescription": {
+            "type": "string",
+            "description": "Human-readable description of this content revision, stored in the policy's revision history."
+          },
+          "schemaVersion": {
+            "type": "string"
+          },
+          "content": {
+            "type": "object",
+            "description": "The full resulting content for the policy -- this replaces the entire list, so it should be built from the current content (Get Policy Content) plus the caller's additions/removals/edits.",
+            "properties": {
+              "urls": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "enabled": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              },
+              "ipAddresses": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "ipAddress": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "enabled": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              },
+              "categories": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "categoryName": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "entries": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "comment": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Tenant": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "externalId": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "system": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

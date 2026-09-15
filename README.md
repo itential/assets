@@ -84,6 +84,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Slack** | Messaging |
 | **SolarWinds** | Orion NPM |
 | **Sonatype** | Nexus |
+| **Symantec** | Management Center |
 | **Twilio** | Communications APIs |
 | **Versa** | Director |
 | **VMware** | NSX · vSphere vCenter |
