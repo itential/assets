@@ -35,11 +35,13 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Atlassian** | Bitbucket Cloud · Confluence Cloud · Confluence Server & Data Center · Jira Cloud · Jira Server & Data Center · Opsgenie |
 | **AWS** | API Gateway · CloudFormation · Cognito · Connect · Direct Connect · EC2 · EKS · Lambda · Network Firewall · Organizations · Route 53 · S3 · Secrets Manager |
 | **BigPanda** | AIOps / incident correlation |
-| **Cisco** | ASA · Catalyst Center · Crosswork Network Controller · IOS · ISE · Meraki · NDFC · NSO · NX-OS · PSIRT Open Vulnerability · ThousandEyes · Umbrella · Webex |
+| **Centreon** | IT and network monitoring |
+| **Cisco** | ASA · Catalyst Center · Crosswork Assurance · Crosswork Network Controller · IOS · ISE · Meraki · NDFC · NSO · NX-OS · PSIRT Open Vulnerability · ThousandEyes · Umbrella · Webex |
 | **Cloudflare** | CDN & edge platform APIs |
 | **CyberArk** | Conjur (secrets management) · Privilege Cloud |
 | **Datadog** | Observability |
 | **dbt Cloud** | Analytics engineering / data transformation |
+| **Device42** | CMDB / IT asset discovery and dependency mapping |
 | **Delinea** | Secret Server (secrets management) |
 | **DigiCert** | Trust Lifecycle Manager (DigiCert ONE) |
 | **Docker** | Docker Engine · Docker Hub |
@@ -47,6 +49,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **EfficientIP** | SOLIDserver (DDI) |
 | **F5** | BIG-IP · BIG-IQ · Insight |
 | **ForeScout** | Web API (CounterACT / eyeSight) |
+| **Forward Networks** | Network digital twin & verification platform |
 | **Fortinet** | FortiGate · FortiManager |
 | **GitHub** | GitHub |
 | **GitLab** | GitLab |
@@ -63,7 +66,9 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Kubernetes** | Container orchestration |
 | **LogicMonitor** | Observability |
 | **Mattermost** | Team collaboration & messaging |
+| **Men and Mice** | Micetro (DDI) |
 | **Microsoft** | 365 IP and URL Web Service · Azure Key Vault · Graph · Teams |
+| **Morpheus** | Cloud management platform |
 | **Nautobot** | Nautobot 2.4 |
 | **NetBox** | IPAM / DCIM |
 | **NetScaler** | ADC |
@@ -78,12 +83,14 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **RingCentral** | Unified communications |
 | **Ruckus** | Fastiron |
 | **Rundeck** | Job automation & orchestration |
+| **Sectigo** | Certificate Manager · SCM Admin |
 | **Selector** | AIOps |
 | **SendGrid** | Transactional & marketing email |
 | **ServiceNow** | Change management · Incident management · RITM |
 | **Slack** | Messaging |
 | **SolarWinds** | Orion NPM |
 | **Sonatype** | Nexus |
+| **Symantec** | Management Center |
 | **Tufin** | SecureApp · SecureChange · SecureTrack |
 | **Twilio** | Communications APIs |
 | **Versa** | Director |
