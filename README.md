@@ -66,6 +66,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Kubernetes** | Container orchestration |
 | **LogicMonitor** | Observability |
 | **Mattermost** | Team collaboration & messaging |
+| **Men and Mice** | Micetro (DDI) |
 | **Microsoft** | 365 IP and URL Web Service · Azure Key Vault · Graph · Teams |
 | **Morpheus** | Cloud management platform |
 | **Nautobot** | Nautobot 2.4 |
