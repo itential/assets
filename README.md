@@ -35,7 +35,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Atlassian** | Bitbucket Cloud · Confluence Cloud · Confluence Server & Data Center · Jira Cloud · Jira Server & Data Center · Opsgenie |
 | **AWS** | API Gateway · CloudFormation · Cognito · Connect · Direct Connect · EC2 · EKS · Lambda · Network Firewall · Organizations · Route 53 · S3 · Secrets Manager |
 | **BigPanda** | AIOps / incident correlation |
-| **Cisco** | ASA · Catalyst Center · Crosswork Network Controller · IOS · ISE · Meraki · NDFC · NSO · NX-OS · PSIRT Open Vulnerability · ThousandEyes · Umbrella · Webex |
+| **Cisco** | ASA · Catalyst Center · Crosswork Assurance · Crosswork Network Controller · IOS · ISE · Meraki · NDFC · NSO · NX-OS · PSIRT Open Vulnerability · ThousandEyes · Umbrella · Webex |
 | **Cloudflare** | CDN & edge platform APIs |
 | **CyberArk** | Conjur (secrets management) · Privilege Cloud |
 | **Datadog** | Observability |
