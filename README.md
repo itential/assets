@@ -40,6 +40,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **CyberArk** | Conjur (secrets management) · Privilege Cloud |
 | **Datadog** | Observability |
 | **dbt Cloud** | Analytics engineering / data transformation |
+| **Device42** | CMDB / IT asset discovery and dependency mapping |
 | **Delinea** | Secret Server (secrets management) |
 | **DigiCert** | Trust Lifecycle Manager (DigiCert ONE) |
 | **Docker** | Docker Engine · Docker Hub |
