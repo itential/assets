@@ -7,6 +7,7 @@ Forward Networks builds a continuously updated digital twin of a network from de
 - [Contents](#contents)
 - [Requirements](#requirements)
 - [Integration Configuration](#integration-configuration)
+  - [Connection Properties](#connection-properties)
 - [OpenAPIs](#openapis)
   - [`forward_networks-latest.json`](#forward_networks-latestjson)
   - [`forward_networks-26.1.json`](#forward_networks-261json)
@@ -30,6 +31,24 @@ Forward Networks builds a continuously updated digital twin of a network from de
 ## Integration Configuration
 
 Authentication is HTTP Basic auth, using a Forward Networks API access key as the username and its matching secret as the password on every request. Generate an access key/secret pair in Forward Networks under your user account's API access settings, then configure the Integration's basic-auth credentials in Itential Platform's Admin Essentials with the key as the username and the secret as the password.
+
+### Connection Properties
+
+```json
+{
+  "authentication": {
+    "api_token": {
+      "username": "<your-api-access-key>",
+      "password": "<your-api-secret>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "<your-forward-networks-host>",
+    "base_path": "/api"
+  }
+}
+```
 
 ## OpenAPIs
 
