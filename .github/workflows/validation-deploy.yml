@@ -1,0 +1,117 @@
+name: Itential Asset & Integration Deploy
+
+on:
+  workflow_run:
+    workflows: ["Itential Asset & Integration Validation"]
+    types: [completed]
+
+jobs:
+  load-context:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    outputs:
+      pr_number: ${{ steps.context.outputs.pr_number }}
+      has_asset_changes: ${{ steps.context.outputs.has_asset_changes }}
+      changed_files: ${{ steps.context.outputs.changed_files }}
+      has_spec_changes: ${{ steps.context.outputs.has_spec_changes }}
+      changed_specs: ${{ steps.context.outputs.changed_specs }}
+    steps:
+      - name: Download validation artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: validation-event
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract PR context
+        id: context
+        run: |
+          PR_NUMBER=$(jq -r .pr_number event.json)
+
+          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          {
+            echo "changed_files<<EOF"
+            jq -c .changed_files event.json
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+          {
+            echo "changed_specs<<EOF"
+            jq -c .changed_specs event.json
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+          echo "has_asset_changes=$(jq -r .has_asset_changes event.json)" >> "$GITHUB_OUTPUT"
+          echo "has_spec_changes=$(jq -r .has_spec_changes event.json)" >> "$GITHUB_OUTPUT"
+
+  validate-assets:
+    needs: [load-context]
+    if: needs.load-context.outputs.has_asset_changes == 'true'
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - name: Checkout trusted scripts
+        uses: actions/checkout@v7
+
+      - name: Checkout approved PR content
+        uses: actions/checkout@v7
+        with:
+          ref: refs/pull/${{ needs.load-context.outputs.pr_number }}/merge
+          path: pr
+          allow-unsafe-pr-checkout: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Install asyncplatform
+        run: pip install git+https://github.com/Itential/asyncplatform.git
+
+      - name: Deploy to Staging
+        working-directory: pr
+        env:
+          HOST: ${{ secrets.PLATFORM_HOST }}
+          CLIENT_ID: ${{ secrets.PLATFORM_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.PLATFORM_CLIENT_SECRET }}
+          PROJECT_MEMBERS: ${{ vars.PROJECT_MEMBERS }}
+          CHANGED_FILES: ${{ needs.load-context.outputs.changed_files }}
+        run: python "$GITHUB_WORKSPACE/.github/scripts/deploy.py" Staging
+
+  validate-integrations:
+    needs: [load-context]
+    if: needs.load-context.outputs.has_spec_changes == 'true'
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - name: Checkout trusted scripts
+        uses: actions/checkout@v7
+
+      - name: Checkout approved PR content
+        uses: actions/checkout@v7
+        with:
+          ref: refs/pull/${{ needs.load-context.outputs.pr_number }}/merge
+          path: pr
+          allow-unsafe-pr-checkout: true
+
+      - name: Install ipctl
+        run: |
+          curl -LO "https://github.com/itential/ipctl/releases/latest/download/ipctl-linux-x86_64.tar.gz"
+          tar -xzf ipctl-linux-x86_64.tar.gz
+          sudo mv ipctl /usr/local/bin/
+
+      - name: Configure ipctl
+        env:
+          HOST: ${{ secrets.PLATFORM_HOST }}
+          CLIENT_ID: ${{ secrets.PLATFORM_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.PLATFORM_CLIENT_SECRET }}
+        run: |
+          printf '[profile default]\nhost = %s\nport = 0\nuse_tls = true\nclient_id = %s\nclient_secret = %s\n' \
+            "$HOST" "$CLIENT_ID" "$CLIENT_SECRET" > /tmp/ipctl.ini
+
+      - name: Import integration models
+        working-directory: pr
+        env:
+          IPCTL_CONFIG_FILE: /tmp/ipctl.ini
+          CHANGED_SPECS: ${{ needs.load-context.outputs.changed_specs }}
+        run: bash "$GITHUB_WORKSPACE/.github/scripts/deploy_integrations.sh"
