@@ -79,6 +79,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **NetScaler** | ADC |
 | **Netskope** | Cloud security platform APIs |
 | **New Relic** | Observability |
+| **Nutanix** | Prism Central |
 | **NVD** | National Vulnerability Database (CVE / CPE) |
 | **Okta** | Identity management |
 | **OpenAI** | AI / LLM APIs |
