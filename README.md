@@ -87,6 +87,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **RingCentral** | Unified communications |
 | **Ruckus** | Fastiron |
 | **Rundeck** | Job automation & orchestration |
+| **Salesforce** | CRM (REST API · Tooling API) |
 | **ScienceLogic** | Skylar One (formerly SL1) |
 | **Sectigo** | Certificate Manager · SCM Admin |
 | **Selector** | AIOps |

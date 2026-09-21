@@ -1,0 +1,1090 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Salesforce",
+    "description": "Authentication: OAuth 2.0 (client credentials grant). Salesforce is a cloud-based CRM platform. This spec covers the core REST API's standard-object surface (Account, Contact, Opportunity, Case, Lead, and any other standard or custom object) via the generic sobjects endpoints, plus SOQL/SOSL query and search.",
+    "version": "62.0"
+  },
+  "servers": [
+    {
+      "url": "https://{host}",
+      "variables": {
+        "host": {
+          "default": "yourorg.my.salesforce.com",
+          "description": "Salesforce org My Domain hostname (no protocol, no path) \u2014 e.g. yourorg.my.salesforce.com for production, or the sandbox/test equivalent"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "oauth2ClientCredentials": []
+    }
+  ],
+  "paths": {
+    "/services/data/v62.0/sobjects": {
+      "get": {
+        "operationId": "describeGlobal",
+        "summary": "List Available Objects",
+        "description": "Lists the standard and custom objects available in the org and basic metadata for each.",
+        "tags": [
+          "sObjects"
+        ],
+        "responses": {
+          "200": {
+            "description": "List of available sObjects",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sobjects": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/sobjects/{sObjectName}": {
+      "parameters": [
+        {
+          "name": "sObjectName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "API name of the standard or custom Salesforce object (e.g. Account, Contact, Opportunity, Case, Lead)"
+        }
+      ],
+      "get": {
+        "operationId": "getSObjectBasicInfo",
+        "summary": "Get Object Basic Information",
+        "description": "Returns basic metadata, plus URLs to related resources, for the given object.",
+        "tags": [
+          "sObjects"
+        ],
+        "responses": {
+          "200": {
+            "description": "Object basic information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createRecord",
+        "summary": "Create Record",
+        "description": "Creates a new record of the given sObject type.",
+        "tags": [
+          "sObjects"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Field name/value pairs to set on the record",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Record created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/sobjects/{sObjectName}/describe": {
+      "parameters": [
+        {
+          "name": "sObjectName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "API name of the standard or custom Salesforce object (e.g. Account, Contact, Opportunity, Case, Lead)"
+        }
+      ],
+      "get": {
+        "operationId": "describeSObject",
+        "summary": "Describe Object",
+        "description": "Returns full metadata for an object, including field-level details (labels, types, picklist values, relationships).",
+        "tags": [
+          "sObjects"
+        ],
+        "responses": {
+          "200": {
+            "description": "Object metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/sobjects/{sObjectName}/{recordId}": {
+      "parameters": [
+        {
+          "name": "sObjectName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "API name of the standard or custom Salesforce object (e.g. Account, Contact, Opportunity, Case, Lead)"
+        },
+        {
+          "name": "recordId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "18-character Salesforce record ID"
+        }
+      ],
+      "get": {
+        "operationId": "getRecord",
+        "summary": "Get Record",
+        "description": "Retrieves field values for a record by ID.",
+        "tags": [
+          "sObjects"
+        ],
+        "parameters": [
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of fields to return; omit to return all accessible fields"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Record field values",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateRecord",
+        "summary": "Update Record",
+        "description": "Updates field values on an existing record by ID.",
+        "tags": [
+          "sObjects"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Field name/value pairs to set on the record",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Record updated"
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteRecord",
+        "summary": "Delete Record",
+        "description": "Deletes a record by ID.",
+        "tags": [
+          "sObjects"
+        ],
+        "responses": {
+          "204": {
+            "description": "Record deleted"
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/sobjects/{sObjectName}/{externalIdFieldName}/{externalIdFieldValue}": {
+      "parameters": [
+        {
+          "name": "sObjectName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "API name of the standard or custom Salesforce object (e.g. Account, Contact, Opportunity, Case, Lead)"
+        },
+        {
+          "name": "externalIdFieldName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "API name of the field marked as an External ID on this object"
+        },
+        {
+          "name": "externalIdFieldValue",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Value of the external ID field identifying the record to upsert"
+        }
+      ],
+      "patch": {
+        "operationId": "upsertRecordByExternalId",
+        "summary": "Upsert Record by External ID",
+        "description": "Creates or updates a record identified by an External ID field, instead of the Salesforce record ID.",
+        "tags": [
+          "sObjects"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Field name/value pairs to set on the record",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Record updated (existing external ID) or created (new external ID)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/sobjects/{sObjectName}/deleted": {
+      "parameters": [
+        {
+          "name": "sObjectName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "API name of the standard or custom Salesforce object (e.g. Account, Contact, Opportunity, Case, Lead)"
+        }
+      ],
+      "get": {
+        "operationId": "getDeletedRecords",
+        "summary": "Get Deleted Records",
+        "description": "Lists IDs of records of the given type deleted (still in the recycle bin) within a time window.",
+        "tags": [
+          "sObjects"
+        ],
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Start of the time window (ISO 8601)"
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "End of the time window (ISO 8601)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted record IDs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/sobjects/{sObjectName}/updated": {
+      "parameters": [
+        {
+          "name": "sObjectName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "API name of the standard or custom Salesforce object (e.g. Account, Contact, Opportunity, Case, Lead)"
+        }
+      ],
+      "get": {
+        "operationId": "getUpdatedRecords",
+        "summary": "Get Updated Records",
+        "description": "Lists IDs of records of the given type updated within a time window.",
+        "tags": [
+          "sObjects"
+        ],
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Start of the time window (ISO 8601)"
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "End of the time window (ISO 8601)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated record IDs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/sobjects/{sObjectName}/describe/layouts": {
+      "parameters": [
+        {
+          "name": "sObjectName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "API name of the standard or custom Salesforce object (e.g. Account, Contact, Opportunity, Case, Lead)"
+        }
+      ],
+      "get": {
+        "operationId": "getPageLayouts",
+        "summary": "Get Page Layouts",
+        "description": "Returns the page layout metadata for the given object.",
+        "tags": [
+          "sObjects"
+        ],
+        "responses": {
+          "200": {
+            "description": "Page layout metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/sobjects/{sObjectName}/listviews": {
+      "parameters": [
+        {
+          "name": "sObjectName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "API name of the standard or custom Salesforce object (e.g. Account, Contact, Opportunity, Case, Lead)"
+        }
+      ],
+      "get": {
+        "operationId": "getListViews",
+        "summary": "Get List Views",
+        "description": "Lists the list views defined for the given object.",
+        "tags": [
+          "sObjects"
+        ],
+        "responses": {
+          "200": {
+            "description": "List views",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/sobjects/{sObjectName}/listviews/{listViewId}/results": {
+      "parameters": [
+        {
+          "name": "sObjectName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "API name of the standard or custom Salesforce object (e.g. Account, Contact, Opportunity, Case, Lead)"
+        },
+        {
+          "name": "listViewId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of the list view"
+        }
+      ],
+      "get": {
+        "operationId": "getListViewResults",
+        "summary": "Get List View Results",
+        "description": "Executes a list view and returns the resulting rows.",
+        "tags": [
+          "sObjects"
+        ],
+        "responses": {
+          "200": {
+            "description": "List view results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/sobjects/{sObjectName}/quickActions": {
+      "parameters": [
+        {
+          "name": "sObjectName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "API name of the standard or custom Salesforce object (e.g. Account, Contact, Opportunity, Case, Lead)"
+        }
+      ],
+      "get": {
+        "operationId": "getQuickActions",
+        "summary": "Get Object Quick Actions",
+        "description": "Lists the quick actions defined on the given object.",
+        "tags": [
+          "sObjects"
+        ],
+        "responses": {
+          "200": {
+            "description": "Quick actions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/query": {
+      "get": {
+        "operationId": "query",
+        "summary": "SOQL Query",
+        "description": "Executes a SOQL query and returns matching records.",
+        "tags": [
+          "Query"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "SOQL query string, e.g. SELECT Id, Name FROM Account WHERE Industry = 'Technology'"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "totalSize": {
+                      "type": "integer"
+                    },
+                    "done": {
+                      "type": "boolean"
+                    },
+                    "nextRecordsUrl": {
+                      "type": "string"
+                    },
+                    "records": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/queryAll": {
+      "get": {
+        "operationId": "queryAll",
+        "summary": "SOQL Query All",
+        "description": "Executes a SOQL query, including archived and deleted records in the results.",
+        "tags": [
+          "Query"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "SOQL query string, e.g. SELECT Id, Name FROM Account WHERE Industry = 'Technology'"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query results (including archived/deleted)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "totalSize": {
+                      "type": "integer"
+                    },
+                    "done": {
+                      "type": "boolean"
+                    },
+                    "nextRecordsUrl": {
+                      "type": "string"
+                    },
+                    "records": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/search": {
+      "get": {
+        "operationId": "search",
+        "summary": "SOSL Search",
+        "description": "Executes a SOSL search across one or more object types.",
+        "tags": [
+          "Query"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "SOSL search string, e.g. FIND {Acme} IN ALL FIELDS RETURNING Account(Id, Name)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/limits": {
+      "get": {
+        "operationId": "getOrgLimits",
+        "summary": "Get Org Limits",
+        "description": "Returns the org's current API usage and remaining limits (API calls, data storage, etc.).",
+        "tags": [
+          "Org"
+        ],
+        "responses": {
+          "200": {
+            "description": "Org limits",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/limits/recordCount": {
+      "get": {
+        "operationId": "getRecordCounts",
+        "summary": "Get Record Counts",
+        "description": "Returns approximate record counts for specified sObjects, subject to org storage limits.",
+        "tags": [
+          "Org"
+        ],
+        "responses": {
+          "200": {
+            "description": "Record counts by sObject",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/appMenu/AppSwitcher": {
+      "get": {
+        "operationId": "getAppMenu",
+        "summary": "Get App Menu",
+        "description": "Lists the apps available to the current user in the App Launcher.",
+        "tags": [
+          "Org"
+        ],
+        "responses": {
+          "200": {
+            "description": "App menu items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/tabs": {
+      "get": {
+        "operationId": "getTabs",
+        "summary": "Get Tabs",
+        "description": "Lists the tabs available to the current user, including their metadata and URLs.",
+        "tags": [
+          "Org"
+        ],
+        "responses": {
+          "200": {
+            "description": "Tab metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL/SOSL syntax, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions (FLS/sharing/object permissions) for this operation"
+          },
+          "404": {
+            "description": "sObject type or record ID not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "oauth2ClientCredentials": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://login.salesforce.com/services/oauth2/token",
+            "scopes": {}
+          }
+        }
+      }
+    }
+  }
+}
