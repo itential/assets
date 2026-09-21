@@ -1,0 +1,1209 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "DX NetOps Spectrum",
+    "version": "latest",
+    "description": "DX NetOps Spectrum is Broadcom's fault and availability management platform for network infrastructure, modeling devices, connections, and services for real-time monitoring, root-cause analysis, and alarm management. This spec covers the OneClick Web Services API.\n\nAuthentication: HTTP Basic Auth, using a local Spectrum user account's username and password.",
+    "x-vendor-api-version": "24.3",
+    "x-itential-curated": "Trimmed to 29 of 31 upstream operations covering alarms, models/devices, associations, connectivity, attributes, events, landscapes, actions, and notification subscriptions. Excludes SNMPv3 profile administration (V3Profiles). See the repo README for the full scope and the full spec."
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}/spectrum/restful",
+      "description": "OneClick Web Services API server.",
+      "variables": {
+        "protocol": {
+          "default": "https",
+          "enum": [
+            "https",
+            "http"
+          ]
+        },
+        "host": {
+          "default": "spectrum.example.com",
+          "description": "OneClick server hostname or IP address."
+        },
+        "port": {
+          "default": "443",
+          "description": "OneClick server port."
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "Action"
+    },
+    {
+      "name": "Alarms"
+    },
+    {
+      "name": "Associations"
+    },
+    {
+      "name": "Attribute"
+    },
+    {
+      "name": "Connectivity"
+    },
+    {
+      "name": "Devices"
+    },
+    {
+      "name": "Events"
+    },
+    {
+      "name": "Landscapes"
+    },
+    {
+      "name": "Model"
+    },
+    {
+      "name": "Models"
+    },
+    {
+      "name": "Subscription"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic",
+        "description": "HTTP Basic authentication using a local Spectrum user account's username and password."
+      }
+    }
+  },
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "paths": {
+    "/action/{actionCode}": {
+      "get": {
+        "operationId": "getAction",
+        "summary": "Issue an action against the SpectroSERVER",
+        "description": "Issues an action request to the SpectroSERVER, identified by an internal action code, optionally targeted at a model and passed attribute-value input pairs.",
+        "tags": [
+          "Action"
+        ],
+        "parameters": [
+          {
+            "name": "actionCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Hex action code (e.g. 0x10093) identifying the action to perform."
+          },
+          {
+            "name": "mh",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Model handle the action is performed against."
+          },
+          {
+            "name": "attr",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Attribute ID for an input attribute-value pair passed to the action."
+          },
+          {
+            "name": "val",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Value for the attribute identified by `attr`."
+          },
+          {
+            "name": "throttlesize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return per response page."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Action result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alarms/{alarmId}": {
+      "delete": {
+        "operationId": "deleteAlarm",
+        "summary": "Clear an alarm",
+        "description": "Clears (deletes) a single alarm identified by its alarm ID.",
+        "tags": [
+          "Alarms"
+        ],
+        "parameters": [
+          {
+            "name": "alarmId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Alarm ID to clear."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Clear result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateAlarmAttribute",
+        "summary": "Update or acknowledge an alarm",
+        "description": "Updates an attribute on an alarm (for example, acknowledging it) by setting an attribute ID/value pair on the alarm identified by its alarm ID.",
+        "tags": [
+          "Alarms"
+        ],
+        "parameters": [
+          {
+            "name": "alarmId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Alarm ID to update."
+          },
+          {
+            "name": "attr",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Attribute ID to set on the alarm."
+          },
+          {
+            "name": "val",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "New value for the attribute."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Update result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alarms/count": {
+      "post": {
+        "operationId": "getAlarmCount",
+        "summary": "Get alarm counts by severity",
+        "description": "Returns alarm counts by severity (critical, major, minor, and so on) for the alarms matching the supplied XML filter criteria.",
+        "tags": [
+          "Alarms"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "type": "string",
+                "description": "XML document specifying alarm filter criteria, for example a named alarm filter (`<rs:alarm-filter name=\"...\"/>`)."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Alarm counts by severity.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alarms/filters": {
+      "get": {
+        "operationId": "getAlarmFilters",
+        "summary": "List available alarm filters",
+        "description": "Returns the alarm filters defined on the OneClick server that can be referenced by name when querying alarms.",
+        "tags": [
+          "Alarms"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of available alarm filter names.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alarms": {
+      "get": {
+        "operationId": "listAlarms",
+        "summary": "List alarms",
+        "description": "Returns alarms, optionally scoped by attribute, landscape, or a page size limit.",
+        "tags": [
+          "Alarms"
+        ],
+        "parameters": [
+          {
+            "name": "attr",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Attribute ID to include in the returned alarm data."
+          },
+          {
+            "name": "landscape",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Landscape handle to scope the alarm query to."
+          },
+          {
+            "name": "throttlesize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of alarms to return per response page."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of alarms.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "queryAlarms",
+        "summary": "Query alarms by XML search criteria",
+        "description": "GET-tunneling endpoint for advanced alarm queries: retrieves alarms matching an XML document that specifies alarm IDs, model handles, or search criteria too complex for query parameters.",
+        "tags": [
+          "Alarms"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "type": "string",
+                "description": "XML document specifying the alarms to retrieve, by alarm ID, model handle list, or search criteria."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of matching alarms.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/associations/relation/{relationType}/model/{modelHandle}": {
+      "get": {
+        "operationId": "getAssociations",
+        "summary": "Get a model's associations",
+        "description": "Returns the models associated with the given model through the specified relation type.",
+        "tags": [
+          "Associations"
+        ],
+        "parameters": [
+          {
+            "name": "relationType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relation type name (for example, a containment or connection relation)."
+          },
+          {
+            "name": "modelHandle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Model handle to look up associations for."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Associated models.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/associations/relation/{relationType}/leftmodel/{leftModelHandle}/rightmodel/{rightModelHandle}": {
+      "post": {
+        "operationId": "createAssociation",
+        "summary": "Create an association between two models",
+        "description": "Creates an association of the given relation type between a left and a right model.",
+        "tags": [
+          "Associations"
+        ],
+        "parameters": [
+          {
+            "name": "relationType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relation type name for the new association."
+          },
+          {
+            "name": "leftModelHandle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Model handle of the left-side model."
+          },
+          {
+            "name": "rightModelHandle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Model handle of the right-side model."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Create result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteAssociation",
+        "summary": "Delete an association between two models",
+        "description": "Deletes an existing association of the given relation type between a left and a right model.",
+        "tags": [
+          "Associations"
+        ],
+        "parameters": [
+          {
+            "name": "relationType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relation type name of the association to remove."
+          },
+          {
+            "name": "leftModelHandle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Model handle of the left-side model."
+          },
+          {
+            "name": "rightModelHandle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Model handle of the right-side model."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/attribute/{attrId}/enums": {
+      "get": {
+        "operationId": "getAttributeEnums",
+        "summary": "Get an attribute's enumeration values",
+        "description": "Returns the valid enumeration (name/value) pairs for an enumerated attribute type.",
+        "tags": [
+          "Attribute"
+        ],
+        "parameters": [
+          {
+            "name": "attrId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Hex attribute ID (for example, 0x1000a) of the enumerated attribute."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attribute enumeration values.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/connectivity/{modelHandle}": {
+      "get": {
+        "operationId": "getConnectivity",
+        "summary": "Get a model's connectivity",
+        "description": "Returns the connection information (ports, links) for the given device model.",
+        "tags": [
+          "Connectivity"
+        ],
+        "parameters": [
+          {
+            "name": "modelHandle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Model handle of the device to look up connectivity for."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Connectivity information.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/devices": {
+      "get": {
+        "operationId": "listDevices",
+        "summary": "List devices",
+        "description": "Returns the devices currently modeled on the OneClick server.",
+        "tags": [
+          "Devices"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of devices.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/getEvents": {
+      "post": {
+        "operationId": "queryEvents",
+        "summary": "Query events by XML search criteria",
+        "description": "Retrieves events matching an XML document that specifies event IDs, model handles, or search criteria.",
+        "tags": [
+          "Events"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "type": "string",
+                "description": "XML document specifying the events to retrieve."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of matching events.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events": {
+      "post": {
+        "operationId": "createEvent",
+        "summary": "Create an event",
+        "description": "Creates an event on the OneClick server from an XML event document.",
+        "tags": [
+          "Events"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "type": "string",
+                "description": "XML document describing the event to create, including its event type and attribute values."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Create result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/{landscapeHandle}/model/{modelHandle}": {
+      "post": {
+        "operationId": "createEventForModel",
+        "summary": "Create an event against a specific model",
+        "description": "Creates an event on the given model within the given landscape, from an XML event document.",
+        "tags": [
+          "Events"
+        ],
+        "parameters": [
+          {
+            "name": "landscapeHandle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Landscape handle the target model belongs to."
+          },
+          {
+            "name": "modelHandle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Model handle to raise the event against."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "type": "string",
+                "description": "XML document describing the event to create, including its event type and attribute values."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Create result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/landscapes": {
+      "get": {
+        "operationId": "listLandscapes",
+        "summary": "List landscapes",
+        "description": "Returns the landscapes (SpectroSERVERs) known to the OneClick server.",
+        "tags": [
+          "Landscapes"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of landscapes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/model": {
+      "post": {
+        "operationId": "createModel",
+        "summary": "Create a model",
+        "description": "Creates a new model (for example, a device) from an XML document specifying its model type and initial attribute values.",
+        "tags": [
+          "Model"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "type": "string",
+                "description": "XML document specifying the new model's type and attribute values."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Create result, including the new model's handle.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/model/{modelHandle}": {
+      "get": {
+        "operationId": "getModel",
+        "summary": "Get a model",
+        "description": "Returns a model's attribute values by its model handle.",
+        "tags": [
+          "Model"
+        ],
+        "parameters": [
+          {
+            "name": "modelHandle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Model handle to retrieve."
+          },
+          {
+            "name": "attr",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Attribute ID to include in the returned model data. Repeat to request multiple attributes."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Model attribute values.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateModelAttributes",
+        "summary": "Update a model's attributes",
+        "description": "Updates one or more attribute values on the given model, supplied as attribute ID/value query parameters.",
+        "tags": [
+          "Model"
+        ],
+        "parameters": [
+          {
+            "name": "modelHandle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Model handle to update."
+          },
+          {
+            "name": "attr",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Attribute ID to set."
+          },
+          {
+            "name": "val",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "New value for the attribute."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Update result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteModel",
+        "summary": "Delete a model",
+        "description": "Deletes the model identified by its model handle.",
+        "tags": [
+          "Model"
+        ],
+        "parameters": [
+          {
+            "name": "modelHandle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Model handle to delete."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/model/attr/update": {
+      "post": {
+        "operationId": "bulkUpdateModelAttributes",
+        "summary": "Bulk-update attributes across models by XML",
+        "description": "Updates one or more attribute values across one or more models in a single call, from an XML document listing model handles and attribute values.",
+        "tags": [
+          "Model"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "type": "string",
+                "description": "XML document listing the model handles and attribute values to update."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update results per model.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/models/getAllDevices": {
+      "post": {
+        "operationId": "queryAllDevices",
+        "summary": "Query all devices by XML search criteria",
+        "description": "Retrieves all device models matching an XML search-criteria document, using the OneClick server's search infrastructure.",
+        "tags": [
+          "Models"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "type": "string",
+                "description": "XML document specifying device search criteria."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of matching devices.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/models": {
+      "post": {
+        "operationId": "queryModels",
+        "summary": "Query models by XML search criteria",
+        "description": "Retrieves models matching an XML search-criteria document, using the OneClick server's search infrastructure.",
+        "tags": [
+          "Models"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "type": "string",
+                "description": "XML document specifying model search criteria, attribute list, and result options."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of matching models.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "bulkUpdateModelAttributesByXml",
+        "summary": "Bulk-update attributes across models by XML (models endpoint)",
+        "description": "Updates attribute values across one or more models in a single call, from an XML document listing model handles and attribute values.",
+        "tags": [
+          "Models"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "type": "string",
+                "description": "XML document listing the model handles and attribute values to update."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update results per model.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscription": {
+      "post": {
+        "operationId": "createSubscription",
+        "summary": "Create a notification subscription",
+        "description": "Creates a subscription so the OneClick server pushes notifications (for example, alarm or model updates) to a listening client.",
+        "tags": [
+          "Subscription"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/xml": {
+              "schema": {
+                "type": "string",
+                "description": "XML document specifying the subscription's notification type, filter, and destination."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Create result, including the new subscription ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscription/{subscriptionId}": {
+      "get": {
+        "operationId": "getSubscription",
+        "summary": "Get a subscription",
+        "description": "Returns the details of a subscription by its subscription ID.",
+        "tags": [
+          "Subscription"
+        ],
+        "parameters": [
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Subscription ID to retrieve."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteSubscription",
+        "summary": "Delete a subscription",
+        "description": "Deletes a subscription by its subscription ID, stopping further pushed notifications.",
+        "tags": [
+          "Subscription"
+        ],
+        "parameters": [
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Subscription ID to delete."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscription/requests": {
+      "get": {
+        "operationId": "listSubscriptionRequests",
+        "summary": "List pending subscription requests",
+        "description": "Returns notifications queued for pull-based subscriptions (as opposed to push-based delivery).",
+        "tags": [
+          "Subscription"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of pending subscription notifications.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response body. Spectrum returns XML by default; set the Accept header to application/json (or add format=json) to receive JSON. Exact shape depends on the resource queried."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
