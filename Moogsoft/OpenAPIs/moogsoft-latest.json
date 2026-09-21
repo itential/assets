@@ -1,0 +1,2214 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Moogsoft",
+    "version": "latest",
+    "x-vendor-api-version": "v1",
+    "description": "Authentication: HTTP Basic. Moogsoft Enterprise / APEX AIOps event correlation and Situation management: alert lifecycle, Situation lifecycle, teams, users, and integration status/configuration via the Graze API and the Integrations API.",
+    "x-itential-curated": "Trimmed to 38 of 165 upstream operations covering common CRUD for automation: alert lifecycle (list/get/assign/close/resolve/severity/acknowledge/custom info), Situation lifecycle (create/list/get/assign/close/resolve/description/custom info/alert membership), team CRUD, user CRUD, and integration status/configuration. Skips deep correlation-rule and ML-model administration (Cookbooks, Recipes, Tempus, Merge Groups, Entropy), workflow-engine authoring, security realm configuration, licensing, and reporting/statistics endpoints. See the repo README for the full scope and the full spec."
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}",
+      "description": "Moogsoft Enterprise / APEX AIOps server",
+      "variables": {
+        "protocol": {
+          "default": "https",
+          "enum": [
+            "https",
+            "http"
+          ]
+        },
+        "host": {
+          "default": "host.example.com",
+          "description": "API host (no protocol, no path)"
+        },
+        "port": {
+          "default": "443"
+        }
+      }
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic",
+        "description": "HTTP Basic authentication using a Moogsoft username and password (or the Graze `graze`/`graze` service account)."
+      }
+    }
+  },
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Alerts"
+    },
+    {
+      "name": "Situations"
+    },
+    {
+      "name": "Teams"
+    },
+    {
+      "name": "Users"
+    },
+    {
+      "name": "Integrations"
+    },
+    {
+      "name": "Authentication"
+    }
+  ],
+  "paths": {
+    "/graze/v1/addAlertCustomInfo": {
+      "post": {
+        "operationId": "addAlertCustomInfo",
+        "summary": "Add or merge custom metadata onto an alert",
+        "tags": [
+          "Alerts"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "alert_id": {
+                    "type": "integer",
+                    "description": "Alert ID"
+                  },
+                  "custom_info": {
+                    "type": "object",
+                    "description": "Custom key/value metadata to add and merge onto the alert"
+                  }
+                },
+                "required": [
+                  "alert_id",
+                  "custom_info"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response (HTTP 200, no response body)."
+          }
+        }
+      }
+    },
+    "/graze/v1/addAlertToSituation": {
+      "post": {
+        "operationId": "addAlertToSituation",
+        "summary": "Add an alert to a Situation",
+        "tags": [
+          "Situations"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "alert_id": {
+                    "type": "integer",
+                    "description": "Alert ID to add"
+                  },
+                  "sitn_id": {
+                    "type": "integer",
+                    "description": "Target Situation ID"
+                  }
+                },
+                "required": [
+                  "alert_id",
+                  "sitn_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response (HTTP 200, no response body)."
+          }
+        }
+      }
+    },
+    "/graze/v1/addSituationCustomInfo": {
+      "post": {
+        "operationId": "addSituationCustomInfo",
+        "summary": "Add or merge custom metadata onto a Situation",
+        "tags": [
+          "Situations"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sitn_id": {
+                    "type": "integer",
+                    "description": "Situation ID"
+                  },
+                  "custom_info": {
+                    "type": "object",
+                    "description": "Custom key/value metadata to add and merge onto the Situation"
+                  }
+                },
+                "required": [
+                  "sitn_id",
+                  "custom_info"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response (HTTP 200, no response body)."
+          }
+        }
+      }
+    },
+    "/graze/v1/assignAlert": {
+      "post": {
+        "operationId": "assignAlert",
+        "summary": "Assign a user as the owner of an alert",
+        "tags": [
+          "Alerts"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "alert_id": {
+                    "type": "integer",
+                    "description": "Alert ID"
+                  },
+                  "user_id": {
+                    "type": "integer",
+                    "description": "User ID to assign as owner (or use username)"
+                  },
+                  "username": {
+                    "type": "string",
+                    "description": "Username to assign as owner (or use user_id)"
+                  }
+                },
+                "required": [
+                  "alert_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response (HTTP 200, no response body)."
+          }
+        }
+      }
+    },
+    "/graze/v1/assignSituation": {
+      "post": {
+        "operationId": "assignSituation",
+        "summary": "Assign a user as the owner of a Situation",
+        "tags": [
+          "Situations"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sitn_id": {
+                    "type": "integer",
+                    "description": "Situation ID"
+                  },
+                  "user_id": {
+                    "type": "integer",
+                    "description": "User ID to assign as owner"
+                  },
+                  "username": {
+                    "type": "string",
+                    "description": "Username to assign as owner (alternative to user_id)"
+                  }
+                },
+                "required": [
+                  "sitn_id",
+                  "user_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response (HTTP 200, no response body)."
+          }
+        }
+      }
+    },
+    "/graze/v1/authenticate": {
+      "get": {
+        "operationId": "authenticate",
+        "summary": "Exchange a username/password for a short-lived auth_token (connectivity check)",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Not needed when the Integration Model's static Basic Auth security scheme is used for every other operation. Useful as a lightweight connectivity/credential check, or as the basis of a dynamic-retrieval auth_token flow if preferred over static Basic Auth.",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Moogsoft username"
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Moogsoft password"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "auth_token": {
+                      "type": "string",
+                      "description": "Session token for use in subsequent requests"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/graze/v1/closeAlert": {
+      "post": {
+        "operationId": "closeAlert",
+        "summary": "Close one or more alerts",
+        "tags": [
+          "Alerts"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "alert_id": {
+                    "type": "integer",
+                    "description": "Single alert ID to close (or use alert_ids)"
+                  },
+                  "alert_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "List of alert IDs to close (or use alert_id)"
+                  },
+                  "thread_entry_comment": {
+                    "type": "string",
+                    "description": "Optional comment recorded when closing"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response (HTTP 200, no response body)."
+          }
+        }
+      }
+    },
+    "/graze/v1/closeSituation": {
+      "post": {
+        "operationId": "closeSituation",
+        "summary": "Close a Situation",
+        "tags": [
+          "Situations"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sitn_id": {
+                    "type": "integer",
+                    "description": "Situation ID"
+                  },
+                  "resolution": {
+                    "type": "integer",
+                    "description": "Alert handling: 0 keep all, 1 close all, 2 close unique only"
+                  }
+                },
+                "required": [
+                  "sitn_id",
+                  "resolution"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response (HTTP 200, no response body)."
+          }
+        }
+      }
+    },
+    "/graze/v1/createSituation": {
+      "post": {
+        "operationId": "createSituation",
+        "summary": "Create a new Situation",
+        "tags": [
+          "Situations"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "description": "Description of the new Situation"
+                  }
+                },
+                "required": [
+                  "description"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sitn_id": {
+                      "type": "integer",
+                      "description": "ID of the newly created Situation"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/graze/v1/createTeam": {
+      "post": {
+        "operationId": "createTeam",
+        "summary": "Create a team",
+        "tags": [
+          "Teams"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Unique team name"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Team description"
+                  },
+                  "active": {
+                    "type": "boolean",
+                    "description": "Team status"
+                  },
+                  "alert_filter": {
+                    "type": "string",
+                    "description": "SQL-like filter for automatic alert assignment"
+                  },
+                  "sig_filter": {
+                    "type": "string",
+                    "description": "SQL-like filter for automatic Situation assignment"
+                  },
+                  "landing_page": {
+                    "type": "string",
+                    "description": "Team default landing page"
+                  },
+                  "services": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Service names or IDs owned by the team"
+                  },
+                  "users": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Usernames or user IDs in the team"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "team_id": {
+                      "type": "integer",
+                      "description": "ID of the newly created team"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/graze/v1/createUser": {
+      "post": {
+        "operationId": "createUser",
+        "summary": "Create a user",
+        "tags": [
+          "Users"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Unique login username"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Password (database security realm only)"
+                  },
+                  "active": {
+                    "type": "boolean",
+                    "description": "User status"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "Email address"
+                  },
+                  "fullname": {
+                    "type": "string",
+                    "description": "Full name"
+                  },
+                  "roles": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Role names or IDs, e.g. [\"Super User\"]"
+                  },
+                  "primary_group": {
+                    "type": "string",
+                    "description": "Primary group name or ID"
+                  },
+                  "department": {
+                    "type": "string",
+                    "description": "Department name or ID"
+                  },
+                  "timezone": {
+                    "type": "string",
+                    "description": "User timezone, e.g. \"Europe/London\""
+                  },
+                  "contact_num": {
+                    "type": "string",
+                    "description": "Contact phone number"
+                  },
+                  "session_expiry": {
+                    "type": "integer",
+                    "description": "Session timeout in minutes"
+                  },
+                  "teams": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Team names or IDs"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password",
+                  "email",
+                  "fullname",
+                  "roles"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user_id": {
+                      "type": "integer",
+                      "description": "ID of the newly created user"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/graze/v1/deassignAlert": {
+      "post": {
+        "operationId": "deassignAlert",
+        "summary": "Remove the current owner from an alert",
+        "tags": [
+          "Alerts"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "alert_id": {
+                    "type": "integer",
+                    "description": "Alert ID"
+                  }
+                },
+                "required": [
+                  "alert_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response (HTTP 200, no response body)."
+          }
+        }
+      }
+    },
+    "/graze/v1/deassignSituation": {
+      "post": {
+        "operationId": "deassignSituation",
+        "summary": "Remove the current owner from a Situation",
+        "tags": [
+          "Situations"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sitn_id": {
+                    "type": "integer",
+                    "description": "Situation ID"
+                  }
+                },
+                "required": [
+                  "sitn_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response (HTTP 200, no response body)."
+          }
+        }
+      }
+    },
+    "/graze/v1/deleteTeam": {
+      "post": {
+        "operationId": "deleteTeam",
+        "summary": "Delete a team",
+        "tags": [
+          "Teams"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "team_id": {
+                    "type": "integer",
+                    "description": "ID of the team to delete"
+                  }
+                },
+                "required": [
+                  "team_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response (HTTP 200, no response body)."
+          }
+        }
+      }
+    },
+    "/graze/v1/getAlertActions": {
+      "get": {
+        "operationId": "getAlertActions",
+        "summary": "List actions performed on alerts",
+        "tags": [
+          "Alerts"
+        ],
+        "parameters": [
+          {
+            "name": "alert_ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "JSON array of alert IDs to filter on, e.g. [1,2,3]"
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Starting row for pagination"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of actions to return"
+          },
+          {
+            "name": "actions",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "JSON array of action codes to filter on"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Start of time range, Unix epoch seconds"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "End of time range, Unix epoch seconds"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "uid": {
+                        "type": "integer",
+                        "description": "User ID that performed the action"
+                      },
+                      "username": {
+                        "type": "string",
+                        "description": "Username that performed the action"
+                      },
+                      "action_code": {
+                        "type": "integer",
+                        "description": "Action code"
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "Action description"
+                      },
+                      "details": {
+                        "type": "string",
+                        "description": "Action details"
+                      },
+                      "alert_id": {
+                        "type": "integer",
+                        "description": "Associated alert ID"
+                      },
+                      "timed_at": {
+                        "type": "integer",
+                        "description": "Unix epoch time the action occurred"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/graze/v1/getAlertDetails": {
+      "get": {
+        "operationId": "getAlertDetails",
+        "summary": "Get full details for an alert",
+        "tags": [
+          "Alerts"
+        ],
+        "parameters": [
+          {
+            "name": "alert_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Alert ID to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "alert_id": {
+                      "type": "integer",
+                      "description": "Alert ID"
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "Alert description"
+                    },
+                    "severity": {
+                      "type": "integer",
+                      "description": "Severity (0-5: Clear, Indeterminate, Warning, Minor, Major, Critical)"
+                    },
+                    "state": {
+                      "type": "integer",
+                      "description": "Alert state"
+                    },
+                    "signature": {
+                      "type": "string",
+                      "description": "Alert signature"
+                    },
+                    "source": {
+                      "type": "string",
+                      "description": "Source of the alert"
+                    },
+                    "agent": {
+                      "type": "string",
+                      "description": "Reporting agent"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "description": "Number of times this alert has been seen"
+                    },
+                    "last_event_time": {
+                      "type": "integer",
+                      "description": "Unix epoch time of last event"
+                    },
+                    "active_sitn_list": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      },
+                      "description": "Situation IDs the alert is currently in"
+                    },
+                    "custom_info": {
+                      "type": "object",
+                      "description": "Custom metadata attached to the alert"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/graze/v1/getAlertIds": {
+      "get": {
+        "operationId": "getAlertIds",
+        "summary": "List alert IDs matching a filter",
+        "tags": [
+          "Alerts"
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "SQL-like filter that alerts must match, e.g. \"severity>=4\""
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of alert IDs to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total_alerts": {
+                      "type": "integer",
+                      "description": "Total number of matching alerts"
+                    },
+                    "alert_ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      },
+                      "description": "Matching alert IDs"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/graze/v1/getSituationDetails": {
+      "get": {
+        "operationId": "getSituationDetails",
+        "summary": "Get full details for a Situation",
+        "tags": [
+          "Situations"
+        ],
+        "parameters": [
+          {
+            "name": "sitn_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Situation ID to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sitn_id": {
+                      "type": "integer",
+                      "description": "Situation ID"
+                    },
+                    "category": {
+                      "type": "string",
+                      "description": "Situation category"
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "Situation description"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "Situation status"
+                    },
+                    "created_at": {
+                      "type": "integer",
+                      "description": "Unix epoch time created"
+                    },
+                    "last_state_change": {
+                      "type": "integer",
+                      "description": "Unix epoch time of last state change"
+                    },
+                    "total_alerts": {
+                      "type": "integer",
+                      "description": "Count of all alerts in the Situation"
+                    },
+                    "total_unique_alerts": {
+                      "type": "integer",
+                      "description": "Count of unique alerts in the Situation"
+                    },
+                    "internal_priority": {
+                      "type": "integer",
+                      "description": "Internal priority level"
+                    },
+                    "moderator_id": {
+                      "type": "string",
+                      "description": "ID of the Situation owner"
+                    },
+                    "primary_team_id": {
+                      "type": "integer",
+                      "description": "Assigned primary team ID"
+                    },
+                    "custom_info": {
+                      "type": "object",
+                      "description": "Custom metadata attached to the Situation"
+                    },
+                    "superseded_by": {
+                      "type": "string",
+                      "description": "ID of the Situation this one was merged into, if any"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/graze/v1/getSituationIds": {
+      "get": {
+        "operationId": "getSituationIds",
+        "summary": "List Situation IDs matching a filter",
+        "tags": [
+          "Situations"
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "SQL-like filter that Situations must match"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of Situation IDs to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total_situations": {
+                      "type": "integer",
+                      "description": "Total number of matching Situations"
+                    },
+                    "sitn_ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      },
+                      "description": "Matching Situation IDs"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/graze/v1/getTeam": {
+      "get": {
+        "operationId": "getTeam",
+        "summary": "Get a single team by ID or name",
+        "tags": [
+          "Teams"
+        ],
+        "parameters": [
+          {
+            "name": "team_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Team ID to retrieve (or use name)"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Team name to retrieve (or use team_id)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "team_id": {
+                      "type": "integer",
+                      "description": "Team ID"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Team name"
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "Team description"
+                    },
+                    "active": {
+                      "type": "boolean",
+                      "description": "Team status"
+                    },
+                    "alert_filter": {
+                      "type": "string",
+                      "description": "SQL-like filter for automatic alert assignment"
+                    },
+                    "sig_filter": {
+                      "type": "string",
+                      "description": "SQL-like filter for automatic Situation assignment"
+                    },
+                    "landing_page": {
+                      "type": "string",
+                      "description": "Team default landing page"
+                    },
+                    "users": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Usernames in the team"
+                    },
+                    "services": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Service names owned by the team"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/graze/v1/getTeams": {
+      "get": {
+        "operationId": "getTeams",
+        "summary": "List all teams",
+        "tags": [
+          "Teams"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "team_id": {
+                        "type": "integer",
+                        "description": "Team ID"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Team name"
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "Team description"
+                      },
+                      "active": {
+                        "type": "boolean",
+                        "description": "Team status"
+                      },
+                      "users": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Usernames in the team"
+                      },
+                      "user_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer"
+                        },
+                        "description": "User IDs in the team"
+                      },
+                      "services": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Service names owned by the team"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/graze/v1/getUserInfo": {
+      "get": {
+        "operationId": "getUserInfo",
+        "summary": "Get basic info for a user",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID to look up (or use username)"
+          },
+          {
+            "name": "username",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Username to look up (or use user_id)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user_id": {
+                      "type": "integer",
+                      "description": "User ID"
+                    },
+                    "full_name": {
+                      "type": "string",
+                      "description": "Full name"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/graze/v1/getUserRoles": {
+      "get": {
+        "operationId": "getUserRoles",
+        "summary": "Get the roles assigned to a user",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID to look up (or use username)"
+          },
+          {
+            "name": "username",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Username to look up (or use user_id)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "description": "Role ID"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Role name"
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "Role description"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/graze/v1/getUsers": {
+      "get": {
+        "operationId": "getUsers",
+        "summary": "List users",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return (default 1000)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "uid": {
+                        "type": "integer",
+                        "description": "User ID"
+                      },
+                      "username": {
+                        "type": "string",
+                        "description": "Username"
+                      },
+                      "fullname": {
+                        "type": "string",
+                        "description": "Full name"
+                      },
+                      "teams": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Team names the user belongs to"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/graze/v1/removeAlertFromSituation": {
+      "post": {
+        "operationId": "removeAlertFromSituation",
+        "summary": "Remove an alert from a Situation",
+        "tags": [
+          "Situations"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "alert_id": {
+                    "type": "integer",
+                    "description": "Alert ID to remove"
+                  },
+                  "sitn_id": {
+                    "type": "integer",
+                    "description": "Situation ID"
+                  }
+                },
+                "required": [
+                  "alert_id",
+                  "sitn_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response (HTTP 200, no response body)."
+          }
+        }
+      }
+    },
+    "/graze/v1/resolveAlerts": {
+      "post": {
+        "operationId": "resolveAlerts",
+        "summary": "Resolve one or more alerts",
+        "tags": [
+          "Alerts"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "alert_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "List of alert IDs to resolve"
+                  },
+                  "thread_entry_comment": {
+                    "type": "string",
+                    "description": "Optional comment recorded when resolving"
+                  }
+                },
+                "required": [
+                  "alert_ids"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "description": "Overall success"
+                    },
+                    "resolved_alerts": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      },
+                      "description": "Alert IDs successfully resolved"
+                    },
+                    "failed_alerts": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      },
+                      "description": "Alert IDs that failed to resolve"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/graze/v1/resolveSituation": {
+      "post": {
+        "operationId": "resolveSituation",
+        "summary": "Resolve a Situation",
+        "tags": [
+          "Situations"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sitn_id": {
+                    "type": "integer",
+                    "description": "Situation ID"
+                  }
+                },
+                "required": [
+                  "sitn_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response (HTTP 200, no response body)."
+          }
+        }
+      }
+    },
+    "/graze/v1/setAlertAcknowledgeState": {
+      "post": {
+        "operationId": "setAlertAcknowledgeState",
+        "summary": "Acknowledge or unacknowledge an alert",
+        "tags": [
+          "Alerts"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "alert_id": {
+                    "type": "integer",
+                    "description": "Alert ID"
+                  },
+                  "acknowledged": {
+                    "type": "integer",
+                    "description": "1 to acknowledge, 0 to unacknowledge"
+                  }
+                },
+                "required": [
+                  "alert_id",
+                  "acknowledged"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response (HTTP 200, no response body)."
+          }
+        }
+      }
+    },
+    "/graze/v1/setAlertSeverity": {
+      "post": {
+        "operationId": "setAlertSeverity",
+        "summary": "Set the severity of an open alert",
+        "tags": [
+          "Alerts"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "alert_id": {
+                    "type": "integer",
+                    "description": "Alert ID"
+                  },
+                  "severity": {
+                    "type": "integer",
+                    "description": "Severity level 0-5 (Clear, Indeterminate, Warning, Minor, Major, Critical)"
+                  }
+                },
+                "required": [
+                  "alert_id",
+                  "severity"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response (HTTP 200, no response body)."
+          }
+        }
+      }
+    },
+    "/graze/v1/setSituationDescription": {
+      "post": {
+        "operationId": "setSituationDescription",
+        "summary": "Update a Situation's description",
+        "tags": [
+          "Situations"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sitn_id": {
+                    "type": "integer",
+                    "description": "Situation ID"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "New description text"
+                  }
+                },
+                "required": [
+                  "sitn_id",
+                  "description"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response (HTTP 200, no response body)."
+          }
+        }
+      }
+    },
+    "/graze/v1/updateTeam": {
+      "post": {
+        "operationId": "updateTeam",
+        "summary": "Update a team",
+        "tags": [
+          "Teams"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Unique team name"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Team description"
+                  },
+                  "active": {
+                    "type": "boolean",
+                    "description": "Team status"
+                  },
+                  "alert_filter": {
+                    "type": "string",
+                    "description": "SQL-like filter for automatic alert assignment"
+                  },
+                  "sig_filter": {
+                    "type": "string",
+                    "description": "SQL-like filter for automatic Situation assignment"
+                  },
+                  "landing_page": {
+                    "type": "string",
+                    "description": "Team default landing page"
+                  },
+                  "services": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Service names or IDs owned by the team"
+                  },
+                  "users": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Usernames or user IDs in the team"
+                  },
+                  "team_id": {
+                    "type": "integer",
+                    "description": "Team ID to update"
+                  }
+                },
+                "required": [
+                  "team_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response (HTTP 200, no response body)."
+          }
+        }
+      }
+    },
+    "/graze/v1/updateUser": {
+      "post": {
+        "operationId": "updateUser",
+        "summary": "Update a user",
+        "tags": [
+          "Users"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "uid": {
+                    "type": "integer",
+                    "description": "User ID to update (or use username)"
+                  },
+                  "username": {
+                    "type": "string",
+                    "description": "Username to update (or use uid)"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "New password (database security realm only)"
+                  },
+                  "active": {
+                    "type": "boolean",
+                    "description": "User status"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "Email address"
+                  },
+                  "fullname": {
+                    "type": "string",
+                    "description": "Full name"
+                  },
+                  "roles": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Role names or IDs"
+                  },
+                  "primary_group": {
+                    "type": "string",
+                    "description": "Primary group name or ID"
+                  },
+                  "department": {
+                    "type": "string",
+                    "description": "Department name or ID"
+                  },
+                  "timezone": {
+                    "type": "string",
+                    "description": "User timezone"
+                  },
+                  "contact_num": {
+                    "type": "string",
+                    "description": "Contact phone number"
+                  },
+                  "session_expiry": {
+                    "type": "integer",
+                    "description": "Session timeout in minutes"
+                  },
+                  "teams": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Team names or IDs"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response (HTTP 200, no response body)."
+          }
+        }
+      }
+    },
+    "/integrations/api/v1/integrations": {
+      "get": {
+        "operationId": "listIntegrations",
+        "summary": "List configured integrations",
+        "tags": [
+          "Integrations"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "description": "Integration ID"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Integration name"
+                      },
+                      "type_id": {
+                        "type": "string",
+                        "description": "Integration type, e.g. \"Webhook\""
+                      },
+                      "version": {
+                        "type": "string",
+                        "description": "Integration type version"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createIntegration",
+        "summary": "Create a new integration configuration",
+        "tags": [
+          "Integrations"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type_id": {
+                    "type": "string",
+                    "description": "Integration type, e.g. \"Webhook\""
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Integration name"
+                  },
+                  "version": {
+                    "type": "string",
+                    "description": "Integration type version"
+                  },
+                  "inputs": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "Input field name"
+                        },
+                        "value": {
+                          "type": "string",
+                          "description": "Input field value"
+                        }
+                      }
+                    },
+                    "description": "Configuration/authentication inputs as name/value pairs"
+                  }
+                },
+                "required": [
+                  "type_id",
+                  "name",
+                  "version",
+                  "inputs"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "description": "Integration ID"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Integration name"
+                    },
+                    "type_id": {
+                      "type": "string",
+                      "description": "Integration type"
+                    },
+                    "version": {
+                      "type": "string",
+                      "description": "Integration type version"
+                    },
+                    "config": {
+                      "type": "object",
+                      "description": "Integration configuration"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integrations/api/v1/integrations/{integrationId}": {
+      "get": {
+        "operationId": "getIntegration",
+        "summary": "Get an integration's configuration",
+        "tags": [
+          "Integrations"
+        ],
+        "parameters": [
+          {
+            "name": "integrationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Integration ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "description": "Integration ID"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Integration name"
+                    },
+                    "type_id": {
+                      "type": "string",
+                      "description": "Integration type"
+                    },
+                    "version": {
+                      "type": "string",
+                      "description": "Integration type version"
+                    },
+                    "config": {
+                      "type": "object",
+                      "description": "Integration configuration"
+                    },
+                    "inputs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      },
+                      "description": "Configuration/authentication inputs"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateIntegrationConfig",
+        "summary": "Update an integration's configuration",
+        "tags": [
+          "Integrations"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type_id": {
+                    "type": "string",
+                    "description": "Integration type, e.g. \"Webhook\""
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Integration name"
+                  },
+                  "version": {
+                    "type": "string",
+                    "description": "Integration type version, must be the most recent"
+                  },
+                  "inputs": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "Input field name"
+                        },
+                        "value": {
+                          "type": "string",
+                          "description": "Input field value"
+                        }
+                      }
+                    },
+                    "description": "Configuration/authentication inputs as name/value pairs"
+                  }
+                },
+                "required": [
+                  "type_id",
+                  "name",
+                  "version",
+                  "inputs"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "description": "Integration ID"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Integration name"
+                    },
+                    "type_id": {
+                      "type": "string",
+                      "description": "Integration type"
+                    },
+                    "version": {
+                      "type": "string",
+                      "description": "Integration type version"
+                    },
+                    "config": {
+                      "type": "object",
+                      "description": "Integration configuration"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "integrationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Integration ID"
+          }
+        ]
+      }
+    },
+    "/integrations/api/v1/integrations/{integrationId}/status": {
+      "get": {
+        "operationId": "getIntegrationStatus",
+        "summary": "Get an integration's running status",
+        "tags": [
+          "Integrations"
+        ],
+        "parameters": [
+          {
+            "name": "integrationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Integration ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "global": {
+                      "type": "object",
+                      "properties": {
+                        "integration_config_id": {
+                          "type": "integer",
+                          "description": "Integration ID"
+                        },
+                        "status": {
+                          "type": "string",
+                          "description": "Overall status, e.g. \"running\""
+                        }
+                      }
+                    },
+                    "instances": {
+                      "type": "object",
+                      "description": "Per-broker instance status, keyed by broker ID"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateIntegrationStatus",
+        "summary": "Start or stop an integration",
+        "tags": [
+          "Integrations"
+        ],
+        "parameters": [
+          {
+            "name": "integrationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Integration ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "command": {
+                    "type": "string",
+                    "description": "\"start\" or \"stop\"",
+                    "enum": [
+                      "start",
+                      "stop"
+                    ]
+                  },
+                  "target": {
+                    "type": "string",
+                    "description": "Optional broker to target"
+                  }
+                },
+                "required": [
+                  "command"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted \u2014 command applied asynchronously, no response body."
+          }
+        }
+      }
+    }
+  }
+}
