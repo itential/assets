@@ -79,7 +79,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **OpenAI** | AI / LLM APIs |
 | **Paessler** | PRTG monitoring |
 | **PagerDuty** | Incident management |
-| **Palo Alto** | Panorama · Prisma Access · Prisma Cloud CSPM |
+| **Palo Alto** | CloudGenix (Prisma SD-WAN) · Panorama · Prisma Access · Prisma Cloud CSPM |
 | **RingCentral** | Unified communications |
 | **Ruckus** | Fastiron |
 | **Rundeck** | Job automation & orchestration |
@@ -90,6 +90,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Slack** | Messaging |
 | **SolarWinds** | Orion NPM |
 | **Sonatype** | Nexus |
+| **Spirent** | TestCenter |
 | **Symantec** | Management Center |
 | **Tufin** | SecureApp · SecureChange · SecureTrack |
 | **Twilio** | Communications APIs |

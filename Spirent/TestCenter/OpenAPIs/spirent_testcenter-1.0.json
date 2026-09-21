@@ -1,0 +1,1058 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Spirent TestCenter",
+    "version": "1.0",
+    "description": "Spirent TestCenter is a network test and measurement platform for validating device, network, and security performance at scale. The STC REST API exposes its Tcl/Python automation object model (sessions, test objects, chassis connections, and command execution) over HTTP.\n\nAuthentication: static session-token header (X-STC-API-Session). No login/token exchange."
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}/stcapi",
+      "description": "STC REST API server (Spirent Lab Server or standalone STC REST daemon)",
+      "variables": {
+        "protocol": {
+          "default": "https",
+          "enum": [
+            "https",
+            "http"
+          ]
+        },
+        "host": {
+          "default": "labserver.example.com",
+          "description": "Lab Server or REST daemon host (no protocol, no path)"
+        },
+        "port": {
+          "default": "8888"
+        }
+      }
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "staticSessionToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-STC-API-Session",
+        "description": "Static session-token header. The STC REST API server issues this token when the lab server process starts; it is configured once as a static credential on the Itential integration instance rather than exchanged via a login call."
+      }
+    }
+  },
+  "security": [
+    {
+      "staticSessionToken": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "BulkObjectManagement"
+    },
+    {
+      "name": "ChassisConnections"
+    },
+    {
+      "name": "FileManagement"
+    },
+    {
+      "name": "ObjectManagement"
+    },
+    {
+      "name": "SessionManagement"
+    },
+    {
+      "name": "SystemFunctions"
+    }
+  ],
+  "paths": {
+    "/bulk/objects/": {
+      "post": {
+        "operationId": "createOneOrMoreAutomationObjects",
+        "summary": "createOneOrMoreAutomationObjects",
+        "tags": [
+          "BulkObjectManagement"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "createOneOrMoreAutomationObjects. No official downloadable schema is published for the STC REST API; consult Spirent's TestCenter API/TCL command reference for the authoritative attribute list."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bulk/objects/{object_handles}": {
+      "put": {
+        "operationId": "bulkConfigureObjectAttributes",
+        "summary": "bulkConfigureObjectAttributes",
+        "tags": [
+          "BulkObjectManagement"
+        ],
+        "parameters": [
+          {
+            "name": "object_handles",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Object Handles"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "bulkConfigureObjectAttributes. No official downloadable schema is published for the STC REST API; consult Spirent's TestCenter API/TCL command reference for the authoritative attribute list."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getValueOfOneOrMoreAttributes",
+        "summary": "getValueOfOneOrMoreAttributes",
+        "tags": [
+          "BulkObjectManagement"
+        ],
+        "parameters": [
+          {
+            "name": "object_handles",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Object Handles"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "bulkDeleteObjects",
+        "summary": "bulkDeleteObjects",
+        "tags": [
+          "BulkObjectManagement"
+        ],
+        "parameters": [
+          {
+            "name": "object_handles",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Object Handles"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "bulkDeleteObjects. No official downloadable schema is published for the STC REST API; consult Spirent's TestCenter API/TCL command reference for the authoritative attribute list."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/connections/": {
+      "post": {
+        "operationId": "connectToChassis",
+        "summary": "connectToChassis",
+        "tags": [
+          "ChassisConnections"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getConnectionStatusAllChassis",
+        "summary": "getConnectionStatusAllChassis",
+        "tags": [
+          "ChassisConnections"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/connections/{chassis_address}": {
+      "put": {
+        "operationId": "connectToSpecifiedChassis",
+        "summary": "connectToSpecifiedChassis",
+        "tags": [
+          "ChassisConnections"
+        ],
+        "parameters": [
+          {
+            "name": "chassis_address",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Chassis Address"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "connectToSpecifiedChassis. No official downloadable schema is published for the STC REST API; consult Spirent's TestCenter API/TCL command reference for the authoritative attribute list."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "disconnectFromSpecifiedChassis",
+        "summary": "disconnectFromSpecifiedChassis",
+        "tags": [
+          "ChassisConnections"
+        ],
+        "parameters": [
+          {
+            "name": "chassis_address",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Chassis Address"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "disconnectFromSpecifiedChassis. No official downloadable schema is published for the STC REST API; consult Spirent's TestCenter API/TCL command reference for the authoritative attribute list."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getSpecifiedChassisStatus",
+        "summary": "getSpecifiedChassisStatus",
+        "tags": [
+          "ChassisConnections"
+        ],
+        "parameters": [
+          {
+            "name": "chassis_address",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Chassis Address"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/files/{file_name}": {
+      "get": {
+        "operationId": "downloadSpecifiedFile",
+        "summary": "downloadSpecifiedFile",
+        "tags": [
+          "FileManagement"
+        ],
+        "parameters": [
+          {
+            "name": "file_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "File Name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "uploadFileToSession",
+        "summary": "uploadFileToSession",
+        "tags": [
+          "FileManagement"
+        ],
+        "parameters": [
+          {
+            "name": "file_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "File Name"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "uploadFileToSession. No official downloadable schema is published for the STC REST API; consult Spirent's TestCenter API/TCL command reference for the authoritative attribute list."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/files/": {
+      "get": {
+        "operationId": "listSessionFiles",
+        "summary": "listSessionFiles",
+        "tags": [
+          "FileManagement"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "uploadFilePost",
+        "summary": "uploadFilePost",
+        "tags": [
+          "FileManagement"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "uploadFilePost. No official downloadable schema is published for the STC REST API; consult Spirent's TestCenter API/TCL command reference for the authoritative attribute list."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/objects/": {
+      "post": {
+        "operationId": "createTestCenterObject",
+        "summary": "createTestCenterObject",
+        "tags": [
+          "ObjectManagement"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/objects/{object_handle}": {
+      "put": {
+        "operationId": "configureTestCenterObject",
+        "summary": "configureTestCenterObject",
+        "tags": [
+          "ObjectManagement"
+        ],
+        "parameters": [
+          {
+            "name": "object_handle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Object Handle"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getAttributesOrObjectHandles",
+        "summary": "getAttributesOrObjectHandles",
+        "tags": [
+          "ObjectManagement"
+        ],
+        "parameters": [
+          {
+            "name": "object_handle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Object Handle"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteObject",
+        "summary": "deleteObject",
+        "tags": [
+          "ObjectManagement"
+        ],
+        "parameters": [
+          {
+            "name": "object_handle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Object Handle"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "deleteObject. No official downloadable schema is published for the STC REST API; consult Spirent's TestCenter API/TCL command reference for the authoritative attribute list."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/": {
+      "get": {
+        "operationId": "listCurrentSessions",
+        "summary": "listCurrentSessions",
+        "tags": [
+          "SessionManagement"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createNewSession",
+        "summary": "createNewSession",
+        "tags": [
+          "SessionManagement"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/{session_id}": {
+      "get": {
+        "operationId": "getSessionInfo",
+        "summary": "getSessionInfo",
+        "tags": [
+          "SessionManagement"
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      },
+      "head": {
+        "operationId": "checkSessionExistance",
+        "summary": "checkSessionExistance",
+        "tags": [
+          "SessionManagement"
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "endSession",
+        "summary": "endSession",
+        "tags": [
+          "SessionManagement"
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session Id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "endSession. No official downloadable schema is published for the STC REST API; consult Spirent's TestCenter API/TCL command reference for the authoritative attribute list."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apply": {
+      "put": {
+        "operationId": "sendTestConfiguration",
+        "summary": "sendTestConfiguration",
+        "tags": [
+          "SystemFunctions"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "sendTestConfiguration. No official downloadable schema is published for the STC REST API; consult Spirent's TestCenter API/TCL command reference for the authoritative attribute list."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/help": {
+      "get": {
+        "operationId": "getApiHelp",
+        "summary": "getApiHelp",
+        "tags": [
+          "SystemFunctions"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/help/commands/": {
+      "get": {
+        "operationId": "getHelpAllCommands",
+        "summary": "getHelpAllCommands",
+        "tags": [
+          "SystemFunctions"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/help/{command_name}": {
+      "get": {
+        "operationId": "getHelpSpecificCommand",
+        "summary": "getHelpSpecificCommand",
+        "tags": [
+          "SystemFunctions"
+        ],
+        "parameters": [
+          {
+            "name": "command_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Command Name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        },
+        "description": "Also covers: getHelpSpecificObject - getHelpSpecificObject\n\nAlso covers: getHelpOnSpecificObjectHandle - getHelpOnSpecificObjectHandle"
+      }
+    },
+    "/help/list": {
+      "get": {
+        "operationId": "searchHelpInfo",
+        "summary": "searchHelpInfo",
+        "tags": [
+          "SystemFunctions"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/log/": {
+      "post": {
+        "operationId": "writeMessageToLog",
+        "summary": "writeMessageToLog",
+        "tags": [
+          "SystemFunctions"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/perform/": {
+      "post": {
+        "operationId": "performApiMethod",
+        "summary": "performApiMethod",
+        "tags": [
+          "SystemFunctions"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bulk/perform/": {
+      "post": {
+        "operationId": "bulkPerformCommand",
+        "summary": "bulkPerformCommand",
+        "tags": [
+          "SystemFunctions"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/system/": {
+      "get": {
+        "operationId": "getSystemInformation",
+        "summary": "getSystemInformation",
+        "tags": [
+          "SystemFunctions"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Response payload; shape follows the STC object/attribute model returned."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
