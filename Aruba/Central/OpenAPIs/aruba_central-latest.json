@@ -1,0 +1,2138 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Aruba Central",
+    "description": "Authentication: OAuth 2.0 (authorization code grant) via Aruba Central's own OAuth2 provider.\n\nHPE Aruba Networking Central cloud-managed network platform \u2014 site, group, and device inventory management, group configuration templates, WLAN (SSID) profiles, guest access portals/visitors, and labels for device organization.\n\nSource: https://developer.arubanetworks.com/central/docs/api-oauth-access-token (auth); operation surface derived from Aruba Central's Configuration/Central/Platform/Guest API families, each of which self-hosts its own per-instance Swagger 2.0 spec (not fetchable without a live tenant).",
+    "version": "latest",
+    "x-vendor-api-version": "2.0",
+    "x-itential-curated": "Trimmed to 56 of 976 upstream operations covering common CRUD for automation: sites and site-device associations, groups and group configuration templates, device inventory and group/template-variable assignment, WLAN (SSID) profile CRUD, guest portal and visitor CRUD, and labels with device associations. See the repo README for the full scope and the full spec."
+  },
+  "servers": [
+    {
+      "url": "https://apigw-prod2.central.arubanetworks.com"
+    }
+  ],
+  "security": [
+    {
+      "oauth2AuthCode": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Device"
+    },
+    {
+      "name": "Device Inventory"
+    },
+    {
+      "name": "Group"
+    },
+    {
+      "name": "Group Template"
+    },
+    {
+      "name": "Guest"
+    },
+    {
+      "name": "Label"
+    },
+    {
+      "name": "Site"
+    },
+    {
+      "name": "WLAN"
+    }
+  ],
+  "paths": {
+    "/central/v1/labels": {
+      "post": {
+        "operationId": "createLabel",
+        "summary": "Create a label",
+        "tags": [
+          "Label"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Label"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/central/v1/labels/associations": {
+      "post": {
+        "operationId": "associateLabel",
+        "summary": "Associate a label with devices",
+        "tags": [
+          "Label"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelAssociation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Associated."
+          }
+        }
+      },
+      "delete": {
+        "operationId": "unassociateLabel",
+        "summary": "Remove a label association from devices",
+        "tags": [
+          "Label"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelAssociation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Unassociated."
+          }
+        }
+      }
+    },
+    "/central/v1/labels/{label_id}": {
+      "get": {
+        "operationId": "getLabel",
+        "summary": "Get a label by ID",
+        "tags": [
+          "Label"
+        ],
+        "parameters": [
+          {
+            "name": "label_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Label"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateLabel",
+        "summary": "Update a label by ID",
+        "tags": [
+          "Label"
+        ],
+        "parameters": [
+          {
+            "name": "label_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Label"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteLabel",
+        "summary": "Delete a label by ID",
+        "tags": [
+          "Label"
+        ],
+        "parameters": [
+          {
+            "name": "label_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          }
+        }
+      }
+    },
+    "/central/v2/labels": {
+      "get": {
+        "operationId": "listLabels",
+        "summary": "List labels",
+        "tags": [
+          "Label"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          }
+        }
+      }
+    },
+    "/central/v2/sites": {
+      "get": {
+        "operationId": "listSites",
+        "summary": "List sites",
+        "tags": [
+          "Site"
+        ],
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          }
+        }
+      },
+      "post": {
+        "operationId": "createSite",
+        "summary": "Create a site",
+        "tags": [
+          "Site"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SiteCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Site"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/central/v2/sites/associate": {
+      "post": {
+        "operationId": "associateSite",
+        "summary": "Associate devices with a site",
+        "tags": [
+          "Site"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SiteAssociation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Associated."
+          }
+        }
+      },
+      "delete": {
+        "operationId": "unassociateSite",
+        "summary": "Remove device association from a site",
+        "tags": [
+          "Site"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SiteAssociation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Unassociated."
+          }
+        }
+      }
+    },
+    "/central/v2/sites/{site_id}": {
+      "get": {
+        "operationId": "getSite",
+        "summary": "Get a site by ID",
+        "tags": [
+          "Site"
+        ],
+        "parameters": [
+          {
+            "name": "site_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Site"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateSite",
+        "summary": "Update a site by ID",
+        "tags": [
+          "Site"
+        ],
+        "parameters": [
+          {
+            "name": "site_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SiteCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Site"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteSite",
+        "summary": "Delete a site by ID",
+        "tags": [
+          "Site"
+        ],
+        "parameters": [
+          {
+            "name": "site_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          }
+        }
+      }
+    },
+    "/configuration/v1/devices/move": {
+      "post": {
+        "operationId": "moveDevices",
+        "summary": "Move devices to a different group",
+        "tags": [
+          "Device"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "group",
+                  "serials"
+                ],
+                "properties": {
+                  "group": {
+                    "type": "string"
+                  },
+                  "serials": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Moved."
+          }
+        }
+      }
+    },
+    "/configuration/v1/devices/{serial}/group": {
+      "get": {
+        "operationId": "getDeviceGroup",
+        "summary": "Get the group a device is assigned to",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "serial",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          }
+        }
+      }
+    },
+    "/configuration/v1/devices/{serial}/template_variables": {
+      "get": {
+        "operationId": "getDeviceTemplateVariables",
+        "summary": "Get a device's template variables",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "serial",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          }
+        }
+      },
+      "post": {
+        "operationId": "createDeviceTemplateVariables",
+        "summary": "Create a device's template variables",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "serial",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created."
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceDeviceTemplateVariables",
+        "summary": "Replace a device's template variables",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "serial",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replaced."
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateDeviceTemplateVariables",
+        "summary": "Update a device's template variables",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "serial",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated."
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteDeviceTemplateVariables",
+        "summary": "Delete a device's template variables",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "serial",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          }
+        }
+      }
+    },
+    "/configuration/v1/groups/default_group": {
+      "get": {
+        "operationId": "getDefaultGroup",
+        "summary": "Get the default group",
+        "tags": [
+          "Group"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Group"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateDefaultGroup",
+        "summary": "Set the default group",
+        "tags": [
+          "Group"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "group"
+                ],
+                "properties": {
+                  "group": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated."
+          }
+        }
+      }
+    },
+    "/configuration/v1/groups/properties": {
+      "get": {
+        "operationId": "getGroupsProperties",
+        "summary": "Get properties for a set of groups",
+        "tags": [
+          "Group"
+        ],
+        "parameters": [
+          {
+            "name": "groups",
+            "in": "query",
+            "description": "Comma-separated list of group names.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          }
+        }
+      }
+    },
+    "/configuration/v1/groups/{group_name}": {
+      "delete": {
+        "operationId": "deleteGroup",
+        "summary": "Delete a group",
+        "tags": [
+          "Group"
+        ],
+        "parameters": [
+          {
+            "name": "group_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          }
+        }
+      }
+    },
+    "/configuration/v1/groups/{group_name}/name": {
+      "patch": {
+        "operationId": "renameGroup",
+        "summary": "Rename a group",
+        "tags": [
+          "Group"
+        ],
+        "parameters": [
+          {
+            "name": "group_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "group"
+                ],
+                "properties": {
+                  "group": {
+                    "type": "string",
+                    "description": "New group name."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Renamed."
+          }
+        }
+      }
+    },
+    "/configuration/v1/groups/{group_name}/templates": {
+      "get": {
+        "operationId": "listGroupTemplates",
+        "summary": "List templates in a group",
+        "tags": [
+          "Group Template"
+        ],
+        "parameters": [
+          {
+            "name": "group_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          }
+        }
+      },
+      "post": {
+        "operationId": "createGroupTemplate",
+        "summary": "Create a template in a group",
+        "tags": [
+          "Group Template"
+        ],
+        "parameters": [
+          {
+            "name": "group_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Template"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Template"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateGroupTemplate",
+        "summary": "Update a template in a group",
+        "tags": [
+          "Group Template"
+        ],
+        "parameters": [
+          {
+            "name": "group_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Template"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Template"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/configuration/v1/groups/{group_name}/templates/{template_name}": {
+      "get": {
+        "operationId": "getGroupTemplate",
+        "summary": "Get a template by name",
+        "tags": [
+          "Group Template"
+        ],
+        "parameters": [
+          {
+            "name": "group_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "template_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Template"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteGroupTemplate",
+        "summary": "Delete a template by name",
+        "tags": [
+          "Group Template"
+        ],
+        "parameters": [
+          {
+            "name": "group_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "template_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          }
+        }
+      }
+    },
+    "/configuration/v1/wlan/{group_name_or_guid}": {
+      "get": {
+        "operationId": "listWlans",
+        "summary": "List SSID profiles in a group",
+        "tags": [
+          "WLAN"
+        ],
+        "parameters": [
+          {
+            "name": "group_name_or_guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          }
+        }
+      }
+    },
+    "/configuration/v1/wlan/{group_name_or_guid}/{wlan_name}": {
+      "delete": {
+        "operationId": "deleteWlan",
+        "summary": "Delete an SSID profile",
+        "tags": [
+          "WLAN"
+        ],
+        "parameters": [
+          {
+            "name": "group_name_or_guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "wlan_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          }
+        }
+      }
+    },
+    "/configuration/v2/groups": {
+      "get": {
+        "operationId": "listGroups",
+        "summary": "List groups",
+        "tags": [
+          "Group"
+        ],
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          }
+        }
+      },
+      "post": {
+        "operationId": "createGroup",
+        "summary": "Create a group",
+        "tags": [
+          "Group"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Group"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/configuration/v2/groups/clone": {
+      "post": {
+        "operationId": "cloneGroup",
+        "summary": "Clone a group",
+        "tags": [
+          "Group"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "group",
+                  "clone_group"
+                ],
+                "properties": {
+                  "group": {
+                    "type": "string",
+                    "description": "Source group name."
+                  },
+                  "clone_group": {
+                    "type": "string",
+                    "description": "New group name."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cloned."
+          }
+        }
+      }
+    },
+    "/configuration/v2/groups/{group_name}/properties": {
+      "patch": {
+        "operationId": "updateGroupProperties",
+        "summary": "Update a group's properties",
+        "tags": [
+          "Group"
+        ],
+        "parameters": [
+          {
+            "name": "group_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupAttributes"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated."
+          }
+        }
+      }
+    },
+    "/configuration/v2/wlan/{group_name_or_guid}/{wlan_name}": {
+      "get": {
+        "operationId": "getWlan",
+        "summary": "Get an SSID profile",
+        "tags": [
+          "WLAN"
+        ],
+        "parameters": [
+          {
+            "name": "group_name_or_guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "wlan_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WlanCreate"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createWlan",
+        "summary": "Create an SSID profile",
+        "tags": [
+          "WLAN"
+        ],
+        "parameters": [
+          {
+            "name": "group_name_or_guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "wlan_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WlanCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WlanCreate"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateWlan",
+        "summary": "Update an SSID profile",
+        "tags": [
+          "WLAN"
+        ],
+        "parameters": [
+          {
+            "name": "group_name_or_guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "wlan_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WlanCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WlanCreate"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceWlan",
+        "summary": "Replace an SSID profile",
+        "tags": [
+          "WLAN"
+        ],
+        "parameters": [
+          {
+            "name": "group_name_or_guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "wlan_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WlanCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replaced.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WlanCreate"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/guest/v1/portals": {
+      "get": {
+        "operationId": "listGuestPortals",
+        "summary": "List guest portals",
+        "tags": [
+          "Guest"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          }
+        }
+      },
+      "post": {
+        "operationId": "createGuestPortal",
+        "summary": "Create a guest portal",
+        "tags": [
+          "Guest"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GuestPortal"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuestPortal"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/guest/v1/portals/{portal_id}": {
+      "get": {
+        "operationId": "getGuestPortal",
+        "summary": "Get a guest portal",
+        "tags": [
+          "Guest"
+        ],
+        "parameters": [
+          {
+            "name": "portal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuestPortal"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceGuestPortal",
+        "summary": "Replace a guest portal",
+        "tags": [
+          "Guest"
+        ],
+        "parameters": [
+          {
+            "name": "portal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GuestPortal"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replaced.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuestPortal"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteGuestPortal",
+        "summary": "Delete a guest portal",
+        "tags": [
+          "Guest"
+        ],
+        "parameters": [
+          {
+            "name": "portal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          }
+        }
+      }
+    },
+    "/guest/v1/portals/{portal_id}/visitors": {
+      "get": {
+        "operationId": "listGuestVisitors",
+        "summary": "List visitors for a portal",
+        "tags": [
+          "Guest"
+        ],
+        "parameters": [
+          {
+            "name": "portal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          }
+        }
+      },
+      "post": {
+        "operationId": "createGuestVisitor",
+        "summary": "Create a visitor account for a portal",
+        "tags": [
+          "Guest"
+        ],
+        "parameters": [
+          {
+            "name": "portal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GuestVisitor"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuestVisitor"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/guest/v1/portals/{portal_id}/visitors/{visitor_id}": {
+      "get": {
+        "operationId": "getGuestVisitor",
+        "summary": "Get a visitor account",
+        "tags": [
+          "Guest"
+        ],
+        "parameters": [
+          {
+            "name": "portal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "visitor_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuestVisitor"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceGuestVisitor",
+        "summary": "Replace a visitor account",
+        "tags": [
+          "Guest"
+        ],
+        "parameters": [
+          {
+            "name": "portal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "visitor_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GuestVisitor"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replaced.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuestVisitor"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteGuestVisitor",
+        "summary": "Delete a visitor account",
+        "tags": [
+          "Guest"
+        ],
+        "parameters": [
+          {
+            "name": "portal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "visitor_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          }
+        }
+      }
+    },
+    "/platform/device_inventory/v1/device/{serial}": {
+      "get": {
+        "operationId": "getInventoryDevice",
+        "summary": "Get a device from inventory by serial",
+        "tags": [
+          "Device Inventory"
+        ],
+        "parameters": [
+          {
+            "name": "serial",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceInventoryItem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/platform/device_inventory/v1/devices": {
+      "get": {
+        "operationId": "listInventoryDevices",
+        "summary": "List devices in inventory",
+        "tags": [
+          "Device Inventory"
+        ],
+        "parameters": [
+          {
+            "name": "sku_type",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "all",
+                "ap",
+                "switch",
+                "gateway"
+              ]
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          }
+        }
+      },
+      "post": {
+        "operationId": "addInventoryDevices",
+        "summary": "Add devices to inventory",
+        "tags": [
+          "Device Inventory"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "devices": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/DeviceInventoryItem"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Added."
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteInventoryDevices",
+        "summary": "Remove devices from inventory",
+        "tags": [
+          "Device Inventory"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "serials": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Removed."
+          }
+        }
+      }
+    },
+    "/platform/device_inventory/v1/devices/stats": {
+      "get": {
+        "operationId": "getInventoryDeviceStats",
+        "summary": "Get inventory device statistics",
+        "tags": [
+          "Device Inventory"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "oauth2AuthCode": {
+        "type": "oauth2",
+        "description": "OAuth 2.0 authorization code grant via Aruba Central's own OAuth2 provider (client ID/secret registered against a Central account, per-region API gateway).",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://apigw-prod2.central.arubanetworks.com/oauth2/authorize/central/api",
+            "tokenUrl": "https://apigw-prod2.central.arubanetworks.com/oauth2/token",
+            "scopes": {}
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Site": {
+        "type": "object",
+        "properties": {
+          "site_id": {
+            "type": "integer"
+          },
+          "site_name": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "zipcode": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "string"
+          },
+          "longitude": {
+            "type": "string"
+          }
+        }
+      },
+      "SiteCreate": {
+        "type": "object",
+        "required": [
+          "site_name"
+        ],
+        "properties": {
+          "site_name": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "zipcode": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "string"
+          },
+          "longitude": {
+            "type": "string"
+          }
+        }
+      },
+      "SiteAssociation": {
+        "type": "object",
+        "required": [
+          "site_id",
+          "device_ids",
+          "device_type"
+        ],
+        "properties": {
+          "site_id": {
+            "type": "integer"
+          },
+          "device_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Serial numbers of the devices to (un)associate."
+          },
+          "device_type": {
+            "type": "string",
+            "enum": [
+              "IAP",
+              "MOBILITY_CONTROLLER",
+              "CX_SWITCH",
+              "SWITCH",
+              "GATEWAY"
+            ]
+          }
+        }
+      },
+      "GroupAttributes": {
+        "type": "object",
+        "description": "Group configuration attributes (template/UI mode, password, applicable device architectures) per Aruba Central's Groups configuration API.",
+        "properties": {
+          "group_password": {
+            "type": "string"
+          },
+          "template_info": {
+            "type": "object",
+            "properties": {
+              "Wired": {
+                "type": "boolean"
+              },
+              "Wireless": {
+                "type": "boolean"
+              }
+            }
+          },
+          "aos_version": {
+            "type": "string",
+            "enum": [
+              "AOS_10",
+              "AOS_8"
+            ]
+          },
+          "monitor_only_sw": {
+            "type": "boolean"
+          },
+          "monitor_only_cx": {
+            "type": "boolean"
+          }
+        }
+      },
+      "GroupCreate": {
+        "type": "object",
+        "required": [
+          "group"
+        ],
+        "properties": {
+          "group": {
+            "type": "string",
+            "description": "Name of the new group."
+          },
+          "group_attributes": {
+            "$ref": "#/components/schemas/GroupAttributes"
+          }
+        }
+      },
+      "Group": {
+        "type": "object",
+        "properties": {
+          "group": {
+            "type": "string"
+          },
+          "group_attributes": {
+            "$ref": "#/components/schemas/GroupAttributes"
+          }
+        }
+      },
+      "Template": {
+        "type": "object",
+        "properties": {
+          "template_name": {
+            "type": "string"
+          },
+          "device_type": {
+            "type": "string",
+            "enum": [
+              "IAP",
+              "ArubaSwitch",
+              "CX",
+              "MobilityController",
+              "Gateway"
+            ]
+          },
+          "version": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "template": {
+            "type": "string",
+            "description": "Raw template body/config text."
+          }
+        }
+      },
+      "DeviceInventoryItem": {
+        "type": "object",
+        "required": [
+          "serial",
+          "mac"
+        ],
+        "properties": {
+          "serial": {
+            "type": "string"
+          },
+          "mac": {
+            "type": "string"
+          },
+          "part_number": {
+            "type": "string"
+          }
+        }
+      },
+      "WlanCreate": {
+        "type": "object",
+        "required": [
+          "essid",
+          "type"
+        ],
+        "properties": {
+          "essid": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "employee",
+              "guest"
+            ]
+          },
+          "vlan": {
+            "type": "string"
+          },
+          "security": {
+            "type": "object",
+            "description": "SSID security/auth configuration (WPA mode, passphrase, 802.1X profile, etc)."
+          },
+          "hide_ssid": {
+            "type": "boolean"
+          },
+          "broadcast_filter": {
+            "type": "string",
+            "enum": [
+              "ARP",
+              "ALL",
+              "None"
+            ]
+          }
+        }
+      },
+      "GuestPortal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "ssid": {
+            "type": "string"
+          }
+        }
+      },
+      "GuestVisitor": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Visitor username."
+          },
+          "name": {
+            "type": "string"
+          },
+          "company_name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "valid_forever": {
+            "type": "boolean"
+          },
+          "is_enabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Label": {
+        "type": "object",
+        "properties": {
+          "label_id": {
+            "type": "integer"
+          },
+          "label_name": {
+            "type": "string"
+          },
+          "category_id": {
+            "type": "integer"
+          }
+        }
+      },
+      "LabelCreate": {
+        "type": "object",
+        "required": [
+          "label_name"
+        ],
+        "properties": {
+          "label_name": {
+            "type": "string"
+          },
+          "category_id": {
+            "type": "integer"
+          }
+        }
+      },
+      "LabelAssociation": {
+        "type": "object",
+        "required": [
+          "label_id",
+          "device_ids",
+          "device_type"
+        ],
+        "properties": {
+          "label_id": {
+            "type": "integer"
+          },
+          "device_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "device_type": {
+            "type": "string",
+            "enum": [
+              "IAP",
+              "MOBILITY_CONTROLLER",
+              "CX_SWITCH",
+              "SWITCH",
+              "GATEWAY"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
