@@ -1,0 +1,4510 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Thruk",
+    "version": "latest",
+    "description": "Thruk is a web interface and monitoring dashboard for Naemon/Nagios-compatible monitoring cores, exposing hosts, services, groups, downtimes, comments, and monitoring core configuration over a REST API. Authentication: static API key (X-Thruk-Auth-Key header, optionally paired with X-Thruk-Auth-User for a superuser key acting on behalf of another user).",
+    "x-itential-curated": "Trimmed to 73 of 169 upstream operations covering hosts, services, host/service groups, contacts/contactgroups, downtimes, comments, commands and timeperiods (read + external-command actions), status/statistics listings, sites, and the config save/check/reload/revert lifecycle needed to persist host/service config changes. See the repo README for the full scope and the full spec.",
+    "x-vendor-api-version": "1"
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}{basePath}/thruk/r",
+      "description": "Thruk REST API server. basePath is the OMD site prefix (e.g. /monitoring) if Thruk runs under OMD, or empty for a standalone Thruk install.",
+      "variables": {
+        "protocol": {
+          "default": "https",
+          "enum": [
+            "https",
+            "http"
+          ]
+        },
+        "host": {
+          "default": "thruk.example.com",
+          "description": "Thruk server hostname or IP (no protocol, no path)."
+        },
+        "port": {
+          "default": "443"
+        },
+        "basePath": {
+          "default": "",
+          "description": "OMD site path prefix, e.g. /monitoring. Leave empty for a standalone (non-OMD) Thruk install."
+        }
+      }
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Thruk-Auth-Key",
+        "description": "Static, user-generated Thruk API key. Superuser keys can additionally set the acting user via the X-Thruk-Auth-User header."
+      }
+    }
+  },
+  "security": [
+    {
+      "apiKeyAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Alerts"
+    },
+    {
+      "name": "Checks"
+    },
+    {
+      "name": "Cmd"
+    },
+    {
+      "name": "Commands"
+    },
+    {
+      "name": "Comments"
+    },
+    {
+      "name": "Config"
+    },
+    {
+      "name": "Contactgroups"
+    },
+    {
+      "name": "Contacts"
+    },
+    {
+      "name": "Downtimes"
+    },
+    {
+      "name": "Hostgroups"
+    },
+    {
+      "name": "Hosts"
+    },
+    {
+      "name": "Index"
+    },
+    {
+      "name": "Logs"
+    },
+    {
+      "name": "Notifications"
+    },
+    {
+      "name": "Processinfo"
+    },
+    {
+      "name": "Servicegroups"
+    },
+    {
+      "name": "Services"
+    },
+    {
+      "name": "Sites"
+    },
+    {
+      "name": "Timeperiods"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "getIndex",
+        "summary": "List all available REST URLs",
+        "tags": [
+          "Index"
+        ],
+        "description": "Lists all available rest urls. Alias for /index.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index": {
+      "get": {
+        "operationId": "getIndexAlias",
+        "summary": "List all available REST URLs",
+        "tags": [
+          "Index"
+        ],
+        "description": "Lists all available rest urls.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/checks/stats": {
+      "get": {
+        "operationId": "getCheckStats",
+        "summary": "Get host/service check statistics",
+        "tags": [
+          "Checks"
+        ],
+        "description": "Lists host / service check statistics (active/passive counts, state change, latency, execution time).",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cmd": {
+      "post": {
+        "operationId": "postCommand",
+        "summary": "Send any external command",
+        "tags": [
+          "Cmd"
+        ],
+        "description": "Sends any Naemon/Nagios external command. Requires the cmd parameter and, depending on the command, one of host/hostgroup/service/servicegroup/contact/contactgroup.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cmd": {
+                    "type": "string",
+                    "description": "Name of the external command to send (required)."
+                  },
+                  "host": {
+                    "type": "string",
+                    "description": "Target host name."
+                  },
+                  "hostgroup": {
+                    "type": "string",
+                    "description": "Target hostgroup name."
+                  },
+                  "service": {
+                    "type": "string",
+                    "description": "Target service description."
+                  },
+                  "servicegroup": {
+                    "type": "string",
+                    "description": "Target servicegroup name."
+                  },
+                  "contact": {
+                    "type": "string",
+                    "description": "Target contact name."
+                  },
+                  "contactgroup": {
+                    "type": "string",
+                    "description": "Target contactgroup name."
+                  }
+                },
+                "required": [
+                  "cmd"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/commands": {
+      "get": {
+        "operationId": "getCommands",
+        "summary": "List commands",
+        "tags": [
+          "Commands"
+        ],
+        "description": "Lists livestatus commands.",
+        "parameters": [
+          {
+            "name": "columns",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of columns to return."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated sort columns, prefix with - for descending."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of rows to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of rows to skip."
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Complex filter query expression."
+          },
+          {
+            "name": "backends",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of backend/site names to query."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/commands/{name}": {
+      "get": {
+        "operationId": "getCommand",
+        "summary": "Get a command by name",
+        "tags": [
+          "Commands"
+        ],
+        "description": "Lists commands for given name. Alias for /commands?name=<name>.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Command name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comments": {
+      "get": {
+        "operationId": "getComments",
+        "summary": "List comments",
+        "tags": [
+          "Comments"
+        ],
+        "description": "Lists livestatus comments.",
+        "parameters": [
+          {
+            "name": "columns",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of columns to return."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated sort columns, prefix with - for descending."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of rows to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of rows to skip."
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Complex filter query expression."
+          },
+          {
+            "name": "backends",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of backend/site names to query."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comments/{id}": {
+      "get": {
+        "operationId": "getComment",
+        "summary": "Get a comment by id",
+        "tags": [
+          "Comments"
+        ],
+        "description": "Lists comments for given id. Alias for /comments?id=<id>.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comment id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contactgroups": {
+      "get": {
+        "operationId": "getContactgroups",
+        "summary": "List contactgroups",
+        "tags": [
+          "Contactgroups"
+        ],
+        "description": "Lists livestatus contactgroups.",
+        "parameters": [
+          {
+            "name": "columns",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of columns to return."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated sort columns, prefix with - for descending."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of rows to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of rows to skip."
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Complex filter query expression."
+          },
+          {
+            "name": "backends",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of backend/site names to query."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contactgroups/{name}": {
+      "get": {
+        "operationId": "getContactgroup",
+        "summary": "Get a contactgroup by name",
+        "tags": [
+          "Contactgroups"
+        ],
+        "description": "Lists contactgroups for given name. Alias for /contactgroups?name=<name>.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Contactgroup name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contactgroups/{name}/cmd/{command}": {
+      "post": {
+        "operationId": "postContactgroupCmd",
+        "summary": "Run an external command against a contactgroup",
+        "tags": [
+          "Contactgroups"
+        ],
+        "description": "Sends one of the documented external commands (acknowledge, schedule/remove downtime, comment, enable/disable checks or notifications, etc.) to a contactgroup.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Contactgroup name."
+          },
+          {
+            "name": "command",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "disable_contactgroup_host_notifications",
+                "disable_contactgroup_svc_notifications",
+                "enable_contactgroup_host_notifications",
+                "enable_contactgroup_svc_notifications"
+              ]
+            },
+            "description": "External command to run against the contactgroup. See the Thruk REST API commands reference for the per-command parameters."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "comment": {
+                    "type": "string",
+                    "description": "Comment text for the command."
+                  },
+                  "author": {
+                    "type": "string",
+                    "description": "Author name attributed to the command."
+                  },
+                  "sticky": {
+                    "type": "boolean",
+                    "description": "For acknowledgements: keep the acknowledgement until the host/service fully recovers."
+                  },
+                  "notify": {
+                    "type": "boolean",
+                    "description": "Whether to send a notification for this command."
+                  },
+                  "persistent": {
+                    "type": "boolean",
+                    "description": "Whether the comment/acknowledgement survives program restarts."
+                  },
+                  "start_time": {
+                    "type": "string",
+                    "description": "Unix timestamp (or relative time expression) the action starts."
+                  },
+                  "end_time": {
+                    "type": "string",
+                    "description": "Unix timestamp (or relative time expression) the action ends."
+                  },
+                  "fixed": {
+                    "type": "boolean",
+                    "description": "Whether a downtime is fixed (1) or flexible (0)."
+                  },
+                  "duration": {
+                    "type": "integer",
+                    "description": "Duration in seconds, used for flexible downtimes."
+                  },
+                  "trigger_id": {
+                    "type": "integer",
+                    "description": "Downtime ID that triggers this one, 0 for non-triggered."
+                  },
+                  "downtime_id": {
+                    "type": "integer",
+                    "description": "ID of the downtime to remove."
+                  },
+                  "comment_id": {
+                    "type": "integer",
+                    "description": "ID of the comment to remove."
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "New value for change_* commands (variable value, timeperiod name, interval, etc.)."
+                  },
+                  "variable": {
+                    "type": "string",
+                    "description": "Name of the custom variable to change (change_custom_*_var commands)."
+                  },
+                  "check_command": {
+                    "type": "string",
+                    "description": "Command line for passive check result submission."
+                  },
+                  "check_output": {
+                    "type": "string",
+                    "description": "Plugin output for passive check result submission."
+                  },
+                  "return_code": {
+                    "type": "integer",
+                    "description": "Return code for passive check result submission (0-3)."
+                  },
+                  "notification_number": {
+                    "type": "integer",
+                    "description": "New notification number for set_*_notification_number commands."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contactgroups/{name}/config": {
+      "get": {
+        "operationId": "getContactgroupConfig",
+        "summary": "Get contactgroup configuration",
+        "tags": [
+          "Contactgroups"
+        ],
+        "description": "Returns configuration for given contactgroup.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Contactgroup name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "replaceContactgroupConfig",
+        "summary": "Replace contactgroup configuration",
+        "tags": [
+          "Contactgroups"
+        ],
+        "description": "Replace contactgroup configuration completely.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Contactgroup name."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateContactgroupConfig",
+        "summary": "Update contactgroup configuration",
+        "tags": [
+          "Contactgroups"
+        ],
+        "description": "Update contactgroup configuration partially.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Contactgroup name."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteContactgroupConfig",
+        "summary": "Delete a contactgroup",
+        "tags": [
+          "Contactgroups"
+        ],
+        "description": "Deletes given contactgroup from configuration.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Contactgroup name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contacts": {
+      "get": {
+        "operationId": "getContacts",
+        "summary": "List contacts",
+        "tags": [
+          "Contacts"
+        ],
+        "description": "Lists livestatus contacts.",
+        "parameters": [
+          {
+            "name": "columns",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of columns to return."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated sort columns, prefix with - for descending."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of rows to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of rows to skip."
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Complex filter query expression."
+          },
+          {
+            "name": "backends",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of backend/site names to query."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contacts/{name}": {
+      "get": {
+        "operationId": "getContact",
+        "summary": "Get a contact by name",
+        "tags": [
+          "Contacts"
+        ],
+        "description": "Lists contacts for given name. Alias for /contacts?name=<name>.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Contact name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contacts/{name}/cmd/{command}": {
+      "post": {
+        "operationId": "postContactCmd",
+        "summary": "Run an external command against a contact",
+        "tags": [
+          "Contacts"
+        ],
+        "description": "Sends one of the documented external commands (acknowledge, schedule/remove downtime, comment, enable/disable checks or notifications, etc.) to a contact.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Contact name."
+          },
+          {
+            "name": "command",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "change_contact_host_notification_timeperiod",
+                "change_contact_svc_notification_timeperiod",
+                "change_custom_contact_var",
+                "disable_contact_host_notifications",
+                "disable_contact_svc_notifications",
+                "enable_contact_host_notifications",
+                "enable_contact_svc_notifications"
+              ]
+            },
+            "description": "External command to run against the contact. See the Thruk REST API commands reference for the per-command parameters."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "comment": {
+                    "type": "string",
+                    "description": "Comment text for the command."
+                  },
+                  "author": {
+                    "type": "string",
+                    "description": "Author name attributed to the command."
+                  },
+                  "sticky": {
+                    "type": "boolean",
+                    "description": "For acknowledgements: keep the acknowledgement until the host/service fully recovers."
+                  },
+                  "notify": {
+                    "type": "boolean",
+                    "description": "Whether to send a notification for this command."
+                  },
+                  "persistent": {
+                    "type": "boolean",
+                    "description": "Whether the comment/acknowledgement survives program restarts."
+                  },
+                  "start_time": {
+                    "type": "string",
+                    "description": "Unix timestamp (or relative time expression) the action starts."
+                  },
+                  "end_time": {
+                    "type": "string",
+                    "description": "Unix timestamp (or relative time expression) the action ends."
+                  },
+                  "fixed": {
+                    "type": "boolean",
+                    "description": "Whether a downtime is fixed (1) or flexible (0)."
+                  },
+                  "duration": {
+                    "type": "integer",
+                    "description": "Duration in seconds, used for flexible downtimes."
+                  },
+                  "trigger_id": {
+                    "type": "integer",
+                    "description": "Downtime ID that triggers this one, 0 for non-triggered."
+                  },
+                  "downtime_id": {
+                    "type": "integer",
+                    "description": "ID of the downtime to remove."
+                  },
+                  "comment_id": {
+                    "type": "integer",
+                    "description": "ID of the comment to remove."
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "New value for change_* commands (variable value, timeperiod name, interval, etc.)."
+                  },
+                  "variable": {
+                    "type": "string",
+                    "description": "Name of the custom variable to change (change_custom_*_var commands)."
+                  },
+                  "check_command": {
+                    "type": "string",
+                    "description": "Command line for passive check result submission."
+                  },
+                  "check_output": {
+                    "type": "string",
+                    "description": "Plugin output for passive check result submission."
+                  },
+                  "return_code": {
+                    "type": "integer",
+                    "description": "Return code for passive check result submission (0-3)."
+                  },
+                  "notification_number": {
+                    "type": "integer",
+                    "description": "New notification number for set_*_notification_number commands."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contacts/{name}/config": {
+      "get": {
+        "operationId": "getContactConfig",
+        "summary": "Get contact configuration",
+        "tags": [
+          "Contacts"
+        ],
+        "description": "Returns configuration for given contact.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Contact name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "replaceContactConfig",
+        "summary": "Replace contact configuration",
+        "tags": [
+          "Contacts"
+        ],
+        "description": "Replace contact configuration completely.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Contact name."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateContactConfig",
+        "summary": "Update contact configuration",
+        "tags": [
+          "Contacts"
+        ],
+        "description": "Update contact configuration partially.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Contact name."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteContactConfig",
+        "summary": "Delete a contact",
+        "tags": [
+          "Contacts"
+        ],
+        "description": "Deletes given contact from configuration.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Contact name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contacts/totals": {
+      "get": {
+        "operationId": "getContactTotals",
+        "summary": "Get contact totals",
+        "tags": [
+          "Contacts"
+        ],
+        "description": "Hash of livestatus contacts totals statistics.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/downtimes": {
+      "get": {
+        "operationId": "getDowntimes",
+        "summary": "List downtimes",
+        "tags": [
+          "Downtimes"
+        ],
+        "description": "Lists livestatus downtimes.",
+        "parameters": [
+          {
+            "name": "columns",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of columns to return."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated sort columns, prefix with - for descending."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of rows to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of rows to skip."
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Complex filter query expression."
+          },
+          {
+            "name": "backends",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of backend/site names to query."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/downtimes/{id}": {
+      "get": {
+        "operationId": "getDowntime",
+        "summary": "Get a downtime by id",
+        "tags": [
+          "Downtimes"
+        ],
+        "description": "Lists downtimes for given id. Alias for /downtimes?id=<id>.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Downtime id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hostgroups": {
+      "get": {
+        "operationId": "getHostgroups",
+        "summary": "List hostgroups",
+        "tags": [
+          "Hostgroups"
+        ],
+        "description": "Lists livestatus hostgroups.",
+        "parameters": [
+          {
+            "name": "columns",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of columns to return."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated sort columns, prefix with - for descending."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of rows to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of rows to skip."
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Complex filter query expression."
+          },
+          {
+            "name": "backends",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of backend/site names to query."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hostgroups/{name}": {
+      "get": {
+        "operationId": "getHostgroup",
+        "summary": "Get a hostgroup by name",
+        "tags": [
+          "Hostgroups"
+        ],
+        "description": "Lists hostgroups for given name. Alias for /hostgroups?name=<name>.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Hostgroup name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hostgroups/{name}/cmd/{command}": {
+      "post": {
+        "operationId": "postHostgroupCmd",
+        "summary": "Run an external command against a hostgroup",
+        "tags": [
+          "Hostgroups"
+        ],
+        "description": "Sends one of the documented external commands (acknowledge, schedule/remove downtime, comment, enable/disable checks or notifications, etc.) to a hostgroup.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Hostgroup name."
+          },
+          {
+            "name": "command",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "disable_hostgroup_host_checks",
+                "disable_hostgroup_host_notifications",
+                "disable_hostgroup_passive_host_checks",
+                "disable_hostgroup_passive_svc_checks",
+                "disable_hostgroup_svc_checks",
+                "disable_hostgroup_svc_notifications",
+                "enable_hostgroup_host_checks",
+                "enable_hostgroup_host_notifications",
+                "enable_hostgroup_passive_host_checks",
+                "enable_hostgroup_passive_svc_checks",
+                "enable_hostgroup_svc_checks",
+                "enable_hostgroup_svc_notifications",
+                "schedule_hostgroup_host_downtime",
+                "schedule_hostgroup_svc_downtime"
+              ]
+            },
+            "description": "External command to run against the hostgroup. See the Thruk REST API commands reference for the per-command parameters."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "comment": {
+                    "type": "string",
+                    "description": "Comment text for the command."
+                  },
+                  "author": {
+                    "type": "string",
+                    "description": "Author name attributed to the command."
+                  },
+                  "sticky": {
+                    "type": "boolean",
+                    "description": "For acknowledgements: keep the acknowledgement until the host/service fully recovers."
+                  },
+                  "notify": {
+                    "type": "boolean",
+                    "description": "Whether to send a notification for this command."
+                  },
+                  "persistent": {
+                    "type": "boolean",
+                    "description": "Whether the comment/acknowledgement survives program restarts."
+                  },
+                  "start_time": {
+                    "type": "string",
+                    "description": "Unix timestamp (or relative time expression) the action starts."
+                  },
+                  "end_time": {
+                    "type": "string",
+                    "description": "Unix timestamp (or relative time expression) the action ends."
+                  },
+                  "fixed": {
+                    "type": "boolean",
+                    "description": "Whether a downtime is fixed (1) or flexible (0)."
+                  },
+                  "duration": {
+                    "type": "integer",
+                    "description": "Duration in seconds, used for flexible downtimes."
+                  },
+                  "trigger_id": {
+                    "type": "integer",
+                    "description": "Downtime ID that triggers this one, 0 for non-triggered."
+                  },
+                  "downtime_id": {
+                    "type": "integer",
+                    "description": "ID of the downtime to remove."
+                  },
+                  "comment_id": {
+                    "type": "integer",
+                    "description": "ID of the comment to remove."
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "New value for change_* commands (variable value, timeperiod name, interval, etc.)."
+                  },
+                  "variable": {
+                    "type": "string",
+                    "description": "Name of the custom variable to change (change_custom_*_var commands)."
+                  },
+                  "check_command": {
+                    "type": "string",
+                    "description": "Command line for passive check result submission."
+                  },
+                  "check_output": {
+                    "type": "string",
+                    "description": "Plugin output for passive check result submission."
+                  },
+                  "return_code": {
+                    "type": "integer",
+                    "description": "Return code for passive check result submission (0-3)."
+                  },
+                  "notification_number": {
+                    "type": "integer",
+                    "description": "New notification number for set_*_notification_number commands."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hostgroups/{name}/config": {
+      "get": {
+        "operationId": "getHostgroupConfig",
+        "summary": "Get hostgroup configuration",
+        "tags": [
+          "Hostgroups"
+        ],
+        "description": "Returns configuration for given hostgroup.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Hostgroup name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "replaceHostgroupConfig",
+        "summary": "Replace hostgroup configuration",
+        "tags": [
+          "Hostgroups"
+        ],
+        "description": "Replace hostgroup configuration completely.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Hostgroup name."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateHostgroupConfig",
+        "summary": "Update hostgroup configuration",
+        "tags": [
+          "Hostgroups"
+        ],
+        "description": "Update hostgroup configuration partially.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Hostgroup name."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteHostgroupConfig",
+        "summary": "Delete a hostgroup",
+        "tags": [
+          "Hostgroups"
+        ],
+        "description": "Deletes given hostgroup from configuration.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Hostgroup name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hostgroups/{name}/stats": {
+      "get": {
+        "operationId": "getHostgroupStats",
+        "summary": "Get hostgroup statistics",
+        "tags": [
+          "Hostgroups"
+        ],
+        "description": "Hash of livestatus hostgroup statistics. Alias for /hosts/stats?groups[gte]=<name>.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Hostgroup name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hosts": {
+      "get": {
+        "operationId": "getHosts",
+        "summary": "List hosts",
+        "tags": [
+          "Hosts"
+        ],
+        "description": "Lists livestatus hosts.",
+        "parameters": [
+          {
+            "name": "columns",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of columns to return."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated sort columns, prefix with - for descending."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of rows to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of rows to skip."
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Complex filter query expression."
+          },
+          {
+            "name": "backends",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of backend/site names to query."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hosts/{name}": {
+      "get": {
+        "operationId": "getHost",
+        "summary": "Get a host by name",
+        "tags": [
+          "Hosts"
+        ],
+        "description": "Lists hosts for given name. Alias for /hosts?name=<name>.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Host name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hosts/{name}/cmd/{command}": {
+      "post": {
+        "operationId": "postHostCmd",
+        "summary": "Run an external command against a host",
+        "tags": [
+          "Hosts"
+        ],
+        "description": "Sends one of the documented external commands (acknowledge, schedule/remove downtime, comment, enable/disable checks or notifications, etc.) to a host.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Host name."
+          },
+          {
+            "name": "command",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "acknowledge_host_problem",
+                "acknowledge_host_problem_expire",
+                "add_host_comment",
+                "change_custom_host_var",
+                "change_host_check_timeperiod",
+                "change_host_modattr",
+                "change_host_notification_timeperiod",
+                "change_max_host_check_attempts",
+                "change_normal_host_check_interval",
+                "change_retry_host_check_interval",
+                "del_active_host_downtimes",
+                "del_all_host_comments",
+                "del_comment",
+                "del_downtime",
+                "delay_host_notification",
+                "disable_all_notifications_beyond_host",
+                "disable_host_and_child_notifications",
+                "disable_host_check",
+                "disable_host_event_handler",
+                "disable_host_flap_detection",
+                "disable_host_notifications",
+                "disable_host_svc_checks",
+                "disable_host_svc_notifications",
+                "disable_passive_host_checks",
+                "enable_all_notifications_beyond_host",
+                "enable_host_and_child_notifications",
+                "enable_host_check",
+                "enable_host_event_handler",
+                "enable_host_flap_detection",
+                "enable_host_notifications",
+                "enable_host_svc_checks",
+                "enable_host_svc_notifications",
+                "enable_passive_host_checks",
+                "note",
+                "process_host_check_result",
+                "remove_host_acknowledgement",
+                "schedule_and_propagate_host_downtime",
+                "schedule_and_propagate_triggered_host_downtime",
+                "schedule_forced_host_check",
+                "schedule_forced_host_svc_checks",
+                "schedule_host_check",
+                "schedule_host_downtime",
+                "schedule_host_svc_checks",
+                "schedule_host_svc_downtime",
+                "send_custom_host_notification",
+                "set_host_notification_number",
+                "start_obsessing_over_host",
+                "stop_obsessing_over_host"
+              ]
+            },
+            "description": "External command to run against the host. See the Thruk REST API commands reference for the per-command parameters."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "comment": {
+                    "type": "string",
+                    "description": "Comment text for the command."
+                  },
+                  "author": {
+                    "type": "string",
+                    "description": "Author name attributed to the command."
+                  },
+                  "sticky": {
+                    "type": "boolean",
+                    "description": "For acknowledgements: keep the acknowledgement until the host/service fully recovers."
+                  },
+                  "notify": {
+                    "type": "boolean",
+                    "description": "Whether to send a notification for this command."
+                  },
+                  "persistent": {
+                    "type": "boolean",
+                    "description": "Whether the comment/acknowledgement survives program restarts."
+                  },
+                  "start_time": {
+                    "type": "string",
+                    "description": "Unix timestamp (or relative time expression) the action starts."
+                  },
+                  "end_time": {
+                    "type": "string",
+                    "description": "Unix timestamp (or relative time expression) the action ends."
+                  },
+                  "fixed": {
+                    "type": "boolean",
+                    "description": "Whether a downtime is fixed (1) or flexible (0)."
+                  },
+                  "duration": {
+                    "type": "integer",
+                    "description": "Duration in seconds, used for flexible downtimes."
+                  },
+                  "trigger_id": {
+                    "type": "integer",
+                    "description": "Downtime ID that triggers this one, 0 for non-triggered."
+                  },
+                  "downtime_id": {
+                    "type": "integer",
+                    "description": "ID of the downtime to remove."
+                  },
+                  "comment_id": {
+                    "type": "integer",
+                    "description": "ID of the comment to remove."
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "New value for change_* commands (variable value, timeperiod name, interval, etc.)."
+                  },
+                  "variable": {
+                    "type": "string",
+                    "description": "Name of the custom variable to change (change_custom_*_var commands)."
+                  },
+                  "check_command": {
+                    "type": "string",
+                    "description": "Command line for passive check result submission."
+                  },
+                  "check_output": {
+                    "type": "string",
+                    "description": "Plugin output for passive check result submission."
+                  },
+                  "return_code": {
+                    "type": "integer",
+                    "description": "Return code for passive check result submission (0-3)."
+                  },
+                  "notification_number": {
+                    "type": "integer",
+                    "description": "New notification number for set_*_notification_number commands."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hosts/{name}/config": {
+      "get": {
+        "operationId": "getHostConfig",
+        "summary": "Get host configuration",
+        "tags": [
+          "Hosts"
+        ],
+        "description": "Returns configuration for given host.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Host name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "replaceHostConfig",
+        "summary": "Replace host configuration",
+        "tags": [
+          "Hosts"
+        ],
+        "description": "Replace host configuration completely. Use POST /config/objects to create a brand new host.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Host name."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateHostConfig",
+        "summary": "Update host configuration",
+        "tags": [
+          "Hosts"
+        ],
+        "description": "Update host configuration partially.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Host name."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteHostConfig",
+        "summary": "Delete a host",
+        "tags": [
+          "Hosts"
+        ],
+        "description": "Deletes given host from configuration.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Host name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hosts/{name}/services": {
+      "get": {
+        "operationId": "getHostServices",
+        "summary": "Get services for a host",
+        "tags": [
+          "Hosts"
+        ],
+        "description": "Lists services running on given host.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Host name."
+          },
+          {
+            "name": "columns",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of columns to return."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated sort columns, prefix with - for descending."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of rows to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of rows to skip."
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Complex filter query expression."
+          },
+          {
+            "name": "backends",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of backend/site names to query."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hosts/stats": {
+      "get": {
+        "operationId": "getHostStats",
+        "summary": "Get host statistics",
+        "tags": [
+          "Hosts"
+        ],
+        "description": "Hash of livestatus host statistics.",
+        "parameters": [
+          {
+            "name": "columns",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of columns to return."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated sort columns, prefix with - for descending."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of rows to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of rows to skip."
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Complex filter query expression."
+          },
+          {
+            "name": "backends",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of backend/site names to query."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hosts/totals": {
+      "get": {
+        "operationId": "getHostTotals",
+        "summary": "Get host totals",
+        "tags": [
+          "Hosts"
+        ],
+        "description": "Hash of livestatus host totals statistics.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/logs": {
+      "get": {
+        "operationId": "getLogs",
+        "summary": "List log entries",
+        "tags": [
+          "Logs"
+        ],
+        "description": "Lists livestatus log entries.",
+        "parameters": [
+          {
+            "name": "columns",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of columns to return."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated sort columns, prefix with - for descending."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of rows to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of rows to skip."
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Complex filter query expression."
+          },
+          {
+            "name": "backends",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of backend/site names to query."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notifications": {
+      "get": {
+        "operationId": "getNotifications",
+        "summary": "List notifications",
+        "tags": [
+          "Notifications"
+        ],
+        "description": "Lists livestatus notifications.",
+        "parameters": [
+          {
+            "name": "columns",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of columns to return."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated sort columns, prefix with - for descending."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of rows to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of rows to skip."
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Complex filter query expression."
+          },
+          {
+            "name": "backends",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of backend/site names to query."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/processinfo": {
+      "get": {
+        "operationId": "getProcessinfo",
+        "summary": "Get process info",
+        "tags": [
+          "Processinfo"
+        ],
+        "description": "Lists livestatus process information for each backend.",
+        "parameters": [
+          {
+            "name": "columns",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of columns to return."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated sort columns, prefix with - for descending."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of rows to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of rows to skip."
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Complex filter query expression."
+          },
+          {
+            "name": "backends",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of backend/site names to query."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/processinfo/stats": {
+      "get": {
+        "operationId": "getProcessinfoStats",
+        "summary": "Get process info statistics",
+        "tags": [
+          "Processinfo"
+        ],
+        "description": "Hash of livestatus process information statistics.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/servicegroups": {
+      "get": {
+        "operationId": "getServicegroups",
+        "summary": "List servicegroups",
+        "tags": [
+          "Servicegroups"
+        ],
+        "description": "Lists livestatus servicegroups.",
+        "parameters": [
+          {
+            "name": "columns",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of columns to return."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated sort columns, prefix with - for descending."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of rows to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of rows to skip."
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Complex filter query expression."
+          },
+          {
+            "name": "backends",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of backend/site names to query."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/servicegroups/{name}": {
+      "get": {
+        "operationId": "getServicegroup",
+        "summary": "Get a servicegroup by name",
+        "tags": [
+          "Servicegroups"
+        ],
+        "description": "Lists servicegroups for given name. Alias for /servicegroups?name=<name>.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Servicegroup name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/servicegroups/{name}/cmd/{command}": {
+      "post": {
+        "operationId": "postServicegroupCmd",
+        "summary": "Run an external command against a servicegroup",
+        "tags": [
+          "Servicegroups"
+        ],
+        "description": "Sends one of the documented external commands (acknowledge, schedule/remove downtime, comment, enable/disable checks or notifications, etc.) to a servicegroup.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Servicegroup name."
+          },
+          {
+            "name": "command",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "disable_servicegroup_host_checks",
+                "disable_servicegroup_host_notifications",
+                "disable_servicegroup_passive_host_checks",
+                "disable_servicegroup_passive_svc_checks",
+                "disable_servicegroup_svc_checks",
+                "disable_servicegroup_svc_notifications",
+                "enable_servicegroup_host_checks",
+                "enable_servicegroup_host_notifications",
+                "enable_servicegroup_passive_host_checks",
+                "enable_servicegroup_passive_svc_checks",
+                "enable_servicegroup_svc_checks",
+                "enable_servicegroup_svc_notifications",
+                "schedule_servicegroup_host_downtime",
+                "schedule_servicegroup_svc_downtime"
+              ]
+            },
+            "description": "External command to run against the servicegroup. See the Thruk REST API commands reference for the per-command parameters."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "comment": {
+                    "type": "string",
+                    "description": "Comment text for the command."
+                  },
+                  "author": {
+                    "type": "string",
+                    "description": "Author name attributed to the command."
+                  },
+                  "sticky": {
+                    "type": "boolean",
+                    "description": "For acknowledgements: keep the acknowledgement until the host/service fully recovers."
+                  },
+                  "notify": {
+                    "type": "boolean",
+                    "description": "Whether to send a notification for this command."
+                  },
+                  "persistent": {
+                    "type": "boolean",
+                    "description": "Whether the comment/acknowledgement survives program restarts."
+                  },
+                  "start_time": {
+                    "type": "string",
+                    "description": "Unix timestamp (or relative time expression) the action starts."
+                  },
+                  "end_time": {
+                    "type": "string",
+                    "description": "Unix timestamp (or relative time expression) the action ends."
+                  },
+                  "fixed": {
+                    "type": "boolean",
+                    "description": "Whether a downtime is fixed (1) or flexible (0)."
+                  },
+                  "duration": {
+                    "type": "integer",
+                    "description": "Duration in seconds, used for flexible downtimes."
+                  },
+                  "trigger_id": {
+                    "type": "integer",
+                    "description": "Downtime ID that triggers this one, 0 for non-triggered."
+                  },
+                  "downtime_id": {
+                    "type": "integer",
+                    "description": "ID of the downtime to remove."
+                  },
+                  "comment_id": {
+                    "type": "integer",
+                    "description": "ID of the comment to remove."
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "New value for change_* commands (variable value, timeperiod name, interval, etc.)."
+                  },
+                  "variable": {
+                    "type": "string",
+                    "description": "Name of the custom variable to change (change_custom_*_var commands)."
+                  },
+                  "check_command": {
+                    "type": "string",
+                    "description": "Command line for passive check result submission."
+                  },
+                  "check_output": {
+                    "type": "string",
+                    "description": "Plugin output for passive check result submission."
+                  },
+                  "return_code": {
+                    "type": "integer",
+                    "description": "Return code for passive check result submission (0-3)."
+                  },
+                  "notification_number": {
+                    "type": "integer",
+                    "description": "New notification number for set_*_notification_number commands."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/servicegroups/{name}/config": {
+      "get": {
+        "operationId": "getServicegroupConfig",
+        "summary": "Get servicegroup configuration",
+        "tags": [
+          "Servicegroups"
+        ],
+        "description": "Returns configuration for given servicegroup.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Servicegroup name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "replaceServicegroupConfig",
+        "summary": "Replace servicegroup configuration",
+        "tags": [
+          "Servicegroups"
+        ],
+        "description": "Replace servicegroup configuration completely.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Servicegroup name."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateServicegroupConfig",
+        "summary": "Update servicegroup configuration",
+        "tags": [
+          "Servicegroups"
+        ],
+        "description": "Update servicegroup configuration partially.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Servicegroup name."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteServicegroupConfig",
+        "summary": "Delete a servicegroup",
+        "tags": [
+          "Servicegroups"
+        ],
+        "description": "Deletes given servicegroup from configuration.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Servicegroup name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/servicegroups/{name}/stats": {
+      "get": {
+        "operationId": "getServicegroupStats",
+        "summary": "Get servicegroup statistics",
+        "tags": [
+          "Servicegroups"
+        ],
+        "description": "Hash of livestatus servicegroup statistics.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Servicegroup name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/services": {
+      "get": {
+        "operationId": "getServices",
+        "summary": "List services",
+        "tags": [
+          "Services"
+        ],
+        "description": "Lists livestatus services.",
+        "parameters": [
+          {
+            "name": "columns",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of columns to return."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated sort columns, prefix with - for descending."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of rows to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of rows to skip."
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Complex filter query expression."
+          },
+          {
+            "name": "backends",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of backend/site names to query."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/services/{host}/{service}": {
+      "get": {
+        "operationId": "getService",
+        "summary": "Get a service by host and description",
+        "tags": [
+          "Services"
+        ],
+        "description": "Lists a service for the given host and service description.",
+        "parameters": [
+          {
+            "name": "host",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Host name."
+          },
+          {
+            "name": "service",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Service description."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/services/{host}/{service}/cmd/{command}": {
+      "post": {
+        "operationId": "postServiceCmd",
+        "summary": "Run an external command against a service",
+        "tags": [
+          "Services"
+        ],
+        "description": "Sends one of the documented external commands (acknowledge, schedule/remove downtime, comment, enable/disable checks or notifications, etc.) to a service.",
+        "parameters": [
+          {
+            "name": "host",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Host name."
+          },
+          {
+            "name": "service",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Service description."
+          },
+          {
+            "name": "command",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "acknowledge_svc_problem",
+                "acknowledge_svc_problem_expire",
+                "add_svc_comment",
+                "change_custom_svc_var",
+                "change_max_svc_check_attempts",
+                "change_normal_svc_check_interval",
+                "change_retry_svc_check_interval",
+                "change_svc_check_timeperiod",
+                "change_svc_modattr",
+                "change_svc_notification_timeperiod",
+                "del_active_service_downtimes",
+                "del_all_svc_comments",
+                "del_comment",
+                "del_downtime",
+                "delay_svc_notification",
+                "disable_passive_svc_checks",
+                "disable_svc_check",
+                "disable_svc_event_handler",
+                "disable_svc_flap_detection",
+                "disable_svc_notifications",
+                "enable_passive_svc_checks",
+                "enable_svc_check",
+                "enable_svc_event_handler",
+                "enable_svc_flap_detection",
+                "enable_svc_notifications",
+                "note",
+                "process_service_check_result",
+                "remove_svc_acknowledgement",
+                "schedule_forced_svc_check",
+                "schedule_svc_check",
+                "schedule_svc_downtime",
+                "send_custom_svc_notification",
+                "set_svc_notification_number",
+                "start_obsessing_over_svc",
+                "stop_obsessing_over_svc"
+              ]
+            },
+            "description": "External command to run against the service. See the Thruk REST API commands reference for the per-command parameters."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "comment": {
+                    "type": "string",
+                    "description": "Comment text for the command."
+                  },
+                  "author": {
+                    "type": "string",
+                    "description": "Author name attributed to the command."
+                  },
+                  "sticky": {
+                    "type": "boolean",
+                    "description": "For acknowledgements: keep the acknowledgement until the host/service fully recovers."
+                  },
+                  "notify": {
+                    "type": "boolean",
+                    "description": "Whether to send a notification for this command."
+                  },
+                  "persistent": {
+                    "type": "boolean",
+                    "description": "Whether the comment/acknowledgement survives program restarts."
+                  },
+                  "start_time": {
+                    "type": "string",
+                    "description": "Unix timestamp (or relative time expression) the action starts."
+                  },
+                  "end_time": {
+                    "type": "string",
+                    "description": "Unix timestamp (or relative time expression) the action ends."
+                  },
+                  "fixed": {
+                    "type": "boolean",
+                    "description": "Whether a downtime is fixed (1) or flexible (0)."
+                  },
+                  "duration": {
+                    "type": "integer",
+                    "description": "Duration in seconds, used for flexible downtimes."
+                  },
+                  "trigger_id": {
+                    "type": "integer",
+                    "description": "Downtime ID that triggers this one, 0 for non-triggered."
+                  },
+                  "downtime_id": {
+                    "type": "integer",
+                    "description": "ID of the downtime to remove."
+                  },
+                  "comment_id": {
+                    "type": "integer",
+                    "description": "ID of the comment to remove."
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "New value for change_* commands (variable value, timeperiod name, interval, etc.)."
+                  },
+                  "variable": {
+                    "type": "string",
+                    "description": "Name of the custom variable to change (change_custom_*_var commands)."
+                  },
+                  "check_command": {
+                    "type": "string",
+                    "description": "Command line for passive check result submission."
+                  },
+                  "check_output": {
+                    "type": "string",
+                    "description": "Plugin output for passive check result submission."
+                  },
+                  "return_code": {
+                    "type": "integer",
+                    "description": "Return code for passive check result submission (0-3)."
+                  },
+                  "notification_number": {
+                    "type": "integer",
+                    "description": "New notification number for set_*_notification_number commands."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/services/{host}/{service}/config": {
+      "get": {
+        "operationId": "getServiceConfig",
+        "summary": "Get service configuration",
+        "tags": [
+          "Services"
+        ],
+        "description": "Returns configuration for given service.",
+        "parameters": [
+          {
+            "name": "host",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Host name."
+          },
+          {
+            "name": "service",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Service description."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "replaceServiceConfig",
+        "summary": "Replace service configuration",
+        "tags": [
+          "Services"
+        ],
+        "description": "Replace service configuration completely. Use POST /config/objects to create a brand new service.",
+        "parameters": [
+          {
+            "name": "host",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Host name."
+          },
+          {
+            "name": "service",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Service description."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateServiceConfig",
+        "summary": "Update service configuration",
+        "tags": [
+          "Services"
+        ],
+        "description": "Update service configuration partially.",
+        "parameters": [
+          {
+            "name": "host",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Host name."
+          },
+          {
+            "name": "service",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Service description."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteServiceConfig",
+        "summary": "Delete a service",
+        "tags": [
+          "Services"
+        ],
+        "description": "Deletes given service from configuration.",
+        "parameters": [
+          {
+            "name": "host",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Host name."
+          },
+          {
+            "name": "service",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Service description."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/services/stats": {
+      "get": {
+        "operationId": "getServiceStats",
+        "summary": "Get service statistics",
+        "tags": [
+          "Services"
+        ],
+        "description": "Hash of livestatus service statistics.",
+        "parameters": [
+          {
+            "name": "columns",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of columns to return."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated sort columns, prefix with - for descending."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of rows to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of rows to skip."
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Complex filter query expression."
+          },
+          {
+            "name": "backends",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of backend/site names to query."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/services/totals": {
+      "get": {
+        "operationId": "getServiceTotals",
+        "summary": "Get service totals",
+        "tags": [
+          "Services"
+        ],
+        "description": "Hash of livestatus service totals statistics.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sites": {
+      "get": {
+        "operationId": "getSites",
+        "summary": "List configured sites/backends",
+        "tags": [
+          "Sites"
+        ],
+        "description": "Lists configured backends/sites.",
+        "parameters": [
+          {
+            "name": "columns",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of columns to return."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated sort columns, prefix with - for descending."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of rows to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of rows to skip."
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Complex filter query expression."
+          },
+          {
+            "name": "backends",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of backend/site names to query."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/check": {
+      "post": {
+        "operationId": "postConfigCheck",
+        "summary": "Run config check",
+        "tags": [
+          "Config"
+        ],
+        "description": "Returns result from config check. Requires changes to be saved to disk first (see /config/save).",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/diff": {
+      "get": {
+        "operationId": "getConfigDiff",
+        "summary": "Get pending config diff",
+        "tags": [
+          "Config"
+        ],
+        "description": "Returns differences between filesystem and stashed config changes.",
+        "parameters": [
+          {
+            "name": "ignore_whitespace",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Ignore whitespace-only differences."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/reload": {
+      "post": {
+        "operationId": "postConfigReload",
+        "summary": "Reload configuration",
+        "tags": [
+          "Config"
+        ],
+        "description": "Reloads configuration with the configured reload command.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/revert": {
+      "post": {
+        "operationId": "postConfigRevert",
+        "summary": "Revert staged config changes",
+        "tags": [
+          "Config"
+        ],
+        "description": "Reverts stashed configuration changes.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/save": {
+      "post": {
+        "operationId": "postConfigSave",
+        "summary": "Save staged config changes",
+        "tags": [
+          "Config"
+        ],
+        "description": "Saves stashed configuration changes to disk.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the command was accepted."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Result message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/timeperiods": {
+      "get": {
+        "operationId": "getTimeperiods",
+        "summary": "List timeperiods",
+        "tags": [
+          "Timeperiods"
+        ],
+        "description": "Lists livestatus timeperiods.",
+        "parameters": [
+          {
+            "name": "columns",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of columns to return."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated sort columns, prefix with - for descending."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of rows to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of rows to skip."
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Complex filter query expression."
+          },
+          {
+            "name": "backends",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of backend/site names to query."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/timeperiods/{name}": {
+      "get": {
+        "operationId": "getTimeperiod",
+        "summary": "Get a timeperiod by name",
+        "tags": [
+          "Timeperiods"
+        ],
+        "description": "Lists timeperiods for given name. Alias for /timeperiods?name=<name>.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Timeperiod name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alerts": {
+      "get": {
+        "operationId": "getAlerts",
+        "summary": "List alerts",
+        "tags": [
+          "Alerts"
+        ],
+        "description": "Lists alerts based on logfiles. Alias for /logs?type[~]=^(HOST|SERVICE) ALERT.",
+        "parameters": [
+          {
+            "name": "columns",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of columns to return."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated sort columns, prefix with - for descending."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of rows to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of rows to skip."
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Complex filter query expression."
+          },
+          {
+            "name": "backends",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of backend/site names to query."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
