@@ -38,6 +38,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Centreon** | IT and network monitoring |
 | **Cisco** | ASA · Catalyst Center · Crosswork Assurance · Crosswork Network Controller · IOS · ISE · Meraki · NDFC · NSO · NX-OS · PSIRT Open Vulnerability · ThousandEyes · Umbrella · Webex |
 | **Cloudflare** | CDN & edge platform APIs |
+| **Cloudify** | TOSCA-based multi-cloud orchestration |
 | **CyberArk** | Conjur (secrets management) · Privilege Cloud |
 | **Datadog** | Observability |
 | **dbt Cloud** | Analytics engineering / data transformation |
