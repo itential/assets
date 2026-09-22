@@ -79,6 +79,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **NVD** | National Vulnerability Database (CVE / CPE) |
 | **Okta** | Identity management |
 | **OpenAI** | AI / LLM APIs |
+| **OpsRamp** | IT operations management (monitoring, alerting, incident management) |
 | **Paessler** | PRTG monitoring |
 | **PagerDuty** | Incident management |
 | **Palo Alto** | CloudGenix (Prisma SD-WAN) · Panorama · Prisma Access · Prisma Cloud CSPM |
