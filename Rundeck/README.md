@@ -34,7 +34,7 @@ This project provides OpenAPI specs for automating against Rundeck's REST API vi
 
 ## Integration Configuration
 
-Import the OpenAPI spec from `OpenAPIs/` as an Integration Model in **Admin > Integrations**, then create an integration pointing at your Rundeck server.
+Import the OpenAPI spec from `OpenAPIs/` as an Integration Model in **Admin > Integrations**, then create an integration pointing at your Rundeck server. The API is rooted at `/api/59` — this must be set in the instance's `server.base_path` field, since the platform builds the request URL from `protocol`/`host`/`port`/`base_path` rather than any path in the OpenAPI spec itself.
 
 Authentication is a static API token in the `X-Rundeck-Auth-Token` header (Rundeck also accepts it as an `authtoken` query parameter, but the header is what this spec's security scheme uses). Generate a token from your Rundeck user profile page under **API Tokens**.
 
@@ -50,7 +50,7 @@ The instance's `authentication`/`server` properties should look like this once c
   "server": {
     "protocol": "https",
     "host": "<your-rundeck-host>",
-    "base_path": ""
+    "base_path": "/api/59"
   }
 }
 ```
