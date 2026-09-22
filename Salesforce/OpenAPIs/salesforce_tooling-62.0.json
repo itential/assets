@@ -1,0 +1,577 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Salesforce Tooling",
+    "description": "Authentication: OAuth 2.0 (client credentials grant). The Tooling API is Salesforce's REST API surface for org metadata \u2014 Apex classes/triggers, custom fields, validation rules, flows, and other declarative/programmatic configuration \u2014 plus anonymous Apex execution and test runs.",
+    "version": "62.0"
+  },
+  "servers": [
+    {
+      "url": "https://{host}",
+      "variables": {
+        "host": {
+          "default": "yourorg.my.salesforce.com",
+          "description": "Salesforce org My Domain hostname (no protocol, no path) \u2014 e.g. yourorg.my.salesforce.com for production, or the sandbox/test equivalent"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "oauth2ClientCredentials": []
+    }
+  ],
+  "paths": {
+    "/services/data/v62.0/tooling/query": {
+      "get": {
+        "operationId": "toolingQuery",
+        "summary": "Tooling Query",
+        "description": "Executes a SOQL query against Tooling API metadata objects (Apex classes/triggers, custom fields, validation rules, flows, etc.).",
+        "tags": [
+          "Query"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "SOQL query string against Tooling API objects, e.g. SELECT Id, Name FROM ApexClass"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "size": {
+                      "type": "integer"
+                    },
+                    "totalSize": {
+                      "type": "integer"
+                    },
+                    "done": {
+                      "type": "boolean"
+                    },
+                    "records": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL syntax, invalid Apex, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions for this operation"
+          },
+          "404": {
+            "description": "Object or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/tooling/queryAll": {
+      "get": {
+        "operationId": "toolingQueryAll",
+        "summary": "Tooling Query All",
+        "description": "Executes a SOQL query against Tooling API metadata objects, including archived and deleted records.",
+        "tags": [
+          "Query"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "SOQL query string against Tooling API objects, e.g. SELECT Id, Name FROM ApexClass"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query results (including archived/deleted)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "size": {
+                      "type": "integer"
+                    },
+                    "totalSize": {
+                      "type": "integer"
+                    },
+                    "done": {
+                      "type": "boolean"
+                    },
+                    "records": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL syntax, invalid Apex, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions for this operation"
+          },
+          "404": {
+            "description": "Object or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/tooling/sobjects": {
+      "get": {
+        "operationId": "toolingDescribeGlobal",
+        "summary": "List Tooling Objects",
+        "description": "Lists the metadata objects exposed through the Tooling API and basic metadata for each.",
+        "tags": [
+          "Metadata Objects"
+        ],
+        "responses": {
+          "200": {
+            "description": "List of available Tooling API objects",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sobjects": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL syntax, invalid Apex, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions for this operation"
+          },
+          "404": {
+            "description": "Object or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/tooling/sobjects/{sObjectName}": {
+      "parameters": [
+        {
+          "name": "sObjectName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "API name of the Tooling API object (e.g. CustomField, ApexClass, ValidationRule, Flow)"
+        }
+      ],
+      "post": {
+        "operationId": "toolingCreateRecord",
+        "summary": "Create Metadata Record",
+        "description": "Creates a new record of the given Tooling API object type (e.g. a CustomField or ValidationRule).",
+        "tags": [
+          "Metadata Objects"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Field name/value pairs to set",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Record created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL syntax, invalid Apex, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions for this operation"
+          },
+          "404": {
+            "description": "Object or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/tooling/sobjects/{sObjectName}/describe": {
+      "parameters": [
+        {
+          "name": "sObjectName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "API name of the Tooling API object (e.g. CustomField, ApexClass, ValidationRule, Flow)"
+        }
+      ],
+      "get": {
+        "operationId": "toolingDescribeSObject",
+        "summary": "Describe Tooling Object",
+        "description": "Returns full field-level metadata for a Tooling API object.",
+        "tags": [
+          "Metadata Objects"
+        ],
+        "responses": {
+          "200": {
+            "description": "Object metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL syntax, invalid Apex, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions for this operation"
+          },
+          "404": {
+            "description": "Object or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/tooling/sobjects/{sObjectName}/{recordId}": {
+      "parameters": [
+        {
+          "name": "sObjectName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "API name of the Tooling API object (e.g. CustomField, ApexClass, ValidationRule, Flow)"
+        },
+        {
+          "name": "recordId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "18-character Salesforce record ID"
+        }
+      ],
+      "get": {
+        "operationId": "toolingGetRecord",
+        "summary": "Get Metadata Record",
+        "description": "Retrieves field values for a Tooling API metadata record by ID.",
+        "tags": [
+          "Metadata Objects"
+        ],
+        "responses": {
+          "200": {
+            "description": "Record field values",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL syntax, invalid Apex, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions for this operation"
+          },
+          "404": {
+            "description": "Object or record ID not found"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "toolingUpdateRecord",
+        "summary": "Update Metadata Record",
+        "description": "Updates field values on an existing Tooling API metadata record by ID.",
+        "tags": [
+          "Metadata Objects"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Field name/value pairs to set",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Record updated"
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL syntax, invalid Apex, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions for this operation"
+          },
+          "404": {
+            "description": "Object or record ID not found"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "toolingDeleteRecord",
+        "summary": "Delete Metadata Record",
+        "description": "Deletes a Tooling API metadata record by ID.",
+        "tags": [
+          "Metadata Objects"
+        ],
+        "responses": {
+          "204": {
+            "description": "Record deleted"
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL syntax, invalid Apex, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions for this operation"
+          },
+          "404": {
+            "description": "Object or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/tooling/executeAnonymous": {
+      "get": {
+        "operationId": "executeAnonymousApex",
+        "summary": "Execute Anonymous Apex",
+        "description": "Executes an anonymous block of Apex code and returns compile/execution results. Code is passed via the anonymousBody query parameter.",
+        "tags": [
+          "Apex"
+        ],
+        "parameters": [
+          {
+            "name": "anonymousBody",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "URL-encoded Apex code to execute"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Compile and execution result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "compiled": {
+                      "type": "boolean"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "compileProblem": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "exceptionMessage": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "exceptionStackTrace": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "line": {
+                      "type": "integer"
+                    },
+                    "column": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL syntax, invalid Apex, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions for this operation"
+          },
+          "404": {
+            "description": "Object or record ID not found"
+          }
+        }
+      }
+    },
+    "/services/data/v62.0/tooling/runTestsAsynchronous": {
+      "post": {
+        "operationId": "runTestsAsynchronous",
+        "summary": "Run Apex Tests Asynchronously",
+        "description": "Queues the given Apex test classes/methods to run asynchronously and returns a job ID for tracking.",
+        "tags": [
+          "Apex"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "classids": {
+                    "type": "string",
+                    "description": "Comma-separated list of ApexClass IDs to run"
+                  },
+                  "suiteids": {
+                    "type": "string",
+                    "description": "Comma-separated list of ApexTestSuite IDs to run"
+                  },
+                  "maxFailedTests": {
+                    "type": "integer",
+                    "description": "Stop the run after this many test failures (-1 disables)"
+                  },
+                  "testLevel": {
+                    "type": "string",
+                    "enum": [
+                      "RunSpecifiedTests"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Async test run (Apex Job) ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request (invalid field name, bad SOQL syntax, invalid Apex, etc.)"
+          },
+          "401": {
+            "description": "Invalid or expired session/access token"
+          },
+          "403": {
+            "description": "Insufficient permissions for this operation"
+          },
+          "404": {
+            "description": "Object or record ID not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "oauth2ClientCredentials": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://login.salesforce.com/services/oauth2/token",
+            "scopes": {}
+          }
+        }
+      }
+    }
+  }
+}
