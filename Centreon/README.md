@@ -34,12 +34,22 @@ This project provides OpenAPI specs for automating against Centreon's REST API v
 
 Authentication is a static API token sent on the `X-AUTH-TOKEN` header. Generate a token as an administrator in the Centreon web UI (Administration > Authentication, or a user's Security tab) — unlike a token obtained via `/login`, an admin-generated token does not expire from inactivity.
 
-In Itential Platform's **Admin Essentials**, set the integration's `authentication.tokenAuth.value` field to the token value:
+Import the OpenAPI spec from `OpenAPIs/` as an Integration Model in **Admin Essentials**, then create an integration pointing at your Centreon server. The API is rooted at `/centreon/api/v25.10` (adjust the version segment if you're on a different major API version) — this must be set in the instance's `server.base_path` field, since the platform builds the request URL from `protocol`/`host`/`port`/`base_path` rather than any path in the OpenAPI spec itself.
+
+The instance's `authentication`/`server` properties should look like this once configured:
 
 ```json
-"authentication": {
-  "tokenAuth": {
-    "value": "<TOKEN>"
+{
+  "authentication": {
+    "tokenAuth": {
+      "value": "<TOKEN>"
+    }
+  },
+  "server": {
+    "protocol": "https",
+    "host": "<your-centreon-host>",
+    "port": "443",
+    "base_path": "/centreon/api/v25.10"
   }
 }
 ```
