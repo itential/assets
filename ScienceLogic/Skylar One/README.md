@@ -30,7 +30,7 @@ Skylar One (formerly SL1) is ScienceLogic's IT infrastructure monitoring and AIO
 
 ## Integration Configuration
 
-Authentication is HTTP Basic auth using a valid SL1 user account's username and password — credentials are validated against SL1's own user accounts, there is no separate API token or login/token-exchange step. (SL1's REST Toolkit also supports a configurable API-key header as an alternative, but it isn't modeled here since Basic auth is always available and requires no extra setup.) The base path for every resource is `/api`.
+Authentication is HTTP Basic auth using a valid SL1 user account's username and password — credentials are validated against SL1's own user accounts, there is no separate API token or login/token-exchange step. (SL1's REST Toolkit also supports a configurable API-key header as an alternative, but it isn't modeled here since Basic auth is always available and requires no extra setup.) The base path for every resource is `/api` — this platform doesn't apply any path in the OpenAPI spec itself, so it must be set explicitly in the instance's `server.base_path` field (see below).
 
 ### Connection Properties
 
@@ -45,7 +45,8 @@ Authentication is HTTP Basic auth using a valid SL1 user account's username and 
   "server": {
     "protocol": "https",
     "host": "<your-sl1-appliance-host>",
-    "port": "443"
+    "port": "443",
+    "base_path": "/api"
   }
 }
 ```
@@ -56,8 +57,6 @@ Authentication is HTTP Basic auth using a valid SL1 user account's username and 
 |---|---|---|---|
 | [`skylar_one-latest.json`](./OpenAPIs/skylar_one-latest.json) | latest (curated) | 125 | Trimmed to 125 of 727 upstream operations covering common CRUD for automation — see breakdown below |
 | [`skylar_one-12.5.20.json`](./OpenAPIs/skylar_one-12.5.20.json) | 12.5.20 | 727 | Full spec covering SL1's complete documented REST resource surface. |
-
-Both specs were built from the SL1 REST API's real resource/URI hierarchy (`/device`, `/device_group`, `/organization`, `/alert`, `/event`, `/ticket`, etc.), cross-checked against `docs.sciencelogic.com`'s ScienceLogic API reference for authentication, query parameters (`limit`, `offset`, `extended_fetch`, `hide_filterinfo`, `filter.*`, `order.*`), and the standard collection response envelope (`searchspec`/`total_matched`/`total_returned`/`result_set`). SL1 does not publish a per-resource JSON schema, so most individual resource bodies are modeled as flexible objects rather than an exhaustive field list — the `device` create/update and `alert` create bodies are the exception, modeled from SL1's own documented field examples.
 
 ### `skylar_one-latest.json`
 
@@ -81,8 +80,6 @@ Resources included, by category:
 - **Ticket Queue**: List, Create, Get, Update, Replace, Delete
 - **Ticket State**: List, Create, Get, Update, Replace, Delete
 - **Monitor**: Port, Process, Service policies (each: List, Create, Get, Update, Replace, Delete)
-
-Excluded as out of scope for common automation: user/account administration, credentials, custom attributes, dashboards, dynamic application (PowerPack) authoring and their performance/collection sub-resources, raw/bulk performance-data endpoints, discovery-session logs and active-session internals, system patching, theming, ticket chargeback/log/watcher sub-resources, and other internal-platform-administration resources.
 
 ### `skylar_one-12.5.20.json`
 
