@@ -91,6 +91,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **SolarWinds** | Orion NPM |
 | **Sonatype** | Nexus |
 | **Symantec** | Management Center |
+| **Thruk** | Monitoring dashboard (Naemon / Nagios) |
 | **Tufin** | SecureApp · SecureChange · SecureTrack |
 | **Twilio** | Communications APIs |
 | **Versa** | Director |
