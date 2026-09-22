@@ -31,7 +31,7 @@ This project provides an OpenAPI spec for automating against the OneClick Web Se
 
 ## Integration Configuration
 
-Import `dx_netops_spectrum-latest.json` as an Integration Model in **Admin > Integrations**, then create an integration pointing at your OneClick server.
+Import `dx_netops_spectrum-latest.json` as an Integration Model in **Admin > Integrations**, then create an integration pointing at your OneClick server. The API is rooted at `/spectrum/restful` — this must be set in the instance's `server.base_path` field, since the platform builds the request URL from `protocol`/`host`/`port`/`base_path` rather than any path in the OpenAPI spec itself.
 
 Authentication is HTTP Basic Auth, using a local Spectrum user account's username and password (SSO-only accounts can't authenticate this way — the account must exist in Spectrum's local user management). Spectrum 24.3.10+ also offers a UI-generated static bearer token as an alternative, but Basic Auth needs no separate token-generation step and is available on all supported versions.
 
@@ -48,7 +48,8 @@ The instance's `authentication`/`server` properties should look like this once c
   "server": {
     "protocol": "https",
     "host": "<your-oneclick-host>",
-    "port": "443"
+    "port": "443",
+    "base_path": "/spectrum/restful"
   }
 }
 ```
@@ -62,7 +63,7 @@ The instance's `authentication`/`server` properties should look like this once c
 
 ### `dx_netops_spectrum-latest.json`
 
-Broadcom doesn't publish a downloadable OpenAPI/Swagger document for the OneClick Web Services API, so this spec was hand-authored directly from the [Broadcom TechDocs Web Services API Reference](https://techdocs.broadcom.com/us/en/ca-enterprise-software/it-operations-management/spectrum/24-3/programming/web-services-api-reference.html) (resource nouns, request/response documentation, and the alarm/action/model resource pages), then curated to the core CRUD categories.
+Curated to the core CRUD categories.
 
 Resources included, by category:
 
@@ -77,13 +78,11 @@ Resources included, by category:
 - **Action**: issue an action against the SpectroSERVER
 - **Subscription**: create, get, delete a notification subscription; list pending subscription requests
 
-Excluded: SNMPv3 profile administration (`v3profiles` create/delete) — security-credential administration rather than device/alarm CRUD automation.
-
 Several write operations (alarm/event/model queries and bulk updates) take a raw XML request document rather than JSON, per the vendor API's native XML-based request format — these are modeled as `application/xml` string bodies rather than fabricated JSON schemas.
 
 ### `dx_netops_spectrum-24.3.json`
 
-Full spec for the OneClick Web Services API as documented for Spectrum 24.3 — the same hand-authored coverage as `-latest`, plus SNMPv3 profile administration. See `dx_netops_spectrum-latest.json` above for the curated subset if you just need common CRUD automation.
+Full spec for the OneClick Web Services API as documented for Spectrum 24.3, plus SNMPv3 profile administration. See `dx_netops_spectrum-latest.json` above for the curated subset if you just need common CRUD automation.
 
 ## Studio Projects
 
