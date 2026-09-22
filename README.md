@@ -88,7 +88,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **SendGrid** | Transactional & marketing email |
 | **ServiceNow** | Change management · Incident management · RITM |
 | **Slack** | Messaging |
-| **SolarWinds** | Orion NPM |
+| **SolarWinds** | Orion NPM · Service Desk |
 | **Sonatype** | Nexus |
 | **Symantec** | Management Center |
 | **Thruk** | Monitoring dashboard (Naemon / Nagios) |
