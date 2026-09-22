@@ -49,6 +49,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Docker** | Docker Engine · Docker Hub |
 | **EasyPost** | Shipping / logistics |
 | **EfficientIP** | SOLIDserver (DDI) |
+| **ExtraHop** | RevealX 360 |
 | **F5** | BIG-IP · BIG-IQ · Insight |
 | **ForeScout** | Web API (CounterACT / eyeSight) |
 | **Forward Networks** | Network digital twin & verification platform |
