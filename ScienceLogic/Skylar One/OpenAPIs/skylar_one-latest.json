@@ -1,0 +1,6083 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Skylar One",
+    "description": "Authentication: HTTP Basic. Skylar One (formerly SL1) is ScienceLogic's IT infrastructure monitoring and AIOps platform, providing multi-vendor discovery, monitoring, event/alert management, and automation across hybrid environments via its REST API.",
+    "version": "latest",
+    "x-itential-curated": "Trimmed to 125 of 727 upstream operations covering devices, device groups/categories/classes, organizations, alerts/events, assets, interfaces, collector groups, discovery sessions, tickets, and common monitoring policies (port/process/service). See the repo README for the full scope and the full spec.",
+    "x-vendor-api-version": "12.5.20"
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}",
+      "description": "SL1 (Skylar One) API server. This platform does not apply OpenAPI server variables/paths automatically \u2014 set the integration instance's server.base_path to \"/api\".",
+      "variables": {
+        "protocol": {
+          "default": "https",
+          "enum": [
+            "https",
+            "http"
+          ]
+        },
+        "host": {
+          "default": "sl1.example.com",
+          "description": "SL1 appliance hostname or IP address (no protocol, no path)."
+        },
+        "port": {
+          "default": "443"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Alert"
+    },
+    {
+      "name": "Asset"
+    },
+    {
+      "name": "Cleared Event"
+    },
+    {
+      "name": "Collector Group"
+    },
+    {
+      "name": "Device"
+    },
+    {
+      "name": "Device Category"
+    },
+    {
+      "name": "Device Class"
+    },
+    {
+      "name": "Device Group"
+    },
+    {
+      "name": "Discovery Session"
+    },
+    {
+      "name": "Event"
+    },
+    {
+      "name": "Event Category"
+    },
+    {
+      "name": "Interface"
+    },
+    {
+      "name": "Monitor"
+    },
+    {
+      "name": "Organization"
+    },
+    {
+      "name": "Ticket"
+    },
+    {
+      "name": "Ticket Queue"
+    },
+    {
+      "name": "Ticket State"
+    }
+  ],
+  "paths": {
+    "/alert": {
+      "get": {
+        "operationId": "listAlert",
+        "summary": "List alert",
+        "description": "List alert",
+        "tags": [
+          "Alert"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createAlert",
+        "summary": "Create alert",
+        "description": "Create alert",
+        "tags": [
+          "Alert"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlertInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alert/{alert_id}": {
+      "get": {
+        "operationId": "getAlert",
+        "summary": "Get alert",
+        "description": "Get alert",
+        "tags": [
+          "Alert"
+        ],
+        "parameters": [
+          {
+            "name": "alert_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for alert id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateAlert",
+        "summary": "Update alert (partial)",
+        "description": "Update alert (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Alert"
+        ],
+        "parameters": [
+          {
+            "name": "alert_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for alert id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlertInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/asset": {
+      "get": {
+        "operationId": "listAsset",
+        "summary": "List asset",
+        "description": "List asset",
+        "tags": [
+          "Asset"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createAsset",
+        "summary": "Create asset",
+        "description": "Create asset",
+        "tags": [
+          "Asset"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/asset/{asset_id}": {
+      "get": {
+        "operationId": "getAsset",
+        "summary": "Get asset",
+        "description": "Get asset",
+        "tags": [
+          "Asset"
+        ],
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for asset id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateAsset",
+        "summary": "Update asset (partial)",
+        "description": "Update asset (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Asset"
+        ],
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for asset id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceAsset",
+        "summary": "Replace asset",
+        "description": "Replace asset",
+        "tags": [
+          "Asset"
+        ],
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for asset id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteAsset",
+        "summary": "Delete asset",
+        "description": "Delete asset",
+        "tags": [
+          "Asset"
+        ],
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for asset id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource deleted successfully."
+          }
+        }
+      }
+    },
+    "/asset/{asset_id}/note/": {
+      "get": {
+        "operationId": "listAssetNote",
+        "summary": "List asset note",
+        "description": "List asset note",
+        "tags": [
+          "Asset"
+        ],
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for asset id."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createAssetNote",
+        "summary": "Create asset note",
+        "description": "Create asset note",
+        "tags": [
+          "Asset"
+        ],
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for asset id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/asset/{asset_id}/note/{note_id}": {
+      "get": {
+        "operationId": "getAssetNote",
+        "summary": "Get asset note",
+        "description": "Get asset note",
+        "tags": [
+          "Asset"
+        ],
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for asset id."
+          },
+          {
+            "name": "note_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for note id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateAssetNote",
+        "summary": "Update asset note (partial)",
+        "description": "Update asset note (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Asset"
+        ],
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for asset id."
+          },
+          {
+            "name": "note_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for note id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceAssetNote",
+        "summary": "Replace asset note",
+        "description": "Replace asset note",
+        "tags": [
+          "Asset"
+        ],
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for asset id."
+          },
+          {
+            "name": "note_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for note id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cleared_event": {
+      "get": {
+        "operationId": "listClearedEvent",
+        "summary": "List cleared event",
+        "description": "List cleared event",
+        "tags": [
+          "Cleared Event"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cleared_event/{cleared_event_id}": {
+      "get": {
+        "operationId": "getClearedEvent",
+        "summary": "Get cleared event",
+        "description": "Get cleared event",
+        "tags": [
+          "Cleared Event"
+        ],
+        "parameters": [
+          {
+            "name": "cleared_event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for cleared event id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/collector_group": {
+      "get": {
+        "operationId": "listCollectorGroup",
+        "summary": "List collector group",
+        "description": "List collector group",
+        "tags": [
+          "Collector Group"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createCollectorGroup",
+        "summary": "Create collector group",
+        "description": "Create collector group",
+        "tags": [
+          "Collector Group"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/collector_group/{collector_group_id}": {
+      "get": {
+        "operationId": "getCollectorGroup",
+        "summary": "Get collector group",
+        "description": "Get collector group",
+        "tags": [
+          "Collector Group"
+        ],
+        "parameters": [
+          {
+            "name": "collector_group_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for collector group id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateCollectorGroup",
+        "summary": "Update collector group (partial)",
+        "description": "Update collector group (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Collector Group"
+        ],
+        "parameters": [
+          {
+            "name": "collector_group_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for collector group id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceCollectorGroup",
+        "summary": "Replace collector group",
+        "description": "Replace collector group",
+        "tags": [
+          "Collector Group"
+        ],
+        "parameters": [
+          {
+            "name": "collector_group_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for collector group id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteCollectorGroup",
+        "summary": "Delete collector group",
+        "description": "Delete collector group",
+        "tags": [
+          "Collector Group"
+        ],
+        "parameters": [
+          {
+            "name": "collector_group_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for collector group id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource deleted successfully."
+          }
+        }
+      }
+    },
+    "/device": {
+      "get": {
+        "operationId": "listDevice",
+        "summary": "List device",
+        "description": "List device",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createDevice",
+        "summary": "Create device",
+        "description": "Create device",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/device/{device_id}": {
+      "get": {
+        "operationId": "getDevice",
+        "summary": "Get device",
+        "description": "Get device",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateDevice",
+        "summary": "Update device (partial)",
+        "description": "Update device (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceDevice",
+        "summary": "Replace device",
+        "description": "Replace device",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteDevice",
+        "summary": "Delete device",
+        "description": "Delete device",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource deleted successfully."
+          }
+        }
+      }
+    },
+    "/device/{device_id}/detail": {
+      "get": {
+        "operationId": "getDeviceDetail",
+        "summary": "Get device detail",
+        "description": "Get device detail",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/device/{device_id}/interface": {
+      "get": {
+        "operationId": "listDeviceInterface",
+        "summary": "List device interface",
+        "description": "List device interface",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device id."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createDeviceInterface",
+        "summary": "Create device interface",
+        "description": "Create device interface",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/device/{device_id}/interface/{interface_id}": {
+      "get": {
+        "operationId": "getDeviceInterface",
+        "summary": "Get device interface",
+        "description": "Get device interface",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device id."
+          },
+          {
+            "name": "interface_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for interface id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateDeviceInterface",
+        "summary": "Update device interface (partial)",
+        "description": "Update device interface (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device id."
+          },
+          {
+            "name": "interface_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for interface id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceDeviceInterface",
+        "summary": "Replace device interface",
+        "description": "Replace device interface",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device id."
+          },
+          {
+            "name": "interface_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for interface id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteDeviceInterface",
+        "summary": "Delete device interface",
+        "description": "Delete device interface",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device id."
+          },
+          {
+            "name": "interface_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for interface id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource deleted successfully."
+          }
+        }
+      }
+    },
+    "/device/{device_id}/note/": {
+      "get": {
+        "operationId": "listDeviceNote",
+        "summary": "List device note",
+        "description": "List device note",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device id."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createDeviceNote",
+        "summary": "Create device note",
+        "description": "Create device note",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/device/{device_id}/note/{note_id}": {
+      "get": {
+        "operationId": "getDeviceNote",
+        "summary": "Get device note",
+        "description": "Get device note",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device id."
+          },
+          {
+            "name": "note_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for note id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateDeviceNote",
+        "summary": "Update device note (partial)",
+        "description": "Update device note (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device id."
+          },
+          {
+            "name": "note_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for note id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceDeviceNote",
+        "summary": "Replace device note",
+        "description": "Replace device note",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device id."
+          },
+          {
+            "name": "note_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for note id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteDeviceNote",
+        "summary": "Delete device note",
+        "description": "Delete device note",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device id."
+          },
+          {
+            "name": "note_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for note id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource deleted successfully."
+          }
+        }
+      }
+    },
+    "/device/{device_id}/vitals": {
+      "get": {
+        "operationId": "getDeviceVitals",
+        "summary": "Get device vitals",
+        "description": "Get device vitals",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/device_category": {
+      "get": {
+        "operationId": "listDeviceCategory",
+        "summary": "List device category",
+        "description": "List device category",
+        "tags": [
+          "Device Category"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/device_category/{device_category_id}": {
+      "get": {
+        "operationId": "getDeviceCategory",
+        "summary": "Get device category",
+        "description": "Get device category",
+        "tags": [
+          "Device Category"
+        ],
+        "parameters": [
+          {
+            "name": "device_category_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device category id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/device_class": {
+      "get": {
+        "operationId": "listDeviceClass",
+        "summary": "List device class",
+        "description": "List device class",
+        "tags": [
+          "Device Class"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/device_class/{device_class_id}": {
+      "get": {
+        "operationId": "getDeviceClass",
+        "summary": "Get device class",
+        "description": "Get device class",
+        "tags": [
+          "Device Class"
+        ],
+        "parameters": [
+          {
+            "name": "device_class_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device class id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/device_group": {
+      "get": {
+        "operationId": "listDeviceGroup",
+        "summary": "List device group",
+        "description": "List device group",
+        "tags": [
+          "Device Group"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createDeviceGroup",
+        "summary": "Create device group",
+        "description": "Create device group",
+        "tags": [
+          "Device Group"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/device_group/{device_group_id}": {
+      "get": {
+        "operationId": "getDeviceGroup",
+        "summary": "Get device group",
+        "description": "Get device group",
+        "tags": [
+          "Device Group"
+        ],
+        "parameters": [
+          {
+            "name": "device_group_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device group id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateDeviceGroup",
+        "summary": "Update device group (partial)",
+        "description": "Update device group (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Device Group"
+        ],
+        "parameters": [
+          {
+            "name": "device_group_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device group id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceDeviceGroup",
+        "summary": "Replace device group",
+        "description": "Replace device group",
+        "tags": [
+          "Device Group"
+        ],
+        "parameters": [
+          {
+            "name": "device_group_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device group id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteDeviceGroup",
+        "summary": "Delete device group",
+        "description": "Delete device group",
+        "tags": [
+          "Device Group"
+        ],
+        "parameters": [
+          {
+            "name": "device_group_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device group id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource deleted successfully."
+          }
+        }
+      }
+    },
+    "/device_group/{device_group_id}/expanded_devices": {
+      "get": {
+        "operationId": "listDeviceGroupExpandedDevices",
+        "summary": "List device group expanded devices",
+        "description": "List device group expanded devices",
+        "tags": [
+          "Device Group"
+        ],
+        "parameters": [
+          {
+            "name": "device_group_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for device group id."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/discovery_session": {
+      "get": {
+        "operationId": "listDiscoverySession",
+        "summary": "List discovery session",
+        "description": "List discovery session",
+        "tags": [
+          "Discovery Session"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createDiscoverySession",
+        "summary": "Create discovery session",
+        "description": "Create discovery session",
+        "tags": [
+          "Discovery Session"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/discovery_session/{discovery_session_id}": {
+      "get": {
+        "operationId": "getDiscoverySession",
+        "summary": "Get discovery session",
+        "description": "Get discovery session",
+        "tags": [
+          "Discovery Session"
+        ],
+        "parameters": [
+          {
+            "name": "discovery_session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for discovery session id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateDiscoverySession",
+        "summary": "Update discovery session (partial)",
+        "description": "Update discovery session (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Discovery Session"
+        ],
+        "parameters": [
+          {
+            "name": "discovery_session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for discovery session id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceDiscoverySession",
+        "summary": "Replace discovery session",
+        "description": "Replace discovery session",
+        "tags": [
+          "Discovery Session"
+        ],
+        "parameters": [
+          {
+            "name": "discovery_session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for discovery session id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteDiscoverySession",
+        "summary": "Delete discovery session",
+        "description": "Delete discovery session",
+        "tags": [
+          "Discovery Session"
+        ],
+        "parameters": [
+          {
+            "name": "discovery_session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for discovery session id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource deleted successfully."
+          }
+        }
+      }
+    },
+    "/event": {
+      "get": {
+        "operationId": "listEvent",
+        "summary": "List event",
+        "description": "List event",
+        "tags": [
+          "Event"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/event/{event_id}": {
+      "get": {
+        "operationId": "getEvent",
+        "summary": "Get event",
+        "description": "Get event",
+        "tags": [
+          "Event"
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for event id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateEvent",
+        "summary": "Update event (partial)",
+        "description": "Update event (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Event"
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for event id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteEvent",
+        "summary": "Delete event",
+        "description": "Delete event",
+        "tags": [
+          "Event"
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for event id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource deleted successfully."
+          }
+        }
+      }
+    },
+    "/event_category/{event_category_id}": {
+      "get": {
+        "operationId": "getEventCategory",
+        "summary": "Get event category",
+        "description": "Get event category",
+        "tags": [
+          "Event Category"
+        ],
+        "parameters": [
+          {
+            "name": "event_category_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for event category id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateEventCategory",
+        "summary": "Update event category (partial)",
+        "description": "Update event category (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Event Category"
+        ],
+        "parameters": [
+          {
+            "name": "event_category_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for event category id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteEventCategory",
+        "summary": "Delete event category",
+        "description": "Delete event category",
+        "tags": [
+          "Event Category"
+        ],
+        "parameters": [
+          {
+            "name": "event_category_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for event category id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource deleted successfully."
+          }
+        }
+      }
+    },
+    "/interface": {
+      "get": {
+        "operationId": "listInterface",
+        "summary": "List interface",
+        "description": "List interface",
+        "tags": [
+          "Interface"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createInterface",
+        "summary": "Create interface",
+        "description": "Create interface",
+        "tags": [
+          "Interface"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/interface/{interface_id}": {
+      "get": {
+        "operationId": "getInterface",
+        "summary": "Get interface",
+        "description": "Get interface",
+        "tags": [
+          "Interface"
+        ],
+        "parameters": [
+          {
+            "name": "interface_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for interface id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateInterface",
+        "summary": "Update interface (partial)",
+        "description": "Update interface (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Interface"
+        ],
+        "parameters": [
+          {
+            "name": "interface_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for interface id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceInterface",
+        "summary": "Replace interface",
+        "description": "Replace interface",
+        "tags": [
+          "Interface"
+        ],
+        "parameters": [
+          {
+            "name": "interface_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for interface id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteInterface",
+        "summary": "Delete interface",
+        "description": "Delete interface",
+        "tags": [
+          "Interface"
+        ],
+        "parameters": [
+          {
+            "name": "interface_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for interface id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource deleted successfully."
+          }
+        }
+      }
+    },
+    "/monitor/port": {
+      "get": {
+        "operationId": "listMonitorPort",
+        "summary": "List monitor port",
+        "description": "List monitor port",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createMonitorPort",
+        "summary": "Create monitor port",
+        "description": "Create monitor port",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/monitor/port/{port_id}": {
+      "get": {
+        "operationId": "getMonitorPort",
+        "summary": "Get monitor port",
+        "description": "Get monitor port",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [
+          {
+            "name": "port_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for port id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateMonitorPort",
+        "summary": "Update monitor port (partial)",
+        "description": "Update monitor port (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [
+          {
+            "name": "port_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for port id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceMonitorPort",
+        "summary": "Replace monitor port",
+        "description": "Replace monitor port",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [
+          {
+            "name": "port_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for port id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteMonitorPort",
+        "summary": "Delete monitor port",
+        "description": "Delete monitor port",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [
+          {
+            "name": "port_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for port id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource deleted successfully."
+          }
+        }
+      }
+    },
+    "/monitor/process": {
+      "get": {
+        "operationId": "listMonitorProcess",
+        "summary": "List monitor process",
+        "description": "List monitor process",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createMonitorProcess",
+        "summary": "Create monitor process",
+        "description": "Create monitor process",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/monitor/process/{process_id}": {
+      "get": {
+        "operationId": "getMonitorProcess",
+        "summary": "Get monitor process",
+        "description": "Get monitor process",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for process id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateMonitorProcess",
+        "summary": "Update monitor process (partial)",
+        "description": "Update monitor process (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for process id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceMonitorProcess",
+        "summary": "Replace monitor process",
+        "description": "Replace monitor process",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for process id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteMonitorProcess",
+        "summary": "Delete monitor process",
+        "description": "Delete monitor process",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for process id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource deleted successfully."
+          }
+        }
+      }
+    },
+    "/monitor/service": {
+      "get": {
+        "operationId": "listMonitorService",
+        "summary": "List monitor service",
+        "description": "List monitor service",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createMonitorService",
+        "summary": "Create monitor service",
+        "description": "Create monitor service",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/monitor/service/{service_id}": {
+      "get": {
+        "operationId": "getMonitorService",
+        "summary": "Get monitor service",
+        "description": "Get monitor service",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [
+          {
+            "name": "service_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for service id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateMonitorService",
+        "summary": "Update monitor service (partial)",
+        "description": "Update monitor service (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [
+          {
+            "name": "service_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for service id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceMonitorService",
+        "summary": "Replace monitor service",
+        "description": "Replace monitor service",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [
+          {
+            "name": "service_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for service id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteMonitorService",
+        "summary": "Delete monitor service",
+        "description": "Delete monitor service",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [
+          {
+            "name": "service_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for service id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource deleted successfully."
+          }
+        }
+      }
+    },
+    "/organization": {
+      "get": {
+        "operationId": "listOrganization",
+        "summary": "List organization",
+        "description": "List organization",
+        "tags": [
+          "Organization"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createOrganization",
+        "summary": "Create organization",
+        "description": "Create organization",
+        "tags": [
+          "Organization"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organization/{organization_id}": {
+      "get": {
+        "operationId": "getOrganization",
+        "summary": "Get organization",
+        "description": "Get organization",
+        "tags": [
+          "Organization"
+        ],
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for organization id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateOrganization",
+        "summary": "Update organization (partial)",
+        "description": "Update organization (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Organization"
+        ],
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for organization id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceOrganization",
+        "summary": "Replace organization",
+        "description": "Replace organization",
+        "tags": [
+          "Organization"
+        ],
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for organization id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteOrganization",
+        "summary": "Delete organization",
+        "description": "Delete organization",
+        "tags": [
+          "Organization"
+        ],
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for organization id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource deleted successfully."
+          }
+        }
+      }
+    },
+    "/organization/{organization_id}/note/": {
+      "get": {
+        "operationId": "listOrganizationNote",
+        "summary": "List organization note",
+        "description": "List organization note",
+        "tags": [
+          "Organization"
+        ],
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for organization id."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createOrganizationNote",
+        "summary": "Create organization note",
+        "description": "Create organization note",
+        "tags": [
+          "Organization"
+        ],
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for organization id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organization/{organization_id}/note/{note_id}": {
+      "get": {
+        "operationId": "getOrganizationNote",
+        "summary": "Get organization note",
+        "description": "Get organization note",
+        "tags": [
+          "Organization"
+        ],
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for organization id."
+          },
+          {
+            "name": "note_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for note id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateOrganizationNote",
+        "summary": "Update organization note (partial)",
+        "description": "Update organization note (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Organization"
+        ],
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for organization id."
+          },
+          {
+            "name": "note_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for note id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceOrganizationNote",
+        "summary": "Replace organization note",
+        "description": "Replace organization note",
+        "tags": [
+          "Organization"
+        ],
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for organization id."
+          },
+          {
+            "name": "note_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for note id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteOrganizationNote",
+        "summary": "Delete organization note",
+        "description": "Delete organization note",
+        "tags": [
+          "Organization"
+        ],
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for organization id."
+          },
+          {
+            "name": "note_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for note id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource deleted successfully."
+          }
+        }
+      }
+    },
+    "/ticket": {
+      "get": {
+        "operationId": "listTicket",
+        "summary": "List ticket",
+        "description": "List ticket",
+        "tags": [
+          "Ticket"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createTicket",
+        "summary": "Create ticket",
+        "description": "Create ticket",
+        "tags": [
+          "Ticket"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ticket/{ticket_id}": {
+      "get": {
+        "operationId": "getTicket",
+        "summary": "Get ticket",
+        "description": "Get ticket",
+        "tags": [
+          "Ticket"
+        ],
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for ticket id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateTicket",
+        "summary": "Update ticket (partial)",
+        "description": "Update ticket (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Ticket"
+        ],
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for ticket id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceTicket",
+        "summary": "Replace ticket",
+        "description": "Replace ticket",
+        "tags": [
+          "Ticket"
+        ],
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for ticket id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ticket/{ticket_id}/note/": {
+      "get": {
+        "operationId": "listTicketNote",
+        "summary": "List ticket note",
+        "description": "List ticket note",
+        "tags": [
+          "Ticket"
+        ],
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for ticket id."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createTicketNote",
+        "summary": "Create ticket note",
+        "description": "Create ticket note",
+        "tags": [
+          "Ticket"
+        ],
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for ticket id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ticket/{ticket_id}/note/{note_id}": {
+      "get": {
+        "operationId": "getTicketNote",
+        "summary": "Get ticket note",
+        "description": "Get ticket note",
+        "tags": [
+          "Ticket"
+        ],
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for ticket id."
+          },
+          {
+            "name": "note_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for note id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateTicketNote",
+        "summary": "Update ticket note (partial)",
+        "description": "Update ticket note (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Ticket"
+        ],
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for ticket id."
+          },
+          {
+            "name": "note_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for note id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceTicketNote",
+        "summary": "Replace ticket note",
+        "description": "Replace ticket note",
+        "tags": [
+          "Ticket"
+        ],
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for ticket id."
+          },
+          {
+            "name": "note_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for note id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ticket_queue": {
+      "get": {
+        "operationId": "listTicketQueue",
+        "summary": "List ticket queue",
+        "description": "List ticket queue",
+        "tags": [
+          "Ticket Queue"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createTicketQueue",
+        "summary": "Create ticket queue",
+        "description": "Create ticket queue",
+        "tags": [
+          "Ticket Queue"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ticket_queue/{ticket_queue_id}": {
+      "get": {
+        "operationId": "getTicketQueue",
+        "summary": "Get ticket queue",
+        "description": "Get ticket queue",
+        "tags": [
+          "Ticket Queue"
+        ],
+        "parameters": [
+          {
+            "name": "ticket_queue_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for ticket queue id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateTicketQueue",
+        "summary": "Update ticket queue (partial)",
+        "description": "Update ticket queue (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Ticket Queue"
+        ],
+        "parameters": [
+          {
+            "name": "ticket_queue_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for ticket queue id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceTicketQueue",
+        "summary": "Replace ticket queue",
+        "description": "Replace ticket queue",
+        "tags": [
+          "Ticket Queue"
+        ],
+        "parameters": [
+          {
+            "name": "ticket_queue_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for ticket queue id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteTicketQueue",
+        "summary": "Delete ticket queue",
+        "description": "Delete ticket queue",
+        "tags": [
+          "Ticket Queue"
+        ],
+        "parameters": [
+          {
+            "name": "ticket_queue_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for ticket queue id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource deleted successfully."
+          }
+        }
+      }
+    },
+    "/ticket_state": {
+      "get": {
+        "operationId": "listTicketState",
+        "summary": "List ticket state",
+        "description": "List ticket state",
+        "tags": [
+          "Ticket State"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of resources to return."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Zero-based starting position in the result set."
+          },
+          {
+            "name": "extended_fetch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to return full attributes for each resource; default (0) returns only URI and description."
+          },
+          {
+            "name": "hide_filterinfo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "description": "Set to 1 to omit the searchspec block and return only result_set."
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression. Use filter.<field>[.<operator>]=<value>, e.g. filter.name.contains=core-switch. Operators: min, max, contains, begins_with, ends_with, isnull, in; prefix with .not to invert.",
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort expression. Use order.<field>=ASC|DESC, e.g. order.name=ASC.",
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createTicketState",
+        "summary": "Create ticket state",
+        "description": "Create ticket state",
+        "tags": [
+          "Ticket State"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ticket_state/{ticket_state_id}": {
+      "get": {
+        "operationId": "getTicketState",
+        "summary": "Get ticket state",
+        "description": "Get ticket state",
+        "tags": [
+          "Ticket State"
+        ],
+        "parameters": [
+          {
+            "name": "ticket_state_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for ticket state id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateTicketState",
+        "summary": "Update ticket state (partial)",
+        "description": "Update ticket state (partial). Only include the properties to change; unspecified fields are left as-is.",
+        "tags": [
+          "Ticket State"
+        ],
+        "parameters": [
+          {
+            "name": "ticket_state_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for ticket state id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "replaceTicketState",
+        "summary": "Replace ticket state",
+        "description": "Replace ticket state",
+        "tags": [
+          "Ticket State"
+        ],
+        "parameters": [
+          {
+            "name": "ticket_state_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for ticket state id."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteTicketState",
+        "summary": "Delete ticket state",
+        "description": "Delete ticket state",
+        "tags": [
+          "Ticket State"
+        ],
+        "parameters": [
+          {
+            "name": "ticket_state_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Relative-URI identifier segment for ticket state id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource deleted successfully."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic",
+        "description": "HTTP Basic authentication using valid SL1 user credentials."
+      }
+    },
+    "schemas": {
+      "CollectionEnvelope": {
+        "type": "object",
+        "description": "Standard SL1 response envelope for a GET against a resource index (collection) URI.",
+        "properties": {
+          "searchspec": {
+            "type": "object",
+            "description": "Echo of the fields and options available/applied for this search. Omitted when hide_filterinfo=1."
+          },
+          "total_matched": {
+            "type": "string",
+            "description": "Total number of resources matching the request, regardless of limit/offset."
+          },
+          "total_returned": {
+            "type": "string",
+            "description": "Number of resources actually included in result_set."
+          },
+          "result_set": {
+            "type": "array",
+            "description": "Matching resources. Each entry is a full resource object when extended_fetch=1, otherwise {URI, description}.",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "Resource": {
+        "type": "object",
+        "description": "Generic SL1 resource representation. Field names vary by resource type; SL1 does not publish a per-resource JSON schema, so fields are not enumerated here. See the resource's page under docs.sciencelogic.com's ScienceLogic API section.",
+        "additionalProperties": true
+      },
+      "DeviceInput": {
+        "type": "object",
+        "description": "Fields accepted when creating or updating a physical device.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Device name."
+          },
+          "ip": {
+            "type": "string",
+            "description": "IP address for the device; must be unique in SL1."
+          },
+          "organization": {
+            "type": "string",
+            "description": "Relative API URI of an existing organization, e.g. /organization/0."
+          },
+          "class_type": {
+            "type": "string",
+            "description": "Relative API URI of an existing device class, e.g. /device_class/1547. Defaults to Ping | ICMP if omitted."
+          },
+          "snmp_cred_id": {
+            "type": "string",
+            "description": "Relative API URI of an existing SNMP credential, e.g. /credential/snmp/69."
+          },
+          "collector_group": {
+            "type": "string",
+            "description": "Relative API URI of an existing collector group, e.g. /collector_group/1."
+          }
+        },
+        "additionalProperties": true
+      },
+      "AlertInput": {
+        "type": "object",
+        "description": "Fields accepted when generating an alert/event via the API.",
+        "properties": {
+          "force_ytype": {
+            "type": "string",
+            "description": "Type of sub-entity on a device to associate the alert with."
+          },
+          "force_yid": {
+            "type": "string",
+            "description": "ID of the specific sub-entity."
+          },
+          "force_yname": {
+            "type": "string",
+            "description": "Name of the specific sub-entity."
+          },
+          "message": {
+            "type": "string",
+            "description": "Message text to associate with the alert."
+          },
+          "value": {
+            "type": "string",
+            "description": "Numeric value that triggered the alert."
+          },
+          "threshold": {
+            "type": "string",
+            "description": "Numeric threshold that was exceeded."
+          },
+          "message_time": {
+            "type": "string",
+            "description": "Timestamp to associate with the alert, in Unix time."
+          },
+          "aligned_resource": {
+            "type": "string",
+            "description": "Relative API URI of the device to align the alert to, e.g. /device/1."
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  }
+}
