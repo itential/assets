@@ -34,7 +34,7 @@ Symantec Management Center (Broadcom) centrally manages ProxySG, Advanced Secure
 
 ## Integration Configuration
 
-Import the OpenAPI spec from `OpenAPIs/` as an Integration Model in **Admin > Integrations**, then create an integration pointing at your Management Center appliance.
+Import the OpenAPI spec from `OpenAPIs/` as an Integration Model in **Admin > Integrations**, then create an integration pointing at your Management Center appliance. The API is rooted at `/api` — this must be set in the instance's `server.base_path` field, since the platform builds the request URL from `protocol`/`host`/`port`/`base_path` rather than any path in the OpenAPI spec itself.
 
 Authentication is a static API token, generated in the Management Center console under **Administration > Users > Generate Token** (up to 360-day validity) and replayed as-is on the `X-Auth-Token` header — no login call involved.
 
@@ -45,7 +45,7 @@ Authentication is a static API token, generated in the Management Center console
   "server": {
     "protocol": "https",
     "host": "<mc-host>:8082",
-    "base_path": ""
+    "base_path": "/api"
   },
   "authentication": {
     "apiKeyAuth": {
@@ -65,13 +65,11 @@ Authentication is a static API token, generated in the Management Center console
 | Spec | Version | Operations | Description |
 |---|---|---|---|
 | [`symantec_management_center-latest.json`](./OpenAPIs/symantec_management_center-latest.json) | latest (curated) | 121 | Alerts, device/device group management, file store, folders, jobs, policies, scripts, and tenants — see breakdown below |
-| [`symantec_management_center-1.0.json`](./OpenAPIs/symantec_management_center-1.0.json) | 1.0 | 154 | Full spec covering every operation documented in Broadcom's TechDocs reference |
+| [`symantec_management_center-1.0.json`](./OpenAPIs/symantec_management_center-1.0.json) | 1.0 | 154 | Full spec covering every documented operation |
 
 ### `symantec_management_center-latest.json`
 
-Sourced from Broadcom's official TechDocs REST API reference for Management Center 3.3: [techdocs.broadcom.com/.../management-center/3-3/api/overview.html](https://techdocs.broadcom.com/us/en/symantec-security-software/web-and-network-security/management-center/3-3/api/overview.html), which documents every path and schema individually across `api/Paths/*.html` and `api/Definitions/*.html`.
-
-Actively-maintained spec (`x-vendor-api-version: 1.0`). Trimmed to 121 of 154 upstream operations covering common CRUD for automation.
+Trimmed to 121 of 154 upstream operations covering common CRUD for automation.
 
 Resources included, by category:
 
@@ -85,11 +83,9 @@ Resources included, by category:
 - **Scripts**: List, Get, Create, Update, Delete, Content (get/create/by version), Attributes, Versions, Execute, Install
 - **Tenants**: List, Get, Create, Update, Delete
 
-Excluded as vendor-internal tooling outside common-CRUD-for-automation scope: the **System** tag (appliance self-administration — system images, settings, password, restart, sensors, storage, usage, version, metrics, info, audit) and the **Auth** tag (user/role/permission administration).
-
 ### `symantec_management_center-1.0.json`
 
-Full spec built from the same Broadcom TechDocs reference (154 operations across all 11 documented tag categories, including System and Auth). The vendor's API overview lists its version as `1.0`.
+Full spec (154 operations across all 11 documented tag categories). The vendor's API overview lists its version as `1.0`.
 
 ## Studio Projects
 
