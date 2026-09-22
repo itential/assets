@@ -63,7 +63,7 @@ If Thruk runs under OMD with a named site, prefix `base_path` with the site name
 
 ### `thruk-latest.json`
 
-Hand-built from Thruk's official REST API documentation (`thruk.org/documentation/rest.html`, mirrored from the Thruk GitHub source), since Thruk does not publish a machine-readable OpenAPI/Swagger document. Curated to the core monitoring CRUD and operational categories.
+Curated to the core monitoring CRUD and operational categories.
 
 Resources included, by category:
 
@@ -75,13 +75,11 @@ Resources included, by category:
 - **Status listings**: alerts, logs, notifications, process info, check statistics, sites/backends
 - **Config lifecycle**: check, save, reload, revert (the required sequence after any config change, per Thruk's own object-configuration workflow)
 
-External-command operations use a single parameterized endpoint per resource (`.../cmd/{command}`) with the real, documented command names as a path-parameter enum, rather than one operation per command — this keeps the curated spec's operation count aligned with resource CRUD rather than the underlying command catalog, which runs to well over a hundred individual commands across all resources. The full list of command names and their specific parameters is in the Thruk REST API commands reference.
-
-Excluded: Thruk's own internal tooling and admin surfaces (API key management, business processes, broadcasts, cluster management, config editor, background jobs, log cache administration, metrics, node control, Panorama dashboards, recurring downtime schedules, reports, sessions, user administration), availability/outage historical reporting endpoints, commandline/debug introspection endpoints, and generic `/config/objects` bulk CRUD (superseded for CRUD purposes by the per-resource `.../config` endpoints already included). The system-wide `/system/cmd/...` commands (global event handler changes, process restart/shutdown, global check/notification toggles) were also left out as core-process administration rather than day-to-day monitoring automation.
+External-command operations use a single parameterized endpoint per resource (`.../cmd/{command}`) with the real, documented command names as a path-parameter enum. The full list of command names and their specific parameters is in the Thruk REST API commands reference.
 
 ### `thruk-1.json`
 
-Full spec covering every endpoint documented in Thruk's REST API reference, including the admin/internal endpoints and per-resource external-command endpoints excluded from `-latest.json` above. See `thruk-latest.json` for the curated subset if you just need common monitoring automation.
+Full spec covering every endpoint documented in Thruk's REST API reference. See `thruk-latest.json` for the curated subset if you just need common monitoring automation.
 
 ## Studio Projects
 
