@@ -71,6 +71,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Jenkins** | Jenkins |
 | **JFrog** | Artifactory |
 | **Juniper** | JUNOS · Mist |
+| **Keygen** | Software licensing & distribution |
 | **Kentik** | Network observability |
 | **Kubernetes** | Container orchestration |
 | **LogicMonitor** | Observability |
