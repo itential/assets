@@ -1,0 +1,4709 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Starburst Enterprise",
+    "description": "Starburst Enterprise is a self-hosted, Trino-based analytics platform for querying and governing data across catalogs. Its REST API manages built-in access control (roles, grants, role assignments), data products, ad hoc/scheduled SQL jobs, and cluster maintenance windows.",
+    "version": "482-e.2"
+  },
+  "servers": [
+    {
+      "url": "https://{host}:{port}",
+      "description": "Starburst Enterprise coordinator. This platform does not apply OpenAPI server variables/paths automatically \u2014 set the integration instance's server.base_path to \"/api\".",
+      "variables": {
+        "host": {
+          "default": "host.example.com",
+          "description": "Starburst Enterprise coordinator hostname or IP."
+        },
+        "port": {
+          "default": "8443",
+          "description": "Starburst Enterprise coordinator port."
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "BasicAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Roles",
+      "description": "Built-in access control roles, which bundle privileges and are assigned to users and groups."
+    },
+    {
+      "name": "Grants",
+      "description": "Privilege grants that attach a role to an action on a catalog, schema, table, column, or other entity."
+    },
+    {
+      "name": "LocationGrants",
+      "description": "Read/write privilege grants scoped to a storage location pattern rather than a catalog entity."
+    },
+    {
+      "name": "Subjects",
+      "description": "Role assignments to and from users and groups."
+    },
+    {
+      "name": "RoleAssignments",
+      "description": "Read-only view across all role assignments."
+    },
+    {
+      "name": "Domains",
+      "description": "Data domains used to group and govern related data products."
+    },
+    {
+      "name": "DataProducts",
+      "description": "Curated, published collections of views over one or more catalogs."
+    },
+    {
+      "name": "Workflows",
+      "description": "Asynchronous data product lifecycle actions (publish, delete)."
+    },
+    {
+      "name": "Tags",
+      "description": "Free-text tags applied to data products."
+    },
+    {
+      "name": "SqlJobs",
+      "description": "Ad hoc or scheduled SQL statement execution."
+    },
+    {
+      "name": "DataMaintenance",
+      "description": "Cluster maintenance window scheduling."
+    }
+  ],
+  "paths": {
+    "/v1/biac/roles": {
+      "post": {
+        "tags": [
+          "Roles"
+        ],
+        "summary": "Create Role",
+        "description": "Create a built-in access control role.",
+        "operationId": "createRole",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RolePayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Role"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Roles"
+        ],
+        "summary": "List Roles",
+        "description": "List all built-in access control roles.",
+        "operationId": "listRoles",
+        "parameters": [
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Role"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/roles/{roleId}": {
+      "get": {
+        "tags": [
+          "Roles"
+        ],
+        "summary": "Get Role",
+        "description": "Retrieve details for a role.",
+        "operationId": "getRole",
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Role identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Role"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Roles"
+        ],
+        "summary": "Update Role",
+        "description": "Update a role.",
+        "operationId": "updateRole",
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Role identifier."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RolePayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Role"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Roles"
+        ],
+        "summary": "Delete Role",
+        "description": "Delete a role.",
+        "operationId": "deleteRole",
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Role identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/grants": {
+      "post": {
+        "tags": [
+          "Grants"
+        ],
+        "summary": "Create Grant",
+        "description": "Grant a privilege on an entity to a role.",
+        "operationId": "createGrant",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrantPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Grant"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Grants"
+        ],
+        "summary": "List Grants",
+        "description": "List all grants.",
+        "operationId": "listGrants",
+        "parameters": [
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Grant"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/grants/{grantId}": {
+      "get": {
+        "tags": [
+          "Grants"
+        ],
+        "summary": "Get Grant",
+        "description": "Retrieve details for a grant.",
+        "operationId": "getGrant",
+        "parameters": [
+          {
+            "name": "grantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Grant identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Grant"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Grants"
+        ],
+        "summary": "Delete Grant",
+        "description": "Revoke a grant.",
+        "operationId": "deleteGrant",
+        "parameters": [
+          {
+            "name": "grantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Grant identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/locationGrants": {
+      "post": {
+        "tags": [
+          "LocationGrants"
+        ],
+        "summary": "Create Location Grant",
+        "description": "Grant read or write access to a storage location pattern.",
+        "operationId": "createLocationGrant",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationGrantPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationGrant"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "LocationGrants"
+        ],
+        "summary": "List Location Grants",
+        "description": "List all location grants.",
+        "operationId": "listLocationGrants",
+        "parameters": [
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LocationGrant"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/locationGrants/{locationGrantId}": {
+      "get": {
+        "tags": [
+          "LocationGrants"
+        ],
+        "summary": "Get Location Grant",
+        "description": "Retrieve details for a location grant.",
+        "operationId": "getLocationGrant",
+        "parameters": [
+          {
+            "name": "locationGrantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Location grant identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationGrant"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "LocationGrants"
+        ],
+        "summary": "Delete Location Grant",
+        "description": "Revoke a location grant.",
+        "operationId": "deleteLocationGrant",
+        "parameters": [
+          {
+            "name": "locationGrantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Location grant identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/subjects/users/{userId}/roles/{roleId}": {
+      "post": {
+        "tags": [
+          "Subjects"
+        ],
+        "summary": "Assign Role To User",
+        "description": "Assign a role to a user.",
+        "operationId": "assignRoleToUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User identifier."
+          },
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Role identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Subjects"
+        ],
+        "summary": "Remove Role From User",
+        "description": "Remove a role assignment from a user.",
+        "operationId": "removeRoleFromUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User identifier."
+          },
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Role identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/subjects/users/{userId}/roles": {
+      "get": {
+        "tags": [
+          "Subjects"
+        ],
+        "summary": "List User Role Assignments",
+        "description": "List the roles assigned to a user.",
+        "operationId": "listUserRoleAssignments",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User identifier."
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Role"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/subjects/groups/{groupId}/roles/{roleId}": {
+      "post": {
+        "tags": [
+          "Subjects"
+        ],
+        "summary": "Assign Role To Group",
+        "description": "Assign a role to a group.",
+        "operationId": "assignRoleToGroup",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Group identifier."
+          },
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Role identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Subjects"
+        ],
+        "summary": "Remove Role From Group",
+        "description": "Remove a role assignment from a group.",
+        "operationId": "removeRoleFromGroup",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Group identifier."
+          },
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Role identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/subjects/groups/{groupId}/roles": {
+      "get": {
+        "tags": [
+          "Subjects"
+        ],
+        "summary": "List Group Role Assignments",
+        "description": "List the roles assigned to a group.",
+        "operationId": "listGroupRoleAssignments",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Group identifier."
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Role"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/roleAssignments": {
+      "get": {
+        "tags": [
+          "RoleAssignments"
+        ],
+        "summary": "List All Role Assignments",
+        "description": "List every role assignment across users, groups, and roles.",
+        "operationId": "listRoleAssignments",
+        "parameters": [
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/domains": {
+      "post": {
+        "tags": [
+          "Domains"
+        ],
+        "summary": "Create Domain",
+        "description": "Create a data domain used to organize data products.",
+        "operationId": "createDomain",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DomainPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Domains"
+        ],
+        "summary": "List Domains",
+        "description": "List all data domains.",
+        "operationId": "listDomains",
+        "parameters": [
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Domain"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/domains/{domainId}": {
+      "get": {
+        "tags": [
+          "Domains"
+        ],
+        "summary": "Get Domain",
+        "description": "Retrieve details for a data domain.",
+        "operationId": "getDomain",
+        "parameters": [
+          {
+            "name": "domainId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Domain identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Domains"
+        ],
+        "summary": "Update Domain",
+        "description": "Update a data domain.",
+        "operationId": "updateDomain",
+        "parameters": [
+          {
+            "name": "domainId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Domain identifier."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DomainPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Domains"
+        ],
+        "summary": "Delete Domain",
+        "description": "Delete a data domain.",
+        "operationId": "deleteDomain",
+        "parameters": [
+          {
+            "name": "domainId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Domain identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/dataProducts": {
+      "post": {
+        "tags": [
+          "DataProducts"
+        ],
+        "summary": "Create Data Product",
+        "description": "Create a data product.",
+        "operationId": "createDataProduct",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DataProductPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataProduct"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/dataProducts/search": {
+      "get": {
+        "tags": [
+          "DataProducts"
+        ],
+        "summary": "Search Data Products",
+        "description": "Search/list data products.",
+        "operationId": "searchDataProducts",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Free-text search query."
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DataProduct"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/dataProducts/{id}": {
+      "get": {
+        "tags": [
+          "DataProducts"
+        ],
+        "summary": "Get Data Product",
+        "description": "Retrieve details for a data product.",
+        "operationId": "getDataProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Data product identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataProduct"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "DataProducts"
+        ],
+        "summary": "Update Data Product",
+        "description": "Update a data product.",
+        "operationId": "updateDataProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Data product identifier."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DataProductPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataProduct"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/workflows/dataProducts/{id}": {
+      "delete": {
+        "tags": [
+          "Workflows"
+        ],
+        "summary": "Delete Data Product",
+        "description": "Delete a data product.",
+        "operationId": "deleteDataProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Data product identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/workflows/dataProducts/{id}/publish": {
+      "post": {
+        "tags": [
+          "Workflows"
+        ],
+        "summary": "Publish Data Product",
+        "description": "Publish a data product's views to its target catalog and schema.",
+        "operationId": "publishDataProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Data product identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/tags": {
+      "get": {
+        "tags": [
+          "Tags"
+        ],
+        "summary": "List Tags",
+        "description": "List all tags.",
+        "operationId": "listTags",
+        "parameters": [
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tag"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/tags/{tagId}": {
+      "put": {
+        "tags": [
+          "Tags"
+        ],
+        "summary": "Update Tag",
+        "description": "Rename a tag.",
+        "operationId": "updateTag",
+        "parameters": [
+          {
+            "name": "tagId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Tag identifier."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tag"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Tags"
+        ],
+        "summary": "Delete Tag",
+        "description": "Delete a tag.",
+        "operationId": "deleteTag",
+        "parameters": [
+          {
+            "name": "tagId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Tag identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/sqlJobs": {
+      "post": {
+        "tags": [
+          "SqlJobs"
+        ],
+        "summary": "Create SQL Job",
+        "description": "Create a SQL job that runs one or more SQL statements on demand or on a schedule.",
+        "operationId": "createSqlJob",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SqlJobPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SqlJob"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "SqlJobs"
+        ],
+        "summary": "List SQL Jobs",
+        "description": "List all SQL jobs.",
+        "operationId": "listSqlJobs",
+        "parameters": [
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SqlJob"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/sqlJobs/{jobId}": {
+      "get": {
+        "tags": [
+          "SqlJobs"
+        ],
+        "summary": "Get SQL Job",
+        "description": "Retrieve details for a SQL job.",
+        "operationId": "getSqlJob",
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "SQL job identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SqlJob"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "SqlJobs"
+        ],
+        "summary": "Update SQL Job",
+        "description": "Update a SQL job.",
+        "operationId": "updateSqlJob",
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "SQL job identifier."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SqlJobPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SqlJob"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "SqlJobs"
+        ],
+        "summary": "Delete SQL Job",
+        "description": "Delete a SQL job.",
+        "operationId": "deleteSqlJob",
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "SQL job identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/sqlJobs/{jobId}/execute": {
+      "post": {
+        "tags": [
+          "SqlJobs"
+        ],
+        "summary": "Execute SQL Job",
+        "description": "Run a SQL job immediately, outside its schedule.",
+        "operationId": "executeSqlJob",
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "SQL job identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/maintenance/cluster/apply": {
+      "post": {
+        "tags": [
+          "DataMaintenance"
+        ],
+        "summary": "Apply Cluster Maintenance",
+        "description": "Define or replace the cluster's maintenance windows.",
+        "operationId": "applyClusterMaintenance",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MaintenancePayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaintenancePayload"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/maintenance/cluster": {
+      "get": {
+        "tags": [
+          "DataMaintenance"
+        ],
+        "summary": "Get Cluster Maintenance",
+        "description": "Retrieve the cluster's configured maintenance windows.",
+        "operationId": "getClusterMaintenance",
+        "parameters": [
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaintenancePayload"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/maintenance": {
+      "delete": {
+        "tags": [
+          "DataMaintenance"
+        ],
+        "summary": "Delete All Maintenance Data",
+        "description": "Delete all configured maintenance windows.",
+        "operationId": "deleteAllMaintenance",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/audit/accessLogs": {
+      "get": {
+        "tags": [
+          "AuditLogs"
+        ],
+        "summary": "List Access Logs",
+        "description": "List built-in access control access logs.",
+        "operationId": "listAccessLogs",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "queryId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditLogEntry"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/audit/changeLogs": {
+      "get": {
+        "tags": [
+          "AuditLogs"
+        ],
+        "summary": "List Change Logs",
+        "description": "List built-in access control change logs.",
+        "operationId": "listChangeLogs",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "queryId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditLogEntry"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/roles/{roleId}/columnMasks": {
+      "post": {
+        "tags": [
+          "ColumnMasks"
+        ],
+        "summary": "Add Column Mask To Role",
+        "description": "Attach a column mask expression to a role.",
+        "operationId": "addColumnMaskToRole",
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Role identifier."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ColumnMaskPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "ColumnMasks"
+        ],
+        "summary": "List Role Column Masks",
+        "description": "List column masks attached to a role.",
+        "operationId": "listRoleColumnMasks",
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Role identifier."
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/expressions/columnMask": {
+      "post": {
+        "tags": [
+          "ColumnMasks"
+        ],
+        "summary": "Create Column Mask Expression",
+        "description": "Create a reusable column mask expression.",
+        "operationId": "createColumnMaskExpression",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpressionPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Expression"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "ColumnMasks"
+        ],
+        "summary": "List Column Mask Expressions",
+        "description": "List reusable column mask expressions.",
+        "operationId": "listColumnMaskExpressions",
+        "parameters": [
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Expression"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/expressions/columnMask/{columnMaskExpressionId}": {
+      "delete": {
+        "tags": [
+          "ColumnMasks"
+        ],
+        "summary": "Delete Column Mask Expression",
+        "description": "Delete a column mask expression.",
+        "operationId": "deleteColumnMaskExpression",
+        "parameters": [
+          {
+            "name": "columnMaskExpressionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Column mask expression identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "ColumnMasks"
+        ],
+        "summary": "Get Column Mask Expression",
+        "description": "Retrieve a column mask expression.",
+        "operationId": "getColumnMaskExpression",
+        "parameters": [
+          {
+            "name": "columnMaskExpressionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Column mask expression identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Expression"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ColumnMasks"
+        ],
+        "summary": "Update Column Mask Expression",
+        "description": "Update a column mask expression.",
+        "operationId": "updateColumnMaskExpression",
+        "parameters": [
+          {
+            "name": "columnMaskExpressionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Column mask expression identifier."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpressionPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Expression"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/roles/{roleId}/columnMasks/{columnMaskId}": {
+      "delete": {
+        "tags": [
+          "ColumnMasks"
+        ],
+        "summary": "Remove Column Mask From Role",
+        "description": "Detach a column mask from a role.",
+        "operationId": "removeColumnMaskFromRole",
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Role identifier."
+          },
+          {
+            "name": "columnMaskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Column mask identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "ColumnMasks"
+        ],
+        "summary": "Get Role Column Mask",
+        "description": "Retrieve a column mask attached to a role.",
+        "operationId": "getRoleColumnMask",
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Role identifier."
+          },
+          {
+            "name": "columnMaskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Column mask identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/roles/{roleId}/rowFilters": {
+      "post": {
+        "tags": [
+          "RowFilters"
+        ],
+        "summary": "Add Row Filter To Role",
+        "description": "Attach a row filter expression to a role.",
+        "operationId": "addRowFilterToRole",
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Role identifier."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RowFilterPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "RowFilters"
+        ],
+        "summary": "List Role Row Filters",
+        "description": "List row filters attached to a role.",
+        "operationId": "listRoleRowFilters",
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Role identifier."
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/expressions/rowFilter": {
+      "post": {
+        "tags": [
+          "RowFilters"
+        ],
+        "summary": "Create Row Filter Expression",
+        "description": "Create a reusable row filter expression.",
+        "operationId": "createRowFilterExpression",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpressionPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Expression"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "RowFilters"
+        ],
+        "summary": "List Row Filter Expressions",
+        "description": "List reusable row filter expressions.",
+        "operationId": "listRowFilterExpressions",
+        "parameters": [
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Expression"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/roles/{roleId}/rowFilters/{rowFilterId}": {
+      "delete": {
+        "tags": [
+          "RowFilters"
+        ],
+        "summary": "Remove Row Filter From Role",
+        "description": "Detach a row filter from a role.",
+        "operationId": "removeRowFilterFromRole",
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Role identifier."
+          },
+          {
+            "name": "rowFilterId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Row filter identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "RowFilters"
+        ],
+        "summary": "Get Role Row Filter",
+        "description": "Retrieve a row filter attached to a role.",
+        "operationId": "getRoleRowFilter",
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Role identifier."
+          },
+          {
+            "name": "rowFilterId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Row filter identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/expressions/rowFilter/{rowFilterExpressionId}": {
+      "delete": {
+        "tags": [
+          "RowFilters"
+        ],
+        "summary": "Delete Row Filter Expression",
+        "description": "Delete a row filter expression.",
+        "operationId": "deleteRowFilterExpression",
+        "parameters": [
+          {
+            "name": "rowFilterExpressionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Row filter expression identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "RowFilters"
+        ],
+        "summary": "Get Row Filter Expression",
+        "description": "Retrieve a row filter expression.",
+        "operationId": "getRowFilterExpression",
+        "parameters": [
+          {
+            "name": "rowFilterExpressionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Row filter expression identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Expression"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "RowFilters"
+        ],
+        "summary": "Update Row Filter Expression",
+        "description": "Update a row filter expression.",
+        "operationId": "updateRowFilterExpression",
+        "parameters": [
+          {
+            "name": "rowFilterExpressionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Row filter expression identifier."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpressionPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Expression"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/subjects/roles/{parentRoleId}/roles/{childRoleId}": {
+      "post": {
+        "tags": [
+          "Subjects"
+        ],
+        "summary": "Assign Role To Role",
+        "description": "Nest a role inside another role.",
+        "operationId": "assignRoleToRole",
+        "parameters": [
+          {
+            "name": "parentRoleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parent role identifier."
+          },
+          {
+            "name": "childRoleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Child role identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Subjects"
+        ],
+        "summary": "Remove Role From Role",
+        "description": "Remove a nested role assignment.",
+        "operationId": "removeRoleFromRole",
+        "parameters": [
+          {
+            "name": "parentRoleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parent role identifier."
+          },
+          {
+            "name": "childRoleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Child role identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/biac/subjects/roles/{roleId}/roles": {
+      "get": {
+        "tags": [
+          "Subjects"
+        ],
+        "summary": "List Role-To-Role Assignments",
+        "description": "List roles nested under a role.",
+        "operationId": "listRoleToRoleAssignments",
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Role identifier."
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Role"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/dataProducts/clone": {
+      "post": {
+        "tags": [
+          "DataProducts"
+        ],
+        "summary": "Clone Data Product",
+        "description": "Clone an existing data product.",
+        "operationId": "cloneDataProduct",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CloneDataProductPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataProduct"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/dataProducts/domains/{domain}/dataProducts/{name}/export": {
+      "get": {
+        "tags": [
+          "DataProducts"
+        ],
+        "summary": "Export Data Product By Domain And Name",
+        "description": "Export a data product's definition, looked up by domain and name.",
+        "operationId": "exportDataProductByDomainAndName",
+        "parameters": [
+          {
+            "name": "domain",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Domain name."
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Data product name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/dataProducts/{id}/export": {
+      "get": {
+        "tags": [
+          "DataProducts"
+        ],
+        "summary": "Export Data Product",
+        "description": "Export a data product's definition by ID.",
+        "operationId": "exportDataProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Data product identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/dataProducts/{id}/materializedViewRefreshMetadata": {
+      "get": {
+        "tags": [
+          "DataProducts"
+        ],
+        "summary": "Get Materialized View Refresh Metadata",
+        "description": "Retrieve materialized view refresh metadata for a data product.",
+        "operationId": "getMaterializedViewRefreshMetadata",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Data product identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/dataProducts/{id}/openApi": {
+      "get": {
+        "tags": [
+          "DataProducts"
+        ],
+        "summary": "Get Data Product OpenAPI Specification",
+        "description": "Retrieve the generated OpenAPI specification for a data product's views.",
+        "operationId": "getDataProductOpenApi",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Data product identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/dataProducts/targetCatalogs": {
+      "get": {
+        "tags": [
+          "DataProducts"
+        ],
+        "summary": "List Target Catalogs",
+        "description": "List catalogs available as a data product publish target.",
+        "operationId": "listTargetCatalogs",
+        "parameters": [
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TargetCatalog"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/dataProducts/import": {
+      "post": {
+        "tags": [
+          "DataProducts"
+        ],
+        "summary": "Import Data Product",
+        "description": "Import a previously exported data product definition.",
+        "operationId": "importDataProduct",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportDataProductPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataProduct"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/dataProducts/{id}/sampleQueries": {
+      "get": {
+        "tags": [
+          "DataProducts"
+        ],
+        "summary": "List Data Product Sample Queries",
+        "description": "List sample queries defined for a data product.",
+        "operationId": "listDataProductSampleQueries",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Data product identifier."
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "DataProducts"
+        ],
+        "summary": "Update Data Product Sample Queries",
+        "description": "Replace the sample queries defined for a data product.",
+        "operationId": "updateDataProductSampleQueries",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Data product identifier."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SampleQueriesPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/dataProducts/domains": {
+      "put": {
+        "tags": [
+          "DataProducts"
+        ],
+        "summary": "Reassign Data Product Domains",
+        "description": "Move one or more data products to a different domain.",
+        "operationId": "reassignDataProductDomains",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReassignDomainPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/dataProducts/{id}/materializedViews/{viewName}": {
+      "put": {
+        "tags": [
+          "DataProducts"
+        ],
+        "summary": "Update Data Product Materialized View",
+        "description": "Update a materialized view definition in a data product.",
+        "operationId": "updateDataProductMaterializedView",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Data product identifier."
+          },
+          {
+            "name": "viewName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "View name."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MaterializedViewPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/dataProducts/{id}/views/{viewName}": {
+      "put": {
+        "tags": [
+          "DataProducts"
+        ],
+        "summary": "Update Data Product View",
+        "description": "Update a view definition in a data product.",
+        "operationId": "updateDataProductView",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Data product identifier."
+          },
+          {
+            "name": "viewName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "View name."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ViewPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/tags/unused": {
+      "delete": {
+        "tags": [
+          "Tags"
+        ],
+        "summary": "Delete Unused Tags",
+        "description": "Delete every tag not currently applied to a data product.",
+        "operationId": "deleteUnusedTags",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/dataProducts/{dataProductId}/tags/{tagId}": {
+      "delete": {
+        "tags": [
+          "Tags"
+        ],
+        "summary": "Remove Tag From Data Product",
+        "description": "Remove a tag from a data product.",
+        "operationId": "removeTagFromDataProduct",
+        "parameters": [
+          {
+            "name": "dataProductId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Data product identifier."
+          },
+          {
+            "name": "tagId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Tag identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/dataProducts/{dataProductId}/tags": {
+      "get": {
+        "tags": [
+          "Tags"
+        ],
+        "summary": "List Data Product Tags",
+        "description": "List tags applied to a data product.",
+        "operationId": "listDataProductTags",
+        "parameters": [
+          {
+            "name": "dataProductId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Data product identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tag"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Tags"
+        ],
+        "summary": "Update Data Product Tags",
+        "description": "Replace the tags applied to a data product.",
+        "operationId": "updateDataProductTags",
+        "parameters": [
+          {
+            "name": "dataProductId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Data product identifier."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagsPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/workflows/dataProducts/{id}/deleteStatus": {
+      "get": {
+        "tags": [
+          "Workflows"
+        ],
+        "summary": "Get Data Product Deletion Status",
+        "description": "Check the status of an in-progress data product deletion.",
+        "operationId": "getDataProductDeleteStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Data product identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/workflows/dataProducts/{id}/publishStatus": {
+      "get": {
+        "tags": [
+          "Workflows"
+        ],
+        "summary": "Get Data Product Publication Status",
+        "description": "Check the status of an in-progress data product publish.",
+        "operationId": "getDataProductPublishStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Data product identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/filterNestedEntities": {
+      "get": {
+        "tags": [
+          "Default"
+        ],
+        "summary": "Filter Nested Entities",
+        "description": "List entities nested under a parent entity, filtered by category.",
+        "operationId": "filterNestedEntities",
+        "parameters": [
+          {
+            "name": "entity",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "parentId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/roleHierarchy": {
+      "get": {
+        "tags": [
+          "Default"
+        ],
+        "summary": "Get Role Hierarchy",
+        "description": "Retrieve the full nested-role hierarchy.",
+        "operationId": "getRoleHierarchy",
+        "parameters": [
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/hasAccess": {
+      "get": {
+        "tags": [
+          "Default"
+        ],
+        "summary": "Check Access",
+        "description": "Check whether a subject has a given privilege on a resource.",
+        "operationId": "hasAccess",
+        "parameters": [
+          {
+            "name": "subject",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "action",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "resource",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/entityCategories/actions": {
+      "get": {
+        "tags": [
+          "EntityCategories"
+        ],
+        "summary": "List Entity Category Actions",
+        "description": "List privilege actions available across entity categories.",
+        "operationId": "listEntityCategoryActions",
+        "parameters": [
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/entityCategories": {
+      "get": {
+        "tags": [
+          "EntityCategories"
+        ],
+        "summary": "List Entity Categories",
+        "description": "List entity categories (catalog, schema, table, column, role, etc).",
+        "operationId": "listEntityCategories",
+        "parameters": [
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EntityCategory"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/sqlJobs/{jobId}/status": {
+      "get": {
+        "tags": [
+          "SqlJobs"
+        ],
+        "summary": "Get SQL Job Status",
+        "description": "Check a SQL job's current execution status.",
+        "operationId": "getSqlJobStatus",
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "SQL job identifier."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SqlJobExecution"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/v1/sqlJobs/{jobId}/history": {
+      "get": {
+        "tags": [
+          "SqlJobs"
+        ],
+        "summary": "List SQL Job History",
+        "description": "List past executions of a SQL job.",
+        "operationId": "listSqlJobHistory",
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "SQL job identifier."
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque token for the next page of results."
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of results to return."
+          },
+          {
+            "name": "pageSort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field to sort results by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SqlJobExecution"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "RolePayload": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Role name."
+          },
+          "description": {
+            "type": "string",
+            "description": "Human-readable description of the role."
+          }
+        }
+      },
+      "Role": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Role identifier."
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "createDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "GrantPayload": {
+        "type": "object",
+        "required": [
+          "roleId",
+          "privilege",
+          "entityId"
+        ],
+        "properties": {
+          "roleId": {
+            "type": "string",
+            "description": "Role receiving the privilege."
+          },
+          "privilege": {
+            "type": "string",
+            "description": "Privilege being granted.",
+            "enum": [
+              "SELECT",
+              "INSERT",
+              "UPDATE",
+              "DELETE",
+              "CREATE",
+              "DROP",
+              "ALTER",
+              "SHOW",
+              "REFRESH",
+              "EXECUTE",
+              "IMPERSONATE"
+            ]
+          },
+          "entityId": {
+            "type": "string",
+            "description": "Identifier of the catalog/schema/table/column/role/function/procedure entity the privilege applies to."
+          },
+          "entityKind": {
+            "type": "string",
+            "enum": [
+              "CATALOG",
+              "SCHEMA",
+              "TABLE",
+              "COLUMN",
+              "BRANCH",
+              "ROLE",
+              "USER",
+              "FUNCTION",
+              "PROCEDURE"
+            ]
+          },
+          "grantOption": {
+            "type": "boolean",
+            "description": "Whether the grantee can re-grant this privilege to others.",
+            "default": false
+          }
+        }
+      },
+      "Grant": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "roleId": {
+            "type": "string"
+          },
+          "privilege": {
+            "type": "string"
+          },
+          "entityId": {
+            "type": "string"
+          },
+          "entityKind": {
+            "type": "string"
+          },
+          "grantOption": {
+            "type": "boolean"
+          }
+        }
+      },
+      "LocationGrantPayload": {
+        "type": "object",
+        "required": [
+          "roleId",
+          "locationPattern",
+          "privilege"
+        ],
+        "properties": {
+          "roleId": {
+            "type": "string",
+            "description": "Role receiving the location privilege."
+          },
+          "locationPattern": {
+            "type": "string",
+            "description": "Storage location or glob pattern this grant applies to, e.g. s3://bucket/prefix/*."
+          },
+          "privilege": {
+            "type": "string",
+            "enum": [
+              "READ",
+              "WRITE"
+            ]
+          },
+          "grantOption": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "LocationGrant": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "roleId": {
+            "type": "string"
+          },
+          "locationPattern": {
+            "type": "string"
+          },
+          "privilege": {
+            "type": "string"
+          },
+          "grantOption": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DomainPayload": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Data domain name."
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "Domain": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "createDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DataProductView": {
+        "type": "object",
+        "required": [
+          "name",
+          "definitionQuery"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "View name."
+          },
+          "definitionQuery": {
+            "type": "string",
+            "description": "SQL SELECT statement backing the view."
+          },
+          "description": {
+            "type": "string"
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "DataProductPayload": {
+        "type": "object",
+        "required": [
+          "name",
+          "catalogName",
+          "schemaName",
+          "domainId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "catalogName": {
+            "type": "string",
+            "description": "Target catalog the data product's views are published into."
+          },
+          "schemaName": {
+            "type": "string",
+            "description": "Target schema the data product's views are published into."
+          },
+          "domainId": {
+            "type": "string",
+            "description": "Data domain the data product belongs to."
+          },
+          "summary": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "owners": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "views": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DataProductView"
+            }
+          }
+        }
+      },
+      "DataProduct": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "catalogName": {
+            "type": "string"
+          },
+          "schemaName": {
+            "type": "string"
+          },
+          "domainId": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "PUBLISHING",
+              "ERROR"
+            ]
+          },
+          "owners": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "views": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DataProductView"
+            }
+          },
+          "createDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TagPayload": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Tag": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "SqlJobSchedule": {
+        "type": "object",
+        "properties": {
+          "cron": {
+            "type": "string",
+            "description": "Cron expression controlling when the job runs."
+          },
+          "timeZone": {
+            "type": "string"
+          }
+        }
+      },
+      "SqlJobPayload": {
+        "type": "object",
+        "required": [
+          "name",
+          "catalogName",
+          "schemaName",
+          "sqlStatements"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "catalogName": {
+            "type": "string"
+          },
+          "schemaName": {
+            "type": "string"
+          },
+          "sqlStatements": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "One or more SQL statements executed in sequence when the job runs."
+          },
+          "schedule": {
+            "$ref": "#/components/schemas/SqlJobSchedule"
+          },
+          "owner": {
+            "type": "string"
+          }
+        }
+      },
+      "SqlJob": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "catalogName": {
+            "type": "string"
+          },
+          "schemaName": {
+            "type": "string"
+          },
+          "sqlStatements": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "schedule": {
+            "$ref": "#/components/schemas/SqlJobSchedule"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ENABLED",
+              "DISABLED"
+            ]
+          },
+          "createDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "MaintenanceWindow": {
+        "type": "object",
+        "required": [
+          "name",
+          "cronSchedule",
+          "durationMinutes"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "cronSchedule": {
+            "type": "string",
+            "description": "Cron expression controlling when the maintenance window opens."
+          },
+          "durationMinutes": {
+            "type": "integer",
+            "description": "Length of the maintenance window in minutes."
+          }
+        }
+      },
+      "MaintenancePayload": {
+        "type": "object",
+        "required": [
+          "maintenanceWindows"
+        ],
+        "properties": {
+          "maintenanceWindows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MaintenanceWindow"
+            }
+          }
+        }
+      },
+      "PageMetadata": {
+        "type": "object",
+        "properties": {
+          "nextPageToken": {
+            "type": "string"
+          },
+          "pageSize": {
+            "type": "integer"
+          }
+        }
+      },
+      "ExpressionPayload": {
+        "type": "object",
+        "required": [
+          "name",
+          "expression"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "expression": {
+            "type": "string",
+            "description": "SQL boolean (row filter) or scalar (column mask) expression."
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "Expression": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "expression": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "ColumnMaskPayload": {
+        "type": "object",
+        "required": [
+          "columnMaskExpressionId",
+          "entityId"
+        ],
+        "properties": {
+          "columnMaskExpressionId": {
+            "type": "string"
+          },
+          "entityId": {
+            "type": "string",
+            "description": "Column entity the mask applies to."
+          }
+        }
+      },
+      "RowFilterPayload": {
+        "type": "object",
+        "required": [
+          "rowFilterExpressionId",
+          "entityId"
+        ],
+        "properties": {
+          "rowFilterExpressionId": {
+            "type": "string"
+          },
+          "entityId": {
+            "type": "string",
+            "description": "Table entity the row filter applies to."
+          }
+        }
+      },
+      "CloneDataProductPayload": {
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Data product to clone."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name for the cloned data product."
+          },
+          "domainId": {
+            "type": "string"
+          }
+        }
+      },
+      "ImportDataProductPayload": {
+        "type": "object",
+        "required": [
+          "domainId",
+          "definition"
+        ],
+        "properties": {
+          "domainId": {
+            "type": "string"
+          },
+          "definition": {
+            "type": "object",
+            "description": "Exported data product definition, as returned by the export endpoints."
+          }
+        }
+      },
+      "ReassignDomainPayload": {
+        "type": "object",
+        "required": [
+          "dataProductIds",
+          "domainId"
+        ],
+        "properties": {
+          "dataProductIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "domainId": {
+            "type": "string",
+            "description": "Domain the listed data products are reassigned to."
+          }
+        }
+      },
+      "ViewPayload": {
+        "type": "object",
+        "properties": {
+          "definitionQuery": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "MaterializedViewPayload": {
+        "type": "object",
+        "properties": {
+          "definitionQuery": {
+            "type": "string"
+          },
+          "refreshSchedule": {
+            "type": "string",
+            "description": "Cron expression controlling refresh cadence."
+          }
+        }
+      },
+      "SampleQueriesPayload": {
+        "type": "object",
+        "properties": {
+          "sampleQueries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "TagsPayload": {
+        "type": "object",
+        "properties": {
+          "tagIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "TargetCatalog": {
+        "type": "object",
+        "properties": {
+          "catalogName": {
+            "type": "string"
+          }
+        }
+      },
+      "EntityCategory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AuditLogEntry": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "queryId": {
+            "type": "string"
+          }
+        }
+      },
+      "SqlJobExecution": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "jobId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "RUNNING",
+              "SUCCEEDED",
+              "FAILED"
+            ]
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  }
+}
