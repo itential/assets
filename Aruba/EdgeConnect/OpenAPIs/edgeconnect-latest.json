@@ -1,0 +1,1107 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "HPE Aruba Networking EdgeConnect SD-WAN",
+    "version": "latest",
+    "x-vendor-api-version": "9.5",
+    "description": "HPE Aruba Networking EdgeConnect SD-WAN Orchestrator centrally manages EdgeConnect appliances, Business Intent Overlays, and tunnels across a WAN fabric.\n\nAuthentication: static API key in the X-Auth-Token header.",
+    "x-itential-curated": "Trimmed to 26 of 154 upstream operations covering appliance management, discovery/approval, appliance groups, Business Intent Overlays, tunnel visibility, and template group configuration. See the repo README for the full scope and the full spec."
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}",
+      "description": "HPE Aruba Networking EdgeConnect SD-WAN Orchestrator server. This platform does not apply OpenAPI server variables/paths automatically \u2014 set the integration instance's server.base_path to \"/gms/rest\".",
+      "variables": {
+        "protocol": {
+          "default": "https",
+          "enum": [
+            "https",
+            "http"
+          ],
+          "description": "HTTP scheme"
+        },
+        "host": {
+          "default": "orchestrator.example.com",
+          "description": "Orchestrator hostname or IP address."
+        },
+        "port": {
+          "default": "443",
+          "description": "Orchestrator port."
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "apiKeyHeader": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Appliances"
+    },
+    {
+      "name": "Discovered Appliances"
+    },
+    {
+      "name": "Groups"
+    },
+    {
+      "name": "Business Intent Overlays"
+    },
+    {
+      "name": "Tunnels"
+    },
+    {
+      "name": "Template Groups"
+    }
+  ],
+  "paths": {
+    "/appliance": {
+      "get": {
+        "tags": [
+          "Appliances"
+        ],
+        "summary": "List appliances",
+        "operationId": "listAppliances",
+        "description": "Returns all appliances managed by Orchestrator. Pass nePk to return a single appliance.",
+        "parameters": [
+          {
+            "name": "nePk",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network Primary Key of a single appliance, e.g. 3.NE."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Appliance"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appliance/{nePk}": {
+      "post": {
+        "tags": [
+          "Appliances"
+        ],
+        "summary": "Modify an appliance",
+        "operationId": "modifyAppliance",
+        "description": "Updates an appliance's IP address, username, password, network role, and web protocol.",
+        "parameters": [
+          {
+            "name": "nePk",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplianceModify"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful call, no content returned."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Appliances"
+        ],
+        "summary": "Delete an appliance",
+        "operationId": "deleteAppliance",
+        "description": "Removes an appliance from Orchestrator, including its Orchestrator account/key.",
+        "parameters": [
+          {
+            "name": "nePk",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful call, no content returned."
+          }
+        }
+      }
+    },
+    "/appliance/changeGroup/{groupPk}": {
+      "post": {
+        "tags": [
+          "Appliances"
+        ],
+        "summary": "Move appliances to a different group",
+        "operationId": "moveAppliancesToGroup",
+        "parameters": [
+          {
+            "name": "groupPk",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeApplianceGroup"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful call, no content returned."
+          }
+        }
+      }
+    },
+    "/appliance/discovered": {
+      "get": {
+        "tags": [
+          "Discovered Appliances"
+        ],
+        "summary": "List discovered appliances",
+        "operationId": "listDiscoveredAppliances",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appliance/denied": {
+      "get": {
+        "tags": [
+          "Discovered Appliances"
+        ],
+        "summary": "List denied appliances",
+        "operationId": "listDeniedAppliances",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appliance/discovered/approve/{key}": {
+      "post": {
+        "tags": [
+          "Discovered Appliances"
+        ],
+        "summary": "Approve a discovered appliance",
+        "operationId": "approveDiscoveredAppliance",
+        "description": "Adds and approves a discovered appliance into the given group.",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiscoveredApplianceApproval"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful call, no content returned."
+          }
+        }
+      }
+    },
+    "/appliance/discovered/deny/{id}": {
+      "post": {
+        "tags": [
+          "Discovered Appliances"
+        ],
+        "summary": "Deny a discovered appliance",
+        "operationId": "denyDiscoveredAppliance",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful call, no content returned."
+          }
+        }
+      }
+    },
+    "/gms/group": {
+      "get": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "List appliance groups",
+        "operationId": "listGroups",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Group"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gms/group/{id}": {
+      "get": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "Get an appliance group",
+        "operationId": "getGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Group"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "Update an appliance group",
+        "operationId": "updateGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful call, no content returned."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "Delete an appliance group",
+        "operationId": "deleteGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful call, no content returned."
+          }
+        }
+      }
+    },
+    "/gms/group/new": {
+      "post": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "Create an appliance group",
+        "operationId": "createGroup",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful call, no content returned."
+          }
+        }
+      }
+    },
+    "/gms/overlays/config": {
+      "get": {
+        "tags": [
+          "Business Intent Overlays"
+        ],
+        "summary": "List Business Intent Overlays",
+        "operationId": "listOverlays",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OverlayConfig"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Business Intent Overlays"
+        ],
+        "summary": "Create a Business Intent Overlay",
+        "operationId": "createOverlay",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OverlayConfig"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful call, no content returned."
+          }
+        }
+      }
+    },
+    "/gms/overlays/config/{overlayId}": {
+      "get": {
+        "tags": [
+          "Business Intent Overlays"
+        ],
+        "summary": "Get a Business Intent Overlay",
+        "operationId": "getOverlay",
+        "parameters": [
+          {
+            "name": "overlayId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OverlayConfig"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Business Intent Overlays"
+        ],
+        "summary": "Update a Business Intent Overlay",
+        "operationId": "updateOverlay",
+        "description": "Any changes made are pushed to member appliances automatically.",
+        "parameters": [
+          {
+            "name": "overlayId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OverlayConfig"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful call, no content returned."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Business Intent Overlays"
+        ],
+        "summary": "Delete a Business Intent Overlay",
+        "operationId": "deleteOverlay",
+        "description": "Removes any appliances from the overlay and deletes any reports specific to it.",
+        "parameters": [
+          {
+            "name": "overlayId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful call, no content returned."
+          }
+        }
+      }
+    },
+    "/tunnels2": {
+      "get": {
+        "tags": [
+          "Tunnels"
+        ],
+        "summary": "Get total tunnel count",
+        "operationId": "getTunnelCount",
+        "parameters": [
+          {
+            "name": "metaData",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true
+            },
+            "description": "false returns an empty body."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TunnelCount"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tunnels2/physical": {
+      "get": {
+        "tags": [
+          "Tunnels"
+        ],
+        "summary": "List physical tunnels",
+        "operationId": "listPhysicalTunnels",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Max number of tunnels to return."
+          },
+          {
+            "name": "matchingAlias",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Match tunnel alias on this text string."
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Regular expression to match tunnel state, e.g. Up, Down."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PhysicalTunnel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/template/templateGroups": {
+      "get": {
+        "tags": [
+          "Template Groups"
+        ],
+        "summary": "List template groups",
+        "operationId": "listTemplateGroups",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemplateGroup"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/template/templateGroups/{templateGroup}": {
+      "get": {
+        "tags": [
+          "Template Groups"
+        ],
+        "summary": "Get a template group",
+        "operationId": "getTemplateGroup",
+        "parameters": [
+          {
+            "name": "templateGroup",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateGroup"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Template Groups"
+        ],
+        "summary": "Update a template group",
+        "operationId": "updateTemplateGroup",
+        "parameters": [
+          {
+            "name": "templateGroup",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplateGroupCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful call, no content returned."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Template Groups"
+        ],
+        "summary": "Delete a template group",
+        "operationId": "deleteTemplateGroup",
+        "parameters": [
+          {
+            "name": "templateGroup",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful call, no content returned."
+          }
+        }
+      }
+    },
+    "/template/templateCreate": {
+      "post": {
+        "tags": [
+          "Template Groups"
+        ],
+        "summary": "Create a template group",
+        "operationId": "createTemplateGroup",
+        "description": "If the group does not yet exist, the first call will not include selected templates (returns 204 instead of 200).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplateGroupCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful call, no content returned."
+          }
+        }
+      }
+    },
+    "/template/applianceAssociation/{nePk}": {
+      "post": {
+        "tags": [
+          "Template Groups"
+        ],
+        "summary": "Associate template groups to an appliance",
+        "operationId": "associateTemplateGroupsToAppliance",
+        "description": "The posted list is the complete association for the appliance and replaces any existing one.",
+        "parameters": [
+          {
+            "name": "nePk",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplateGroupAssociation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful call, no content returned."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKeyHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Auth-Token",
+        "description": "Static API key generated in Orchestrator (Orchestrator > Users & Authentication > API Keys). Session/cookie-based login is deprecated as of Orchestrator 9.3 (API v200) and is not used by this spec."
+      }
+    },
+    "schemas": {
+      "Appliance": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Network Primary Key (nePk) of the appliance, e.g. 3.NE."
+          },
+          "nePk": {
+            "type": "string",
+            "description": "Same value as id."
+          },
+          "hostName": {
+            "type": "string"
+          },
+          "IP": {
+            "type": "string"
+          },
+          "networkRole": {
+            "type": "string",
+            "description": "spoke = 0, hub = 1, mesh = 2"
+          },
+          "site": {
+            "type": "string"
+          },
+          "groupId": {
+            "type": "string",
+            "description": "Primary key of the Orchestrator group the appliance belongs to."
+          },
+          "model": {
+            "type": "string"
+          },
+          "serial": {
+            "type": "string"
+          },
+          "softwareVersion": {
+            "type": "string"
+          },
+          "state": {
+            "type": "integer",
+            "description": "0=Unknown, 1=Normal, 2=Unreachable, 3=Unsupported Version, 4=Out of Synchronization, 5=Synchronization in Progress"
+          },
+          "bypass": {
+            "type": "boolean"
+          },
+          "hasUnsavedChanges": {
+            "type": "boolean"
+          },
+          "rebootRequired": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": true
+      },
+      "ApplianceModify": {
+        "type": "object",
+        "required": [
+          "userName",
+          "password",
+          "IP",
+          "webProtocolType",
+          "networkRole"
+        ],
+        "properties": {
+          "userName": {
+            "type": "string",
+            "description": "Username for Orchestrator to log on to this appliance."
+          },
+          "password": {
+            "type": "string"
+          },
+          "IP": {
+            "type": "string"
+          },
+          "webProtocolType": {
+            "type": "integer",
+            "description": "Http = 1, Https = 2, Both = 3"
+          },
+          "networkRole": {
+            "type": "string",
+            "description": "spoke = 0, hub = 1, mesh = 2"
+          }
+        }
+      },
+      "ChangeApplianceGroup": {
+        "type": "object",
+        "required": [
+          "ids"
+        ],
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of appliance nePk values to move, e.g. [\"3.NE\",\"5.NE\"]."
+          }
+        }
+      },
+      "DiscoveredApplianceApproval": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Primary key of the Orchestrator group to add the appliance to, e.g. 4.Network."
+          },
+          "latitude": {
+            "type": "number",
+            "default": 0
+          },
+          "longitude": {
+            "type": "number",
+            "default": 0
+          }
+        }
+      },
+      "Group": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Group Primary Key, e.g. 3.Network."
+          },
+          "name": {
+            "type": "string"
+          },
+          "subType": {
+            "type": "integer",
+            "description": "Root group = 0, auto-discovered = 2, user-defined = 3."
+          },
+          "parentId": {
+            "type": "string"
+          },
+          "backgroundImage": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "GroupCreate": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Unique group name."
+          },
+          "parentId": {
+            "type": "string",
+            "description": "Parent group primary key, e.g. 3.Network. Empty string targets the root group."
+          },
+          "backgroundImage": {
+            "type": "string"
+          }
+        }
+      },
+      "GroupUpdate": {
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Group primary key being updated, e.g. 3.Network."
+          },
+          "name": {
+            "type": "string"
+          },
+          "backgroundImage": {
+            "type": "string"
+          }
+        }
+      },
+      "OverlayConfig": {
+        "type": "object",
+        "description": "Business Intent Overlay configuration object. See the Orchestrator's own Swagger UI (Support > REST APIs) for the full nested schema \u2014 traffic behavior, member appliances, and per-region overrides are all vendor-defined nested structures.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Numeric overlay ID (read-only, assigned on create)."
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "enable": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": true
+      },
+      "TemplateGroup": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "templates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Names of the configuration templates selected in this group."
+          }
+        },
+        "additionalProperties": true
+      },
+      "TemplateGroupCreate": {
+        "type": "object",
+        "description": "Nested template group definition. See Orchestrator's Swagger UI for the full per-template-type schema.",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "TemplateGroupAssociation": {
+        "type": "object",
+        "required": [
+          "templateGroups"
+        ],
+        "properties": {
+          "templateGroups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Complete list of template group names to associate to the appliance. Replaces any existing association."
+          }
+        }
+      },
+      "TunnelCount": {
+        "type": "object",
+        "properties": {
+          "totalTunnelCount": {
+            "type": "integer"
+          }
+        }
+      },
+      "PhysicalTunnel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "alias": {
+            "type": "string"
+          },
+          "tag": {
+            "type": "string",
+            "description": "Overlay name for the bonded tunnel."
+          },
+          "sourceNePk": {
+            "type": "string"
+          },
+          "destNePk": {
+            "type": "string"
+          },
+          "operationalStatus": {
+            "type": "string"
+          },
+          "adminStatus": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  }
+}
