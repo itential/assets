@@ -97,7 +97,7 @@ Replace `<customer_uri>` and `<instance>` with your assigned customer URI and in
 
 ### `sectigo_certificate_manager-latest.json`
 
-Curated spec (`x-vendor-api-version: REST Enrollment API 25.11`) for the REST Enrollment API — every operation the vendor's Enrollment surface exposes, reviewed against the repo's common-CRUD-for-automation policy (nothing was excluded; the full surface is only 7 operations).
+Curated spec (`x-vendor-api-version: REST Enrollment API 25.11`) for the REST Enrollment API — every operation the vendor's Enrollment surface exposes (7 operations).
 
 Resources included, by category:
 
@@ -110,7 +110,7 @@ Full, unmodified vendor spec for the Sectigo Certificate Manager REST Enrollment
 
 ### `sectigo_scm_admin-latest.json`
 
-Curated spec (`x-vendor-api-version: SCM Admin API 26.7`) for the SCM Admin API. Trimmed to 222 of 308 upstream operations, reviewed against the repo's common-CRUD-for-automation policy.
+Curated spec (`x-vendor-api-version: SCM Admin API 26.7`) for the SCM Admin API. Trimmed to 222 of 308 upstream operations.
 
 Resources included, by category:
 

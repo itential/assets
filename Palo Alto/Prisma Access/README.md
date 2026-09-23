@@ -67,7 +67,7 @@ The instance's `authentication`/`server` properties should look like this once c
 
 ### `palo_alto_prisma_access-latest.json`
 
-Merged from Palo Alto's own 68 separate per-resource OpenAPI specs, [published directly in their `pan.dev` developer GitHub org](https://github.com/PaloAltoNetworks/pan.dev/tree/master/openapi-specs/access/prisma-access-config). Reviewed against this repo's common-CRUD-for-automation policy: all 344 upstream operations across all 68 resource categories are already in scope for automation, so nothing was excluded.
+Covers all 344 operations across 68 resource categories.
 
 Resources included, by category:
 

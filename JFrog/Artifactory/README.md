@@ -68,7 +68,7 @@ The instance's `authentication`/`server` properties should look like this once c
 | [`jfrog_artifactory-latest.json`](./OpenAPIs/jfrog_artifactory-latest.json) | latest (curated) | 87 | Trimmed to 87 of 174 upstream operations covering common CRUD for automation — see breakdown below |
 | [`jfrog_artifactory-7.161.16.json`](./OpenAPIs/jfrog_artifactory-7.161.16.json) | 7.161.16 | 174 | Full spec for the JFrog Artifactory REST API |
 
-Both specs are assembled from JFrog's own officially-published, per-endpoint OpenAPI 3.1 definitions on [docs.jfrog.com](https://docs.jfrog.com/artifactory/reference) (the same source that backs Artifactory's interactive `swagger-ui.html` reference) — JFrog does not publish these as a single combined downloadable file, so each operation's official definition was merged into one spec here. The separate **JFrog Distribution API** and package-type-specific plumbing endpoints documented alongside Artifactory are out of scope for this spec.
+The separate **JFrog Distribution API** and package-type-specific plumbing endpoints documented alongside Artifactory are out of scope for this spec.
 
 ### `jfrog_artifactory-latest.json`
 
@@ -87,7 +87,7 @@ Not included: package-type-specific metadata/index calculation endpoints (Maven,
 
 ### `jfrog_artifactory-7.161.16.json`
 
-Full spec assembled from JFrog's official per-endpoint OpenAPI definitions for the Artifactory REST API (174 operations) — the entire Artifactory API surface as JFrog documents it, excluding the separate Distribution API. See `jfrog_artifactory-latest.json` above for the curated subset if you just need common CRUD automation.
+Full spec for the Artifactory REST API (174 operations) — the entire Artifactory API surface as JFrog documents it, excluding the separate Distribution API. See `jfrog_artifactory-latest.json` above for the curated subset if you just need common CRUD automation.
 
 ## Studio Projects
 

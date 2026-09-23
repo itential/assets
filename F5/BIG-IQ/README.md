@@ -18,7 +18,7 @@ This project provides an OpenAPI spec for automating against BIG-IQ's REST API v
 
 | Asset | Description |
 |---|---|
-| [OpenAPIs/](./OpenAPIs/) | F5 BIG-IQ API OpenAPI spec, hand-built from F5's official API reference documentation |
+| [OpenAPIs/](./OpenAPIs/) | F5 BIG-IQ API OpenAPI spec |
 | [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing the new Integration Model workflows plus the pre-existing legacy adapter workflows |
 
 ## Requirements
@@ -69,8 +69,6 @@ The instance's `authentication`/`server` properties should look like this once c
 
 ### `f5_bigiq_api-latest.json`
 
-F5 does not publish a downloadable OpenAPI/Swagger spec for BIG-IQ, and no live instance self-generates one either. This spec was hand-built from F5's official per-endpoint API reference documentation at [clouddocs.f5.com](https://clouddocs.f5.com/products/big-iq/mgmt-api/latest/ApiReferences/bigiq_public_api_ref/) — every operation's path, HTTP verb, and request/response fields were independently verified against that documentation before inclusion.
-
 Scoped to BIG-IQ's own fleet-management capabilities — device discovery/trust/import, device and service-catalog templates, device management IP pools, and license management (purchased-pool and RegKey licensing, utility billing). Excludes BIG-IP device configuration reached through BIG-IQ's working-config and rest-proxy mechanisms (LTM pools, virtual servers, nodes, network interfaces, etc.) — that's BIG-IP's own configuration surface; see [F5/BIG-IP](../BIG-IP/) for direct BIG-IP device management.
 
 Resources included, by category:
@@ -108,5 +106,3 @@ Backed by the **`F5 BIG-IQ API:latest`** Integration Model (see [`f5_bigiq_api-l
 | `F5 BIG-IQ API:latest` Integration Model | Import from [`f5_bigiq_api-latest.json`](./OpenAPIs/f5_bigiq_api-latest.json) before importing the project. Backs the Device Discovery & Trust, Device Groups & IP Pools, Device Reference & Machine ID, Device Templates, Global Templates & Config Sets, and Licensing folders. |
 | `F5 BIG-IQ` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `F5 BIG-IQ` — update the `adapter_id` value in each workflow task if yours is named differently |
 | [F5 BIG-IQ Adapter](https://gitlab.com/itentialopensource/adapters/adapter-f5_bigiq) | Required for the Run Script and Sample Use Cases folders (legacy, unmigrated) |
-
-**Testing status:** all 68 new workflows were created and schema-validated against a running Itential Platform instance. No BIG-IQ test instance was available for this pass, so none have been executed against a live account.

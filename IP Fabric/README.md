@@ -97,5 +97,3 @@ The `Cancel IP Fabric Job` workflow is prefixed to avoid colliding with an ident
 |---|---|
 | `IP Fabric API:latest` Integration Model | Import from [`ip_fabric_api-latest.json`](./OpenAPIs/ip_fabric_api-latest.json) before importing the project |
 | `IP Fabric` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `IP Fabric` — update the `adapter_id` value in each workflow task if yours is named differently |
-
-**Testing status:** all 48 workflows were created and schema-validated against a running Itential Platform instance. The multi-segment path-parameter approach was verified against a live HTTP echo endpoint to confirm segments are sent unencoded. No IP Fabric test instance was available for this pass, so none have been executed against a real account.

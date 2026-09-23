@@ -73,9 +73,7 @@ The instance's `authentication`/`server` properties should look like this once c
 
 **Important context:** Kentik's legacy v5 REST API was **deprecated in January 2025**, and no official OpenAPI/Swagger spec was ever published for it. Kentik's current, officially-specified, actively-supported API is v6, based on gRPC with an automatic REST/JSON translation layer (gRPC-gateway). This spec targets v6.
 
-Combines two official Kentik v6 specs from [`github.com/kentik/api-schema-public`](https://github.com/kentik/api-schema-public) into a single Integration Model: the Device API (`v202504beta2`, 10 operations) and the Site API (`v202509`, 10 operations). Both are already narrow, single-purpose service APIs — every operation is CRUD against devices, sites, or site markets — so all 20 operations are included in full.
-
-Two undocumented internal UI-backend endpoints, `/api/ui/companySettings` and `/api/ui/devices/non-cloud-status`, are **not** part of this spec — they have no official spec and no v6 equivalent, and were reverse-engineered from browser traffic rather than sourced from any published API.
+Combines two Kentik v6 specs into a single Integration Model: the Device API (`v202504beta2`, 10 operations) and the Site API (`v202509`, 10 operations). Both are already narrow, single-purpose service APIs — every operation is CRUD against devices, sites, or site markets — so all 20 operations are included in full.
 
 Operations included, by category:
 
@@ -115,5 +113,3 @@ A few resource names in the Devices folder are prefixed with `Kentik` (`Create K
 |---|---|
 | `Kentik Device & Site API:latest` Integration Model | Import from [`kentik_device_site_api-latest.json`](./OpenAPIs/kentik_device_site_api-latest.json) before importing the project |
 | `Kentik` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Kentik` — update the `adapter_id` value in each workflow task if yours is named differently |
-
-**Testing status:** all 20 workflows were created and schema-validated against a running Itential Platform instance, using a placeholder integration instance — no Kentik test account was available for this pass, so none have been executed against a live Kentik account.

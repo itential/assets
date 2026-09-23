@@ -68,8 +68,6 @@ The instance's `authentication`/`server` properties should look like this once c
 | [`amazon_cognito_user_pools-latest.json`](./OpenAPIs/amazon_cognito_user_pools-latest.json) | latest (curated) | 87 | Trimmed to 87 of 103 upstream operations covering common CRUD for automation — see breakdown below |
 | [`amazon_cognito_user_pools-2016-04-18.json`](./OpenAPIs/amazon_cognito_user_pools-2016-04-18.json) | 2016-04-18 | 103 | Full spec for the Amazon Cognito User Pools API (2016-04-18). |
 
-Both specs are converted in-house from **AWS's own official Amazon Cognito User Pools service model** (`cognito-idp-2016-04-18.normal.json`, published by AWS at [`github.com/aws/aws-sdk-js`](https://github.com/aws/aws-sdk-js/blob/master/apis/cognito-idp-2016-04-18.normal.json) — the same machine-readable definition AWS uses to generate its own SDKs), not from a third-party OpenAPI conversion. AWS does not publish a ready-made OpenAPI/Swagger document for this service directly.
-
 ### `amazon_cognito_user_pools-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2016-04-18`). Trimmed to 87 of 103 upstream operations covering common CRUD for automation.
@@ -93,7 +91,7 @@ Not included: user import jobs (bulk CSV import via S3), advanced security/risk 
 
 ### `amazon_cognito_user_pools-2016-04-18.json`
 
-Full spec, converted in-house from AWS's official service model, for the Amazon Cognito User Pools API (2016-04-18) — the entire upstream API surface as AWS defines it (103 operations). See `amazon_cognito_user_pools-latest.json` above for the curated subset if you just need common CRUD automation.
+Full spec for the Amazon Cognito User Pools API (2016-04-18) — the entire upstream API surface as AWS defines it (103 operations). See `amazon_cognito_user_pools-latest.json` above for the curated subset if you just need common CRUD automation.
 
 ---
 

@@ -58,8 +58,6 @@ Replace `jenkins.example.com` with your own Jenkins controller hostname.
 
 ## OpenAPIs
 
-Jenkins itself publishes no official OpenAPI/Swagger spec or automated REST API documentation. Both specs here are derived from [`swaggy-jenkins`](https://github.com/oapicf/swaggy-jenkins), a community-maintained OpenAPI description of Jenkins' remote access API under the OpenAPI Generator Community Foundation.
-
 | Spec | Version | Operations | Description |
 |---|---|---|---|
 | [`jenkins-latest.json`](./OpenAPIs/jenkins-latest.json) | latest (curated) | 21 | Actively-maintained spec, trimmed to 21 of 58 upstream operations — see breakdown below |

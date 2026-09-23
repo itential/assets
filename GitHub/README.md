@@ -139,5 +139,3 @@ Several resource names are prefixed with `GitHub` (`GitHub Organization`, `GitHu
 |---|---|
 | `GitHub REST API:latest` Integration Model | Import from [`github_rest_api-latest.json`](./OpenAPIs/github_rest_api-latest.json) before importing the project |
 | `GitHub` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `GitHub` — update the `adapter_id` value in each workflow task if yours is named differently |
-
-**Testing status:** all 251 workflows were created and schema-validated against a running Itential Platform instance. `Get Authenticated User` and `List Organization Members` were executed against a real GitHub account and confirmed returning live data. The remaining workflows have not been individually executed.

@@ -65,8 +65,6 @@ The instance's `authentication`/`server` properties should look like this once c
 | [`aws_secrets_manager-latest.json`](./OpenAPIs/aws_secrets_manager-latest.json) | latest (curated) | 22 | Trimmed to 22 of 23 upstream operations — see breakdown below |
 | [`aws_secrets_manager-2017-10-17.json`](./OpenAPIs/aws_secrets_manager-2017-10-17.json) | 2017-10-17 | 23 | Full spec for AWS Secrets Manager API version 2017-10-17. |
 
-Both specs are converted in-house from **AWS's own official AWS Secrets Manager service model** (`secretsmanager-2017-10-17.normal.json`, published by AWS at [`github.com/aws/aws-sdk-js`](https://github.com/aws/aws-sdk-js/blob/master/apis/secretsmanager-2017-10-17.normal.json) — the same machine-readable definition AWS uses to generate its own SDKs), not from a third-party OpenAPI conversion. AWS does not publish a ready-made OpenAPI/Swagger document for this service directly.
-
 ### `aws_secrets_manager-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2017-10-17`). Trimmed to 22 of 23 upstream operations, all of which are core to secret lifecycle management. `BatchGetSecretValue` was added upstream since this spec was last reviewed and is not yet reviewed for inclusion. There is no separate health-check, heartbeat, metrics, or self-introspection/version-info surface in this API to exclude.
@@ -83,7 +81,7 @@ Operations included, by category:
 
 ### `aws_secrets_manager-2017-10-17.json`
 
-Full spec, converted in-house from AWS's official service model, for AWS Secrets Manager API version 2017-10-17 (23 operations) — the entire upstream API surface as AWS defines it. See `aws_secrets_manager-latest.json` above for the curated automation spec.
+Full spec for AWS Secrets Manager API version 2017-10-17 (23 operations) — the entire upstream API surface as AWS defines it. See `aws_secrets_manager-latest.json` above for the curated automation spec.
 
 ## Secret Providers
 

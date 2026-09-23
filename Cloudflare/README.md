@@ -61,7 +61,7 @@ The instance's `authentication`/`server` properties should look like this once c
 
 ### `cloudflare-latest.json`
 
-Sourced from Cloudflare's official api-schemas GitHub repo (github.com/cloudflare/api-schemas). Curated to the most-commonly-automated operations across 51 tags:
+Curated to the most-commonly-automated operations across 51 tags:
 
 | Area | Tags included |
 |---|---|
@@ -80,7 +80,7 @@ Sourced from Cloudflare's official api-schemas GitHub repo (github.com/cloudflar
 
 ### `cloudflare-4.0.0.json`
 
-Sourced from Cloudflare's official api-schemas GitHub repo (github.com/cloudflare/api-schemas). Full Cloudflare v4 REST API — 3,460 operations across 553 tags covering all Cloudflare product areas including Radar analytics, R2 storage, D1 databases, AI Gateway, Magic networking, CASB, Email Security, and more. Import this spec if you need operations not covered by the curated build.
+Full Cloudflare v4 REST API — 3,460 operations across 553 tags covering all Cloudflare product areas including Radar analytics, R2 storage, D1 databases, AI Gateway, Magic networking, CASB, Email Security, and more. Import this spec if you need operations not covered by the curated build.
 
 ---
 

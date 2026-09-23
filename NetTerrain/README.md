@@ -41,7 +41,7 @@ Authentication is HTTP Basic — a NetTerrain username and password sent as the 
 
 ### `netterrain-latest.json`
 
-Sourced from NetTerrain's own self-hosted Swagger/OpenAPI reference (`netTerrain RESTful API V1`). Trimmed to 52 of 261 upstream operations covering common CRUD for automation.
+Trimmed to 52 of 261 upstream operations covering common CRUD for automation.
 
 Resources included, by category:
 

@@ -66,7 +66,7 @@ Substitute your identity tenant ID in `token_url` and your Privilege Cloud subdo
 
 ### `cyberark_privilege_cloud-latest.json`
 
-CyberArk doesn't publish a static downloadable OpenAPI/Swagger file for Privilege Cloud — only a live, per-tenant Swagger UI with no stable pinnable URL. This spec is hand-authored from CyberArk's own current, product-separated REST API reference collection (covering Privilege Cloud specifically, current to Privilege Cloud v14.7), scoped to 16 core operations:
+Scoped to 16 core operations (current to Privilege Cloud v14.7):
 
 - **Safes** (5 ops): list, get, add, update, delete
 - **Accounts** (5 ops): list, get, add, update (JSON-Patch), delete

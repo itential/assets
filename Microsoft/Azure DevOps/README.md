@@ -61,7 +61,7 @@ Every operation in the spec requires an `api-version` query parameter; it defaul
 
 ## OpenAPIs
 
-Microsoft does not publish a static OpenAPI/Swagger document for Azure DevOps Services, and there is no live introspection endpoint to generate one from (it's a multi-tenant SaaS). Both specs below are derived directly from [`microsoft/azure-devops-node-api`](https://github.com/microsoft/azure-devops-node-api) (v17.0.1), Microsoft's own officially-maintained TypeScript client library — its interface files and API client classes define the exact request/response shapes, REST paths, HTTP methods, and API version for every operation, scoped to the same 5 SDK API areas: `CoreApi.ts` (Projects & Teams), `GitApi.ts`, `BuildApi.ts`, `PipelinesApi.ts`, and `WorkItemTrackingApi.ts`.
+Both specs are scoped to 5 API areas: Projects & Teams, Git, Build, Pipelines, and Work Item Tracking.
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
