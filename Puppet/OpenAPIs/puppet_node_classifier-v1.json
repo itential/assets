@@ -1,0 +1,743 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Puppet Enterprise Node Classifier",
+    "description": "Node Classifier API for Puppet Enterprise -- manages the node group hierarchy that assigns classes, class parameters, and environments to nodes based on rule-based conditions. Rooted at /classifier-api/v1 on the primary server, port 4433.",
+    "version": "v1",
+    "x-vendor-api-version": "v1"
+  },
+  "servers": [
+    {
+      "url": "https://{host}:4433",
+      "description": "Puppet Enterprise primary server, node classifier service. Base path /classifier-api/v1 is set via the integration instance's base_path, not baked into this URL.",
+      "variables": {
+        "host": {
+          "default": "puppet.example.com",
+          "description": "Puppet Enterprise primary server hostname."
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "puppetAuthToken": []
+    }
+  ],
+  "paths": {
+    "/groups": {
+      "get": {
+        "tags": [
+          "groups"
+        ],
+        "operationId": "getGroups",
+        "summary": "List node groups",
+        "description": "Returns every node group in the classifier.",
+        "responses": {
+          "200": {
+            "description": "List of node groups.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Type-4 UUID."
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "parent": {
+                        "type": "string",
+                        "description": "Parent node group's UUID."
+                      },
+                      "environment": {
+                        "type": "string",
+                        "default": "production"
+                      },
+                      "environment_trumps": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "If true, this group's environment overrides a child group's own environment setting."
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "classes": {
+                        "type": "object",
+                        "description": "Map of class name to a map of parameter name/value."
+                      },
+                      "variables": {
+                        "type": "object",
+                        "description": "Top-level variables available to every class assigned by this group."
+                      },
+                      "config_data": {
+                        "type": "object",
+                        "description": "Class parameter values set via Hiera-style config data (requires classifier::allow-config-data)."
+                      },
+                      "rule": {
+                        "type": "array",
+                        "description": "Classification condition tree, e.g. [\"and\", [\"~\", [\"fact\", \"os.family\"], \"Debian\"]]. Operators: and, or, not, =, ~ (regex); operands reference facts, trusted data, or node names.",
+                        "items": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "groups"
+        ],
+        "operationId": "createGroup",
+        "summary": "Create a node group",
+        "description": "Creates a new node group. The service assigns the ID.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "parent",
+                  "classes"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "parent": {
+                    "type": "string"
+                  },
+                  "classes": {
+                    "type": "object"
+                  },
+                  "environment": {
+                    "type": "string",
+                    "default": "production"
+                  },
+                  "environment_trumps": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "variables": {
+                    "type": "object"
+                  },
+                  "config_data": {
+                    "type": "object"
+                  },
+                  "rule": {
+                    "type": "array",
+                    "description": "Classification condition tree, e.g. [\"and\", [\"~\", [\"fact\", \"os.family\"], \"Debian\"]]. Operators: and, or, not, =, ~ (regex); operands reference facts, trusted data, or node names.",
+                    "items": {}
+                  }
+                }
+              },
+              "example": {
+                "name": "Web Servers",
+                "parent": "00000000-0000-4000-8000-000000000000",
+                "environment": "production",
+                "classes": {
+                  "apache": {}
+                },
+                "variables": {},
+                "rule": [
+                  "and",
+                  [
+                    "~",
+                    [
+                      "fact",
+                      "os.family"
+                    ],
+                    "Debian"
+                  ]
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "303": {
+            "description": "Created -- Location header points to GET /groups/{id} for the new group."
+          }
+        }
+      }
+    },
+    "/groups/{id}": {
+      "get": {
+        "tags": [
+          "groups"
+        ],
+        "operationId": "getGroupById",
+        "summary": "Get node group",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Node group details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Type-4 UUID."
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "parent": {
+                      "type": "string",
+                      "description": "Parent node group's UUID."
+                    },
+                    "environment": {
+                      "type": "string",
+                      "default": "production"
+                    },
+                    "environment_trumps": {
+                      "type": "boolean",
+                      "default": false,
+                      "description": "If true, this group's environment overrides a child group's own environment setting."
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "classes": {
+                      "type": "object",
+                      "description": "Map of class name to a map of parameter name/value."
+                    },
+                    "variables": {
+                      "type": "object",
+                      "description": "Top-level variables available to every class assigned by this group."
+                    },
+                    "config_data": {
+                      "type": "object",
+                      "description": "Class parameter values set via Hiera-style config data (requires classifier::allow-config-data)."
+                    },
+                    "rule": {
+                      "type": "array",
+                      "description": "Classification condition tree, e.g. [\"and\", [\"~\", [\"fact\", \"os.family\"], \"Debian\"]]. Operators: and, or, not, =, ~ (regex); operands reference facts, trusted data, or node names.",
+                      "items": {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "groups"
+        ],
+        "operationId": "putGroup",
+        "summary": "Create or fully replace a node group",
+        "description": "The ID in the path must be a type-4 UUID. If a group with that ID doesn't exist, it's created; otherwise its definition is fully overwritten by the request body.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "parent",
+                  "classes"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "parent": {
+                    "type": "string"
+                  },
+                  "classes": {
+                    "type": "object"
+                  },
+                  "environment": {
+                    "type": "string",
+                    "default": "production"
+                  },
+                  "environment_trumps": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "variables": {
+                    "type": "object"
+                  },
+                  "config_data": {
+                    "type": "object"
+                  },
+                  "rule": {
+                    "type": "array",
+                    "description": "Classification condition tree, e.g. [\"and\", [\"~\", [\"fact\", \"os.family\"], \"Debian\"]]. Operators: and, or, not, =, ~ (regex); operands reference facts, trusted data, or node names.",
+                    "items": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Group created."
+          },
+          "200": {
+            "description": "Group updated."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "groups"
+        ],
+        "operationId": "deleteGroup",
+        "summary": "Delete a node group",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Group deleted."
+          }
+        }
+      }
+    },
+    "/groups/{id}/children": {
+      "get": {
+        "tags": [
+          "groups"
+        ],
+        "operationId": "getGroupChildren",
+        "summary": "List a node group's children",
+        "description": "Returns the node groups descending directly from the given parent group.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Child node groups.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Type-4 UUID."
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "parent": {
+                        "type": "string",
+                        "description": "Parent node group's UUID."
+                      },
+                      "environment": {
+                        "type": "string",
+                        "default": "production"
+                      },
+                      "environment_trumps": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "If true, this group's environment overrides a child group's own environment setting."
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "classes": {
+                        "type": "object",
+                        "description": "Map of class name to a map of parameter name/value."
+                      },
+                      "variables": {
+                        "type": "object",
+                        "description": "Top-level variables available to every class assigned by this group."
+                      },
+                      "config_data": {
+                        "type": "object",
+                        "description": "Class parameter values set via Hiera-style config data (requires classifier::allow-config-data)."
+                      },
+                      "rule": {
+                        "type": "array",
+                        "description": "Classification condition tree, e.g. [\"and\", [\"~\", [\"fact\", \"os.family\"], \"Debian\"]]. Operators: and, or, not, =, ~ (regex); operands reference facts, trusted data, or node names.",
+                        "items": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/groups/{id}/rules": {
+      "get": {
+        "tags": [
+          "groups"
+        ],
+        "operationId": "getGroupRules",
+        "summary": "Get a node group's resolved rules",
+        "description": "Resolves the group's own rule plus any inherited rules, and translates the result to PuppetDB nodes/inventory query syntax.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resolved and translated rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "rule": {
+                      "type": "array",
+                      "description": "Classification condition tree, e.g. [\"and\", [\"~\", [\"fact\", \"os.family\"], \"Debian\"]]. Operators: and, or, not, =, ~ (regex); operands reference facts, trusted data, or node names.",
+                      "items": {}
+                    },
+                    "rule_with_inherited": {
+                      "type": "array",
+                      "description": "Classification condition tree, e.g. [\"and\", [\"~\", [\"fact\", \"os.family\"], \"Debian\"]]. Operators: and, or, not, =, ~ (regex); operands reference facts, trusted data, or node names.",
+                      "items": {}
+                    },
+                    "translated": {
+                      "type": "object",
+                      "properties": {
+                        "nodes_query_format": {
+                          "type": "object"
+                        },
+                        "inventory_query_format": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/classes": {
+      "get": {
+        "tags": [
+          "classes"
+        ],
+        "operationId": "getClasses",
+        "summary": "List classes",
+        "description": "Returns every class known to the classifier, across all environments.",
+        "responses": {
+          "200": {
+            "description": "List of classes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "environment": {
+                        "type": "string"
+                      },
+                      "parameters": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/classified/nodes/{name}": {
+      "post": {
+        "tags": [
+          "classification"
+        ],
+        "operationId": "classifyNode",
+        "summary": "Classify a node",
+        "description": "Accepts a node name and its facts/trusted data, and returns the classes, parameters, and environment that node would be assigned -- without waiting for that node to actually check in.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fact": {
+                    "type": "object"
+                  },
+                  "trusted": {
+                    "type": "object"
+                  },
+                  "variable": {
+                    "type": "object"
+                  }
+                }
+              },
+              "example": {
+                "fact": {
+                  "os": {
+                    "family": "Debian"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Classification result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "environment": {
+                      "type": "string"
+                    },
+                    "classes": {
+                      "type": "object"
+                    },
+                    "parameters": {
+                      "type": "object"
+                    },
+                    "groups": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/environments": {
+      "get": {
+        "tags": [
+          "environments"
+        ],
+        "operationId": "getEnvironments",
+        "summary": "List environment data",
+        "description": "Returns known environments and, per environment, class availability data.",
+        "responses": {
+          "200": {
+            "description": "Environment data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/nodes": {
+      "get": {
+        "tags": [
+          "nodes"
+        ],
+        "operationId": "getNodes",
+        "summary": "List node check-in history",
+        "description": "Returns records of nodes that have checked into the classifier, including the last time each checked in.",
+        "responses": {
+          "200": {
+            "description": "Node check-in records.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "check_ins": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rules/translate": {
+      "post": {
+        "tags": [
+          "rules"
+        ],
+        "operationId": "translateRule",
+        "summary": "Translate a rule to PuppetDB query syntax",
+        "description": "Translates a node group rule condition into PuppetDB PQL, without needing a saved group to do it against.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "description": "Classification condition tree, e.g. [\"and\", [\"~\", [\"fact\", \"os.family\"], \"Debian\"]]. Operators: and, or, not, =, ~ (regex); operands reference facts, trusted data, or node names.",
+                "items": {}
+              },
+              "example": [
+                "and",
+                [
+                  "~",
+                  [
+                    "fact",
+                    "os.family"
+                  ],
+                  "Debian"
+                ]
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Translated query.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/last-class-update": {
+      "get": {
+        "tags": [
+          "classes"
+        ],
+        "operationId": "getLastClassUpdate",
+        "summary": "Get last class update timestamp",
+        "description": "Returns the time the classifier last fetched class definitions from the primary server.",
+        "responses": {
+          "200": {
+            "description": "Last update timestamp.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/update-classes": {
+      "post": {
+        "tags": [
+          "classes"
+        ],
+        "operationId": "updateClasses",
+        "summary": "Refresh class definitions",
+        "description": "Triggers the classifier to fetch updated class definitions from the primary server.",
+        "responses": {
+          "201": {
+            "description": "Update triggered."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "puppetAuthToken": {
+        "type": "apiKey",
+        "description": "RBAC authentication token. Generate from the PE console (My Account > Access tokens) or with `puppet-access login` on the CLI, then send it in the X-Authentication header.",
+        "name": "X-Authentication",
+        "in": "header"
+      }
+    }
+  }
+}

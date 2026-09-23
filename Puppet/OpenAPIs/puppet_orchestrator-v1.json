@@ -1,0 +1,1385 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Puppet Enterprise Orchestrator",
+    "description": "Orchestrator API for Puppet Enterprise -- runs Puppet agent deploys, tasks, and plans on demand across node inventory, and tracks job state and results. Rooted at /orchestrator/v1 on the primary server, port 8143.",
+    "version": "v1",
+    "x-vendor-api-version": "v1"
+  },
+  "servers": [
+    {
+      "url": "https://{host}:8143",
+      "description": "Puppet Enterprise primary server, orchestrator service. Base path /orchestrator/v1 is set via the integration instance's base_path, not baked into this URL.",
+      "variables": {
+        "host": {
+          "default": "puppet.example.com",
+          "description": "Puppet Enterprise primary server hostname."
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "puppetAuthToken": []
+    }
+  ],
+  "paths": {
+    "/command/deploy": {
+      "post": {
+        "tags": [
+          "command"
+        ],
+        "operationId": "commandDeploy",
+        "summary": "Run Puppet on demand",
+        "description": "Starts a Puppet agent run (a \"deploy\" job) against the nodes, query, or node group in scope.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "environment"
+                ],
+                "properties": {
+                  "environment": {
+                    "type": "string",
+                    "description": "Environment name, or empty string if enforce_environment is false."
+                  },
+                  "scope": {
+                    "type": "object",
+                    "description": "Exactly one of nodes, query, or node_group.",
+                    "properties": {
+                      "nodes": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "query": {
+                        "type": "string",
+                        "description": "A PuppetDB PQL query string."
+                      },
+                      "node_group": {
+                        "type": "string",
+                        "description": "A node classifier group ID."
+                      }
+                    }
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "concurrency": {
+                    "type": "integer",
+                    "description": "Maximum number of nodes to run simultaneously."
+                  },
+                  "noop": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "debug": {
+                    "type": "boolean"
+                  },
+                  "trace": {
+                    "type": "boolean"
+                  },
+                  "enforce_environment": {
+                    "type": "boolean"
+                  },
+                  "userdata": {
+                    "type": "object"
+                  }
+                }
+              },
+              "example": {
+                "environment": "production",
+                "scope": {
+                  "nodes": [
+                    "node1.example.com",
+                    "node2.example.com"
+                  ]
+                },
+                "description": "Deploy production",
+                "concurrency": 10,
+                "noop": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Job accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "job": {
+                    "id": "https://orchestrator.example.com:8143/orchestrator/v1/jobs/81",
+                    "name": "81"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/command/task": {
+      "post": {
+        "tags": [
+          "command"
+        ],
+        "operationId": "commandTask",
+        "summary": "Run a task on a set of nodes",
+        "description": "Starts a task run job against the nodes, query, or node group in scope.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "task",
+                  "params",
+                  "scope"
+                ],
+                "properties": {
+                  "environment": {
+                    "type": "string",
+                    "default": "production"
+                  },
+                  "task": {
+                    "type": "string",
+                    "description": "Task name, e.g. package::install."
+                  },
+                  "params": {
+                    "type": "object",
+                    "description": "Task parameters. Use {} if the task takes none."
+                  },
+                  "scope": {
+                    "type": "object",
+                    "description": "Exactly one of nodes, query, or node_group.",
+                    "properties": {
+                      "nodes": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "query": {
+                        "type": "string",
+                        "description": "A PuppetDB PQL query string."
+                      },
+                      "node_group": {
+                        "type": "string",
+                        "description": "A node classifier group ID."
+                      }
+                    }
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "noop": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "timeout": {
+                    "type": "integer",
+                    "description": "Maximum seconds allowed per node."
+                  },
+                  "userdata": {
+                    "type": "object"
+                  }
+                }
+              },
+              "example": {
+                "environment": "production",
+                "task": "package",
+                "params": {
+                  "action": "status",
+                  "name": "httpd"
+                },
+                "scope": {
+                  "nodes": [
+                    "node1.example.com"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Job accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/command/plan_run": {
+      "post": {
+        "tags": [
+          "command"
+        ],
+        "operationId": "commandPlanRun",
+        "summary": "Run a plan",
+        "description": "Starts a plan run job.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "plan_name"
+                ],
+                "properties": {
+                  "plan_name": {
+                    "type": "string"
+                  },
+                  "params": {
+                    "type": "object"
+                  },
+                  "environment": {
+                    "type": "string",
+                    "default": "production"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "timeout": {
+                    "type": "integer"
+                  },
+                  "userdata": {
+                    "type": "object"
+                  }
+                }
+              },
+              "example": {
+                "plan_name": "canary",
+                "description": "Start the canary plan on node1 and node2",
+                "params": {
+                  "nodes": [
+                    "node1.example.com",
+                    "node2.example.com"
+                  ],
+                  "command": "whoami",
+                  "canary": 1
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Job accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Job ID, usable with /command/stop_plan."
+                    }
+                  }
+                },
+                "example": {
+                  "name": "1234"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/command/stop": {
+      "post": {
+        "tags": [
+          "command"
+        ],
+        "operationId": "commandStop",
+        "summary": "Stop a running job",
+        "description": "Halts an in-progress deploy or task job. By default lets in-progress node runs finish; set force to true to terminate immediately.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "job"
+                ],
+                "properties": {
+                  "job": {
+                    "type": "string",
+                    "description": "Job ID to stop."
+                  },
+                  "force": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                }
+              },
+              "example": {
+                "job": "1234"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Stop accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "nodes": {
+                          "type": "object",
+                          "properties": {
+                            "new": {
+                              "type": "integer"
+                            },
+                            "running": {
+                              "type": "integer"
+                            },
+                            "failed": {
+                              "type": "integer"
+                            },
+                            "errored": {
+                              "type": "integer"
+                            },
+                            "skipped": {
+                              "type": "integer"
+                            },
+                            "finished": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/command/stop_plan": {
+      "post": {
+        "tags": [
+          "command"
+        ],
+        "operationId": "commandStopPlan",
+        "summary": "Stop a running plan job",
+        "description": "Halts an in-progress plan job.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "job"
+                ],
+                "properties": {
+                  "job": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "job": "1234"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Stop accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/command/task_target": {
+      "post": {
+        "tags": [
+          "command"
+        ],
+        "operationId": "commandTaskTarget",
+        "summary": "Create a task-target",
+        "description": "Defines a set of tasks and nodes/node groups that grants privilege escalation to users who otherwise couldn't run those tasks or target those nodes.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "tasks": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "scope": {
+                    "type": "object",
+                    "description": "Exactly one of nodes, query, or node_group.",
+                    "properties": {
+                      "nodes": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "query": {
+                        "type": "string",
+                        "description": "A PuppetDB PQL query string."
+                      },
+                      "node_group": {
+                        "type": "string",
+                        "description": "A node classifier group ID."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Task-target created."
+          }
+        }
+      }
+    },
+    "/jobs": {
+      "get": {
+        "tags": [
+          "jobs"
+        ],
+        "operationId": "getJobs",
+        "summary": "List jobs",
+        "description": "Returns a paginated list of jobs and their details.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "owner",
+                "timestamp",
+                "environment",
+                "name",
+                "state"
+              ]
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "asc"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "deploy",
+                "task",
+                "plan_task"
+              ]
+            }
+          },
+          {
+            "name": "task",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Match task name (partial match supported)."
+          },
+          {
+            "name": "min_finish_timestamp",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "max_finish_timestamp",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of jobs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Full URL of the job resource."
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Job ID."
+                          },
+                          "state": {
+                            "type": "string",
+                            "description": "new, ready, running, stopping, stopped, finished, or failed."
+                          },
+                          "command": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string",
+                            "description": "deploy, task, plan_task, plan_script, plan_upload, plan_command, plan_wait, plan_apply, or plan_apply_prep."
+                          },
+                          "owner": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "login": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "timestamp": {
+                            "type": "string"
+                          },
+                          "started_timestamp": {
+                            "type": "string"
+                          },
+                          "finished_timestamp": {
+                            "type": "string"
+                          },
+                          "duration": {
+                            "type": "string"
+                          },
+                          "node_count": {
+                            "type": "integer"
+                          },
+                          "node_states": {
+                            "type": "object"
+                          },
+                          "nodes": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "report": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "events": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "userdata": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "offset": {
+                          "type": "integer"
+                        },
+                        "order_by": {
+                          "type": "string"
+                        },
+                        "order": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/{job-id}": {
+      "get": {
+        "tags": [
+          "jobs"
+        ],
+        "operationId": "getJobById",
+        "summary": "Get job by ID",
+        "description": "Returns full details for a single job.",
+        "parameters": [
+          {
+            "name": "job-id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Full URL of the job resource."
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Job ID."
+                    },
+                    "state": {
+                      "type": "string",
+                      "description": "new, ready, running, stopping, stopped, finished, or failed."
+                    },
+                    "command": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "description": "deploy, task, plan_task, plan_script, plan_upload, plan_command, plan_wait, plan_apply, or plan_apply_prep."
+                    },
+                    "owner": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "login": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    },
+                    "started_timestamp": {
+                      "type": "string"
+                    },
+                    "finished_timestamp": {
+                      "type": "string"
+                    },
+                    "duration": {
+                      "type": "string"
+                    },
+                    "node_count": {
+                      "type": "integer"
+                    },
+                    "node_states": {
+                      "type": "object"
+                    },
+                    "nodes": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "report": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "events": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "userdata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/{job-id}/events": {
+      "get": {
+        "tags": [
+          "jobs"
+        ],
+        "operationId": "getJobEvents",
+        "summary": "Get job events",
+        "description": "Returns the per-node lifecycle events for a job (queued, running, finished, failed, and so on).",
+        "parameters": [
+          {
+            "name": "job-id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job events.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "node": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "time": {
+                            "type": "string"
+                          },
+                          "details": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/{job-id}/report": {
+      "get": {
+        "tags": [
+          "jobs"
+        ],
+        "operationId": "getJobReport",
+        "summary": "Get job report",
+        "description": "Returns the aggregate report for a finished job (resource changes, failures, and per-node summaries).",
+        "parameters": [
+          {
+            "name": "job-id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job report.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/{job-id}/nodes": {
+      "get": {
+        "tags": [
+          "jobs"
+        ],
+        "operationId": "getJobNodes",
+        "summary": "Get job node results",
+        "description": "Returns per-node state and result details for a job.",
+        "parameters": [
+          {
+            "name": "job-id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job node results.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "details": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/plans": {
+      "get": {
+        "tags": [
+          "plans"
+        ],
+        "operationId": "getPlans",
+        "summary": "List plans",
+        "description": "Returns every plan known in the given environment.",
+        "parameters": [
+          {
+            "name": "environment",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "production"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of plans.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "environment": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "code_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "permitted": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/plans/{module}/{planname}": {
+      "get": {
+        "tags": [
+          "plans"
+        ],
+        "operationId": "getPlanByName",
+        "summary": "Get plan details",
+        "description": "Returns metadata for a single plan.",
+        "parameters": [
+          {
+            "name": "module",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "planname",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "environment",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "production"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Plan details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "environment": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "code_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object"
+                    },
+                    "permitted": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "getTasks",
+        "summary": "List tasks",
+        "description": "Returns every task installed in the given environment, including tasks bundled with Itential Gateway-adjacent PE modules.",
+        "parameters": [
+          {
+            "name": "environment",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "production"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of tasks.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "environment": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "code_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{module}/{taskname}": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "getTaskByName",
+        "summary": "Get task details",
+        "description": "Returns metadata (parameters, description, supported input methods) for a single task.",
+        "parameters": [
+          {
+            "name": "module",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "taskname",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "environment",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "production"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "environment": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "code_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "properties": {
+                        "description": {
+                          "type": "string"
+                        },
+                        "supports_noop": {
+                          "type": "boolean"
+                        },
+                        "input_method": {
+                          "type": "string"
+                        },
+                        "parameters": {
+                          "type": "object"
+                        }
+                      }
+                    },
+                    "files": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "filename": {
+                            "type": "string"
+                          },
+                          "sha256": {
+                            "type": "string"
+                          },
+                          "size_bytes": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inventory/{node}": {
+      "get": {
+        "tags": [
+          "inventory"
+        ],
+        "operationId": "getInventoryNode",
+        "summary": "Check node reachability",
+        "description": "Checks whether the orchestrator's PCP broker can currently reach the given node.",
+        "parameters": [
+          {
+            "name": "node",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reachability status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "connected": {
+                      "type": "boolean"
+                    },
+                    "broker": {
+                      "type": "string"
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "name": "node1.example.com",
+                  "connected": true,
+                  "broker": "pcp://broker.example.com/server",
+                  "timestamp": "2026-09-01T21:48:09.633Z"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usage": {
+      "get": {
+        "tags": [
+          "usage"
+        ],
+        "operationId": "getUsage",
+        "summary": "Get node usage",
+        "description": "Returns a count of active nodes managed by this deployment, for license/usage reporting.",
+        "responses": {
+          "200": {
+            "description": "Usage summary.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "active_node_count": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "puppetAuthToken": {
+        "type": "apiKey",
+        "description": "RBAC authentication token. Generate from the PE console (My Account > Access tokens) or with `puppet-access login` on the CLI, then send it in the X-Authentication header.",
+        "name": "X-Authentication",
+        "in": "header"
+      }
+    }
+  }
+}
