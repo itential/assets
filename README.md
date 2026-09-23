@@ -105,6 +105,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Sonatype** | Nexus |
 | **Spirent** | TestCenter |
 | **Symantec** | Management Center |
+| **TCPWave** | IPAM (DNS-DHCP-IPAM / DDI) |
 | **Thruk** | Monitoring dashboard (Naemon / Nagios) |
 | **Tufin** | SecureApp · SecureChange · SecureTrack |
 | **Twilio** | Communications APIs |
