@@ -1,0 +1,1646 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Moogsoft Cloud",
+    "description": "Moogsoft Cloud (APEX AIOps Incident Management) is a SaaS AIOps platform that ingests events, correlates them into alerts, and groups related alerts into incidents to reduce operational noise. This API supports sending and receiving alerts, incidents, and events, and configuring catalogs, maintenance windows, correlation definitions, and workflows. Base path: none -- all resources are served directly off the host at /v1 or /v2 (e.g. https://api.moogsoft.ai/v1/incidents). This is the reference spec as authored directly from Moogsoft's live documentation on 2026-09-23 (Moogsoft does not publish a downloadable OpenAPI file); it carries the same operation set as -latest.json.",
+    "version": "2026-09-23",
+    "contact": {
+      "name": "Moogsoft Support",
+      "url": "https://docs.moogsoft.com/"
+    }
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}",
+      "description": "Moogsoft Cloud Incident Management API. This platform does not apply OpenAPI server variables/paths automatically -- leave the integration instance's server.base_path empty, since every resource is served directly off the host at /v1 or /v2.",
+      "variables": {
+        "protocol": {
+          "default": "https",
+          "enum": [
+            "https"
+          ]
+        },
+        "host": {
+          "default": "api.moogsoft.ai",
+          "description": "Moogsoft Cloud API host. Production is api.moogsoft.ai; some customers may be issued a dedicated api.dev.moogsoft.cloud development host."
+        },
+        "port": {
+          "default": "443"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "apiKeyAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Events",
+      "description": "Event ingestion."
+    },
+    {
+      "name": "Alerts",
+      "description": "Deduplicated alerts generated from ingested events."
+    },
+    {
+      "name": "Incidents",
+      "description": "Incidents formed by correlating related alerts."
+    },
+    {
+      "name": "Catalogs",
+      "description": "Data enrichment lookup tables applied to incoming events/alerts."
+    },
+    {
+      "name": "Maintenance Windows",
+      "description": "Scheduled suppression windows for known maintenance."
+    },
+    {
+      "name": "Correlation Definitions",
+      "description": "Rules the Correlation Engine uses to group alerts into incidents."
+    },
+    {
+      "name": "Workflows",
+      "description": "Workflow Engine automations triggered by alerts/incidents."
+    },
+    {
+      "name": "Collectors",
+      "description": "Collector agents that forward on-prem data into Moogsoft Cloud."
+    }
+  ],
+  "paths": {
+    "/v1/integrations/events": {
+      "post": {
+        "operationId": "sendEvents",
+        "summary": "Send events",
+        "description": "Submit one or more events for deduplication and correlation into alerts.",
+        "tags": [
+          "Events"
+        ],
+        "requestBody": {
+          "description": "One or more events to ingest.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventBatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Events accepted."
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/alerts-search": {
+      "get": {
+        "operationId": "searchAlerts",
+        "summary": "Search alerts",
+        "description": "Search for alerts matching the given filter, status, and sort parameters.",
+        "tags": [
+          "Alerts"
+        ],
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "description": "Filter expression, e.g. by severity or source.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "Alert status to filter on.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of results to return.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Field to sort results by.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Alert"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/alerts/{alertId}": {
+      "get": {
+        "operationId": "getAlert",
+        "summary": "Get alert details",
+        "description": "Get details of the alert with the specified ID.",
+        "tags": [
+          "Alerts"
+        ],
+        "parameters": [
+          {
+            "name": "alertId",
+            "in": "path",
+            "required": true,
+            "description": "Alert ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Alert"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateAlert",
+        "summary": "Update alert",
+        "description": "Update an alert's owner and/or status. Other alert fields are read-only.",
+        "tags": [
+          "Alerts"
+        ],
+        "parameters": [
+          {
+            "name": "alertId",
+            "in": "path",
+            "required": true,
+            "description": "Alert ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlertUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Alert"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/incidents": {
+      "get": {
+        "operationId": "listIncidents",
+        "summary": "List incidents",
+        "description": "List incidents matching the specified filter parameters.",
+        "tags": [
+          "Incidents"
+        ],
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "description": "Filter expression, e.g. by status or priority.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of results to return.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Incident"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/incidents/{incidentId}": {
+      "get": {
+        "operationId": "getIncident",
+        "summary": "Get incident details",
+        "description": "Get details of the incident with the specified ID.",
+        "tags": [
+          "Incidents"
+        ],
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "description": "Incident ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Incident"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateIncident",
+        "summary": "Update incident",
+        "description": "Update an incident's assignee, status, and/or priority.",
+        "tags": [
+          "Incidents"
+        ],
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "description": "Incident ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncidentUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Incident"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/incidents/{incidentId}/comments": {
+      "post": {
+        "operationId": "addIncidentComment",
+        "summary": "Add incident comment",
+        "description": "Add a comment to the specified incident.",
+        "tags": [
+          "Incidents"
+        ],
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "description": "Incident ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncidentComment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Comment added.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentComment"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/catalogs": {
+      "get": {
+        "operationId": "listCatalogs",
+        "summary": "List catalogs",
+        "description": "Return a list of data enrichment catalogs.",
+        "tags": [
+          "Catalogs"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Catalog"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createCatalog",
+        "summary": "Create catalog",
+        "description": "Create a new data enrichment catalog.",
+        "tags": [
+          "Catalogs"
+        ],
+        "requestBody": {
+          "description": "Request body.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Catalog"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Catalog created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Catalog"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/catalogs/{catalogId}": {
+      "get": {
+        "operationId": "getCatalog",
+        "summary": "Get catalog details",
+        "description": "Get details of the catalog with the specified ID, including its rows.",
+        "tags": [
+          "Catalogs"
+        ],
+        "parameters": [
+          {
+            "name": "catalogId",
+            "in": "path",
+            "required": true,
+            "description": "Catalog ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Catalog"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateCatalog",
+        "summary": "Update catalog",
+        "description": "Update a catalog's metadata and/or rows.",
+        "tags": [
+          "Catalogs"
+        ],
+        "parameters": [
+          {
+            "name": "catalogId",
+            "in": "path",
+            "required": true,
+            "description": "Catalog ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Catalog"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Catalog"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteCatalog",
+        "summary": "Delete catalog",
+        "description": "Delete the catalog with the specified ID.",
+        "tags": [
+          "Catalogs"
+        ],
+        "parameters": [
+          {
+            "name": "catalogId",
+            "in": "path",
+            "required": true,
+            "description": "Catalog ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Catalog deleted."
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/maintenance/windows": {
+      "get": {
+        "operationId": "listMaintenanceWindows",
+        "summary": "List maintenance windows",
+        "description": "Get all scheduled maintenance window configurations.",
+        "tags": [
+          "Maintenance Windows"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MaintenanceWindow"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createMaintenanceWindow",
+        "summary": "Create maintenance window",
+        "description": "Schedule a new maintenance window.",
+        "tags": [
+          "Maintenance Windows"
+        ],
+        "requestBody": {
+          "description": "Request body.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MaintenanceWindow"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Maintenance window created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaintenanceWindow"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/maintenance/windows/{windowId}": {
+      "get": {
+        "operationId": "getMaintenanceWindow",
+        "summary": "Get maintenance window details",
+        "description": "Get details of the maintenance window with the specified ID.",
+        "tags": [
+          "Maintenance Windows"
+        ],
+        "parameters": [
+          {
+            "name": "windowId",
+            "in": "path",
+            "required": true,
+            "description": "Maintenance window ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaintenanceWindow"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateMaintenanceWindow",
+        "summary": "Update maintenance window",
+        "description": "Update the maintenance window with the specified ID.",
+        "tags": [
+          "Maintenance Windows"
+        ],
+        "parameters": [
+          {
+            "name": "windowId",
+            "in": "path",
+            "required": true,
+            "description": "Maintenance window ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MaintenanceWindow"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaintenanceWindow"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteMaintenanceWindow",
+        "summary": "Delete maintenance window",
+        "description": "Delete the maintenance window with the specified ID.",
+        "tags": [
+          "Maintenance Windows"
+        ],
+        "parameters": [
+          {
+            "name": "windowId",
+            "in": "path",
+            "required": true,
+            "description": "Maintenance window ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Maintenance window deleted."
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/correlation-definitions": {
+      "get": {
+        "operationId": "listCorrelationDefinitions",
+        "summary": "List correlation definitions",
+        "description": "Get all correlation algorithm definitions used by the Correlation Engine.",
+        "tags": [
+          "Correlation Definitions"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CorrelationDefinition"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createCorrelationDefinition",
+        "summary": "Create correlation definition",
+        "description": "Create a new correlation definition.",
+        "tags": [
+          "Correlation Definitions"
+        ],
+        "requestBody": {
+          "description": "Request body.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CorrelationDefinition"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Correlation definition created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CorrelationDefinition"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/correlation-definitions/{correlationDefinitionId}": {
+      "get": {
+        "operationId": "getCorrelationDefinition",
+        "summary": "Get correlation definition details",
+        "description": "Get details of the correlation definition with the specified ID.",
+        "tags": [
+          "Correlation Definitions"
+        ],
+        "parameters": [
+          {
+            "name": "correlationDefinitionId",
+            "in": "path",
+            "required": true,
+            "description": "Correlation definition ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CorrelationDefinition"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateCorrelationDefinition",
+        "summary": "Update correlation definition",
+        "description": "Update the correlation definition with the specified ID.",
+        "tags": [
+          "Correlation Definitions"
+        ],
+        "parameters": [
+          {
+            "name": "correlationDefinitionId",
+            "in": "path",
+            "required": true,
+            "description": "Correlation definition ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CorrelationDefinition"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CorrelationDefinition"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteCorrelationDefinition",
+        "summary": "Delete correlation definition",
+        "description": "Delete the correlation definition with the specified ID.",
+        "tags": [
+          "Correlation Definitions"
+        ],
+        "parameters": [
+          {
+            "name": "correlationDefinitionId",
+            "in": "path",
+            "required": true,
+            "description": "Correlation definition ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correlation definition deleted."
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workflows": {
+      "get": {
+        "operationId": "listWorkflows",
+        "summary": "List workflows",
+        "description": "List configured Workflow Engine workflows.",
+        "tags": [
+          "Workflows"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Workflow"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workflows/{workflowId}": {
+      "get": {
+        "operationId": "getWorkflow",
+        "summary": "Get workflow details",
+        "description": "Get details of the workflow with the specified ID.",
+        "tags": [
+          "Workflows"
+        ],
+        "parameters": [
+          {
+            "name": "workflowId",
+            "in": "path",
+            "required": true,
+            "description": "Workflow ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workflow"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateWorkflow",
+        "summary": "Update workflow",
+        "description": "Update a workflow's name, description, and/or enabled status.",
+        "tags": [
+          "Workflows"
+        ],
+        "parameters": [
+          {
+            "name": "workflowId",
+            "in": "path",
+            "required": true,
+            "description": "Workflow ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workflow"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/collectors": {
+      "get": {
+        "operationId": "listCollectors",
+        "summary": "List collectors",
+        "description": "List collector agents registered against this instance.",
+        "tags": [
+          "Collectors"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Collector"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "apiKey",
+        "description": "Static, instance-generated API key. Create one in Incident Management under Settings > API Key Management, then pass it verbatim as the apiKey header value."
+      }
+    },
+    "schemas": {
+      "Event": {
+        "type": "object",
+        "description": "A single monitoring event submitted for correlation.",
+        "properties": {
+          "source": {
+            "type": "string",
+            "description": "Originating system/device name."
+          },
+          "class": {
+            "type": "string",
+            "description": "Event class, e.g. the monitored metric or check name."
+          },
+          "type": {
+            "type": "string",
+            "description": "Event type, e.g. the monitoring tool that generated it."
+          },
+          "severity": {
+            "type": "integer",
+            "description": "Severity, 0 (clear) - 5 (critical)."
+          },
+          "description": {
+            "type": "string",
+            "description": "Human-readable event description."
+          },
+          "manager": {
+            "type": "string",
+            "description": "Name of the system managing/forwarding this event."
+          },
+          "agent": {
+            "type": "string",
+            "description": "Name of the agent/collector that produced the event."
+          },
+          "agentLocation": {
+            "type": "string",
+            "description": "Location of the agent that produced the event."
+          },
+          "signature": {
+            "type": "string",
+            "description": "Deduplication signature; matching events are folded into the same alert."
+          }
+        },
+        "required": [
+          "source",
+          "class",
+          "type",
+          "severity",
+          "description"
+        ]
+      },
+      "EventBatch": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Event"
+            }
+          }
+        },
+        "required": [
+          "events"
+        ]
+      },
+      "Alert": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Alert ID."
+          },
+          "description": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string",
+            "description": "Alert status, e.g. open/acknowledged/closed."
+          },
+          "source": {
+            "type": "string"
+          },
+          "class": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string",
+            "description": "User the alert is assigned to."
+          },
+          "firstEventTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastEventTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "count": {
+            "type": "integer",
+            "description": "Number of deduplicated events folded into this alert."
+          },
+          "incidentId": {
+            "type": "string",
+            "description": "ID of the incident this alert has been correlated into, if any."
+          }
+        }
+      },
+      "AlertUpdate": {
+        "type": "object",
+        "description": "Alerts are largely read-only; only owner and status can be updated.",
+        "properties": {
+          "owner": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "Incident": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string"
+          },
+          "assignee": {
+            "type": "string"
+          },
+          "alertCount": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "IncidentUpdate": {
+        "type": "object",
+        "properties": {
+          "assignee": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string"
+          }
+        }
+      },
+      "IncidentComment": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string",
+            "readOnly": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "comment"
+        ]
+      },
+      "Catalog": {
+        "type": "object",
+        "description": "A data enrichment lookup table used to add fields to events/alerts based on matching keys.",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "keyFields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Fields used to match incoming events/alerts against catalog rows."
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "description": "Catalog rows."
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "MaintenanceWindow": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "recurrence": {
+            "type": "string",
+            "description": "Recurrence rule, e.g. none/daily/weekly/monthly."
+          },
+          "filter": {
+            "type": "string",
+            "description": "Filter expression selecting which alerts/events this window suppresses."
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "startTime",
+          "endTime"
+        ]
+      },
+      "CorrelationDefinition": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "algorithm": {
+            "type": "string",
+            "description": "Correlation algorithm, e.g. similarity/topology/time-window."
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Algorithm-specific tuning parameters."
+          }
+        },
+        "required": [
+          "name",
+          "algorithm"
+        ]
+      },
+      "Workflow": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "trigger": {
+            "type": "string",
+            "description": "Condition that starts the workflow, e.g. an alert/incident filter."
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "description": "Ordered list of workflow actions."
+          }
+        }
+      },
+      "WorkflowUpdate": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "Collector": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string",
+            "description": "OS/platform the collector is installed on."
+          },
+          "status": {
+            "type": "string",
+            "description": "Connectivity status, e.g. online/offline."
+          },
+          "version": {
+            "type": "string"
+          },
+          "lastCheckIn": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "code": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}
