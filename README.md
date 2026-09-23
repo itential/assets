@@ -84,6 +84,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Netskope** | Cloud security platform APIs |
 | **NetTerrain** | DCIM / network documentation |
 | **New Relic** | Observability |
+| **Nutanix** | Prism Central |
 | **NVD** | National Vulnerability Database (CVE / CPE) |
 | **Okta** | Identity management |
 | **OP5** | Naemon/Nagios-core network and infrastructure monitoring (op5 Monitor, by ITRS Group) |
