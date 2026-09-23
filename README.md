@@ -53,6 +53,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **EfficientIP** | SOLIDserver (DDI) |
 | **ExtraHop** | RevealX 360 |
 | **F5** | BIG-IP · BIG-IQ · Insight |
+| **flexiWAN** | flexiManage (SD-WAN management) |
 | **ForeScout** | Web API (CounterACT / eyeSight) |
 | **Forward Networks** | Network digital twin & verification platform |
 | **Fortinet** | FortiGate · FortiManager |
