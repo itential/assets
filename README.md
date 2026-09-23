@@ -106,7 +106,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Tufin** | SecureApp · SecureChange · SecureTrack |
 | **Twilio** | Communications APIs |
 | **Versa** | Director |
-| **VMware** | Avi Load Balancer · NSX · vSphere vCenter |
+| **VMware** | Aria Automation Orchestrator · Avi Load Balancer · Cloud on AWS · NSX · VeloCloud Orchestrator · vSphere vCenter |
 | **WatchGuard** | Firebox (cloud-managed firewall configuration) |
 | **Zoom** | Meetings / collaboration |
 | **Zscaler** | ZIA |
