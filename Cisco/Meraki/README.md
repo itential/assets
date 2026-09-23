@@ -113,5 +113,3 @@ Scoped to core configuration CRUD rather than every operation in the curated spe
 |---|---|
 | `Cisco Meraki Dashboard:latest` Integration Model | Import from [`cisco_meraki_dashboard-latest.json`](./OpenAPIs/cisco_meraki_dashboard-latest.json) before importing the project |
 | `Meraki` integration instance | Create in **Admin > Integrations** with the connection properties above. Workflows are wired to an integration instance named `Meraki` — update the `adapter_id` value in each workflow task if yours is named differently |
-
-**Testing status:** all 162 workflows were created and schema-validated against a running Itential Platform instance. A representative sample — `List Organizations`, `List Networks`, and `List Inventory Devices` — was executed against a real Meraki Dashboard organization and confirmed returning live data. The remaining workflows have not been individually executed against a real organization.

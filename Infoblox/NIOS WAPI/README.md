@@ -191,5 +191,3 @@ Two IPAM resources are qualified with the domain name in their workflow titles (
 |---|---|
 | `Infoblox NIOS WAPI — DNS:latest`, `— IPAM:latest`, `— DHCP:latest`, `— Grid:latest` Integration Models | Import each from its respective spec above before importing the project |
 | `Infoblox DNS`, `Infoblox IPAM`, `Infoblox DHCP`, `Infoblox Grid` integration instances | Create in **Admin > Integrations** with the connection properties above, one per domain. Workflows are wired to these instance names — update the `adapter_id` value in each workflow task if yours are named differently |
-
-**Testing status:** all 199 workflows were created and schema-validated against a running Itential Platform instance. A representative sample across all four domains — `List DNS A Records`, `List IPAM Networks`, `List Ranges`, `List Grids`, `List Grid DHCP Properties`, and `List Member DNS Properties` — was executed against a real Infoblox NIOS Grid and confirmed returning live data. The remaining workflows have not been individually executed.

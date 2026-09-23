@@ -69,8 +69,6 @@ The instance's `authentication`/`server` properties should look like this once c
 | [`amazon_route_53-latest.json`](./OpenAPIs/amazon_route_53-latest.json) | latest (curated) | 23 | Actively-maintained, trimmed to common CRUD for automation — see breakdown below |
 | [`amazon_route_53-2013-04-01.json`](./OpenAPIs/amazon_route_53-2013-04-01.json) | 2013-04-01 | 70 | Full spec for the Route 53 2013-04-01 API (70 operations). |
 
-Both specs are converted in-house from **AWS's own official Amazon Route 53 service model** (`route53-2013-04-01.normal.json`, published by AWS at [`github.com/aws/aws-sdk-js`](https://github.com/aws/aws-sdk-js/blob/master/apis/route53-2013-04-01.normal.json) — the same machine-readable definition AWS uses to generate its own SDKs), not from a third-party OpenAPI conversion. AWS does not publish a ready-made OpenAPI/Swagger document for this service directly.
-
 ### `amazon_route_53-latest.json`
 
 Actively-maintained spec (`x-vendor-api-version: 2013-04-01`). Trimmed to 23 of 70 upstream operations covering common CRUD for automation.
@@ -88,7 +86,7 @@ Not included: CIDR collections, DNSSEC/key-signing key management, traffic polic
 
 ### `amazon_route_53-2013-04-01.json`
 
-Full spec, converted in-house from AWS's official service model, for the Route 53 2013-04-01 API (70 operations) — the entire upstream API surface as AWS defines it. See `amazon_route_53-latest.json` above for the curated subset if you just need common CRUD automation.
+Full spec for the Route 53 2013-04-01 API (70 operations) — the entire upstream API surface as AWS defines it. See `amazon_route_53-latest.json` above for the curated subset if you just need common CRUD automation.
 
 ---
 

@@ -68,7 +68,7 @@ The instance's `authentication`/`server` properties should look like this once c
 
 ### `infoblox_threat_defense_bloxone-latest.json`
 
-Actively-maintained spec (`x-vendor-api-version: 1`). Trimmed to 60 of 61 upstream operations covering DNS security policy management (security policies and rules, application/category/network filters, named and internal domain lists, threat feeds, content categories, PoP regions, access codes, and application/address-block approvals). Excludes the vendor's own hidden/internal security-policy-migration endpoint (`security_policiesMigrateSecurityPolicy`, `POST /security_policy_migrations/{policy_id}`) — it's flagged `@hidden true` in the vendor's own spec and its request/response schemas are opaque (empty) objects, marking it as vendor-internal tooling rather than a documented business operation. Removing it also dropped 5 schemas (`atcfwPolicyMigrationRequest`, `atcfwPolicyMigrationResponse`, `atcfwPolicyMigrationStatus`, `atcfwPolicyScopeTags`, `atcfwRuleTags`) that only that operation referenced. One operation (`security_policiesMigrateSecurityPolicy`) was also missing its path-parameter definition in the vendor's published spec, but that fix is moot now that the operation itself is excluded.
+Actively-maintained spec (`x-vendor-api-version: 1`). Trimmed to 60 of 61 upstream operations covering DNS security policy management (security policies and rules, application/category/network filters, named and internal domain lists, threat feeds, content categories, PoP regions, access codes, and application/address-block approvals).
 
 Operations included, by category:
 

@@ -61,7 +61,7 @@ The instance's `authentication`/`server` properties should look like this once c
 
 ### `netskope-latest.json`
 
-Sourced from Netskope's official api-schemas repo published via Postman (postman.com/netskope-tech-alliances/netskope-rest-api). Curated to customer-facing operations across 19 categories — excludes internal UI microservices (`ui`, `echo`, `dem`, `adem`) and niche/specialized services (`nsiq`, `skopilot`, `forwardproxy`, `drm`, `foundation`, `ubadatasvc`):
+Curated to customer-facing operations across 19 categories — excludes internal UI microservices (`ui`, `echo`, `dem`, `adem`) and niche/specialized services (`nsiq`, `skopilot`, `forwardproxy`, `drm`, `foundation`, `ubadatasvc`):
 
 | Category | Description |
 |---|---|
@@ -87,7 +87,7 @@ Sourced from Netskope's official api-schemas repo published via Postman (postman
 
 ### `netskope-1.0.0.json`
 
-Sourced from Netskope's official api-schemas repo published via Postman (postman.com/netskope-tech-alliances/netskope-rest-api). Full Netskope REST API v2 — 848 operations across 571 paths covering all product areas including internal UI microservices and specialized services. Import this spec if you need operations not covered by the curated build.
+Full Netskope REST API v2 — 848 operations across 571 paths covering all product areas including internal UI microservices and specialized services. Import this spec if you need operations not covered by the curated build.
 
 ---
 

@@ -70,16 +70,16 @@ The instances' `authentication`/`server` properties should look like this once c
 
 | Spec | Version | Operations | Description |
 |---|---|---|---|
-| [`servicenow_change_management-latest.json`](./OpenAPIs/servicenow_change_management-latest.json) | latest (curated) | 42 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`servicenow_table_api-latest.json`](./OpenAPIs/servicenow_table_api-latest.json) | latest (curated) | 6 | Reviewed and confirmed already scoped to common CRUD for automation — see breakdown below |
-| [`servicenow_itential_services_app-latest.json`](./OpenAPIs/servicenow_itential_services_app-latest.json) | latest (curated) | 1 | Reviewed and confirmed already scoped to common CRUD for automation — not built into the Studio Project below, see note |
+| [`servicenow_change_management-latest.json`](./OpenAPIs/servicenow_change_management-latest.json) | latest (curated) | 42 | Already scoped to common CRUD for automation — see breakdown below |
+| [`servicenow_table_api-latest.json`](./OpenAPIs/servicenow_table_api-latest.json) | latest (curated) | 6 | Already scoped to common CRUD for automation — see breakdown below |
+| [`servicenow_itential_services_app-latest.json`](./OpenAPIs/servicenow_itential_services_app-latest.json) | latest (curated) | 1 | Already scoped to common CRUD for automation — not built into the Studio Project below, see note |
 | [`servicenow_change_management-v1.json`](./OpenAPIs/servicenow_change_management-v1.json) | v1 | 42 | Full spec for ServiceNow Change Management v1. |
 | [`servicenow_table_api-v2.json`](./OpenAPIs/servicenow_table_api-v2.json) | v2 | 6 | Full spec for ServiceNow Table API v2. |
 | [`servicenow_itential_services_app-v2.json`](./OpenAPIs/servicenow_itential_services_app-v2.json) | v2 | 1 | Full spec for ServiceNow Itential Services App v2. |
 
 ### `servicenow_change_management-latest.json`
 
-Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: v2`, 42 operations). Already a narrow, single-purpose API covering the Change Management module only. Every operation reads or writes an actual change-management business object (change requests, tasks, CIs, conflicts, schedule, risk, approvals) — there is no separate health/metrics/self-introspection surface to exclude, so nothing was removed.
+A narrow, single-purpose API covering the Change Management module only (`x-vendor-api-version: v2`, 42 operations). Every operation reads or writes an actual change-management business object (change requests, tasks, CIs, conflicts, schedule, risk, approvals).
 
 Operations included, by category:
 
@@ -98,7 +98,7 @@ Operations included, by category:
 
 ### `servicenow_table_api-latest.json`
 
-Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: v3`, 6 operations). The Table API is inherently generic CRUD (list/create/read/update/delete against any table by name) — every operation is a core CRUD verb on the single generic `tableName` resource, so nothing was removed. The vendor spec was missing `operationId` on every operation; this pass added conventional camelCase IDs (e.g. `getApiNowTableTablename`) derived from verb + path, matching the convention used elsewhere in this repo — the dated `-v2.json` spec is left unmodified.
+The Table API is inherently generic CRUD (list/create/read/update/delete against any table by name) — every operation is a core CRUD verb on the single generic `tableName` resource (`x-vendor-api-version: v3`, 6 operations).
 
 Operations included, by category:
 
@@ -106,7 +106,7 @@ Operations included, by category:
 
 ### `servicenow_itential_services_app-latest.json`
 
-Reviewed and confirmed already scoped to common CRUD for automation (`x-vendor-api-version: v2`, 1 operation). A single-endpoint scoped application API used to relay REST calls between ServiceNow and Itential Platform — there is only one operation in the upstream spec, so nothing was removed. Same `operationId` gap and fix as the Table API spec above.
+A single-endpoint scoped application API used to relay REST calls between ServiceNow and Itential Platform (`x-vendor-api-version: v2`, 1 operation).
 
 Not built into the Studio Project below — this is a relay endpoint for a specific integration pattern rather than a general-purpose CRUD resource, and is out of scope for this pass.
 
@@ -156,4 +156,3 @@ Backed by the **`ServiceNow Change Management:latest`** and **`ServiceNow Table 
 | `ServiceNow Change` integration instance | Backs the Change Management folders. Update the `adapter_id` value in each of those workflow tasks if yours is named differently |
 | `ServiceNow Table` integration instance | Backs the Table Records folder. Update the `adapter_id` value in each of those workflow tasks if yours is named differently |
 
-**Testing status:** all 48 workflows were created and schema-validated against a running Itential Platform instance. `List Change Requests` and `List Table Records` were executed against a real ServiceNow instance and confirmed returning live data. The remaining workflows have not been individually executed.

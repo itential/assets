@@ -64,7 +64,7 @@ Leaving the API key value blank is a valid configuration — every operation sti
 
 ### `nvd-latest.json`
 
-Actively-maintained spec (`x-vendor-api-version: 2.0`). Reviewed against the repo's common-CRUD-for-automation policy: all 5 upstream operations are already in scope, so the full spec is carried through as `-latest` — NVD's public API surface is small and entirely read-only, with no larger vendor spec to trim from.
+Actively-maintained spec (`x-vendor-api-version: 2.0`). All 5 operations are carried through as `-latest` — NVD's public API surface is small and entirely read-only.
 
 Operations, by resource type:
 

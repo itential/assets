@@ -41,7 +41,7 @@ Authentication is HTTP Basic — a Device42 username and password sent as the `A
 
 ### `device42-latest.json`
 
-Sourced from Device42's own officially-published OpenAPI spec at `api.device42.com/device42.yaml` (Swagger 2.0, converted to OpenAPI 3.0). Trimmed to 66 of 468 upstream operations covering common CRUD for automation.
+Trimmed to 66 of 468 upstream operations covering common CRUD for automation.
 
 Resources included, by category:
 

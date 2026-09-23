@@ -62,7 +62,7 @@ The instance's `authentication`/`server` properties should look like this once c
 
 ### `solarwinds_orion_npm-latest.json`
 
-Sourced from SolarWinds' own officially-published OpenAPI spec ([`solarwinds/OrionSDK`](https://github.com/solarwinds/OrionSDK) on GitHub, served at `solarwinds.github.io/OrionSDK/swagger-ui/`). Trimmed to 24 of 792 upstream operations — the full spec spans SWIS's entire cross-module surface (NCM, SAM/DPI, IPAM, NetPath, SEUM, virtualization, Cisco ACI, agent management, and more), not just NPM.
+Trimmed to 24 of 792 upstream operations — the full spec spans SWIS's entire cross-module surface (NCM, SAM/DPI, IPAM, NetPath, SEUM, virtualization, Cisco ACI, agent management, and more), not just NPM.
 
 Resources included:
 

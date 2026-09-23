@@ -8,7 +8,6 @@ This project provides one OpenAPI spec for Itential Platform's own REST API via 
 - [Requirements](#requirements)
 - [Integration Configuration](#integration-configuration)
 - [OpenAPIs](#openapis)
-  - [`itential_platform-latest.json`](#itential_platform-latestjson)
 - [Studio Projects](#studio-projects)
   - [`Itential Platform - Studio.project.json`](#itential-platform---studioprojectjson)
   - [`Itential Platform - Admin.project.json`](#itential-platform---adminprojectjson)
@@ -68,10 +67,6 @@ The instance's `authentication`/`server` properties should look like this once c
 | Spec | Version | Operations | Description |
 |---|---|---|---|
 | [`itential_platform-latest.json`](./OpenAPIs/itential_platform-latest.json) | latest | 305 | Full Itential Platform REST API surface used by the 7 Studio Projects below |
-
-### `itential_platform-latest.json`
-
-Sourced from Itential's downloadable OpenAPI 3.1 spec (docs.itential.com/openapi/api-reference-3.yaml) and published per-operation API reference (docs.itential.com/itential-platform/6/6/api-reference).
 
 ## Studio Projects
 
