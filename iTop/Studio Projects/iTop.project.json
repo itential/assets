@@ -1,0 +1,1516 @@
+{
+  "_id": "a81c2790494b4bf39dccd959",
+  "name": "iTop",
+  "description": "iTop REST/JSON API automation: query, create, update, delete, and transition objects of any class (tickets, CIs, contacts) via the core/* operations",
+  "components": [
+    {
+      "iid": 0,
+      "reference": "aaed6392-5708-437c-84fc-1fe440216c10",
+      "type": "workflow",
+      "folder": "/Core",
+      "document": {
+        "name": "List Operations",
+        "description": "Lists every REST/JSON operation the target iTop instance supports, optionally scoped to one class.",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "a101": {
+            "name": "merge",
+            "canvasName": "merge",
+            "summary": "Operation Vars",
+            "description": "Merge the optional class filter into a single object",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "data_to_merge": [
+                  {
+                    "key": "class",
+                    "value": {
+                      "task": "job",
+                      "variable": "class"
+                    }
+                  }
+                ]
+              },
+              "outgoing": {
+                "merged_object": ""
+              }
+            },
+            "actor": "Pronghorn",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "a102": {
+            "name": "renderJinja2ContextWithCast",
+            "canvasName": "renderJinja2ContextWithCast",
+            "summary": "Build List Operations Body",
+            "description": "Renders the form-urlencoded body for the list_operations call",
+            "location": "Application",
+            "locationType": null,
+            "app": "TemplateBuilder",
+            "type": "automatic",
+            "displayName": "TemplateBuilder",
+            "variables": {
+              "incoming": {
+                "template": "version=1.3&json_data={{ {\"operation\": \"list_operations\", \"class\": class} | tojson | urlencode }}",
+                "variables": "$var.a101.merged_object",
+                "castDataType": "string"
+              },
+              "outgoing": {
+                "renderedTemplate": ""
+              }
+            },
+            "actor": "Pronghorn",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          },
+          "a103": {
+            "name": "callOperation",
+            "canvasName": "callOperation",
+            "summary": "List Operations",
+            "description": "List Operations",
+            "location": "Adapter",
+            "locationType": "iTop:latest",
+            "app": "iTop:latest",
+            "type": "automatic",
+            "displayName": "iTop",
+            "variables": {
+              "incoming": {
+                "adapter_id": "iTop",
+                "bodyContentType": "application/x-www-form-urlencoded",
+                "requestBodyPayload": "$var.a102.renderedTemplate"
+              },
+              "outgoing": {
+                "response": null
+              }
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 450
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 600
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "a101": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a101": {
+            "a102": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a102": {
+            "a103": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a103": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "class": {
+              "type": "string",
+              "description": "Optional: restrict the listing to operations available for this class."
+            }
+          }
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP envelope returned by the adapter task ({ok, url, status, headers, text, body}); the iTop response envelope ({code, message, objects}) is at response.body."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8,
+        "last_updated": "2026-09-23T00:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "6.4.0",
+        "uuid": "a50ce681-7e51-4861-a266-b59b93c2358b",
+        "created": "2026-09-23T00:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "6.4.0"
+      }
+    },
+    {
+      "iid": 1,
+      "reference": "31a1d27a-1e2e-4c99-8dba-234a5b977184",
+      "type": "workflow",
+      "folder": "/Core",
+      "document": {
+        "name": "Check Credentials",
+        "description": "Validates a username/password pair against the target iTop instance.",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "a201": {
+            "name": "merge",
+            "canvasName": "merge",
+            "summary": "Credential Vars",
+            "description": "Merge the username/password into a single object",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "data_to_merge": [
+                  {
+                    "key": "user",
+                    "value": {
+                      "task": "job",
+                      "variable": "user"
+                    }
+                  },
+                  {
+                    "key": "password",
+                    "value": {
+                      "task": "job",
+                      "variable": "password"
+                    }
+                  }
+                ]
+              },
+              "outgoing": {
+                "merged_object": ""
+              }
+            },
+            "actor": "Pronghorn",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "a202": {
+            "name": "renderJinja2ContextWithCast",
+            "canvasName": "renderJinja2ContextWithCast",
+            "summary": "Build Check Credentials Body",
+            "description": "Renders the form-urlencoded body for the core/check_credentials call",
+            "location": "Application",
+            "locationType": null,
+            "app": "TemplateBuilder",
+            "type": "automatic",
+            "displayName": "TemplateBuilder",
+            "variables": {
+              "incoming": {
+                "template": "version=1.3&json_data={{ {\"operation\": \"core/check_credentials\", \"user\": user, \"password\": password} | tojson | urlencode }}",
+                "variables": "$var.a201.merged_object",
+                "castDataType": "string"
+              },
+              "outgoing": {
+                "renderedTemplate": ""
+              }
+            },
+            "actor": "Pronghorn",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          },
+          "a203": {
+            "name": "callOperation",
+            "canvasName": "callOperation",
+            "summary": "Check Credentials",
+            "description": "Check Credentials",
+            "location": "Adapter",
+            "locationType": "iTop:latest",
+            "app": "iTop:latest",
+            "type": "automatic",
+            "displayName": "iTop",
+            "variables": {
+              "incoming": {
+                "adapter_id": "iTop",
+                "bodyContentType": "application/x-www-form-urlencoded",
+                "requestBodyPayload": "$var.a202.renderedTemplate"
+              },
+              "outgoing": {
+                "response": null
+              }
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 450
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 600
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "a201": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a201": {
+            "a202": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a202": {
+            "a203": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a203": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "user": {
+              "type": "string",
+              "description": "iTop login to validate."
+            },
+            "password": {
+              "type": "string",
+              "description": "Password to validate."
+            }
+          },
+          "required": [
+            "user",
+            "password"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP envelope returned by the adapter task ({ok, url, status, headers, text, body}); the iTop response envelope ({code, message, objects}) is at response.body."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8,
+        "last_updated": "2026-09-23T00:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "6.4.0",
+        "uuid": "ec3ced71-581e-4ad2-a112-abf7571020dc",
+        "created": "2026-09-23T00:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "6.4.0"
+      }
+    },
+    {
+      "iid": 2,
+      "reference": "86cba382-78ff-4b52-9bb2-31fa4e8cd039",
+      "type": "workflow",
+      "folder": "/Core",
+      "document": {
+        "name": "Get Object",
+        "description": "Searches for one or more objects of a given class. key accepts a numeric ID or an OQL query string (e.g. \"SELECT UserRequest WHERE status = 'new'\").",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "a301": {
+            "name": "merge",
+            "canvasName": "merge",
+            "summary": "Get Vars",
+            "description": "Merge the class/key/output_fields inputs into a single object",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "data_to_merge": [
+                  {
+                    "key": "class",
+                    "value": {
+                      "task": "job",
+                      "variable": "class"
+                    }
+                  },
+                  {
+                    "key": "key",
+                    "value": {
+                      "task": "job",
+                      "variable": "key"
+                    }
+                  },
+                  {
+                    "key": "output_fields",
+                    "value": {
+                      "task": "job",
+                      "variable": "outputFields"
+                    }
+                  }
+                ]
+              },
+              "outgoing": {
+                "merged_object": ""
+              }
+            },
+            "actor": "Pronghorn",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "a302": {
+            "name": "renderJinja2ContextWithCast",
+            "canvasName": "renderJinja2ContextWithCast",
+            "summary": "Build Get Body",
+            "description": "Renders the form-urlencoded body for the core/get call",
+            "location": "Application",
+            "locationType": null,
+            "app": "TemplateBuilder",
+            "type": "automatic",
+            "displayName": "TemplateBuilder",
+            "variables": {
+              "incoming": {
+                "template": "version=1.3&json_data={{ {\"operation\": \"core/get\", \"class\": class, \"key\": key, \"output_fields\": output_fields} | tojson | urlencode }}",
+                "variables": "$var.a301.merged_object",
+                "castDataType": "string"
+              },
+              "outgoing": {
+                "renderedTemplate": ""
+              }
+            },
+            "actor": "Pronghorn",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          },
+          "a303": {
+            "name": "callOperation",
+            "canvasName": "callOperation",
+            "summary": "Get Object",
+            "description": "Get Object",
+            "location": "Adapter",
+            "locationType": "iTop:latest",
+            "app": "iTop:latest",
+            "type": "automatic",
+            "displayName": "iTop",
+            "variables": {
+              "incoming": {
+                "adapter_id": "iTop",
+                "bodyContentType": "application/x-www-form-urlencoded",
+                "requestBodyPayload": "$var.a302.renderedTemplate"
+              },
+              "outgoing": {
+                "response": null
+              }
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 450
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 600
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "a301": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a301": {
+            "a302": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a302": {
+            "a303": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a303": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "class": {
+              "type": "string",
+              "description": "Object class, e.g. UserRequest, Incident, Person, Contact, or any custom class."
+            },
+            "key": {
+              "type": "string",
+              "description": "Numeric object ID or an OQL query string, e.g. \"SELECT UserRequest WHERE status = 'new'\"."
+            },
+            "outputFields": {
+              "type": "string",
+              "description": "Comma-separated field list, or * for all attributes.",
+              "default": "*"
+            }
+          },
+          "required": [
+            "class",
+            "key"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP envelope returned by the adapter task ({ok, url, status, headers, text, body}); the iTop response envelope ({code, message, objects}) is at response.body."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8,
+        "last_updated": "2026-09-23T00:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "6.4.0",
+        "uuid": "d856e707-514a-4e0f-bd47-76ce8789addb",
+        "created": "2026-09-23T00:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "6.4.0"
+      }
+    },
+    {
+      "iid": 3,
+      "reference": "49b0d499-9978-4006-bcd2-f3403542bc89",
+      "type": "workflow",
+      "folder": "/Core",
+      "document": {
+        "name": "Create Object",
+        "description": "Creates a new object of a given class from a fields object.",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "a401": {
+            "name": "merge",
+            "canvasName": "merge",
+            "summary": "Create Vars",
+            "description": "Merge the class/fields/output_fields inputs into a single object",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "data_to_merge": [
+                  {
+                    "key": "class",
+                    "value": {
+                      "task": "job",
+                      "variable": "class"
+                    }
+                  },
+                  {
+                    "key": "fields",
+                    "value": {
+                      "task": "job",
+                      "variable": "fields"
+                    }
+                  },
+                  {
+                    "key": "output_fields",
+                    "value": {
+                      "task": "job",
+                      "variable": "outputFields"
+                    }
+                  }
+                ]
+              },
+              "outgoing": {
+                "merged_object": ""
+              }
+            },
+            "actor": "Pronghorn",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "a402": {
+            "name": "renderJinja2ContextWithCast",
+            "canvasName": "renderJinja2ContextWithCast",
+            "summary": "Build Create Body",
+            "description": "Renders the form-urlencoded body for the core/create call",
+            "location": "Application",
+            "locationType": null,
+            "app": "TemplateBuilder",
+            "type": "automatic",
+            "displayName": "TemplateBuilder",
+            "variables": {
+              "incoming": {
+                "template": "version=1.3&json_data={{ {\"operation\": \"core/create\", \"class\": class, \"fields\": fields, \"output_fields\": output_fields} | tojson | urlencode }}",
+                "variables": "$var.a401.merged_object",
+                "castDataType": "string"
+              },
+              "outgoing": {
+                "renderedTemplate": ""
+              }
+            },
+            "actor": "Pronghorn",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          },
+          "a403": {
+            "name": "callOperation",
+            "canvasName": "callOperation",
+            "summary": "Create Object",
+            "description": "Create Object",
+            "location": "Adapter",
+            "locationType": "iTop:latest",
+            "app": "iTop:latest",
+            "type": "automatic",
+            "displayName": "iTop",
+            "variables": {
+              "incoming": {
+                "adapter_id": "iTop",
+                "bodyContentType": "application/x-www-form-urlencoded",
+                "requestBodyPayload": "$var.a402.renderedTemplate"
+              },
+              "outgoing": {
+                "response": null
+              }
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 450
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 600
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "a401": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a401": {
+            "a402": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a402": {
+            "a403": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a403": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "class": {
+              "type": "string",
+              "description": "Object class to create, e.g. UserRequest, Incident, Person, Contact, or any custom class."
+            },
+            "fields": {
+              "type": "object",
+              "description": "Attribute values for the new object, e.g. {\"org_id\": \"SELECT Organization WHERE name = 'Demo'\", \"title\": \"...\"}."
+            },
+            "outputFields": {
+              "type": "string",
+              "description": "Comma-separated field list to return for the created object.",
+              "default": "id, friendlyname"
+            }
+          },
+          "required": [
+            "class",
+            "fields"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP envelope returned by the adapter task ({ok, url, status, headers, text, body}); the iTop response envelope ({code, message, objects}) is at response.body."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8,
+        "last_updated": "2026-09-23T00:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "6.4.0",
+        "uuid": "e8f39ed6-42ea-4eee-9de8-8c65a07a5ff1",
+        "created": "2026-09-23T00:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "6.4.0"
+      }
+    },
+    {
+      "iid": 4,
+      "reference": "c9ee28b4-6970-4ca2-933a-dee6e2edb6fe",
+      "type": "workflow",
+      "folder": "/Core",
+      "document": {
+        "name": "Update Object",
+        "description": "Updates fields on an existing object. key accepts a numeric ID or an OQL query string.",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "a501": {
+            "name": "merge",
+            "canvasName": "merge",
+            "summary": "Update Vars",
+            "description": "Merge the class/key/fields inputs into a single object",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "data_to_merge": [
+                  {
+                    "key": "class",
+                    "value": {
+                      "task": "job",
+                      "variable": "class"
+                    }
+                  },
+                  {
+                    "key": "key",
+                    "value": {
+                      "task": "job",
+                      "variable": "key"
+                    }
+                  },
+                  {
+                    "key": "fields",
+                    "value": {
+                      "task": "job",
+                      "variable": "fields"
+                    }
+                  }
+                ]
+              },
+              "outgoing": {
+                "merged_object": ""
+              }
+            },
+            "actor": "Pronghorn",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "a502": {
+            "name": "renderJinja2ContextWithCast",
+            "canvasName": "renderJinja2ContextWithCast",
+            "summary": "Build Update Body",
+            "description": "Renders the form-urlencoded body for the core/update call",
+            "location": "Application",
+            "locationType": null,
+            "app": "TemplateBuilder",
+            "type": "automatic",
+            "displayName": "TemplateBuilder",
+            "variables": {
+              "incoming": {
+                "template": "version=1.3&json_data={{ {\"operation\": \"core/update\", \"class\": class, \"key\": key, \"fields\": fields} | tojson | urlencode }}",
+                "variables": "$var.a501.merged_object",
+                "castDataType": "string"
+              },
+              "outgoing": {
+                "renderedTemplate": ""
+              }
+            },
+            "actor": "Pronghorn",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          },
+          "a503": {
+            "name": "callOperation",
+            "canvasName": "callOperation",
+            "summary": "Update Object",
+            "description": "Update Object",
+            "location": "Adapter",
+            "locationType": "iTop:latest",
+            "app": "iTop:latest",
+            "type": "automatic",
+            "displayName": "iTop",
+            "variables": {
+              "incoming": {
+                "adapter_id": "iTop",
+                "bodyContentType": "application/x-www-form-urlencoded",
+                "requestBodyPayload": "$var.a502.renderedTemplate"
+              },
+              "outgoing": {
+                "response": null
+              }
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 450
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 600
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "a501": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a501": {
+            "a502": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a502": {
+            "a503": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a503": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "class": {
+              "type": "string",
+              "description": "Object class, e.g. UserRequest, Incident, Person, Contact, or any custom class."
+            },
+            "key": {
+              "type": "string",
+              "description": "Numeric object ID or an OQL query string identifying the object(s) to update."
+            },
+            "fields": {
+              "type": "object",
+              "description": "Attribute values to set, e.g. {\"status\": \"assigned\"}."
+            }
+          },
+          "required": [
+            "class",
+            "key",
+            "fields"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP envelope returned by the adapter task ({ok, url, status, headers, text, body}); the iTop response envelope ({code, message, objects}) is at response.body."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8,
+        "last_updated": "2026-09-23T00:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "6.4.0",
+        "uuid": "8f298253-4895-4dc9-92df-5e250a677d93",
+        "created": "2026-09-23T00:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "6.4.0"
+      }
+    },
+    {
+      "iid": 5,
+      "reference": "c48aa891-01fa-497c-8e4e-ab4cf345fe80",
+      "type": "workflow",
+      "folder": "/Core",
+      "document": {
+        "name": "Delete Object",
+        "description": "Deletes an existing object. key accepts a numeric ID or an OQL query string. Set simulate to true to preview the deletion plan without applying it.",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "a601": {
+            "name": "merge",
+            "canvasName": "merge",
+            "summary": "Delete Vars",
+            "description": "Merge the class/key/simulate inputs into a single object",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "data_to_merge": [
+                  {
+                    "key": "class",
+                    "value": {
+                      "task": "job",
+                      "variable": "class"
+                    }
+                  },
+                  {
+                    "key": "key",
+                    "value": {
+                      "task": "job",
+                      "variable": "key"
+                    }
+                  },
+                  {
+                    "key": "simulate",
+                    "value": {
+                      "task": "job",
+                      "variable": "simulate"
+                    }
+                  }
+                ]
+              },
+              "outgoing": {
+                "merged_object": ""
+              }
+            },
+            "actor": "Pronghorn",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "a602": {
+            "name": "renderJinja2ContextWithCast",
+            "canvasName": "renderJinja2ContextWithCast",
+            "summary": "Build Delete Body",
+            "description": "Renders the form-urlencoded body for the core/delete call",
+            "location": "Application",
+            "locationType": null,
+            "app": "TemplateBuilder",
+            "type": "automatic",
+            "displayName": "TemplateBuilder",
+            "variables": {
+              "incoming": {
+                "template": "version=1.3&json_data={{ {\"operation\": \"core/delete\", \"class\": class, \"key\": key, \"simulate\": simulate} | tojson | urlencode }}",
+                "variables": "$var.a601.merged_object",
+                "castDataType": "string"
+              },
+              "outgoing": {
+                "renderedTemplate": ""
+              }
+            },
+            "actor": "Pronghorn",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          },
+          "a603": {
+            "name": "callOperation",
+            "canvasName": "callOperation",
+            "summary": "Delete Object",
+            "description": "Delete Object",
+            "location": "Adapter",
+            "locationType": "iTop:latest",
+            "app": "iTop:latest",
+            "type": "automatic",
+            "displayName": "iTop",
+            "variables": {
+              "incoming": {
+                "adapter_id": "iTop",
+                "bodyContentType": "application/x-www-form-urlencoded",
+                "requestBodyPayload": "$var.a602.renderedTemplate"
+              },
+              "outgoing": {
+                "response": null
+              }
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 450
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 600
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "a601": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a601": {
+            "a602": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a602": {
+            "a603": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a603": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "class": {
+              "type": "string",
+              "description": "Object class, e.g. UserRequest, Incident, Person, Contact, or any custom class."
+            },
+            "key": {
+              "type": "string",
+              "description": "Numeric object ID or an OQL query string identifying the object(s) to delete."
+            },
+            "simulate": {
+              "type": "boolean",
+              "description": "If true, returns the deletion plan without deleting anything.",
+              "default": false
+            }
+          },
+          "required": [
+            "class",
+            "key"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP envelope returned by the adapter task ({ok, url, status, headers, text, body}); the iTop response envelope ({code, message, objects}) is at response.body."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8,
+        "last_updated": "2026-09-23T00:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "6.4.0",
+        "uuid": "c0449206-4d67-416c-bbff-fb64fc0f9ab0",
+        "created": "2026-09-23T00:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "6.4.0"
+      }
+    },
+    {
+      "iid": 6,
+      "reference": "501f941d-6f5c-46dd-9101-7219910cdab5",
+      "type": "workflow",
+      "folder": "/Core",
+      "document": {
+        "name": "Apply Stimulus",
+        "description": "Triggers a lifecycle state transition (stimulus) on an existing object, e.g. moving a ticket from new to assigned.",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "a701": {
+            "name": "merge",
+            "canvasName": "merge",
+            "summary": "Apply Stimulus Vars",
+            "description": "Merge the class/key/stimulus/fields inputs into a single object",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "data_to_merge": [
+                  {
+                    "key": "class",
+                    "value": {
+                      "task": "job",
+                      "variable": "class"
+                    }
+                  },
+                  {
+                    "key": "key",
+                    "value": {
+                      "task": "job",
+                      "variable": "key"
+                    }
+                  },
+                  {
+                    "key": "stimulus",
+                    "value": {
+                      "task": "job",
+                      "variable": "stimulus"
+                    }
+                  },
+                  {
+                    "key": "fields",
+                    "value": {
+                      "task": "job",
+                      "variable": "fields"
+                    }
+                  }
+                ]
+              },
+              "outgoing": {
+                "merged_object": ""
+              }
+            },
+            "actor": "Pronghorn",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "a702": {
+            "name": "renderJinja2ContextWithCast",
+            "canvasName": "renderJinja2ContextWithCast",
+            "summary": "Build Apply Stimulus Body",
+            "description": "Renders the form-urlencoded body for the core/apply_stimulus call",
+            "location": "Application",
+            "locationType": null,
+            "app": "TemplateBuilder",
+            "type": "automatic",
+            "displayName": "TemplateBuilder",
+            "variables": {
+              "incoming": {
+                "template": "version=1.3&json_data={{ {\"operation\": \"core/apply_stimulus\", \"class\": class, \"key\": key, \"stimulus\": stimulus, \"fields\": fields} | tojson | urlencode }}",
+                "variables": "$var.a701.merged_object",
+                "castDataType": "string"
+              },
+              "outgoing": {
+                "renderedTemplate": ""
+              }
+            },
+            "actor": "Pronghorn",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          },
+          "a703": {
+            "name": "callOperation",
+            "canvasName": "callOperation",
+            "summary": "Apply Stimulus",
+            "description": "Apply Stimulus",
+            "location": "Adapter",
+            "locationType": "iTop:latest",
+            "app": "iTop:latest",
+            "type": "automatic",
+            "displayName": "iTop",
+            "variables": {
+              "incoming": {
+                "adapter_id": "iTop",
+                "bodyContentType": "application/x-www-form-urlencoded",
+                "requestBodyPayload": "$var.a702.renderedTemplate"
+              },
+              "outgoing": {
+                "response": null
+              }
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 450
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 600
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "a701": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a701": {
+            "a702": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a702": {
+            "a703": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a703": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "class": {
+              "type": "string",
+              "description": "Object class, e.g. UserRequest, Incident, or any custom class with a lifecycle."
+            },
+            "key": {
+              "type": "string",
+              "description": "Numeric object ID or an OQL query string identifying the object."
+            },
+            "stimulus": {
+              "type": "string",
+              "description": "Stimulus code to apply, e.g. ev_assign."
+            },
+            "fields": {
+              "type": "object",
+              "description": "Optional attribute values to set as part of the transition, e.g. {\"agent_id\": 57}.",
+              "default": {}
+            }
+          },
+          "required": [
+            "class",
+            "key",
+            "stimulus"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP envelope returned by the adapter task ({ok, url, status, headers, text, body}); the iTop response envelope ({code, message, objects}) is at response.body."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8,
+        "last_updated": "2026-09-23T00:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "6.4.0",
+        "uuid": "10e9eb8b-3e42-451d-a1e9-46eff66c68a4",
+        "created": "2026-09-23T00:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "6.4.0"
+      }
+    }
+  ],
+  "folders": [
+    {
+      "nodeType": "folder",
+      "name": "Core",
+      "children": [
+        {
+          "iid": 0,
+          "nodeType": "component"
+        },
+        {
+          "iid": 1,
+          "nodeType": "component"
+        },
+        {
+          "iid": 2,
+          "nodeType": "component"
+        },
+        {
+          "iid": 3,
+          "nodeType": "component"
+        },
+        {
+          "iid": 4,
+          "nodeType": "component"
+        },
+        {
+          "iid": 5,
+          "nodeType": "component"
+        },
+        {
+          "iid": 6,
+          "nodeType": "component"
+        }
+      ]
+    }
+  ],
+  "createdBy": {
+    "_id": "49b4fab8bd01486987d57a92",
+    "provenance": "LDAP",
+    "username": "admin@itential"
+  },
+  "lastUpdatedBy": {
+    "_id": "ac3a1afe46d0403a9be5c461",
+    "provenance": "LDAP",
+    "username": "admin@itential"
+  },
+  "created": "2026-09-23T00:00:00.000Z",
+  "lastUpdated": "2026-09-23T00:00:00.000Z",
+  "iid": 7,
+  "thumbnail": "",
+  "backgroundColor": "",
+  "referencedComponentHashes": []
+}
