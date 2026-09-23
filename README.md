@@ -95,6 +95,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **PagerDuty** | Incident management |
 | **Palo Alto** | CloudGenix (Prisma SD-WAN) · Panorama · Prisma Access · Prisma Cloud CSPM |
 | **phpIPAM** | IP address management |
+| **Progress** | WhatsUp Gold |
 | **Puppet** | Enterprise (Orchestrator, Node Classifier) |
 | **Rancher** | Multi-cluster Kubernetes management |
 | **Redis** | Cloud (managed database-as-a-service) |
