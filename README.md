@@ -78,6 +78,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **NetBox** | IPAM / DCIM |
 | **NetScaler** | ADC |
 | **Netskope** | Cloud security platform APIs |
+| **NetTerrain** | DCIM / network documentation |
 | **New Relic** | Observability |
 | **NVD** | National Vulnerability Database (CVE / CPE) |
 | **Okta** | Identity management |
