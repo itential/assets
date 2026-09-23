@@ -1,0 +1,2191 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "TigerConnect",
+    "description": "TigerConnect is a clinical communication and collaboration platform used by healthcare organizations for secure, HIPAA-compliant messaging between care team members, patients, and connected systems. Authentication: HTTP Basic Auth.",
+    "version": "latest",
+    "x-vendor-api-version": "2",
+    "x-itential-curated": "Trimmed to 31 of 47 upstream operations covering common CRUD for automation across Users, Groups, Organizations, Messages, Roster, Metadata, and Search. See the repo README for the full scope and the full spec."
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}",
+      "variables": {
+        "protocol": {
+          "default": "https"
+        },
+        "host": {
+          "default": "developer.tigertext.me"
+        },
+        "port": {
+          "default": "443"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "BasicAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  },
+  "paths": {
+    "/user": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Create Or Update User",
+        "description": "This endpoint lets users generate or update users.",
+        "operationId": "createOrUpdateUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "unique_id"
+                ],
+                "properties": {
+                  "unique_id": {
+                    "type": "string",
+                    "description": "The user's unique identifier. If there's already a user with this unique_id in the caller's organization, it will be updated. If there's a user with the same unique_id but it doesn't belong to the caller's organization, an error will be returned. And, if there's no users with that unique_id, the user will be created."
+                  },
+                  "emails": {
+                    "type": "array",
+                    "description": "A list of the user's email addresses",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "phones": {
+                    "type": "array",
+                    "description": "A list of the user's phone numbers",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "first_name": {
+                    "type": "string",
+                    "description": "The user's first name"
+                  },
+                  "last_name": {
+                    "type": "string",
+                    "description": "The user's last name"
+                  },
+                  "display_name": {
+                    "type": "string",
+                    "description": "The user's display name (if not provided it's built using first_name and/or last_name)"
+                  },
+                  "distinguished_name": {
+                    "type": "string",
+                    "description": "The user's unique identifier used in conjunction with optional header TT-X-Organization-Key for external authentication"
+                  },
+                  "department": {
+                    "type": "string",
+                    "description": "The user's department."
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "The user's title."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "204"
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403"
+          }
+        }
+      }
+    },
+    "/user/{user}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get User",
+        "description": "This endpoint retrieves user information associated with the user addressed by [Addressing Users and Groups](https://developer.tigertext.com/docs/messaging-users-and-groups), if found. This endpoint provides the usual [Request and Response Formats](https://developer.tigertext.com/docs/request-and-response-formats).",
+        "operationId": "getUser",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "description": "User addressed by [Addressing Users and Groups](https://developer.tigertext.com/docs/messaging-users-and-groups#addressing-users), if found.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200"
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "object",
+                          "properties": {
+                            "not_found": {
+                              "type": "string",
+                              "example": "12656764-f34e-4a52-a197-e528xxxxx"
+                            }
+                          }
+                        },
+                        "type": {
+                          "type": "string",
+                          "example": "resource:not_found"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user_lookup/{user}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Lookup User",
+        "description": "This endpoint retrieves the basic details of user addressed by user address.  User address is interpreted using address encoding. If the user does not exist, it will respond with a 'not found' status.",
+        "operationId": "lookupUser",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "description": "The user email, username, phone number or user token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "reply": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string",
+                          "example": "4309f80a-14f5-4a76-a2ba-d2df9772fffd"
+                        },
+                        "status": {
+                          "type": "string",
+                          "example": "User status message"
+                        },
+                        "first_name": {
+                          "type": "string",
+                          "example": "First"
+                        },
+                        "last_name": {
+                          "type": "string",
+                          "example": "Last"
+                        },
+                        "display_name": {
+                          "type": "string",
+                          "example": "First Last"
+                        },
+                        "username": {
+                          "type": "string",
+                          "example": "username"
+                        },
+                        "avatar": {
+                          "type": "string",
+                          "example": "https://avatarurl.jpg"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "object",
+                          "properties": {
+                            "not_found": {
+                              "type": "string",
+                              "example": "user@notthere.com"
+                            }
+                          }
+                        },
+                        "type": {
+                          "type": "string",
+                          "example": "resource:not_found"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{user}/organization": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Add User To Organization",
+        "description": "This endpoint adds a user to an organization. The user can be addressed by user address. User address is interpreted using address encoding.",
+        "operationId": "addUserToOrganization",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "description": "The user email, username, phone number or user token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "organization_key"
+                ],
+                "properties": {
+                  "organization_key": {
+                    "type": "string",
+                    "description": "The key for the organization to which the user will be added"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "204",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{user}/organization/{organization}": {
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Remove User From Organization",
+        "description": "This endpoint removes a user to an organization. The user can be addressed by user address. User address is interpreted using address encoding.",
+        "operationId": "removeUserFromOrganization",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "description": "The user email, username, phone number or user token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "organization",
+            "in": "path",
+            "description": "The key for the organization to which the user will be removed",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "204",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{user}/organization/{organization}/roles": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get User Roles",
+        "description": "Retrieves the roles assigned to a particular user within an organization",
+        "operationId": "getUserRoles",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "description": "The user token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "organization",
+            "in": "path",
+            "description": "The key for the organization to which the user will be removed",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200"
+          },
+          "400": {
+            "description": "400"
+          }
+        }
+      }
+    },
+    "/user/{user}/organization/{organization}/roles/{role}": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Assign User Role",
+        "description": "Assigns a specific role to a particular user within an organization",
+        "operationId": "assignUserRole",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "description": "The user token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "organization",
+            "in": "path",
+            "description": "The key for the organization to which the user will be removed",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "role",
+            "in": "path",
+            "description": "The associated role - Customer, Help Desk, Admin or Reporting",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "reply": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "organization": {
+                            "type": "object",
+                            "properties": {
+                              "organization_id": {
+                                "type": "string",
+                                "example": "lHT0KCFxSDoPvGZP9D4WYsvv"
+                              },
+                              "roles": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "example": "customer"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Remove User Role",
+        "description": "Removes an assigned role from a particular user within an organization",
+        "operationId": "removeUserRole",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "description": "The user token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "organization",
+            "in": "path",
+            "description": "The key for the organization to which the user will be removed",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "role",
+            "in": "path",
+            "description": "The associated role - Customer, Help Desk, Admin or Reporting",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "204"
+          }
+        }
+      }
+    },
+    "/group": {
+      "post": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "Create Group",
+        "description": "Create a new group.",
+        "operationId": "createGroup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "members"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The unique group name"
+                  },
+                  "members": {
+                    "type": "array",
+                    "description": "The members to add to the group encoded using address encoding (Note: The caller is auto-added)",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "avatar": {
+                    "type": "string",
+                    "description": "(optional): Binary data to use for the group's avatar"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "(optional): The group description"
+                  },
+                  "is_public": {
+                    "type": "boolean",
+                    "description": "(optional): A boolean value of whether it is public / private group.",
+                    "default": false
+                  },
+                  "replay_history": {
+                    "type": "boolean",
+                    "description": "(optional): A boolean value indicating if, when a new member is added to the group, it should get the messages sent to the group before that.",
+                    "default": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "201"
+          },
+          "204": {
+            "description": "204",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400"
+          },
+          "403": {
+            "description": "403"
+          },
+          "404": {
+            "description": "404"
+          }
+        }
+      }
+    },
+    "/group/{group}": {
+      "get": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "Get Group",
+        "description": "Get information about a group using its group token.",
+        "operationId": "getGroup",
+        "parameters": [
+          {
+            "name": "group",
+            "in": "path",
+            "description": "The unique group token.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "reply": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string",
+                          "example": "3889a2ff-6af3-4a0f-8ae9-63a3ce14a425"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "TigerConnect team"
+                        },
+                        "replay_history": {
+                          "type": "boolean",
+                          "example": false,
+                          "default": true
+                        },
+                        "avatar": {
+                          "type": "string",
+                          "example": "https://d18oyzjkq5093g.cloudfront.net/v1/3889a2ff-6af3-4a0f-8ae9-63a3ce14a425/1.jpg"
+                        },
+                        "num_members": {
+                          "type": "integer",
+                          "example": 11,
+                          "default": 0
+                        },
+                        "members": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "example": "83c5c3e4-e599-49a0-b8c8-e00b39ce2530"
+                          }
+                        },
+                        "ttl": {
+                          "type": "integer",
+                          "example": 43200,
+                          "default": 0
+                        },
+                        "description": {
+                          "type": "string",
+                          "example": ""
+                        },
+                        "created_time": {
+                          "type": "string",
+                          "example": "2015-08-11T14:17:28.0Z"
+                        },
+                        "created_by": {
+                          "type": "string",
+                          "example": "83c5c3e4-e599-49a0-b8c8-e00b39ce2530"
+                        },
+                        "organization_key": {
+                          "type": "string",
+                          "example": "3D5qqmf6f6RgVzFwcbZoIPuW"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "object",
+                          "properties": {
+                            "not_found": {
+                              "type": "string",
+                              "example": "3889a2ff-6af3-4a0f-8ae9-63a3cexxxxxxx"
+                            }
+                          }
+                        },
+                        "type": {
+                          "type": "string",
+                          "example": "resource:not_found"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "Update Group",
+        "description": "Update information about a group using its group token.",
+        "operationId": "updateGroup",
+        "parameters": [
+          {
+            "name": "group",
+            "in": "path",
+            "description": "The unique group token.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "(optional): The group name"
+                  },
+                  "avatar": {
+                    "type": "string",
+                    "description": "(optional): Binary data to use for the group's avatar"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "(optional): The group description"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "204"
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "Delete Group",
+        "description": "Delete a group. If the group has already been deleted, no error is reported.",
+        "operationId": "deleteGroup",
+        "parameters": [
+          {
+            "name": "group",
+            "in": "path",
+            "description": "The unique group token.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "204"
+          },
+          "403": {
+            "description": "403"
+          }
+        }
+      }
+    },
+    "/group/{group}/members": {
+      "post": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "Add Group Members",
+        "description": "Add members to a group.",
+        "operationId": "addGroupMembers",
+        "parameters": [
+          {
+            "name": "group",
+            "in": "path",
+            "description": "The unique group token.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "members": {
+                    "type": "array",
+                    "description": "list of the new members on the group encoded using address encoding (users already in the group are ignored). When sending a Json object, you can send the list directly instead of an object with the members property. There is a maximum group size limit. Default for public group is 5000 members. Default for private group is 100 members. Both are configurable.",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "204"
+          },
+          "400": {
+            "description": "400"
+          },
+          "404": {
+            "description": "404"
+          }
+        }
+      }
+    },
+    "/group/{group}/members/remove": {
+      "post": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "Remove Group Members",
+        "description": "Remove members from a group.",
+        "operationId": "removeGroupMembers",
+        "parameters": [
+          {
+            "name": "group",
+            "in": "path",
+            "description": "The unique group token.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "members": {
+                    "type": "array",
+                    "description": "list of the new members on the group encoded using address encoding (users already in the group are ignored). When sending a Json object, you can send the list directly instead of an object with the members property. There is a maximum group size limit. Default for public group is 5000 members. Default for private group is 100 members. Both are configurable.",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "204"
+          },
+          "400": {
+            "description": "400"
+          },
+          "404": {
+            "description": "404"
+          }
+        }
+      }
+    },
+    "/organization": {
+      "post": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "Create Organization",
+        "description": "This endpoint creates new TigerText organizations.",
+        "operationId": "createOrganization",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The organization name"
+                  },
+                  "ttl": {
+                    "type": "integer",
+                    "description": "The number of minutes for message time to live.",
+                    "default": 43200,
+                    "format": "int32"
+                  },
+                  "billing": {
+                    "type": "string",
+                    "description": "Should always be set to active.",
+                    "default": "active"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "204"
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403"
+          }
+        }
+      }
+    },
+    "/organization/{organization}": {
+      "get": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "Get Organization",
+        "description": "This endpoint gets information about an existing TigerText organization.",
+        "operationId": "getOrganization",
+        "parameters": [
+          {
+            "name": "organization",
+            "in": "path",
+            "description": "The organization token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "reply": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "LqBiVKmo71VmPNdSw2sjBR1A"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "A New Org"
+                        },
+                        "ttl": {
+                          "type": "integer",
+                          "example": 43200,
+                          "default": 0
+                        },
+                        "auto_send_welcome_email": {
+                          "type": "boolean",
+                          "example": false,
+                          "default": true
+                        },
+                        "disable_conversation_mute": {
+                          "type": "boolean",
+                          "example": false,
+                          "default": true
+                        },
+                        "allow_public_groups": {
+                          "type": "boolean",
+                          "example": false,
+                          "default": true
+                        },
+                        "welcome_email_logo": {
+                          "type": "string",
+                          "example": "https://d18oyzjkq5093g.cloudfront.net/templates/welcome_email_logo.jpg"
+                        },
+                        "dor": {
+                          "type": "boolean",
+                          "example": false,
+                          "default": true
+                        },
+                        "settings_restricted": {
+                          "type": "boolean",
+                          "example": false,
+                          "default": true
+                        },
+                        "welcome_email_settings": {
+                          "type": "string",
+                          "example": "{\"from\":\"TigerText Admin\",\"subject\":\"You have been invited to join Charles Test Org on TigerText for secure HIPAA-compliant messaging\",\"optional_header\":\"\",\"optional_message\":\"\",\"optional_name\":\"\"}"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403"
+          },
+          "404": {
+            "description": "404"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "Update Organization",
+        "description": "This endpoint updates existing TigerText organizations.",
+        "operationId": "updateOrganization",
+        "parameters": [
+          {
+            "name": "organization",
+            "in": "path",
+            "description": "The organization id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The organization name"
+                  },
+                  "ttl": {
+                    "type": "integer",
+                    "description": "The number of minutes for message time to live.",
+                    "default": 43200,
+                    "format": "int32"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "204"
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "Delete Organization",
+        "description": "This endpoint deletes an existing TigerText organization.",
+        "operationId": "deleteOrganization",
+        "parameters": [
+          {
+            "name": "organization",
+            "in": "path",
+            "description": "The organization id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "204"
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403"
+          },
+          "404": {
+            "description": "404"
+          }
+        }
+      }
+    },
+    "/organization/{organization}/security_groups": {
+      "post": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "Create Security Groups",
+        "description": "The endpoint creates a new custom directory for an organization.  Security groups are portrayed in the Web Admin as Custom Directories.",
+        "operationId": "createSecurityGroups",
+        "parameters": [
+          {
+            "name": "organization",
+            "in": "path",
+            "description": "The key for the organization to which the user will be removed",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "security_groups": {
+                    "type": "array",
+                    "description": "A list of security groups to be created",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "204",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/message": {
+      "post": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "Send Message",
+        "description": "Send Message",
+        "operationId": "sendMessage",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "response_format": {
+                    "type": "string",
+                    "description": "The expected response format.  If set to message, the full message will be included in the response.  Otherwise default response has no body just regular headers."
+                  },
+                  "body": {
+                    "type": "string",
+                    "description": "The message body"
+                  },
+                  "sender_organization": {
+                    "type": "string",
+                    "description": "The organization token for the sender. If not present, will default to the organization key of the sender."
+                  },
+                  "recipient": {
+                    "type": "string",
+                    "description": "Recipient is either a user or a group, encoded using address encoding."
+                  },
+                  "recipient_organization": {
+                    "type": "string",
+                    "description": "For P2P messages, the organization token for the recipient. If not present, will default to the organization key of the sender."
+                  },
+                  "ttl": {
+                    "type": "integer",
+                    "description": "An integer value with the number of minutes until the message expires. -1 indicates no expiration and it's the default value",
+                    "default": -1,
+                    "format": "int32"
+                  },
+                  "dor": {
+                    "type": "boolean",
+                    "description": "A boolean value indicating that the message should be deleted on read.",
+                    "default": false
+                  },
+                  "data": {
+                    "type": "array",
+                    "description": "A group of user-defined datum elements that will be associated with the message. Depending on the request format this field will be parsed differently:",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200"
+          },
+          "201": {
+            "description": "201",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "204"
+          },
+          "400": {
+            "description": "400"
+          },
+          "404": {
+            "description": "404"
+          }
+        }
+      }
+    },
+    "/message/{message}": {
+      "get": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "Get Message",
+        "description": "This endpoint retrieves message information associated with the :message-id, if found. It provides the usual response formats.",
+        "operationId": "getMessage",
+        "parameters": [
+          {
+            "name": "message",
+            "in": "path",
+            "description": "The message ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "reply": {
+                      "type": "object",
+                      "properties": {
+                        "message_id": {
+                          "type": "string",
+                          "example": "8aa7762a-cd6a-4439-9746-3d6ec1f982a8"
+                        },
+                        "sender_token": {
+                          "type": "string",
+                          "example": "4309f80a-14f5-4a76-a2ba-d2df9772fffd"
+                        },
+                        "sender_organization": {
+                          "type": "string",
+                          "example": "3D5qqmf6f6RgVzFwcbZoIPuW"
+                        },
+                        "recipient_token": {
+                          "type": "string",
+                          "example": "3889a2ff-6af3-4a0f-8ae9-63a3ce14a425"
+                        },
+                        "recipient_organization": {
+                          "type": "string",
+                          "example": "3D5qqmf6f6RgVzFwcbZoIPuW"
+                        },
+                        "created_time": {
+                          "type": "string",
+                          "example": "2016-02-19T16:50:13.0Z"
+                        },
+                        "body": {
+                          "type": "string",
+                          "example": "hello world"
+                        },
+                        "ttl": {
+                          "type": "integer",
+                          "example": 43200,
+                          "default": 0
+                        },
+                        "dor": {
+                          "type": "boolean",
+                          "example": false,
+                          "default": true
+                        },
+                        "status": {
+                          "type": "string",
+                          "example": "New"
+                        },
+                        "priority": {
+                          "type": "integer",
+                          "example": 0,
+                          "default": 0
+                        },
+                        "sort_number": {
+                          "type": "integer",
+                          "example": 297186529,
+                          "default": 0
+                        },
+                        "sort_series": {
+                          "type": "integer",
+                          "example": 1,
+                          "default": 0
+                        },
+                        "expire_in": {
+                          "type": "integer",
+                          "example": 2146445,
+                          "default": 0
+                        },
+                        "attachment_name": {
+                          "type": "string",
+                          "example": "undefined"
+                        },
+                        "dnd_auto_forwarded_from": {},
+                        "dnd_auto_forwarded_to": {},
+                        "sub_type": {},
+                        "attachments": {
+                          "type": "array"
+                        },
+                        "data": {
+                          "type": "array"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "object",
+                          "properties": {
+                            "not_found": {
+                              "type": "string",
+                              "example": "8aa7762a-cd6a-4439-9746-3d6e1f98xxx"
+                            }
+                          }
+                        },
+                        "type": {
+                          "type": "string",
+                          "example": "resource:not_found"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "Delete Message",
+        "description": "This endpoint deletes the message. If the message was already deleted, no error is reported.",
+        "operationId": "deleteMessage",
+        "parameters": [
+          {
+            "name": "message",
+            "in": "path",
+            "description": "The message ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "204"
+          }
+        }
+      }
+    },
+    "/message/{message}/attachment/1": {
+      "get": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "Get Message Attachment",
+        "description": "This endpoint retrieves the attachment from the message.",
+        "operationId": "getMessageAttachment",
+        "parameters": [
+          {
+            "name": "message",
+            "in": "path",
+            "description": "The message ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accept",
+            "in": "query",
+            "description": "on fetching an attachment, we may have optional 'Accept' header which valid values are:  application/pdf application/msword, application/msexcel, application/mspowerpoint, image/tt-zip, image/tt-thumbnail-jpg",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200"
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/message/status": {
+      "post": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "Set Message Status",
+        "description": "This endpoint lets users set the status of messages.",
+        "operationId": "setMessageStatus",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "delivered": {
+                    "type": "array",
+                    "description": "A list of message ids to set status to Delivered",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "read": {
+                    "type": "array",
+                    "description": "A list of message ids to set status to Read",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200"
+          },
+          "400": {
+            "description": "400"
+          },
+          "403": {
+            "description": "403",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404"
+          }
+        }
+      }
+    },
+    "/message/{message}/status": {
+      "get": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "Get Message Status",
+        "description": "This endpoint retrieves message recipient status information associated.",
+        "operationId": "getMessageStatus",
+        "parameters": [
+          {
+            "name": "message",
+            "in": "path",
+            "description": "The message ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "reply": {
+                      "type": "object",
+                      "properties": {
+                        "is_recalled": {
+                          "type": "boolean",
+                          "example": false,
+                          "default": true
+                        },
+                        "client_id": {
+                          "type": "string",
+                          "example": "932e8135-d616-4c10-a8d2-fef3f79608c8"
+                        },
+                        "statuses": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "account_id": {
+                                "type": "string",
+                                "example": "12656764-f34e-4a52-a197-e5287425323f"
+                              },
+                              "status": {
+                                "type": "string",
+                                "example": "Read"
+                              },
+                              "timestamp": {
+                                "type": "string",
+                                "example": "2016-02-24T21:07:27.0Z"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Forbidden"
+                        },
+                        "type": {
+                          "type": "string",
+                          "example": "security:forbidden"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "object",
+                          "properties": {
+                            "not_found": {
+                              "type": "string",
+                              "example": "932e8135-d616-4c10-a8d2-fef79608c8"
+                            }
+                          }
+                        },
+                        "type": {
+                          "type": "string",
+                          "example": "resource:not_found"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/roster": {
+      "get": {
+        "tags": [
+          "Roster"
+        ],
+        "summary": "Get Roster",
+        "description": "Get the recent conversation list for a user. As new messages are sent and received, the roster is updated with those conversations.",
+        "operationId": "getRoster",
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "reply": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "example": "tigertext:entity:account"
+                          },
+                          "token": {
+                            "type": "string",
+                            "example": "12656764-f34e-4a52-a197-e5287425323f"
+                          },
+                          "organization_key": {
+                            "type": "string",
+                            "example": "UpM28mnfW65vJkbqEATtKvxm"
+                          },
+                          "display_name": {
+                            "type": "string",
+                            "example": "Echo Bot"
+                          },
+                          "status": {
+                            "type": "string",
+                            "example": "I'm busy repeating things..."
+                          },
+                          "dnd": {
+                            "type": "boolean",
+                            "example": false,
+                            "default": true
+                          },
+                          "dnd_text": {
+                            "type": "string",
+                            "example": "Do not disturb"
+                          },
+                          "avatar": {
+                            "type": "string",
+                            "example": "s3.amazon.com/somelocation.jpeg"
+                          },
+                          "title": {
+                            "type": "string",
+                            "example": "SVP, Channel Sales "
+                          },
+                          "username": {
+                            "type": "string",
+                            "example": ""
+                          },
+                          "department": {
+                            "type": "string",
+                            "example": ""
+                          },
+                          "dnd_auto_forward_receiver": {
+                            "type": "string",
+                            "example": ""
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Roster"
+        ],
+        "summary": "Add Roster Entry",
+        "description": "Add users or lists to their roster.",
+        "operationId": "addRosterEntry",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "entity"
+                ],
+                "properties": {
+                  "entity": {
+                    "type": "string",
+                    "description": "The list token or the friend address (encoded using address encoding)"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Any of the following options: \"tigertext:entity:account\" (default): For users \"tigertext:entity:list\": For distribution lists",
+                    "default": "tigertext:entity:account"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "201"
+          },
+          "204": {
+            "description": "204",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400"
+          },
+          "403": {
+            "description": "403"
+          },
+          "404": {
+            "description": "404"
+          }
+        }
+      }
+    },
+    "/roster/{entity}": {
+      "delete": {
+        "tags": [
+          "Roster"
+        ],
+        "summary": "Remove Roster Entry",
+        "description": "Remove a conversation from the recent conversation list. For conversations that are with another User, all messages are deleted. For conversations with a group, the User leaves the group and is no longer receives subsequent group messages.",
+        "operationId": "removeRosterEntry",
+        "parameters": [
+          {
+            "name": "entity",
+            "in": "path",
+            "description": "entity addressed by address encoding from the user's roster. If the entity was already removed, no error is reported.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "204"
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403"
+          },
+          "404": {
+            "description": "404"
+          }
+        }
+      }
+    },
+    "/metadata/{entity}": {
+      "get": {
+        "tags": [
+          "Metadata"
+        ],
+        "summary": "Get Entity Metadata",
+        "description": "Get the metadata for a User or Group based on address encoding.",
+        "operationId": "getEntityMetadata",
+        "parameters": [
+          {
+            "name": "entity",
+            "in": "path",
+            "description": "User or group based on address encoding.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "reply": {
+                      "type": "object",
+                      "properties": {
+                        "metadata_key": {
+                          "type": "string",
+                          "example": "metadata_value"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "object",
+                          "properties": {
+                            "not_found": {
+                              "type": "string",
+                              "example": "12656764-f34e-4a52-197-e52874xxxxxx"
+                            }
+                          }
+                        },
+                        "type": {
+                          "type": "string",
+                          "example": "resource:not_found"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Metadata"
+        ],
+        "summary": "Set Entity Metadata",
+        "description": "Adds metadata for a user or Group based on address encoding.  The POSTed JSON object or the POST body itself will be parsed as lists of {Key, Value} pairs and just stored as the entity metadata, thus replacing any existing metadata.",
+        "operationId": "setEntityMetadata",
+        "parameters": [
+          {
+            "name": "entity",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "key1": {
+                    "type": "string"
+                  },
+                  "key2": {
+                    "type": "string"
+                  },
+                  "key3": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "201",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "204"
+          },
+          "400": {
+            "description": "400"
+          },
+          "404": {
+            "description": "404"
+          }
+        }
+      }
+    },
+    "/search": {
+      "post": {
+        "tags": [
+          "Search"
+        ],
+        "summary": "Search",
+        "description": "Search entities in the system according to the provided parameters",
+        "operationId": "search",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "array",
+                    "description": "A list of the types of entities to return from search, leaving blank will return all types.  Possible type values: \"account\" \"distribution_list\" \"group\" \"public_group\".  For example [\"account\", \"group\"]",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "directory": {
+                    "type": "array",
+                    "description": "A list of the organization IDs to restrict the results",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "display_name": {
+                    "type": "string",
+                    "description": "Filtering field for partial match on account, group or distribution list display name"
+                  },
+                  "department": {
+                    "type": "string",
+                    "description": "Filtering field for partial match on account department"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Filtering field for partial match on account title"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
