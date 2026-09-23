@@ -70,6 +70,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Kentik** | Network observability |
 | **Kubernetes** | Container orchestration |
 | **LogicMonitor** | Observability |
+| **ManageEngine** | ServiceDesk Plus (ITSM) |
 | **Mattermost** | Team collaboration & messaging |
 | **Men and Mice** | Micetro (DDI) |
 | **Microsoft** | 365 IP and URL Web Service · Azure DevOps · Azure Key Vault · Dynamics 365 · Graph · Teams |

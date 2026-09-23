@@ -1,0 +1,2091 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "latest",
+    "title": "ManageEngine ServiceDesk Plus",
+    "description": "Authentication: static Authtoken (technician API key sent in the `authtoken` header).\n\nManageEngine ServiceDesk Plus on-premise ITSM REST API (V3) for managing requests (tickets), problems, changes, and assets/configuration items.\n\nSource: https://help.servicedeskplus.com/api/rest-api.html",
+    "x-vendor-api-version": "3",
+    "x-itential-curated": "Curated to core CRUD (list/get/add/edit/delete) across the 4 primary ITSM record types -- requests (tickets), problems, changes, and assets/configuration items -- out of the V3 API's full surface. See the repo README for the full breakdown and the dated reference spec, which adds request notes, resolutions, and technician/requester lookups."
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}",
+      "variables": {
+        "protocol": {
+          "default": "https",
+          "enum": [
+            "http",
+            "https"
+          ]
+        },
+        "host": {
+          "default": "sdp.example.com"
+        },
+        "port": {
+          "default": "8080"
+        }
+      },
+      "description": "ServiceDesk Plus on-premise server. The real API base path (/api/v3) is configured separately via the instance's base_path setting -- see the product README."
+    }
+  ],
+  "security": [
+    {
+      "AuthToken": []
+    }
+  ],
+  "paths": {
+    "/requests": {
+      "get": {
+        "operationId": "list_requests",
+        "summary": "List requests",
+        "description": "Returns a paginated list of requests, optionally filtered via `input_data`.",
+        "tags": [
+          "Requests"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "input_data",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "JSON-encoded filter/pagination object, e.g. {\"list_info\":{\"row_count\":10,\"start_index\":1,\"search_criteria\":[{\"field\":\"status.name\",\"condition\":\"is\",\"value\":\"Open\"}]}}."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "requests": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Request"
+                      }
+                    },
+                    "list_info": {
+                      "$ref": "#/components/schemas/ListInfo"
+                    },
+                    "response_status": {
+                      "$ref": "#/components/schemas/ResponseStatus"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "add_request",
+        "summary": "Add request",
+        "description": "Creates a new request.",
+        "tags": [
+          "Requests"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "request": {
+                    "$ref": "#/components/schemas/Request"
+                  }
+                },
+                "required": [
+                  "request"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "request": {
+                      "$ref": "#/components/schemas/Request"
+                    },
+                    "response_status": {
+                      "$ref": "#/components/schemas/ResponseStatus"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/requests/{request_id}": {
+      "get": {
+        "operationId": "get_request",
+        "summary": "Get request",
+        "description": "Retrieves a single request by ID.",
+        "tags": [
+          "Requests"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The request ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "request": {
+                      "$ref": "#/components/schemas/Request"
+                    },
+                    "response_status": {
+                      "$ref": "#/components/schemas/ResponseStatus"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "edit_request",
+        "summary": "Edit request",
+        "description": "Updates an existing request.",
+        "tags": [
+          "Requests"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The request ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "request": {
+                    "$ref": "#/components/schemas/Request"
+                  }
+                },
+                "required": [
+                  "request"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "request": {
+                      "$ref": "#/components/schemas/Request"
+                    },
+                    "response_status": {
+                      "$ref": "#/components/schemas/ResponseStatus"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete_request",
+        "summary": "Delete request",
+        "description": "Deletes a request.",
+        "tags": [
+          "Requests"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The request ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/problems": {
+      "get": {
+        "operationId": "list_problems",
+        "summary": "List problems",
+        "description": "Returns a paginated list of problems, optionally filtered via `input_data`.",
+        "tags": [
+          "Problems"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "input_data",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "JSON-encoded filter/pagination object, e.g. {\"list_info\":{\"row_count\":10,\"start_index\":1,\"search_criteria\":[{\"field\":\"status.name\",\"condition\":\"is\",\"value\":\"Open\"}]}}."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "problems": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Problem"
+                      }
+                    },
+                    "list_info": {
+                      "$ref": "#/components/schemas/ListInfo"
+                    },
+                    "response_status": {
+                      "$ref": "#/components/schemas/ResponseStatus"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "add_problem",
+        "summary": "Add problem",
+        "description": "Creates a new problem.",
+        "tags": [
+          "Problems"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "problem": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                },
+                "required": [
+                  "problem"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "problem": {
+                      "$ref": "#/components/schemas/Problem"
+                    },
+                    "response_status": {
+                      "$ref": "#/components/schemas/ResponseStatus"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/problems/{problem_id}": {
+      "get": {
+        "operationId": "get_problem",
+        "summary": "Get problem",
+        "description": "Retrieves a single problem by ID.",
+        "tags": [
+          "Problems"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "problem_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The problem ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "problem": {
+                      "$ref": "#/components/schemas/Problem"
+                    },
+                    "response_status": {
+                      "$ref": "#/components/schemas/ResponseStatus"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "edit_problem",
+        "summary": "Edit problem",
+        "description": "Updates an existing problem.",
+        "tags": [
+          "Problems"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "problem_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The problem ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "problem": {
+                    "$ref": "#/components/schemas/Problem"
+                  }
+                },
+                "required": [
+                  "problem"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "problem": {
+                      "$ref": "#/components/schemas/Problem"
+                    },
+                    "response_status": {
+                      "$ref": "#/components/schemas/ResponseStatus"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete_problem",
+        "summary": "Delete problem",
+        "description": "Deletes a problem.",
+        "tags": [
+          "Problems"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "problem_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The problem ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/changes": {
+      "get": {
+        "operationId": "list_changes",
+        "summary": "List changes",
+        "description": "Returns a paginated list of changes, optionally filtered via `input_data`.",
+        "tags": [
+          "Changes"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "input_data",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "JSON-encoded filter/pagination object, e.g. {\"list_info\":{\"row_count\":10,\"start_index\":1,\"search_criteria\":[{\"field\":\"status.name\",\"condition\":\"is\",\"value\":\"Open\"}]}}."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "changes": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Change"
+                      }
+                    },
+                    "list_info": {
+                      "$ref": "#/components/schemas/ListInfo"
+                    },
+                    "response_status": {
+                      "$ref": "#/components/schemas/ResponseStatus"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "add_change",
+        "summary": "Add change",
+        "description": "Creates a new change.",
+        "tags": [
+          "Changes"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "change": {
+                    "$ref": "#/components/schemas/Change"
+                  }
+                },
+                "required": [
+                  "change"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "change": {
+                      "$ref": "#/components/schemas/Change"
+                    },
+                    "response_status": {
+                      "$ref": "#/components/schemas/ResponseStatus"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/changes/{change_id}": {
+      "get": {
+        "operationId": "get_change",
+        "summary": "Get change",
+        "description": "Retrieves a single change by ID.",
+        "tags": [
+          "Changes"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "change_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The change ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "change": {
+                      "$ref": "#/components/schemas/Change"
+                    },
+                    "response_status": {
+                      "$ref": "#/components/schemas/ResponseStatus"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "edit_change",
+        "summary": "Edit change",
+        "description": "Updates an existing change.",
+        "tags": [
+          "Changes"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "change_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The change ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "change": {
+                    "$ref": "#/components/schemas/Change"
+                  }
+                },
+                "required": [
+                  "change"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "change": {
+                      "$ref": "#/components/schemas/Change"
+                    },
+                    "response_status": {
+                      "$ref": "#/components/schemas/ResponseStatus"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete_change",
+        "summary": "Delete change",
+        "description": "Deletes a change.",
+        "tags": [
+          "Changes"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "change_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The change ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/assets": {
+      "get": {
+        "operationId": "list_assets",
+        "summary": "List assets",
+        "description": "Returns a paginated list of assets, optionally filtered via `input_data`.",
+        "tags": [
+          "Assets"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "input_data",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "JSON-encoded filter/pagination object, e.g. {\"list_info\":{\"row_count\":10,\"start_index\":1,\"search_criteria\":[{\"field\":\"status.name\",\"condition\":\"is\",\"value\":\"Open\"}]}}."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "assets": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Asset"
+                      }
+                    },
+                    "list_info": {
+                      "$ref": "#/components/schemas/ListInfo"
+                    },
+                    "response_status": {
+                      "$ref": "#/components/schemas/ResponseStatus"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "add_asset",
+        "summary": "Add asset",
+        "description": "Creates a new asset.",
+        "tags": [
+          "Assets"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset": {
+                    "$ref": "#/components/schemas/Asset"
+                  }
+                },
+                "required": [
+                  "asset"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "asset": {
+                      "$ref": "#/components/schemas/Asset"
+                    },
+                    "response_status": {
+                      "$ref": "#/components/schemas/ResponseStatus"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/assets/{asset_id}": {
+      "get": {
+        "operationId": "get_asset",
+        "summary": "Get asset",
+        "description": "Retrieves a single asset by ID.",
+        "tags": [
+          "Assets"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The asset/CI ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "asset": {
+                      "$ref": "#/components/schemas/Asset"
+                    },
+                    "response_status": {
+                      "$ref": "#/components/schemas/ResponseStatus"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "edit_asset",
+        "summary": "Edit asset",
+        "description": "Updates an existing asset.",
+        "tags": [
+          "Assets"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The asset/CI ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset": {
+                    "$ref": "#/components/schemas/Asset"
+                  }
+                },
+                "required": [
+                  "asset"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "asset": {
+                      "$ref": "#/components/schemas/Asset"
+                    },
+                    "response_status": {
+                      "$ref": "#/components/schemas/ResponseStatus"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete_asset",
+        "summary": "Delete asset",
+        "description": "Deletes a asset.",
+        "tags": [
+          "Assets"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The asset/CI ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized -- missing or invalid authtoken",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Request": {
+        "type": "object",
+        "description": "A helpdesk request (ticket).",
+        "required": [
+          "subject"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "subject": {
+            "type": "string",
+            "description": "Short summary of the request, max 250 characters."
+          },
+          "description": {
+            "type": "string",
+            "description": "HTML body describing the request."
+          },
+          "requester": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Requester name or email_id"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "status": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "priority": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "category": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "subcategory": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "item": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "technician": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "group": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Support group"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "impact": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "urgency": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "level": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "mode": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "site": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "request_type": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "template": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "due_by_time": {
+            "type": "object",
+            "description": "Due-by timestamp",
+            "properties": {
+              "value": {
+                "type": "string",
+                "description": "Epoch milliseconds as a string"
+              }
+            }
+          },
+          "created_time": {
+            "type": "object",
+            "description": "Creation timestamp",
+            "properties": {
+              "value": {
+                "type": "string",
+                "description": "Epoch milliseconds as a string"
+              }
+            },
+            "readOnly": true
+          },
+          "udf_fields": {
+            "type": "object",
+            "description": "Custom (user-defined) fields, keyed by field name."
+          }
+        }
+      },
+      "Problem": {
+        "type": "object",
+        "description": "A problem record.",
+        "required": [
+          "title"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "title": {
+            "type": "string",
+            "description": "Problem heading."
+          },
+          "description": {
+            "type": "string",
+            "description": "HTML body describing the problem."
+          },
+          "reported_by": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "category": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "subcategory": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "impact": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "priority": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "status": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "technician": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "group": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Support group"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "due_by_time": {
+            "type": "object",
+            "description": "Resolution due-by timestamp",
+            "properties": {
+              "value": {
+                "type": "string",
+                "description": "Epoch milliseconds as a string"
+              }
+            }
+          },
+          "udf_fields": {
+            "type": "object",
+            "description": "Custom (user-defined) fields, keyed by field name."
+          }
+        }
+      },
+      "Change": {
+        "type": "object",
+        "description": "A change request.",
+        "required": [
+          "title",
+          "stage",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the change request."
+          },
+          "description": {
+            "type": "string",
+            "description": "HTML body describing the change."
+          },
+          "stage": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Current stage of the change process"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "status": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "change_type": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "priority": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "urgency": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "risk": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "impact": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "category": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "subcategory": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "change_requester": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "change_manager": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "change_owner": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "reason_for_change": {
+            "type": "string"
+          },
+          "scheduled_start_time": {
+            "type": "object",
+            "description": "Planned start timestamp",
+            "properties": {
+              "value": {
+                "type": "string",
+                "description": "Epoch milliseconds as a string"
+              }
+            }
+          },
+          "scheduled_end_time": {
+            "type": "object",
+            "description": "Planned end timestamp",
+            "properties": {
+              "value": {
+                "type": "string",
+                "description": "Epoch milliseconds as a string"
+              }
+            }
+          },
+          "udf_fields": {
+            "type": "object",
+            "description": "Custom (user-defined) fields, keyed by field name."
+          }
+        }
+      },
+      "Asset": {
+        "type": "object",
+        "description": "An asset or configuration item (CI). ServiceDesk Plus models CIs as assets scoped to a CI-type product, so this same resource covers both hardware/software assets and non-workstation CIs.",
+        "required": [
+          "name",
+          "product"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Asset/CI name."
+          },
+          "product": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Product type -- determines whether this is treated as an asset or a CI"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "asset_tag": {
+            "type": "string"
+          },
+          "serial_number": {
+            "type": "string"
+          },
+          "barcode": {
+            "type": "string"
+          },
+          "location": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "site": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Assigned user"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "department": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "vendor": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "state": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Reference by name"
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "purchase_cost": {
+            "type": "string"
+          },
+          "acquisition_date": {
+            "type": "object",
+            "description": "Acquisition timestamp",
+            "properties": {
+              "value": {
+                "type": "string",
+                "description": "Epoch milliseconds as a string"
+              }
+            }
+          },
+          "warranty_expiry": {
+            "type": "object",
+            "description": "Warranty expiry timestamp",
+            "properties": {
+              "value": {
+                "type": "string",
+                "description": "Epoch milliseconds as a string"
+              }
+            }
+          },
+          "ip_address": {
+            "type": "string",
+            "readOnly": true
+          },
+          "mac_address": {
+            "type": "string",
+            "readOnly": true
+          },
+          "udf_fields": {
+            "type": "object",
+            "description": "Custom (user-defined) fields, keyed by field name."
+          }
+        }
+      },
+      "ResponseStatus": {
+        "type": "object",
+        "properties": {
+          "status_code": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "status_code": {
+                  "type": "integer"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "field": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ListInfo": {
+        "type": "object",
+        "properties": {
+          "row_count": {
+            "type": "integer"
+          },
+          "start_index": {
+            "type": "integer"
+          },
+          "has_more_rows": {
+            "type": "boolean"
+          },
+          "total_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "response_status": {
+            "$ref": "#/components/schemas/ResponseStatus"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "AuthToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "authtoken",
+        "description": "Static technician API key. Generate one from a technician's User Profile > Generate Authtoken (select Never Expires), or Admin > Developer Space > API for an integration-scoped key."
+      }
+    }
+  }
+}
