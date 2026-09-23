@@ -96,6 +96,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **phpIPAM** | IP address management |
 | **Puppet** | Enterprise (Orchestrator, Node Classifier) |
 | **Rancher** | Multi-cluster Kubernetes management |
+| **Redis** | Cloud (managed database-as-a-service) |
 | **RingCentral** | Unified communications |
 | **Ruckus** | Fastiron |
 | **Rundeck** | Job automation & orchestration |
