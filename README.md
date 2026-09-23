@@ -118,6 +118,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Symantec** | Management Center |
 | **TCPWave** | IPAM (DNS-DHCP-IPAM / DDI) |
 | **Thruk** | Monitoring dashboard (Naemon / Nagios) |
+| **TigerConnect** | Clinical communication & collaboration |
 | **Tufin** | SecureApp · SecureChange · SecureTrack |
 | **Twilio** | Communications APIs |
 | **Versa** | Director |
