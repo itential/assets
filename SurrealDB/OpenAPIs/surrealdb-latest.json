@@ -1,0 +1,575 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "SurrealDB",
+    "description": "SurrealDB is a multi-model database that supports document, graph, key-value, and relational data in a single engine, queried via SurrealQL over HTTP or WebSocket. This spec covers its HTTP REST API, exposed directly by a running SurrealDB server.",
+    "version": "latest",
+    "x-itential-curated": "Trimmed to 15 of 24 documented HTTP API operations, covering record CRUD (/key/{table}, /key/{table}/{id}), raw SurrealQL queries (/sql), bulk import/export, health, and version. See the repo README for the full breakdown."
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}",
+      "variables": {
+        "protocol": {
+          "default": "http",
+          "enum": ["http", "https"]
+        },
+        "host": {
+          "default": "localhost"
+        },
+        "port": {
+          "default": "8000"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "BasicAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "System",
+      "description": "Server health and version information."
+    },
+    {
+      "name": "Records",
+      "description": "Record CRUD against a table or a specific record, without writing SurrealQL."
+    },
+    {
+      "name": "Query",
+      "description": "Raw SurrealQL query execution."
+    },
+    {
+      "name": "Data",
+      "description": "Bulk import and export of a namespace/database's data."
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["System"],
+        "summary": "Health Check",
+        "description": "Checks the status of the database server and its underlying storage engine.",
+        "operationId": "getHealth",
+        "responses": {
+          "200": { "description": "The server and storage engine are healthy." },
+          "500": { "description": "The server or storage engine is unhealthy." }
+        }
+      }
+    },
+    "/version": {
+      "get": {
+        "tags": ["System"],
+        "summary": "Get Version",
+        "description": "Returns the version of the SurrealDB database server.",
+        "operationId": "getVersion",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/key/{table}": {
+      "get": {
+        "tags": ["Records"],
+        "summary": "Select All Records",
+        "description": "Selects all records in a table from the database. Equivalent to `SELECT * FROM type::table($table);`.",
+        "operationId": "selectAllRecords",
+        "parameters": [
+          { "$ref": "#/components/parameters/Table" },
+          { "$ref": "#/components/parameters/SurrealNS" },
+          { "$ref": "#/components/parameters/SurrealDB" },
+          { "$ref": "#/components/parameters/Accept" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Record" }
+                }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      },
+      "post": {
+        "tags": ["Records"],
+        "summary": "Create Record In Table",
+        "description": "Creates a record in a table in the database, with a generated ID. Equivalent to `CREATE type::table($table) CONTENT $data;`.",
+        "operationId": "createRecordInTable",
+        "parameters": [
+          { "$ref": "#/components/parameters/Table" },
+          { "$ref": "#/components/parameters/SurrealNS" },
+          { "$ref": "#/components/parameters/SurrealDB" },
+          { "$ref": "#/components/parameters/Accept" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Record" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Record" }
+                }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      },
+      "put": {
+        "tags": ["Records"],
+        "summary": "Update All Records In Table",
+        "description": "Replaces every record in a table with the supplied content. Equivalent to `UPDATE type::table($table) CONTENT $data;`.",
+        "operationId": "updateAllRecordsInTable",
+        "parameters": [
+          { "$ref": "#/components/parameters/Table" },
+          { "$ref": "#/components/parameters/SurrealNS" },
+          { "$ref": "#/components/parameters/SurrealDB" },
+          { "$ref": "#/components/parameters/Accept" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Record" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Record" }
+                }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      },
+      "patch": {
+        "tags": ["Records"],
+        "summary": "Merge All Records In Table",
+        "description": "Merges the supplied content into every record in a table. Equivalent to `UPDATE type::table($table) MERGE $data;`.",
+        "operationId": "mergeAllRecordsInTable",
+        "parameters": [
+          { "$ref": "#/components/parameters/Table" },
+          { "$ref": "#/components/parameters/SurrealNS" },
+          { "$ref": "#/components/parameters/SurrealDB" },
+          { "$ref": "#/components/parameters/Accept" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Record" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Record" }
+                }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      },
+      "delete": {
+        "tags": ["Records"],
+        "summary": "Delete All Records In Table",
+        "description": "Deletes every record in a table and returns each record's state before deletion. Equivalent to `DELETE FROM type::table($table) RETURN BEFORE;`.",
+        "operationId": "deleteAllRecordsInTable",
+        "parameters": [
+          { "$ref": "#/components/parameters/Table" },
+          { "$ref": "#/components/parameters/SurrealNS" },
+          { "$ref": "#/components/parameters/SurrealDB" },
+          { "$ref": "#/components/parameters/Accept" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Record" }
+                }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      }
+    },
+    "/key/{table}/{id}": {
+      "get": {
+        "tags": ["Records"],
+        "summary": "Select Record",
+        "description": "Selects a specific record from the database. Equivalent to `SELECT * FROM type::record($table, $id);`.",
+        "operationId": "selectRecord",
+        "parameters": [
+          { "$ref": "#/components/parameters/Table" },
+          { "$ref": "#/components/parameters/RecordId" },
+          { "$ref": "#/components/parameters/SurrealNS" },
+          { "$ref": "#/components/parameters/SurrealDB" },
+          { "$ref": "#/components/parameters/Accept" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Record" }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      },
+      "post": {
+        "tags": ["Records"],
+        "summary": "Create Record",
+        "description": "Creates a record with a specific ID in the database. Equivalent to `CREATE type::record($table, $id) CONTENT $data;`.",
+        "operationId": "createRecord",
+        "parameters": [
+          { "$ref": "#/components/parameters/Table" },
+          { "$ref": "#/components/parameters/RecordId" },
+          { "$ref": "#/components/parameters/SurrealNS" },
+          { "$ref": "#/components/parameters/SurrealDB" },
+          { "$ref": "#/components/parameters/Accept" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Record" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Record" }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      },
+      "put": {
+        "tags": ["Records"],
+        "summary": "Update Record",
+        "description": "Replaces the content of a specific record. Equivalent to `UPDATE type::record($table, $id) CONTENT $data;`.",
+        "operationId": "updateRecord",
+        "parameters": [
+          { "$ref": "#/components/parameters/Table" },
+          { "$ref": "#/components/parameters/RecordId" },
+          { "$ref": "#/components/parameters/SurrealNS" },
+          { "$ref": "#/components/parameters/SurrealDB" },
+          { "$ref": "#/components/parameters/Accept" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Record" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Record" }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      },
+      "patch": {
+        "tags": ["Records"],
+        "summary": "Merge Record",
+        "description": "Merges the supplied content into a specific record. Equivalent to `UPDATE type::record($table, $id) MERGE $data;`.",
+        "operationId": "mergeRecord",
+        "parameters": [
+          { "$ref": "#/components/parameters/Table" },
+          { "$ref": "#/components/parameters/RecordId" },
+          { "$ref": "#/components/parameters/SurrealNS" },
+          { "$ref": "#/components/parameters/SurrealDB" },
+          { "$ref": "#/components/parameters/Accept" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Record" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Record" }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      },
+      "delete": {
+        "tags": ["Records"],
+        "summary": "Delete Record",
+        "description": "Deletes a specific record and returns its state before deletion. Equivalent to `DELETE FROM type::record($table, $id) RETURN BEFORE;`.",
+        "operationId": "deleteRecord",
+        "parameters": [
+          { "$ref": "#/components/parameters/Table" },
+          { "$ref": "#/components/parameters/RecordId" },
+          { "$ref": "#/components/parameters/SurrealNS" },
+          { "$ref": "#/components/parameters/SurrealDB" },
+          { "$ref": "#/components/parameters/Accept" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Record" }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      }
+    },
+    "/sql": {
+      "post": {
+        "tags": ["Query"],
+        "summary": "Run SurrealQL Query",
+        "description": "Executes one or more raw SurrealQL statements and returns a result for each.",
+        "operationId": "runSqlQuery",
+        "parameters": [
+          { "$ref": "#/components/parameters/SurrealNS" },
+          { "$ref": "#/components/parameters/SurrealDB" },
+          { "$ref": "#/components/parameters/Accept" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "text/plain": {
+              "schema": {
+                "type": "string",
+                "description": "One or more semicolon-separated SurrealQL statements."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/QueryResult" }
+                }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      }
+    },
+    "/export": {
+      "post": {
+        "tags": ["Data"],
+        "summary": "Export Data",
+        "description": "Exports data for a specific namespace and database. The optional body scopes what's included (users, accesses, params, functions, analyzers, tables, versions, records).",
+        "operationId": "exportData",
+        "parameters": [
+          { "$ref": "#/components/parameters/SurrealNS" },
+          { "$ref": "#/components/parameters/SurrealDB" }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ExportOptions" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "description": "SurrealQL statements representing the exported data."
+                }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      }
+    },
+    "/import": {
+      "post": {
+        "tags": ["Data"],
+        "summary": "Import Data",
+        "description": "Imports SurrealQL statements into a specific namespace and database. Statements are committed as they are parsed; a failure partway through leaves earlier statements applied with no rollback.",
+        "operationId": "importData",
+        "parameters": [
+          { "$ref": "#/components/parameters/SurrealNS" },
+          { "$ref": "#/components/parameters/SurrealDB" },
+          { "$ref": "#/components/parameters/Accept" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "text/plain": {
+              "schema": {
+                "type": "string",
+                "description": "SurrealQL statements to import, as raw file content."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Successful response." },
+          "default": { "description": "Error response." }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "parameters": {
+      "Table": {
+        "name": "table",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" },
+        "description": "Name of the table to operate on."
+      },
+      "RecordId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" },
+        "description": "Record ID (the part after the table name in the record's identifier)."
+      },
+      "SurrealNS": {
+        "name": "Surreal-NS",
+        "in": "header",
+        "required": true,
+        "schema": { "type": "string" },
+        "description": "Namespace to run this request against."
+      },
+      "SurrealDB": {
+        "name": "Surreal-DB",
+        "in": "header",
+        "required": true,
+        "schema": { "type": "string" },
+        "description": "Database to run this request against."
+      },
+      "Accept": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "schema": { "type": "string", "default": "application/json" },
+        "description": "Desired response format."
+      }
+    },
+    "schemas": {
+      "Record": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Record identifier, in the form table:id."
+          }
+        }
+      },
+      "QueryResult": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "OK or ERR for this statement."
+          },
+          "time": {
+            "type": "string",
+            "description": "Time taken to run this statement."
+          },
+          "result": {
+            "description": "The statement's result, or an error message."
+          }
+        }
+      },
+      "ExportOptions": {
+        "type": "object",
+        "properties": {
+          "users": { "type": "boolean", "default": true },
+          "accesses": { "type": "boolean", "default": true },
+          "params": { "type": "boolean", "default": true },
+          "functions": { "type": "boolean", "default": true },
+          "analyzers": { "type": "boolean", "default": true },
+          "versions": { "type": "boolean", "default": false },
+          "tables": {
+            "description": "\"true\" for all tables, \"false\" for none, or an array of table names.",
+            "oneOf": [
+              { "type": "boolean" },
+              { "type": "array", "items": { "type": "string" } }
+            ]
+          },
+          "records": { "type": "boolean", "default": true }
+        }
+      }
+    }
+  }
+}

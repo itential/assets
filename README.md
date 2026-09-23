@@ -114,6 +114,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Sonatype** | Nexus |
 | **Spirent** | TestCenter |
 | **Starburst** | Enterprise |
+| **SurrealDB** | Multi-model database |
 | **Symantec** | Management Center |
 | **TCPWave** | IPAM (DNS-DHCP-IPAM / DDI) |
 | **Thruk** | Monitoring dashboard (Naemon / Nagios) |
