@@ -25,7 +25,7 @@ This project provides two peer OpenAPI specs — the core REST API and the Tooli
 | Asset | Description |
 |---|---|
 | [OpenAPIs/](./OpenAPIs/) | Two peer specs — `salesforce_rest-latest.json` (core REST API) and `salesforce_tooling-latest.json` (Tooling/metadata API) — each with a full dated counterpart |
-| [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing all 19 workflows in 5 folders |
+| [Studio Projects/](./Studio%20Projects/) | Itential Platform project containing all 25 workflows in 6 folders |
 
 ## Requirements
 
@@ -110,7 +110,7 @@ Full reference surface (10 operations), adding Tooling Query All and asynchronou
 
 ### Salesforce Project
 
-Backed by the **`Salesforce:latest`** and **`Salesforce Tooling:latest`** Integration Models (see above). The project contains **19 workflows** organized into **5 folders**, one atomic workflow per curated operation.
+Backed by the **`Salesforce:latest`** and **`Salesforce Tooling:latest`** Integration Models (see above). The project contains **25 workflows** organized into **6 folders**, one atomic workflow per curated operation.
 
 #### Folder Structure
 
@@ -121,6 +121,7 @@ Backed by the **`Salesforce:latest`** and **`Salesforce Tooling:latest`** Integr
 | Query | SOQL Query, SOQL Query All, SOSL Search | Querying and searching records |
 | Tooling Metadata | List, Create, Describe, Get, Update, Delete | Metadata object CRUD (CustomField, ValidationRule, etc.) |
 | Tooling Apex | Tooling Query, Execute Anonymous Apex | Apex execution and metadata querying |
+| Cases | Create Case, Get Case, Update Case, Delete Case, List Cases, Create Case Comment | Case-object CRUD, SOQL listing, and Case Comments, all via the generic sobjects endpoints |
 
 #### Dependencies
 
