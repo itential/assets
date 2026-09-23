@@ -1,0 +1,4964 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Sentinel Provisioning",
+    "description": "Sentinel Provisioning REST API for Rhino Sentinel (Sentinel Express), Alianza's real-time converged-services platform for network operators. Exposed by REM (Rhino Element Manager), the API provisions Sentinel service-layer resources -- subscriber data, service plans, session types, subscriptions, and home zone routing -- as REST resources scoped by a Rhino instance and, for subscriber-scoped resources, a Sentinel selection key.",
+    "version": "4.0.0"
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}",
+      "description": "Sentinel Provisioning REST API server. This platform does not apply OpenAPI server variables/paths automatically -- set the integration instance's server.base_path to \"/rem/sentinel/api\" (REM's default mount point for the Sentinel Provisioning REST API).",
+      "variables": {
+        "protocol": {
+          "default": "http",
+          "enum": [
+            "http",
+            "https"
+          ]
+        },
+        "host": {
+          "default": "sentinel.example.com",
+          "description": "REM server hostname or IP (no protocol, no path)."
+        },
+        "port": {
+          "default": "8080"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "paths": {
+    "/plans": {
+      "get": {
+        "tags": [
+          "Plans"
+        ],
+        "operationId": "listPlans",
+        "summary": "List Plans.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "networkOperator",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network operator scope for the resource."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number of a paginated listing. Defaults to 1."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Plans"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Plans"
+        ],
+        "operationId": "createPlan",
+        "summary": "Create a Plan.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "networkOperator",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network operator scope for the resource."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Plan"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created.",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "URL of the newly created resource."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/plans/{name}": {
+      "get": {
+        "tags": [
+          "Plans"
+        ],
+        "operationId": "getPlan",
+        "summary": "Retrieve a Plan.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Plan name."
+          },
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "networkOperator",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network operator scope for the resource."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Plan"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Plans"
+        ],
+        "operationId": "updatePlan",
+        "summary": "Update a Plan.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Plan name."
+          },
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "networkOperator",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network operator scope for the resource."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Plan"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Updated."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Plans"
+        ],
+        "operationId": "deletePlan",
+        "summary": "Delete a Plan.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Plan name."
+          },
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "networkOperator",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network operator scope for the resource."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessiontypes": {
+      "get": {
+        "tags": [
+          "Session Types"
+        ],
+        "operationId": "listSessionTypes",
+        "summary": "List Session Types.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "networkOperator",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network operator scope for the resource."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number of a paginated listing. Defaults to 1."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionTypes"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Session Types"
+        ],
+        "operationId": "createSessionType",
+        "summary": "Create a Session Type.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "networkOperator",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network operator scope for the resource."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionType"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created.",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "URL of the newly created resource."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessiontypes/{name}": {
+      "get": {
+        "tags": [
+          "Session Types"
+        ],
+        "operationId": "getSessionType",
+        "summary": "Retrieve a Session Type.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session type name."
+          },
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "networkOperator",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network operator scope for the resource."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionType"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Session Types"
+        ],
+        "operationId": "updateSessionType",
+        "summary": "Update a Session Type.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session type name."
+          },
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "networkOperator",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network operator scope for the resource."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionType"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Updated."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Session Types"
+        ],
+        "operationId": "deleteSessionType",
+        "summary": "Delete a Session Type.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session type name."
+          },
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "networkOperator",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network operator scope for the resource."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions": {
+      "get": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "operationId": "listSubscriptions",
+        "summary": "List Subscriptions.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "networkOperator",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network operator scope for the resource."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number of a paginated listing. Defaults to 1."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscriptions"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "operationId": "createSubscription",
+        "summary": "Create a Subscription.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "networkOperator",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network operator scope for the resource."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Subscription"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created.",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "URL of the newly created resource."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/{name}": {
+      "get": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "operationId": "getSubscription",
+        "summary": "Retrieve a Subscription.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Subscription name."
+          },
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "networkOperator",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network operator scope for the resource."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "operationId": "updateSubscription",
+        "summary": "Update a Subscription.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Subscription name."
+          },
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "networkOperator",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network operator scope for the resource."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Subscription"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Updated."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "operationId": "deleteSubscription",
+        "summary": "Delete a Subscription.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Subscription name."
+          },
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "networkOperator",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Network operator scope for the resource."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriberdata/records": {
+      "post": {
+        "tags": [
+          "Subscriber Data"
+        ],
+        "operationId": "createSubscriberDataRecord",
+        "summary": "Create a Subscriber Data record.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriberDataRecord"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created.",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "URL of the newly created resource."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriberdata/records/{subscriberId}": {
+      "get": {
+        "tags": [
+          "Subscriber Data"
+        ],
+        "operationId": "getSubscriberDataRecord",
+        "summary": "Retrieve a Subscriber Data record.",
+        "parameters": [
+          {
+            "name": "subscriberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Subscriber identifier."
+          },
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriberDataRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Subscriber Data"
+        ],
+        "operationId": "updateSubscriberDataRecord",
+        "summary": "Update a Subscriber Data record.",
+        "parameters": [
+          {
+            "name": "subscriberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Subscriber identifier."
+          },
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriberDataRecord"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Updated."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Subscriber Data"
+        ],
+        "operationId": "deleteSubscriberDataRecord",
+        "summary": "Delete a Subscriber Data record.",
+        "parameters": [
+          {
+            "name": "subscriberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Subscriber identifier."
+          },
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/homezone/zones": {
+      "get": {
+        "tags": [
+          "Home Zone"
+        ],
+        "operationId": "listHomeZoneZones",
+        "summary": "List Home Zone zones.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number of a paginated listing. Defaults to 1."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HomeZoneZones"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Home Zone"
+        ],
+        "operationId": "createHomeZoneZone",
+        "summary": "Create a Home Zone zone.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HomeZoneZone"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created.",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "URL of the newly created resource."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/homezone/zones/{name}": {
+      "get": {
+        "tags": [
+          "Home Zone"
+        ],
+        "operationId": "getHomeZoneZone",
+        "summary": "Retrieve a Home Zone zone.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Zone name."
+          },
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HomeZoneZone"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Home Zone"
+        ],
+        "operationId": "updateHomeZoneZone",
+        "summary": "Update a Home Zone zone.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Zone name."
+          },
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HomeZoneZone"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Updated."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Home Zone"
+        ],
+        "operationId": "deleteHomeZoneZone",
+        "summary": "Delete a Home Zone zone.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Zone name."
+          },
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriberdata/lookupconfig": {
+      "get": {
+        "tags": [
+          "Subscriber Data"
+        ],
+        "operationId": "getSubscriberDataLookupConfig",
+        "summary": "Retrieve or list SubscriberDataLookupConfig.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number of a paginated listing. Defaults to 1."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/SubscriberDataLookupConfig"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SubscriberDataLookupConfigs"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Subscriber Data"
+        ],
+        "operationId": "createSubscriberDataLookupConfig",
+        "summary": "Create a SubscriberDataLookupConfig entry.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriberDataLookupConfig"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created.",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "URL of the newly created resource."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Subscriber Data"
+        ],
+        "operationId": "updateSubscriberDataLookupConfig",
+        "summary": "Update a SubscriberDataLookupConfig entry.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriberDataLookupConfig"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Updated."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Subscriber Data"
+        ],
+        "operationId": "deleteSubscriberDataLookupConfig",
+        "summary": "Delete a SubscriberDataLookupConfig entry.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriberdata/sqlconfig": {
+      "get": {
+        "tags": [
+          "Subscriber Data"
+        ],
+        "operationId": "getSubscriberDataSqlConfig",
+        "summary": "Retrieve or list SubscriberDataSqlConfig.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number of a paginated listing. Defaults to 1."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/SubscriberDataSqlConfig"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SubscriberDataSqlConfigs"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Subscriber Data"
+        ],
+        "operationId": "createSubscriberDataSqlConfig",
+        "summary": "Create a SubscriberDataSqlConfig entry.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriberDataSqlConfig"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created.",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "URL of the newly created resource."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Subscriber Data"
+        ],
+        "operationId": "updateSubscriberDataSqlConfig",
+        "summary": "Update a SubscriberDataSqlConfig entry.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriberDataSqlConfig"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Updated."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Subscriber Data"
+        ],
+        "operationId": "deleteSubscriberDataSqlConfig",
+        "summary": "Delete a SubscriberDataSqlConfig entry.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriberdata/fields": {
+      "get": {
+        "tags": [
+          "Subscriber Data"
+        ],
+        "operationId": "getSubscriberDataFields",
+        "summary": "Retrieve or list SubscriberDataFields.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number of a paginated listing. Defaults to 1."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/SubscriberDataLookupFields"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SubscriberDataLookupFieldsListing"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Subscriber Data"
+        ],
+        "operationId": "createSubscriberDataFields",
+        "summary": "Create a SubscriberDataFields entry.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriberDataLookupFields"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created.",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "URL of the newly created resource."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Subscriber Data"
+        ],
+        "operationId": "updateSubscriberDataFields",
+        "summary": "Update a SubscriberDataFields entry.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriberDataLookupFields"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Updated."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Subscriber Data"
+        ],
+        "operationId": "deleteSubscriberDataFields",
+        "summary": "Delete a SubscriberDataFields entry.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/homezone/sqlconfig": {
+      "get": {
+        "tags": [
+          "Home Zone"
+        ],
+        "operationId": "getHomeZoneSqlConfig",
+        "summary": "Retrieve or list HomeZoneSqlConfig.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number of a paginated listing. Defaults to 1."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/HomeZoneSql"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HomeZoneSqls"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Home Zone"
+        ],
+        "operationId": "createHomeZoneSqlConfig",
+        "summary": "Create a HomeZoneSqlConfig entry.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HomeZoneSql"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created.",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "URL of the newly created resource."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Home Zone"
+        ],
+        "operationId": "updateHomeZoneSqlConfig",
+        "summary": "Update a HomeZoneSqlConfig entry.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HomeZoneSql"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Updated."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Home Zone"
+        ],
+        "operationId": "deleteHomeZoneSqlConfig",
+        "summary": "Delete a HomeZoneSqlConfig entry.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/homezone/config": {
+      "get": {
+        "tags": [
+          "Home Zone"
+        ],
+        "operationId": "getHomeZoneConfig",
+        "summary": "Retrieve or list HomeZoneConfig.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number of a paginated listing. Defaults to 1."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/HomeZoneConfig"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HomeZoneConfigs"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Home Zone"
+        ],
+        "operationId": "createHomeZoneConfig",
+        "summary": "Create a HomeZoneConfig entry.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HomeZoneConfig"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created.",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "URL of the newly created resource."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Home Zone"
+        ],
+        "operationId": "updateHomeZoneConfig",
+        "summary": "Update a HomeZoneConfig entry.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HomeZoneConfig"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Updated."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Home Zone"
+        ],
+        "operationId": "deleteHomeZoneConfig",
+        "summary": "Delete a HomeZoneConfig entry.",
+        "parameters": [
+          {
+            "name": "rhinoInstanceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the configured Rhino instance to provision against (e.g. Local)."
+          },
+          {
+            "name": "selectionKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sentinel selection key scope, formatted as platformOperator:networkOperator:sessionType:planId:subscriptionId (e.g. OpenCloud::::)."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "400": {
+            "description": "Bad request -- validation, missing/invalid parameter, or entity already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource, collection, or page not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Requested content type not acceptable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic",
+        "description": "Static HTTP Basic credentials configured through REM (Rhino Element Manager)."
+      }
+    },
+    "schemas": {
+      "ResourceLink": {
+        "type": "object",
+        "properties": {
+          "rel": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "CollectionNotFound",
+              "EntityNotFound",
+              "EntityMissing",
+              "EntityAlreadyExists",
+              "RequiredParameterMissing",
+              "ParameterInvalid",
+              "RequestInconsistent",
+              "ServerError",
+              "PageNotFound",
+              "NotAcceptable"
+            ]
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "Plan": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Plan name (identifier)."
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "Plans": {
+        "type": "object",
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "resources": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResourceLink"
+                  }
+                }
+              }
+            }
+          },
+          "next": {
+            "type": "string",
+            "description": "URL of the next page, if any."
+          },
+          "prev": {
+            "type": "string",
+            "description": "URL of the previous page, if any."
+          }
+        }
+      },
+      "SessionType": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Session type name (identifier)."
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "SessionTypes": {
+        "type": "object",
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "resources": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResourceLink"
+                  }
+                }
+              }
+            }
+          },
+          "next": {
+            "type": "string",
+            "description": "URL of the next page, if any."
+          },
+          "prev": {
+            "type": "string",
+            "description": "URL of the previous page, if any."
+          }
+        }
+      },
+      "Subscription": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Subscription name (identifier)."
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "Subscriptions": {
+        "type": "object",
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "resources": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResourceLink"
+                  }
+                }
+              }
+            }
+          },
+          "next": {
+            "type": "string",
+            "description": "URL of the next page, if any."
+          },
+          "prev": {
+            "type": "string",
+            "description": "URL of the previous page, if any."
+          }
+        }
+      },
+      "SubscriberDataField": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "String",
+              "Boolean",
+              "Integer",
+              "String[]",
+              "Date",
+              "Date[]"
+            ]
+          },
+          "valueString": {
+            "type": "string"
+          },
+          "valueInt": {
+            "type": "integer"
+          },
+          "valueBoolean": {
+            "type": "boolean"
+          },
+          "valueArray": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "valueDate": {
+            "type": "number",
+            "description": "Epoch milliseconds."
+          },
+          "valueDateArray": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ]
+      },
+      "SubscriberDataRecord": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Subscriber identifier."
+          },
+          "subscriberData": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubscriberDataField"
+            }
+          },
+          "imsPublicUserIdentities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "HomeZoneZone": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Zone name (identifier)."
+          },
+          "locationTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mCC": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Mobile country codes."
+          },
+          "mNC": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Mobile network codes."
+          },
+          "lAC": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Location area codes."
+          },
+          "cIOrSAC": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Cell IDs or service area codes."
+          },
+          "locationDescriptions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "HomeZoneZones": {
+        "type": "object",
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "resources": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResourceLink"
+                  }
+                }
+              }
+            }
+          },
+          "next": {
+            "type": "string",
+            "description": "URL of the next page, if any."
+          },
+          "prev": {
+            "type": "string",
+            "description": "URL of the previous page, if any."
+          }
+        }
+      },
+      "SubscriberDataLookupConfig": {
+        "type": "object",
+        "properties": {
+          "lookupType": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "lookupType"
+        ]
+      },
+      "SubscriberDataLookupConfigs": {
+        "type": "object",
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "resources": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResourceLink"
+                  }
+                },
+                "selectionKey": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "next": {
+            "type": "string",
+            "description": "URL of the next page, if any."
+          },
+          "prev": {
+            "type": "string",
+            "description": "URL of the previous page, if any."
+          }
+        }
+      },
+      "SubscriberDataSqlConfig": {
+        "type": "object",
+        "properties": {
+          "listSQL": {
+            "type": "string"
+          },
+          "loadSQL": {
+            "type": "string"
+          },
+          "updateSQL": {
+            "type": "string"
+          },
+          "deleteSQL": {
+            "type": "string"
+          },
+          "insertSQL": {
+            "type": "string"
+          },
+          "loadByImsPublicUserIdentitySQL": {
+            "type": "string"
+          },
+          "listImsPublicUserIdentitiesSQL": {
+            "type": "string"
+          },
+          "insertImsPublicUserIdentitySQL": {
+            "type": "string"
+          },
+          "deleteImsPublicUserIdentitySQL": {
+            "type": "string"
+          },
+          "deleteAllImsPublicUserIdentitiesForSubscriberSQL": {
+            "type": "string"
+          },
+          "databaseRequestTimeout": {
+            "type": "integer"
+          },
+          "asynchronousQuery": {
+            "type": "boolean"
+          },
+          "useImsPublicUserIdentities": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "asynchronousQuery",
+          "useImsPublicUserIdentities"
+        ]
+      },
+      "SubscriberDataSqlConfigs": {
+        "type": "object",
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "resources": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResourceLink"
+                  }
+                },
+                "selectionKey": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "next": {
+            "type": "string",
+            "description": "URL of the next page, if any."
+          },
+          "prev": {
+            "type": "string",
+            "description": "URL of the previous page, if any."
+          }
+        }
+      },
+      "SubscriberDataLookupField": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "String",
+              "Boolean",
+              "Integer",
+              "String[]",
+              "Date",
+              "Date[]"
+            ]
+          },
+          "sessionStateFieldName": {
+            "type": "string"
+          },
+          "resFieldName": {
+            "type": "string"
+          },
+          "colIdx": {
+            "type": "string"
+          },
+          "insertParamIdx": {
+            "type": "integer"
+          },
+          "updateParamIdx": {
+            "type": "integer"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "idField": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "required",
+          "idField"
+        ]
+      },
+      "SubscriberDataLookupFields": {
+        "type": "object",
+        "properties": {
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubscriberDataLookupField"
+            }
+          }
+        }
+      },
+      "SubscriberDataLookupFieldsListing": {
+        "type": "object",
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "resources": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResourceLink"
+                  }
+                },
+                "selectionKey": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "next": {
+            "type": "string",
+            "description": "URL of the next page, if any."
+          },
+          "prev": {
+            "type": "string",
+            "description": "URL of the previous page, if any."
+          }
+        }
+      },
+      "HomeZoneSql": {
+        "type": "object",
+        "properties": {
+          "zoneLookupSQL": {
+            "type": "string"
+          },
+          "zoneInsertSQL": {
+            "type": "string"
+          },
+          "zoneUpdateSQL": {
+            "type": "string"
+          },
+          "zoneDeleteSQL": {
+            "type": "string"
+          },
+          "zoneListingSQL": {
+            "type": "string"
+          }
+        }
+      },
+      "HomeZoneSqls": {
+        "type": "object",
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "resources": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResourceLink"
+                  }
+                },
+                "selectionKey": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "next": {
+            "type": "string",
+            "description": "URL of the next page, if any."
+          },
+          "prev": {
+            "type": "string",
+            "description": "URL of the previous page, if any."
+          }
+        }
+      },
+      "HomeZoneConfig": {
+        "type": "object",
+        "properties": {
+          "lookupType": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "lookupType"
+        ]
+      },
+      "HomeZoneConfigs": {
+        "type": "object",
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "resources": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResourceLink"
+                  }
+                },
+                "selectionKey": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "next": {
+            "type": "string",
+            "description": "URL of the next page, if any."
+          },
+          "prev": {
+            "type": "string",
+            "description": "URL of the previous page, if any."
+          }
+        }
+      }
+    }
+  }
+}

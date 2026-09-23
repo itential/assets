@@ -28,6 +28,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **1Password** | Connect (secrets access) |
 | **6connect** | IP address management |
 | **Akamai** | CDN & edge platform APIs |
+| **Alianza** | Sentinel (converged services provisioning) |
 | **Ansible** | AWX / Tower |
 | **Apache** | Airflow · Kafka |
 | **ARIN** | RDAP · Whois-RWS |
