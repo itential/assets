@@ -1,0 +1,642 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "F5 VELOS",
+    "version": "latest",
+    "x-vendor-api-version": "1.6.1",
+    "description": "F5 VELOS is the chassis-based platform and system-controller layer that hosts BIG-IP tenant instances on shared hardware blades. This API is F5OS-C's RESTCONF interface, exposed by the chassis's system controller, for managing chassis partitions, tenants, tenant software images, and platform/node hardware status.\n\nAuthentication: HTTP Basic (username/password of an F5OS-C user with appropriate role permissions). F5OS-C also supports exchanging Basic auth for a short-lived X-Auth-Token, but that token is only returned in a response header rather than the response body, so it cannot be picked up via this platform's dynamic-retrieval mechanism -- Basic auth is used directly on every request instead, which F5OS-C supports natively (enabled by default; confirm with `show system aaa` if it has been disabled in your environment).\n\nSource: https://clouddocs.f5.com/api/velos-api/",
+    "x-itential-curated": "Trimmed to 16 of the system controller's RESTCONF operations covering chassis partition lifecycle, tenant lifecycle, tenant image inventory, and platform/node hardware status -- the core system-controller resources someone would realistically automate. See the repo README for the full breakdown and the dated reference spec."
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}",
+      "description": "VELOS system controller. The RESTCONF API is served under a base path (/restconf/data) configured via this instance's base_path property, not encoded in this URL.",
+      "variables": {
+        "protocol": {
+          "default": "https"
+        },
+        "host": {
+          "default": "velos.example.com"
+        },
+        "port": {
+          "default": "8888"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic",
+        "description": "HTTP Basic auth using an F5OS-C local (or remote AAA) user's username/password. Sent on every request; F5OS-C has HTTP Basic auth enabled for its RESTCONF API by default."
+      }
+    },
+    "schemas": {
+      "PartitionConfig": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether the partition is active. A newly-created partition is typically created disabled, then enabled once slots are assigned."
+          },
+          "iso-version": {
+            "type": "string",
+            "description": "F5OS-C ISO version to install on the partition.",
+            "example": "1.1.0-3198"
+          },
+          "mgmt-ip": {
+            "type": "object",
+            "properties": {
+              "ipv4": {
+                "type": "object",
+                "properties": {
+                  "address": {
+                    "type": "string",
+                    "example": "10.1.1.10"
+                  },
+                  "prefix-length": {
+                    "type": "integer",
+                    "example": 24
+                  },
+                  "gateway": {
+                    "type": "string",
+                    "example": "10.1.1.1"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Partition": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "partitionA"
+          },
+          "config": {
+            "$ref": "#/components/schemas/PartitionConfig"
+          }
+        }
+      },
+      "PartitionsCollection": {
+        "type": "object",
+        "properties": {
+          "partition": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Partition"
+            }
+          }
+        }
+      },
+      "PartitionCreateRequest": {
+        "type": "object",
+        "properties": {
+          "partition": {
+            "$ref": "#/components/schemas/Partition"
+          }
+        }
+      },
+      "TenantConfig": {
+        "type": "object",
+        "properties": {
+          "image": {
+            "type": "string",
+            "description": "Name of an image already present in the tenant image inventory.",
+            "example": "BIGIP-17.1.1-0.0.5.ALL-VELOS.qcow2.zip.bundle"
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Blade slot numbers the tenant is assigned to.",
+            "example": [1]
+          },
+          "mgmt-ip": {
+            "type": "string",
+            "example": "10.1.2.10"
+          },
+          "gateway": {
+            "type": "string",
+            "example": "10.1.2.1"
+          },
+          "prefix-length": {
+            "type": "integer",
+            "example": 24
+          },
+          "vlans": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "example": [444, 500, 555]
+          },
+          "vcpu-cores-per-node": {
+            "type": "integer",
+            "example": 2
+          },
+          "memory": {
+            "type": "integer",
+            "description": "Memory allocated per node, in MB.",
+            "example": 7680
+          },
+          "cryptos": {
+            "type": "string",
+            "enum": ["enabled", "disabled"]
+          },
+          "running-state": {
+            "type": "string",
+            "enum": ["configured", "provisioned", "deployed"]
+          }
+        }
+      },
+      "Tenant": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "tenant1"
+          },
+          "config": {
+            "$ref": "#/components/schemas/TenantConfig"
+          }
+        }
+      },
+      "TenantsCollection": {
+        "type": "object",
+        "properties": {
+          "tenant": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Tenant"
+            }
+          }
+        }
+      },
+      "TenantCreateRequest": {
+        "type": "object",
+        "properties": {
+          "tenant": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Tenant"
+            }
+          }
+        }
+      },
+      "TenantImage": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "BIGIP-17.1.1-0.0.5.ALL-VELOS.qcow2.zip.bundle"
+          },
+          "in-use": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "TenantImagesCollection": {
+        "type": "object",
+        "properties": {
+          "image": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TenantImage"
+            }
+          }
+        }
+      },
+      "PlatformComponent": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "chassis"
+          },
+          "state": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Reported hardware/operational status for the component (e.g. oper-status, mfg-name, serial-no)."
+          }
+        },
+        "additionalProperties": true
+      },
+      "PlatformComponentsCollection": {
+        "type": "object",
+        "properties": {
+          "component": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlatformComponent"
+            }
+          }
+        }
+      },
+      "Slot": {
+        "type": "object",
+        "properties": {
+          "slot-num": {
+            "type": "integer"
+          },
+          "config": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Slot-to-partition assignment, e.g. partition-name."
+          },
+          "state": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": true
+      },
+      "SlotsCollection": {
+        "type": "object",
+        "properties": {
+          "slot": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Slot"
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/f5-system-partition:partitions": {
+      "get": {
+        "operationId": "listPartitions",
+        "summary": "List chassis partitions",
+        "responses": {
+          "200": {
+            "description": "Collection of chassis partitions.",
+            "content": {
+              "application/yang-data+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartitionsCollection"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createPartition",
+        "summary": "Create a chassis partition",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/yang-data+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartitionCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Partition created."
+          }
+        }
+      }
+    },
+    "/f5-system-partition:partitions/partition={name}": {
+      "get": {
+        "operationId": "getPartition",
+        "summary": "Get a chassis partition",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested chassis partition.",
+            "content": {
+              "application/yang-data+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Partition"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deletePartition",
+        "summary": "Delete a chassis partition",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Partition deleted."
+          }
+        }
+      }
+    },
+    "/f5-system-partition:partitions/partition={name}/config": {
+      "patch": {
+        "operationId": "updatePartitionConfig",
+        "summary": "Update a chassis partition's config (e.g. enable/disable)",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/yang-data+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartitionConfig"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Partition config updated."
+          }
+        }
+      }
+    },
+    "/f5-tenants:tenants": {
+      "get": {
+        "operationId": "listTenants",
+        "summary": "List tenants",
+        "responses": {
+          "200": {
+            "description": "Collection of tenants on this chassis partition.",
+            "content": {
+              "application/yang-data+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantsCollection"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createTenant",
+        "summary": "Create a tenant",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/yang-data+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TenantCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tenant created."
+          }
+        }
+      }
+    },
+    "/f5-tenants:tenants/tenant={name}": {
+      "get": {
+        "operationId": "getTenant",
+        "summary": "Get a tenant",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested tenant.",
+            "content": {
+              "application/yang-data+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tenant"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteTenant",
+        "summary": "Delete a tenant",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Tenant deleted."
+          }
+        }
+      }
+    },
+    "/f5-tenants:tenants/tenant={name}/config": {
+      "patch": {
+        "operationId": "updateTenantConfig",
+        "summary": "Update a tenant's config (e.g. running-state, vcpu-cores-per-node, vlans)",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/yang-data+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TenantConfig"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Tenant config updated."
+          }
+        }
+      }
+    },
+    "/f5-tenant-images:images": {
+      "get": {
+        "operationId": "listTenantImages",
+        "summary": "List tenant software images",
+        "responses": {
+          "200": {
+            "description": "Collection of tenant images present on the system controller.",
+            "content": {
+              "application/yang-data+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantImagesCollection"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/f5-tenant-images:images/image={name}": {
+      "get": {
+        "operationId": "getTenantImage",
+        "summary": "Get a tenant software image",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested tenant image.",
+            "content": {
+              "application/yang-data+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantImage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteTenantImage",
+        "summary": "Delete a tenant software image",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Tenant image deleted."
+          }
+        }
+      }
+    },
+    "/openconfig-platform:components": {
+      "get": {
+        "operationId": "listPlatformComponents",
+        "summary": "List hardware/platform components (chassis, slots, controller nodes, etc.)",
+        "responses": {
+          "200": {
+            "description": "Collection of platform components.",
+            "content": {
+              "application/yang-data+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlatformComponentsCollection"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openconfig-platform:components/component={name}": {
+      "get": {
+        "operationId": "getPlatformComponent",
+        "summary": "Get a hardware/platform component's status",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "chassis"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested component's status.",
+            "content": {
+              "application/yang-data+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlatformComponent"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/f5-system-slot:slots": {
+      "get": {
+        "operationId": "listSlots",
+        "summary": "List blade slots and their partition assignment",
+        "responses": {
+          "200": {
+            "description": "Collection of chassis blade slots.",
+            "content": {
+              "application/yang-data+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SlotsCollection"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
