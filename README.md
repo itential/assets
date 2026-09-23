@@ -38,6 +38,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Automox** | Cloud-native endpoint patch & configuration management |
 | **AWS** | API Gateway · CloudFormation · Cognito · Connect · Direct Connect · EC2 · EKS · Lambda · Network Firewall · Organizations · Route 53 · S3 · Secrets Manager |
 | **BigPanda** | AIOps / incident correlation |
+| **BlueCat** | Address Manager |
 | **Broadcom** | DX NetOps Spectrum |
 | **Centreon** | IT and network monitoring |
 | **Cisco** | ASA · Catalyst Center · Crosswork Assurance · Crosswork Network Controller · DCNM · IOS · ISE · Meraki · NDFC · NSO · NX-OS · PSIRT Open Vulnerability · Support · ThousandEyes · Umbrella · Webex |
