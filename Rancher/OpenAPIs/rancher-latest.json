@@ -1,0 +1,2064 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Rancher",
+    "description": "Rancher is a multi-cluster Kubernetes management platform from SUSE, providing centralized cluster provisioning, RBAC, and workload management across on-prem and cloud Kubernetes clusters through a management API exposed at /v3.",
+    "version": "latest",
+    "x-vendor-api-version": "2.10.0",
+    "x-itential-curated": "Trimmed to 35 of 49 upstream operations covering Clusters, Projects, Namespaces, Workloads, Users, Node Templates, and Node Pools CRUD. See the repo README for the full scope and the full spec."
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}",
+      "description": "Rancher server. This platform does not apply OpenAPI server variables/paths automatically \u2014 set the integration instance's server.base_path to \"/v3\".",
+      "variables": {
+        "protocol": {
+          "default": "https",
+          "enum": [
+            "https",
+            "http"
+          ]
+        },
+        "host": {
+          "default": "rancher.example.com",
+          "description": "Rancher server hostname or IP address (no protocol, no path)."
+        },
+        "port": {
+          "default": "443"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [],
+  "paths": {
+    "/clusters": {
+      "get": {
+        "operationId": "listClusters",
+        "summary": "List Clusters",
+        "tags": [
+          "Clusters"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by cluster name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A collection of clusters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Collection"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Cluster"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createCluster",
+        "summary": "Create Cluster",
+        "tags": [
+          "Clusters"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Cluster"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cluster created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cluster"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clusters/{id}": {
+      "get": {
+        "operationId": "getCluster",
+        "summary": "Get Cluster by ID",
+        "tags": [
+          "Clusters"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Cluster ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cluster found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cluster"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateCluster",
+        "summary": "Update Cluster",
+        "tags": [
+          "Clusters"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Cluster ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Cluster"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cluster updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cluster"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteCluster",
+        "summary": "Delete Cluster",
+        "tags": [
+          "Clusters"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Cluster ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cluster deletion accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cluster"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects": {
+      "get": {
+        "operationId": "listProjects",
+        "summary": "List Projects",
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "clusterId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by cluster ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A collection of projects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Collection"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Project"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createProject",
+        "summary": "Create Project",
+        "tags": [
+          "Projects"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Project"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Project created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{id}": {
+      "get": {
+        "operationId": "getProject",
+        "summary": "Get Project by ID",
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Project found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateProject",
+        "summary": "Update Project",
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Project"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Project updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteProject",
+        "summary": "Delete Project",
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Project deletion accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/namespaces": {
+      "get": {
+        "operationId": "listNamespaces",
+        "summary": "List Namespaces",
+        "tags": [
+          "Namespaces"
+        ],
+        "parameters": [
+          {
+            "name": "clusterId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by cluster ID."
+          },
+          {
+            "name": "projectId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by project ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A collection of namespaces.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Collection"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Namespace"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createNamespace",
+        "summary": "Create Namespace",
+        "tags": [
+          "Namespaces"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Namespace"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Namespace created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Namespace"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{id}": {
+      "get": {
+        "operationId": "getNamespace",
+        "summary": "Get Namespace by ID",
+        "tags": [
+          "Namespaces"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Namespace ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Namespace found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Namespace"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateNamespace",
+        "summary": "Update Namespace",
+        "tags": [
+          "Namespaces"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Namespace ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Namespace"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Namespace updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Namespace"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteNamespace",
+        "summary": "Delete Namespace",
+        "tags": [
+          "Namespaces"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Namespace ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Namespace deletion accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Namespace"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "operationId": "listUsers",
+        "summary": "List Users",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by username."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A collection of users.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Collection"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/User"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createUser",
+        "summary": "Create User",
+        "tags": [
+          "Users"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "operationId": "getUser",
+        "summary": "Get User by ID",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateUser",
+        "summary": "Update User",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteUser",
+        "summary": "Delete User",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deletion accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/nodeTemplates": {
+      "get": {
+        "operationId": "listNodeTemplates",
+        "summary": "List Node Templates",
+        "tags": [
+          "Node Templates"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "A collection of node templates.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Collection"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/NodeTemplate"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createNodeTemplate",
+        "summary": "Create NodeTemplate",
+        "tags": [
+          "Node Templates"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NodeTemplate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "NodeTemplate created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeTemplate"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/nodeTemplates/{id}": {
+      "get": {
+        "operationId": "getNodeTemplate",
+        "summary": "Get NodeTemplate by ID",
+        "tags": [
+          "Node Templates"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "NodeTemplate ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "NodeTemplate found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeTemplate"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateNodeTemplate",
+        "summary": "Update NodeTemplate",
+        "tags": [
+          "Node Templates"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "NodeTemplate ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NodeTemplate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "NodeTemplate updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeTemplate"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteNodeTemplate",
+        "summary": "Delete NodeTemplate",
+        "tags": [
+          "Node Templates"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "NodeTemplate ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "NodeTemplate deletion accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeTemplate"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/nodePools": {
+      "get": {
+        "operationId": "listNodePools",
+        "summary": "List Node Pools",
+        "tags": [
+          "Node Pools"
+        ],
+        "parameters": [
+          {
+            "name": "clusterId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by cluster ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A collection of node pools.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Collection"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/NodePool"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createNodePool",
+        "summary": "Create NodePool",
+        "tags": [
+          "Node Pools"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NodePool"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "NodePool created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodePool"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/nodePools/{id}": {
+      "get": {
+        "operationId": "getNodePool",
+        "summary": "Get NodePool by ID",
+        "tags": [
+          "Node Pools"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "NodePool ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "NodePool found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodePool"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateNodePool",
+        "summary": "Update NodePool",
+        "tags": [
+          "Node Pools"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "NodePool ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NodePool"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "NodePool updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodePool"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteNodePool",
+        "summary": "Delete NodePool",
+        "tags": [
+          "Node Pools"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "NodePool ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "NodePool deletion accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodePool"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project/{projectId}/workloads": {
+      "get": {
+        "operationId": "listWorkloads",
+        "summary": "List Workloads",
+        "tags": [
+          "Workloads"
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID (e.g. c-m-xxxxxxxx:p-xxxxx)."
+          },
+          {
+            "name": "namespaceId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by namespace."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A collection of workloads.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Collection"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Workload"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createWorkload",
+        "summary": "Create Workload",
+        "tags": [
+          "Workloads"
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID (e.g. c-m-xxxxxxxx:p-xxxxx)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Workload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Workload created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workload"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project/{projectId}/workloads/{id}": {
+      "get": {
+        "operationId": "getWorkload",
+        "summary": "Get Workload by ID",
+        "tags": [
+          "Workloads"
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID (e.g. c-m-xxxxxxxx:p-xxxxx)."
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Workload ID, formatted <kind>:<namespace>:<name> (e.g. deployment:default:my-app)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workload found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workload"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateWorkload",
+        "summary": "Update Workload",
+        "tags": [
+          "Workloads"
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID (e.g. c-m-xxxxxxxx:p-xxxxx)."
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Workload ID, formatted <kind>:<namespace>:<name> (e.g. deployment:default:my-app)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Workload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Workload updated (e.g. to change scale or container image).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workload"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteWorkload",
+        "summary": "Delete Workload",
+        "tags": [
+          "Workloads"
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project ID (e.g. c-m-xxxxxxxx:p-xxxxx)."
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Workload ID, formatted <kind>:<namespace>:<name> (e.g. deployment:default:my-app)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workload deletion accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workload"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Rancher API bearer token, formed by concatenating an API key's access key and secret key with a colon (<access-key>:<secret-key>), generated under User Avatar > API & Keys."
+      }
+    },
+    "schemas": {
+      "Cluster": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Cluster ID (e.g. c-m-xxxxxxxx)."
+          },
+          "type": {
+            "type": "string",
+            "default": "cluster"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "description": "e.g. active, provisioning, updating, unavailable."
+          },
+          "driverName": {
+            "type": "string",
+            "description": "e.g. rancherKubernetesEngine, imported, eks, gke, aks."
+          },
+          "k8sVersion": {
+            "type": "string",
+            "description": "Kubernetes version reported for the cluster."
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "transitioning": {
+            "type": "string"
+          },
+          "transitioningMessage": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "Project": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Project ID (e.g. c-m-xxxxxxxx:p-xxxxx)."
+          },
+          "type": {
+            "type": "string",
+            "default": "project"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "clusterId": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "resourceQuota": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "namespaceDefaultResourceQuota": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "name",
+          "clusterId"
+        ],
+        "additionalProperties": true
+      },
+      "Namespace": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Namespace name, unique within its cluster."
+          },
+          "type": {
+            "type": "string",
+            "default": "namespace"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "clusterId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project the namespace is moved into (e.g. c-m-xxxxxxxx:p-xxxxx)."
+          },
+          "state": {
+            "type": "string"
+          },
+          "resourceQuota": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "name",
+          "clusterId"
+        ],
+        "additionalProperties": true
+      },
+      "Workload": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Composite ID in the form <kind>:<namespace>:<name>, e.g. deployment:default:my-app."
+          },
+          "type": {
+            "type": "string",
+            "default": "workload"
+          },
+          "name": {
+            "type": "string"
+          },
+          "namespaceId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "workloadType": {
+            "type": "string",
+            "description": "deployment, statefulSet, daemonSet, job, or cronJob."
+          },
+          "scale": {
+            "type": "integer"
+          },
+          "state": {
+            "type": "string"
+          },
+          "containers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "image": {
+                  "type": "string"
+                },
+                "command": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "environment": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "name",
+          "namespaceId",
+          "containers"
+        ],
+        "additionalProperties": true
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID (e.g. u-xxxxxxxx)."
+          },
+          "type": {
+            "type": "string",
+            "default": "user"
+          },
+          "username": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "isSystem": {
+            "type": "boolean"
+          },
+          "mustChangePassword": {
+            "type": "boolean"
+          },
+          "password": {
+            "type": "string",
+            "description": "Write-only. Required on create."
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "username"
+        ],
+        "additionalProperties": true
+      },
+      "NodeTemplate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Node template ID (e.g. nt-xxxxxxxx)."
+          },
+          "type": {
+            "type": "string",
+            "default": "nodeTemplate"
+          },
+          "name": {
+            "type": "string"
+          },
+          "driver": {
+            "type": "string",
+            "description": "Node driver name, e.g. amazonec2, azure, digitalocean, vmwarevsphere."
+          },
+          "cloudCredentialId": {
+            "type": "string"
+          },
+          "engineInstallURL": {
+            "type": "string"
+          },
+          "useInternalIpAddress": {
+            "type": "boolean"
+          },
+          "labels": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "name",
+          "driver",
+          "cloudCredentialId"
+        ],
+        "additionalProperties": true
+      },
+      "NodePool": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Node pool ID (e.g. c-m-xxxxxxxx:np-xxxxx)."
+          },
+          "type": {
+            "type": "string",
+            "default": "nodePool"
+          },
+          "name": {
+            "type": "string"
+          },
+          "clusterId": {
+            "type": "string"
+          },
+          "nodeTemplateId": {
+            "type": "string"
+          },
+          "hostnamePrefix": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "controlPlane": {
+            "type": "boolean"
+          },
+          "etcd": {
+            "type": "boolean"
+          },
+          "worker": {
+            "type": "boolean"
+          },
+          "labels": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "nodeTaints": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "clusterId",
+          "nodeTemplateId",
+          "quantity"
+        ],
+        "additionalProperties": true
+      },
+      "Collection": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "collection"
+          },
+          "data": {
+            "type": "array",
+            "items": {}
+          },
+          "pagination": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "error"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
