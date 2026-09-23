@@ -1,0 +1,1771 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "OWASP ZAP",
+    "description": "Authentication: static API key. The HTTP API for controlling and automating the OWASP Zed Attack Proxy (ZAP), the open-source web application security scanner. Covers spider and active scan job control, alerts, context/scope management, and core session operations.",
+    "version": "latest",
+    "x-vendor-api-version": "2.16.1",
+    "x-itential-curated": "Trimmed to 33 of 735 upstream operations covering common CRUD for automation: spider scan job control, active scan job control, alerts, context/scope management, and core session/site/URL operations. See the repo README for the full scope and the full spec.",
+    "contact": {
+      "name": "ZAP User Group",
+      "url": "https://groups.google.com/group/zaproxy-users"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}",
+      "description": "OWASP ZAP API server. This platform does not apply OpenAPI server variables/paths automatically \u2014 set the integration instance's server.base_path to \"\" (all curated operations already include their full /JSON/... path).",
+      "variables": {
+        "protocol": {
+          "default": "http",
+          "enum": [
+            "http",
+            "https"
+          ]
+        },
+        "host": {
+          "default": "127.0.0.1",
+          "description": "Host ZAP is listening on (no protocol, no path)."
+        },
+        "port": {
+          "default": "8080"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "apiKeyHeader": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "spider",
+      "description": "Traditional spider crawl job control."
+    },
+    {
+      "name": "ascan",
+      "description": "Active scan job control."
+    },
+    {
+      "name": "alert",
+      "description": "Alerts raised by passive and active scanning."
+    },
+    {
+      "name": "context",
+      "description": "Context (scope) management."
+    },
+    {
+      "name": "core",
+      "description": "Core session, site, and URL operations."
+    }
+  ],
+  "paths": {
+    "/JSON/spider/action/scan/": {
+      "get": {
+        "operationId": "spiderActionScan",
+        "summary": "Start Spider Scan",
+        "description": "Starts crawling the target site with the Spider tool, optionally against a specific context.",
+        "tags": [
+          "spider"
+        ],
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Target URL to start the spider scan from."
+          },
+          {
+            "name": "maxChildren",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of child URLs to crawl per node."
+          },
+          {
+            "name": "recurse",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true
+            },
+            "description": "Whether the spider should crawl recursively."
+          },
+          {
+            "name": "contextName",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Context to constrain the scan to."
+          },
+          {
+            "name": "subtreeOnly",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Whether to constrain the scan to URLs under the start URL's subtree."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The ID of the newly started spider scan.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScanId"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/spider/view/status/": {
+      "get": {
+        "operationId": "spiderViewStatus",
+        "summary": "Get Spider Scan Status",
+        "description": "Returns the percentage complete for a spider scan, or for all spider scans if scanId is omitted.",
+        "tags": [
+          "spider"
+        ],
+        "parameters": [
+          {
+            "name": "scanId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the spider scan. Omit for the status of the most recent scan."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Percentage complete (0-100).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/spider/action/stop/": {
+      "get": {
+        "operationId": "spiderActionStop",
+        "summary": "Stop Spider Scan",
+        "description": "Stops a running spider scan, or all spider scans if scanId is omitted.",
+        "tags": [
+          "spider"
+        ],
+        "parameters": [
+          {
+            "name": "scanId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the spider scan to stop. Omit to stop all spider scans."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Action completed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Result": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/spider/view/results/": {
+      "get": {
+        "operationId": "spiderViewResults",
+        "summary": "Get Spider Scan Results",
+        "description": "Returns the URLs discovered by a spider scan.",
+        "tags": [
+          "spider"
+        ],
+        "parameters": [
+          {
+            "name": "scanId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the spider scan. Omit for the results of the most recent scan."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "URLs found during the scan.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UrlList"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/spider/view/scans/": {
+      "get": {
+        "operationId": "spiderViewScans",
+        "summary": "List Spider Scans",
+        "description": "Returns all spider scans, including running, finished, and stopped ones.",
+        "tags": [
+          "spider"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "All spider scans.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpiderScanList"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/spider/action/removeScan/": {
+      "get": {
+        "operationId": "spiderActionRemoveScan",
+        "summary": "Remove Spider Scan",
+        "description": "Removes a spider scan (it must not be running).",
+        "tags": [
+          "spider"
+        ],
+        "parameters": [
+          {
+            "name": "scanId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the spider scan to remove."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Action completed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Result": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/ascan/action/scan/": {
+      "get": {
+        "operationId": "ascanActionScan",
+        "summary": "Start Active Scan",
+        "description": "Starts an Active Scan against the target, optionally through a defined Scan Policy.",
+        "tags": [
+          "ascan"
+        ],
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Target URL to start the active scan from."
+          },
+          {
+            "name": "recurse",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true
+            },
+            "description": "Whether the scan should also apply to URLs under the target URL."
+          },
+          {
+            "name": "inScopeOnly",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Whether to only scan URLs in scope."
+          },
+          {
+            "name": "scanPolicyName",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Scan policy to use instead of the default policy."
+          },
+          {
+            "name": "method",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "HTTP method to use for the initial request."
+          },
+          {
+            "name": "postData",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "POST data to use for the initial request."
+          },
+          {
+            "name": "contextId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Context ID to scan within."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The ID of the newly started active scan.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScanId"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/ascan/view/status/": {
+      "get": {
+        "operationId": "ascanViewStatus",
+        "summary": "Get Active Scan Status",
+        "description": "Returns the percentage complete for an active scan, or for all active scans if scanId is omitted.",
+        "tags": [
+          "ascan"
+        ],
+        "parameters": [
+          {
+            "name": "scanId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the active scan. Omit for the status of the most recent scan."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Percentage complete (0-100).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/ascan/action/stop/": {
+      "get": {
+        "operationId": "ascanActionStop",
+        "summary": "Stop Active Scan",
+        "description": "Stops a running active scan.",
+        "tags": [
+          "ascan"
+        ],
+        "parameters": [
+          {
+            "name": "scanId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the active scan to stop."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Action completed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Result": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/ascan/action/pause/": {
+      "get": {
+        "operationId": "ascanActionPause",
+        "summary": "Pause Active Scan",
+        "description": "Pauses a running active scan.",
+        "tags": [
+          "ascan"
+        ],
+        "parameters": [
+          {
+            "name": "scanId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the active scan to pause."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Action completed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Result": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/ascan/action/resume/": {
+      "get": {
+        "operationId": "ascanActionResume",
+        "summary": "Resume Active Scan",
+        "description": "Resumes a paused active scan.",
+        "tags": [
+          "ascan"
+        ],
+        "parameters": [
+          {
+            "name": "scanId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the active scan to resume."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Action completed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Result": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/ascan/action/removeScan/": {
+      "get": {
+        "operationId": "ascanActionRemoveScan",
+        "summary": "Remove Active Scan",
+        "description": "Removes an active scan (it must not be running).",
+        "tags": [
+          "ascan"
+        ],
+        "parameters": [
+          {
+            "name": "scanId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the active scan to remove."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Action completed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Result": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/ascan/view/scans/": {
+      "get": {
+        "operationId": "ascanViewScans",
+        "summary": "List Active Scans",
+        "description": "Returns all active scans, including running, finished, and stopped ones.",
+        "tags": [
+          "ascan"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "All active scans.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AscanScanList"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/ascan/view/alertsIds/": {
+      "get": {
+        "operationId": "ascanViewAlertsIds",
+        "summary": "Get Active Scan Alert IDs",
+        "description": "Returns the IDs of the alerts raised while an active scan ran.",
+        "tags": [
+          "ascan"
+        ],
+        "parameters": [
+          {
+            "name": "scanId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the active scan."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Alert IDs raised by the scan.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertsIds"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/alert/view/alerts/": {
+      "get": {
+        "operationId": "alertViewAlerts",
+        "summary": "List Alerts",
+        "description": "Returns the alerts raised, optionally filtered by base URL, risk level, or context.",
+        "tags": [
+          "alert"
+        ],
+        "parameters": [
+          {
+            "name": "baseurl",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Base URL to filter alerts by."
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Index of the first alert to return."
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of alerts to return."
+          },
+          {
+            "name": "riskId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Risk level to filter by (0=Informational, 1=Low, 2=Medium, 3=High)."
+          },
+          {
+            "name": "contextName",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Context to filter alerts by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Alerts matching the filters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertList"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/alert/view/alert/": {
+      "get": {
+        "operationId": "alertViewAlert",
+        "summary": "Get Alert",
+        "description": "Returns full details for a single alert.",
+        "tags": [
+          "alert"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the alert."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested alert.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertDetail"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/alert/view/alertsSummary/": {
+      "get": {
+        "operationId": "alertViewAlertsSummary",
+        "summary": "Get Alerts Summary",
+        "description": "Returns a count of alerts grouped by risk level, optionally filtered by base URL.",
+        "tags": [
+          "alert"
+        ],
+        "parameters": [
+          {
+            "name": "baseurl",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Base URL to filter alerts by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Alert counts by risk level.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertsSummary"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/alert/view/numberOfAlerts/": {
+      "get": {
+        "operationId": "alertViewNumberOfAlerts",
+        "summary": "Get Number Of Alerts",
+        "description": "Returns the number of alerts, optionally filtered by base URL and risk level.",
+        "tags": [
+          "alert"
+        ],
+        "parameters": [
+          {
+            "name": "baseurl",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Base URL to filter alerts by."
+          },
+          {
+            "name": "riskId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Risk level to filter by (0=Informational, 1=Low, 2=Medium, 3=High)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Number of matching alerts.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NumberOfAlerts"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/alert/action/deleteAlert/": {
+      "get": {
+        "operationId": "alertActionDeleteAlert",
+        "summary": "Delete Alert",
+        "description": "Deletes a single alert.",
+        "tags": [
+          "alert"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the alert to delete."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Action completed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Result": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/alert/action/deleteAllAlerts/": {
+      "get": {
+        "operationId": "alertActionDeleteAllAlerts",
+        "summary": "Delete All Alerts",
+        "description": "Deletes every alert raised in the current session.",
+        "tags": [
+          "alert"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Action completed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Result": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/context/action/newContext/": {
+      "get": {
+        "operationId": "contextActionNewContext",
+        "summary": "Create Context",
+        "description": "Creates a new context.",
+        "tags": [
+          "context"
+        ],
+        "parameters": [
+          {
+            "name": "contextName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the new context."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The ID of the newly created context.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContextId"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/context/view/contextList/": {
+      "get": {
+        "operationId": "contextViewContextList",
+        "summary": "List Contexts",
+        "description": "Returns the names of all configured contexts.",
+        "tags": [
+          "context"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Configured context names.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContextList"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/context/view/context/": {
+      "get": {
+        "operationId": "contextViewContext",
+        "summary": "Get Context",
+        "description": "Returns the full details of a single context.",
+        "tags": [
+          "context"
+        ],
+        "parameters": [
+          {
+            "name": "contextName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the context."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested context.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContextDetail"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/context/action/removeContext/": {
+      "get": {
+        "operationId": "contextActionRemoveContext",
+        "summary": "Remove Context",
+        "description": "Removes a context.",
+        "tags": [
+          "context"
+        ],
+        "parameters": [
+          {
+            "name": "contextName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the context to remove."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Action completed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Result": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/context/action/includeInContext/": {
+      "get": {
+        "operationId": "contextActionIncludeInContext",
+        "summary": "Include In Context",
+        "description": "Adds a regex pattern of URLs to include in a context's scope.",
+        "tags": [
+          "context"
+        ],
+        "parameters": [
+          {
+            "name": "contextName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the context."
+          },
+          {
+            "name": "regex",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Regex pattern of URLs to include."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Action completed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Result": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/context/action/excludeFromContext/": {
+      "get": {
+        "operationId": "contextActionExcludeFromContext",
+        "summary": "Exclude From Context",
+        "description": "Adds a regex pattern of URLs to exclude from a context's scope.",
+        "tags": [
+          "context"
+        ],
+        "parameters": [
+          {
+            "name": "contextName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the context."
+          },
+          {
+            "name": "regex",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Regex pattern of URLs to exclude."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Action completed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Result": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/context/view/urls/": {
+      "get": {
+        "operationId": "contextViewUrls",
+        "summary": "Get Context URLs",
+        "description": "Returns the URLs accessed through/within a context.",
+        "tags": [
+          "context"
+        ],
+        "parameters": [
+          {
+            "name": "contextName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the context."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "URLs within the context.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UrlList"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/core/view/sites/": {
+      "get": {
+        "operationId": "coreViewSites",
+        "summary": "List Sites",
+        "description": "Returns every site (top-level host) currently known to the session.",
+        "tags": [
+          "core"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Known sites.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteList"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/core/view/urls/": {
+      "get": {
+        "operationId": "coreViewUrls",
+        "summary": "Get URLs",
+        "description": "Returns every URL accessed, optionally filtered by base URL.",
+        "tags": [
+          "core"
+        ],
+        "parameters": [
+          {
+            "name": "baseurl",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Base URL to filter by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Accessed URLs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UrlList"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/core/view/version/": {
+      "get": {
+        "operationId": "coreViewVersion",
+        "summary": "Get Version",
+        "description": "Returns the running ZAP version.",
+        "tags": [
+          "core"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "ZAP version.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Version"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/core/action/accessUrl/": {
+      "get": {
+        "operationId": "coreActionAccessUrl",
+        "summary": "Access URL",
+        "description": "Makes ZAP load a URL through the proxy, adding it to the session so it can be spidered/scanned.",
+        "tags": [
+          "core"
+        ],
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "URL to access."
+          },
+          {
+            "name": "followRedirects",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true
+            },
+            "description": "Whether to follow redirects."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Details of the HTTP request/response made.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessUrlResult"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/core/action/newSession/": {
+      "get": {
+        "operationId": "coreActionNewSession",
+        "summary": "New Session",
+        "description": "Creates a new session, discarding in-memory data not yet saved.",
+        "tags": [
+          "core"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filesystem path/name to save the new session as. Session is in-memory only if omitted."
+          },
+          {
+            "name": "overwrite",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Whether to overwrite an existing session file of the same name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Action completed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Result": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    },
+    "/JSON/core/action/saveSession/": {
+      "get": {
+        "operationId": "coreActionSaveSession",
+        "summary": "Save Session",
+        "description": "Saves the current session to disk.",
+        "tags": [
+          "core"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filesystem path/name to save the session as."
+          },
+          {
+            "name": "overwrite",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Whether to overwrite an existing session file of the same name."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Action completed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Result": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ErrorJson"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKeyHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-ZAP-API-Key",
+        "description": "ZAP API key, configured in ZAP under Tools > Options > API."
+      }
+    },
+    "responses": {
+      "ErrorJson": {
+        "description": "Error response.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorJson"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "ErrorJson": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          }
+        }
+      },
+      "ScanId": {
+        "type": "object",
+        "properties": {
+          "scan": {
+            "type": "string",
+            "description": "ID of the started scan."
+          }
+        }
+      },
+      "Status": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Percentage complete, as a string (e.g. \"45\")."
+          }
+        }
+      },
+      "UrlList": {
+        "type": "object",
+        "properties": {
+          "urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SpiderScanSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "progress": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "SpiderScanList": {
+        "type": "object",
+        "properties": {
+          "scans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SpiderScanSummary"
+            }
+          }
+        }
+      },
+      "AscanScanSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "progress": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "AscanScanList": {
+        "type": "object",
+        "properties": {
+          "scans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AscanScanSummary"
+            }
+          }
+        }
+      },
+      "AlertsIds": {
+        "type": "object",
+        "properties": {
+          "alertsIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AlertSummary": {
+        "type": "object",
+        "properties": {
+          "alertRef": {
+            "type": "string"
+          },
+          "alert": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "risk": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "solution": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "pluginId": {
+            "type": "string"
+          },
+          "cweid": {
+            "type": "string"
+          },
+          "wascid": {
+            "type": "string"
+          }
+        }
+      },
+      "AlertList": {
+        "type": "object",
+        "properties": {
+          "alerts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AlertSummary"
+            }
+          }
+        }
+      },
+      "AlertDetail": {
+        "type": "object",
+        "properties": {
+          "alert": {
+            "$ref": "#/components/schemas/AlertSummary"
+          }
+        }
+      },
+      "AlertsSummary": {
+        "type": "object",
+        "properties": {
+          "alertsSummary": {
+            "type": "object",
+            "properties": {
+              "High": {
+                "type": "string"
+              },
+              "Medium": {
+                "type": "string"
+              },
+              "Low": {
+                "type": "string"
+              },
+              "Informational": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "NumberOfAlerts": {
+        "type": "object",
+        "properties": {
+          "numberOfAlerts": {
+            "type": "string"
+          }
+        }
+      },
+      "ContextId": {
+        "type": "object",
+        "properties": {
+          "contextId": {
+            "type": "string"
+          }
+        }
+      },
+      "ContextList": {
+        "type": "object",
+        "properties": {
+          "contextList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ContextDetail": {
+        "type": "object",
+        "properties": {
+          "context": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "inscope": {
+                "type": "boolean"
+              },
+              "incregexes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "excregexes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "SiteList": {
+        "type": "object",
+        "properties": {
+          "sites": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Version": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string"
+          }
+        }
+      },
+      "AccessUrlResult": {
+        "type": "object",
+        "properties": {
+          "accessUrl": {
+            "type": "object",
+            "properties": {
+              "requestHeader": {
+                "type": "string"
+              },
+              "requestBody": {
+                "type": "string"
+              },
+              "responseHeader": {
+                "type": "string"
+              },
+              "responseBody": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
