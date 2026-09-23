@@ -1,0 +1,1830 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "TCPWave IPAM",
+    "version": "11.32P4",
+    "description": "Authentication: API key (TIMS-Session-Token header). TCPWave IPAM is a DNS-DHCP-IPAM (DDI) management platform. This API covers core IP address space management: networks, subnets, IP objects (host records), DNS zones and resource records, and DHCP scopes.",
+    "contact": {
+      "name": "TCPWave",
+      "url": "https://www.tcpwave.com/"
+    }
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}",
+      "description": "TCPWave IPAM management appliance. The REST API is served under a base path (default /tims/rest) configured via this instance's base_path property, not encoded in this URL.",
+      "variables": {
+        "protocol": {
+          "default": "https"
+        },
+        "host": {
+          "default": "tcpwave.example.com"
+        },
+        "port": {
+          "default": "7443"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "TIMSSessionToken": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Networks"
+    },
+    {
+      "name": "Subnets"
+    },
+    {
+      "name": "IP Addresses"
+    },
+    {
+      "name": "DNS Zones & Records"
+    },
+    {
+      "name": "DHCP Scopes"
+    }
+  ],
+  "paths": {
+    "/network/add": {
+      "post": {
+        "summary": "Create Network",
+        "description": "Creates a network (address block) inside a TCPWave organization.",
+        "operationId": "createNetwork",
+        "tags": [
+          "Networks"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NetworkAddRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/network/delete": {
+      "post": {
+        "summary": "Delete Network",
+        "description": "Deletes a network by its base address.",
+        "operationId": "deleteNetwork",
+        "tags": [
+          "Networks"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NetworkDeleteRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/network/list": {
+      "get": {
+        "summary": "List Networks",
+        "description": "Lists networks defined in an organization.",
+        "operationId": "listNetworks",
+        "tags": [
+          "Networks"
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of network objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "organization_name",
+            "in": "query",
+            "description": "Organization to list networks for.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "EARTH"
+            }
+          }
+        ]
+      }
+    },
+    "/network/getnetworkdetailsbyip": {
+      "get": {
+        "summary": "Get Network Details by IP",
+        "description": "Returns the network that contains the given IP address.",
+        "operationId": "getNetworkDetailsByIp",
+        "tags": [
+          "Networks"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ipAddress",
+            "in": "query",
+            "description": "IP address to resolve to its containing network.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "10.1.10.5"
+            }
+          },
+          {
+            "name": "organization_name",
+            "in": "query",
+            "description": "Organization to search within.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "EARTH"
+            }
+          }
+        ]
+      }
+    },
+    "/subnet/add": {
+      "post": {
+        "summary": "Create Subnet",
+        "description": "Creates a subnet inside a parent network.",
+        "operationId": "createSubnet",
+        "tags": [
+          "Subnets"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubnetAddRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subnet/edit": {
+      "post": {
+        "summary": "Update Subnet",
+        "description": "Updates one or more subnets' configuration.",
+        "operationId": "updateSubnet",
+        "tags": [
+          "Subnets"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubnetUpdateRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subnet/delete": {
+      "post": {
+        "summary": "Delete Subnet",
+        "description": "Deletes one or more subnets, optionally along with their resource records.",
+        "operationId": "deleteSubnet",
+        "tags": [
+          "Subnets"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubnetDeleteRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subnet/getsubnetbyobjectip": {
+      "get": {
+        "summary": "Get Subnet by Object IP",
+        "description": "Returns the subnet that contains the given object/host IP address.",
+        "operationId": "getSubnetByObjectIp",
+        "tags": [
+          "Subnets"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ipAddress",
+            "in": "query",
+            "description": "IP address of the object to resolve to its containing subnet.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "10.1.10.5"
+            }
+          },
+          {
+            "name": "organization_name",
+            "in": "query",
+            "description": "Organization to search within.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "EARTH"
+            }
+          }
+        ]
+      }
+    },
+    "/object/add": {
+      "post": {
+        "summary": "Create IP Object",
+        "description": "Creates an IP object (host record) in a subnet, optionally with associated DNS resource records.",
+        "operationId": "createObject",
+        "tags": [
+          "IP Addresses"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObjectAddRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/object/delete-multiple": {
+      "post": {
+        "summary": "Delete IP Objects",
+        "description": "Deletes one or more IP objects by address.",
+        "operationId": "deleteObjects",
+        "tags": [
+          "IP Addresses"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObjectDeleteRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/object/getnextfreeip": {
+      "get": {
+        "summary": "Get Next Free IP",
+        "description": "Returns the next available (unallocated) IP address in a subnet.",
+        "operationId": "getNextFreeIp",
+        "tags": [
+          "IP Addresses"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "subnet_address",
+            "in": "query",
+            "description": "Subnet to search for a free address.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "10.1.10.0"
+            }
+          },
+          {
+            "name": "organization_name",
+            "in": "query",
+            "description": "Organization the subnet belongs to.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "EARTH"
+            }
+          }
+        ]
+      }
+    },
+    "/object/rrlist": {
+      "get": {
+        "summary": "List Resource Records",
+        "description": "Lists the DNS resource records associated with a domain/object.",
+        "operationId": "listResourceRecords",
+        "tags": [
+          "DNS Zones & Records"
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of resource record objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "domain_name",
+            "in": "query",
+            "description": "Domain/zone to list resource records for.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "tcpwave.com"
+            }
+          },
+          {
+            "name": "organization_name",
+            "in": "query",
+            "description": "Organization the domain belongs to.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "EARTH"
+            }
+          }
+        ]
+      }
+    },
+    "/zone/add": {
+      "post": {
+        "summary": "Create DNS Zone",
+        "description": "Creates a forward DNS zone.",
+        "operationId": "createZone",
+        "tags": [
+          "DNS Zones & Records"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZoneAddRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/zone/update": {
+      "post": {
+        "summary": "Update DNS Zone",
+        "description": "Updates a DNS zone's configuration and/or its resource records (via addedRRs/deletedRRs).",
+        "operationId": "updateZone",
+        "tags": [
+          "DNS Zones & Records"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZoneUpdateRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/zone/multidelete": {
+      "post": {
+        "summary": "Delete DNS Zones",
+        "description": "Deletes one or more DNS zones.",
+        "operationId": "deleteZones",
+        "tags": [
+          "DNS Zones & Records"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZoneDeleteRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/zone/list": {
+      "get": {
+        "summary": "List DNS Zones",
+        "description": "Lists DNS zones defined in an organization.",
+        "operationId": "listZones",
+        "tags": [
+          "DNS Zones & Records"
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of zone objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "organization_name",
+            "in": "query",
+            "description": "Organization to list zones for.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "EARTH"
+            }
+          }
+        ]
+      }
+    },
+    "/zone/get": {
+      "get": {
+        "summary": "Get DNS Zone",
+        "description": "Returns details for a single DNS zone.",
+        "operationId": "getZone",
+        "tags": [
+          "DNS Zones & Records"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Zone name.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "tcpwave.com"
+            }
+          },
+          {
+            "name": "organization_name",
+            "in": "query",
+            "description": "Organization the zone belongs to.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "EARTH"
+            }
+          }
+        ]
+      }
+    },
+    "/scope/create": {
+      "post": {
+        "summary": "Create DHCP Scope",
+        "description": "Creates a DHCP scope (address ranges plus options) inside a subnet.",
+        "operationId": "createDhcpScope",
+        "tags": [
+          "DHCP Scopes"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DhcpScopeCreateRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scope/delete": {
+      "post": {
+        "summary": "Delete DHCP Scope",
+        "description": "Deletes one or more DHCP scopes by address range.",
+        "operationId": "deleteDhcpScope",
+        "tags": [
+          "DHCP Scopes"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DhcpScopeDeleteRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scope/page": {
+      "get": {
+        "summary": "List DHCP Scopes",
+        "description": "Lists DHCP scopes in an organization (paginated).",
+        "operationId": "listDhcpScopes",
+        "tags": [
+          "DHCP Scopes"
+        ],
+        "responses": {
+          "200": {
+            "description": "Page of DHCP scope objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "organization_name",
+            "in": "query",
+            "description": "Organization to list scopes for.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "EARTH"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number, zero-based.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Page size.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 25
+            }
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "TIMSSessionToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "TIMS-Session-Token",
+        "description": "Long-lived (default 60-day) session token generated out-of-band from the TCPWave IPAM UI (Administration > Security Management > Session Token Management). Replayed as a static header value on every request; there is no token-exchange call in this API."
+      }
+    },
+    "schemas": {
+      "NetworkAddRequest": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Network base address.",
+            "example": "10.1.10.0"
+          },
+          "mask_length": {
+            "type": "string",
+            "example": "16"
+          },
+          "name": {
+            "type": "string",
+            "example": "test"
+          },
+          "description": {
+            "type": "string"
+          },
+          "dmzVisible": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no"
+            ]
+          },
+          "dnssec_enable": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no"
+            ]
+          },
+          "nsec_option": {
+            "type": "string",
+            "enum": [
+              "NSEC",
+              "NSEC3"
+            ]
+          },
+          "percentageFull": {
+            "type": "integer",
+            "description": "Utilization threshold percentage."
+          },
+          "email_check": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "snmp_check": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "log_check": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "rrs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "A single DNS resource record.",
+              "properties": {
+                "owner": {
+                  "type": "string",
+                  "description": "Fully-qualified owner name, e.g. www.tcpwave.com.",
+                  "example": "www.tcpwave.com."
+                },
+                "rrclass": {
+                  "type": "string",
+                  "example": "IN"
+                },
+                "rrtype": {
+                  "type": "string",
+                  "description": "Resource record type.",
+                  "example": "A",
+                  "enum": [
+                    "A",
+                    "AAAA",
+                    "CNAME",
+                    "MX",
+                    "NS",
+                    "TXT",
+                    "PTR",
+                    "SRV"
+                  ]
+                },
+                "ttl": {
+                  "type": "string",
+                  "example": "1200"
+                },
+                "data": {
+                  "type": "string",
+                  "description": "Record data, e.g. an IP address for an A record or a priority+target for MX.",
+                  "example": "10.1.10.5"
+                },
+                "status": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "description": {
+                  "type": "string"
+                },
+                "is_external_rr": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    1
+                  ]
+                }
+              },
+              "required": [
+                "owner",
+                "rrtype",
+                "data"
+              ]
+            }
+          },
+          "zoneTemplateId": {
+            "type": "string"
+          },
+          "zoneTemplateName": {
+            "type": "string",
+            "nullable": true
+          },
+          "addr1": {
+            "type": "string",
+            "example": "10"
+          },
+          "addr2": {
+            "type": "string",
+            "example": "1"
+          },
+          "addr3": {
+            "type": "string",
+            "example": "10"
+          },
+          "addr4": {
+            "type": "string",
+            "example": "0"
+          },
+          "organization_name": {
+            "type": "string",
+            "description": "Name of the TCPWave organization (tenant) the resource belongs to.",
+            "example": "EARTH"
+          }
+        },
+        "required": [
+          "address",
+          "mask_length",
+          "name",
+          "organization_name"
+        ]
+      },
+      "NetworkDeleteRequest": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "example": "10.1.10.0"
+          },
+          "organization_name": {
+            "type": "string",
+            "description": "Name of the TCPWave organization (tenant) the resource belongs to.",
+            "example": "EARTH"
+          }
+        },
+        "required": [
+          "address",
+          "organization_name"
+        ]
+      },
+      "SubnetAddRequest": {
+        "type": "object",
+        "properties": {
+          "addr1": {
+            "type": "integer",
+            "example": 10
+          },
+          "addr2": {
+            "type": "integer",
+            "example": 1
+          },
+          "addr3": {
+            "type": "integer",
+            "example": 10
+          },
+          "addr4": {
+            "type": "integer",
+            "example": 0
+          },
+          "mask_length": {
+            "type": "integer",
+            "example": 24
+          },
+          "name": {
+            "type": "string",
+            "example": "Demo Subnet 1"
+          },
+          "routerAddress": {
+            "type": "string",
+            "example": "10.1.10.1"
+          },
+          "network_address": {
+            "type": "string",
+            "description": "Parent network address this subnet belongs to.",
+            "example": "10.1.10.0"
+          },
+          "primary_domain": {
+            "type": "string",
+            "example": "tcpwave.com"
+          },
+          "organization_name": {
+            "type": "string",
+            "description": "Name of the TCPWave organization (tenant) the resource belongs to.",
+            "example": "EARTH"
+          }
+        },
+        "required": [
+          "addr1",
+          "addr2",
+          "addr3",
+          "addr4",
+          "mask_length",
+          "name",
+          "network_address",
+          "organization_name"
+        ]
+      },
+      "SubnetUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Subnet address(es) being edited.",
+            "example": [
+              "10.1.10.0"
+            ]
+          },
+          "subnet": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "location_id": {
+                "nullable": true
+              },
+              "subnet_group_id": {
+                "type": "string"
+              },
+              "vlan_id": {
+                "type": "string"
+              },
+              "vrf_name": {
+                "type": "string"
+              },
+              "sharedNetwork": {
+                "type": "string"
+              },
+              "discovery_template": {
+                "type": "string",
+                "nullable": true
+              },
+              "enable_discovery": {
+                "type": "string",
+                "enum": [
+                  "yes",
+                  "no"
+                ]
+              },
+              "description": {
+                "type": "string"
+              },
+              "primary_domain": {
+                "type": "string"
+              },
+              "routerAddress": {
+                "type": "string"
+              },
+              "organization_name": {
+                "type": "string",
+                "description": "Name of the TCPWave organization (tenant) the resource belongs to.",
+                "example": "EARTH"
+              },
+              "primary_dhcp_server_address": {
+                "type": "string"
+              },
+              "template_name": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": [
+          "address",
+          "subnet"
+        ]
+      },
+      "SubnetDeleteRequest": {
+        "type": "object",
+        "properties": {
+          "addressList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "10.1.10.0/24"
+            ]
+          },
+          "isDeleterrsChecked": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ],
+            "description": "Whether to also delete the resource records under this subnet."
+          },
+          "organizationName": {
+            "type": "string",
+            "example": "EARTH"
+          }
+        },
+        "required": [
+          "addressList",
+          "organizationName"
+        ]
+      },
+      "ObjectAddRequest": {
+        "type": "object",
+        "description": "Creates an IP object (host record). Optionally attaches DNS resource records via rrs.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "QA-Remote-87"
+          },
+          "class_code": {
+            "type": "string",
+            "example": "TCPWave Remote"
+          },
+          "alloc_type": {
+            "type": "string",
+            "description": "Allocation type code (e.g. 1 = static).",
+            "example": "1"
+          },
+          "mac": {
+            "type": "string"
+          },
+          "ttl": {
+            "type": "string",
+            "example": "1200"
+          },
+          "rsrv_exp_dt": {
+            "type": "string",
+            "description": "Reservation expiration date."
+          },
+          "objectview": {
+            "type": "string"
+          },
+          "option_template_name": {
+            "type": "string"
+          },
+          "dhcp_server": {
+            "type": "string"
+          },
+          "update_ns_a": {
+            "type": "boolean"
+          },
+          "update_ns_ptr": {
+            "type": "boolean"
+          },
+          "dyn_update_rrs_a": {
+            "type": "boolean"
+          },
+          "dyn_update_rrs_ptr": {
+            "type": "boolean"
+          },
+          "dyn_update_rrs_cname": {
+            "type": "boolean"
+          },
+          "dyn_update_rrs_mx": {
+            "type": "boolean"
+          },
+          "cloudInstanceTemplate": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "addr1": {
+            "type": "string",
+            "example": "10"
+          },
+          "addr2": {
+            "type": "string",
+            "example": "1"
+          },
+          "addr3": {
+            "type": "string",
+            "example": "10"
+          },
+          "addr4": {
+            "type": "string",
+            "example": "5"
+          },
+          "subnet_address": {
+            "type": "string",
+            "example": "10.1.10.0"
+          },
+          "domain_name": {
+            "type": "string",
+            "example": "tcpwave.com"
+          },
+          "rrs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "A single DNS resource record.",
+              "properties": {
+                "owner": {
+                  "type": "string",
+                  "description": "Fully-qualified owner name, e.g. www.tcpwave.com.",
+                  "example": "www.tcpwave.com."
+                },
+                "rrclass": {
+                  "type": "string",
+                  "example": "IN"
+                },
+                "rrtype": {
+                  "type": "string",
+                  "description": "Resource record type.",
+                  "example": "A",
+                  "enum": [
+                    "A",
+                    "AAAA",
+                    "CNAME",
+                    "MX",
+                    "NS",
+                    "TXT",
+                    "PTR",
+                    "SRV"
+                  ]
+                },
+                "ttl": {
+                  "type": "string",
+                  "example": "1200"
+                },
+                "data": {
+                  "type": "string",
+                  "description": "Record data, e.g. an IP address for an A record or a priority+target for MX.",
+                  "example": "10.1.10.5"
+                },
+                "status": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "description": {
+                  "type": "string"
+                },
+                "is_external_rr": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    1
+                  ]
+                }
+              },
+              "required": [
+                "owner",
+                "rrtype",
+                "data"
+              ]
+            }
+          },
+          "organization_name": {
+            "type": "string",
+            "description": "Name of the TCPWave organization (tenant) the resource belongs to.",
+            "example": "EARTH"
+          }
+        },
+        "required": [
+          "name",
+          "addr1",
+          "addr2",
+          "addr3",
+          "addr4",
+          "subnet_address",
+          "domain_name",
+          "organization_name"
+        ]
+      },
+      "ObjectDeleteRequest": {
+        "type": "object",
+        "properties": {
+          "addressArray": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "10.1.10.87"
+            ]
+          },
+          "isDeleterrsChecked": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "organization_name": {
+            "type": "string",
+            "description": "Name of the TCPWave organization (tenant) the resource belongs to.",
+            "example": "EARTH"
+          }
+        },
+        "required": [
+          "addressArray",
+          "organization_name"
+        ]
+      },
+      "ZoneAddRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "tcpwave.com"
+          },
+          "template_name": {
+            "type": "string",
+            "example": "TCPWave-template"
+          },
+          "description": {
+            "type": "string"
+          },
+          "dnssec_enable": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no"
+            ]
+          },
+          "nsec_option": {
+            "type": "string",
+            "enum": [
+              "NSEC",
+              "NSEC3"
+            ]
+          },
+          "restrictedZone": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no"
+            ]
+          },
+          "monitoringService": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no"
+            ]
+          },
+          "dmzVisible": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no"
+            ]
+          },
+          "activeDirectoryEnable": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no"
+            ]
+          },
+          "dcObjectIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "dcAclObjects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "secureActiveDirectoryEnable": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no"
+            ]
+          },
+          "serial_format": {
+            "type": "string",
+            "example": "DATE"
+          },
+          "zoneRR": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "A single DNS resource record.",
+              "properties": {
+                "owner": {
+                  "type": "string",
+                  "description": "Fully-qualified owner name, e.g. www.tcpwave.com.",
+                  "example": "www.tcpwave.com."
+                },
+                "rrclass": {
+                  "type": "string",
+                  "example": "IN"
+                },
+                "rrtype": {
+                  "type": "string",
+                  "description": "Resource record type.",
+                  "example": "A",
+                  "enum": [
+                    "A",
+                    "AAAA",
+                    "CNAME",
+                    "MX",
+                    "NS",
+                    "TXT",
+                    "PTR",
+                    "SRV"
+                  ]
+                },
+                "ttl": {
+                  "type": "string",
+                  "example": "1200"
+                },
+                "data": {
+                  "type": "string",
+                  "description": "Record data, e.g. an IP address for an A record or a priority+target for MX.",
+                  "example": "10.1.10.5"
+                },
+                "status": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "description": {
+                  "type": "string"
+                },
+                "is_external_rr": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    1
+                  ]
+                }
+              },
+              "required": [
+                "owner",
+                "rrtype",
+                "data"
+              ]
+            }
+          },
+          "organization_name": {
+            "type": "string",
+            "description": "Name of the TCPWave organization (tenant) the resource belongs to.",
+            "example": "EARTH"
+          }
+        },
+        "required": [
+          "name",
+          "organization_name"
+        ]
+      },
+      "ZoneUpdateRequest": {
+        "type": "object",
+        "description": "Updates zone metadata and/or its resource records. Add records via addedRRs, remove via deletedRRs.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "tcpwave1.com"
+          },
+          "old_name": {
+            "type": "string",
+            "description": "Current name of the zone being renamed/updated.",
+            "example": "tcpwave.com"
+          },
+          "template_name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "dnssec_enable": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no"
+            ]
+          },
+          "restrictedZone": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no"
+            ]
+          },
+          "monitoringService": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no"
+            ]
+          },
+          "dmzVisible": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "serial_format": {
+            "type": "string"
+          },
+          "updateSubZone": {
+            "type": "boolean"
+          },
+          "addedRRs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "A single DNS resource record.",
+              "properties": {
+                "owner": {
+                  "type": "string",
+                  "description": "Fully-qualified owner name, e.g. www.tcpwave.com.",
+                  "example": "www.tcpwave.com."
+                },
+                "rrclass": {
+                  "type": "string",
+                  "example": "IN"
+                },
+                "rrtype": {
+                  "type": "string",
+                  "description": "Resource record type.",
+                  "example": "A",
+                  "enum": [
+                    "A",
+                    "AAAA",
+                    "CNAME",
+                    "MX",
+                    "NS",
+                    "TXT",
+                    "PTR",
+                    "SRV"
+                  ]
+                },
+                "ttl": {
+                  "type": "string",
+                  "example": "1200"
+                },
+                "data": {
+                  "type": "string",
+                  "description": "Record data, e.g. an IP address for an A record or a priority+target for MX.",
+                  "example": "10.1.10.5"
+                },
+                "status": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "description": {
+                  "type": "string"
+                },
+                "is_external_rr": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    1
+                  ]
+                }
+              },
+              "required": [
+                "owner",
+                "rrtype",
+                "data"
+              ]
+            }
+          },
+          "deletedRRs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "A single DNS resource record.",
+              "properties": {
+                "owner": {
+                  "type": "string",
+                  "description": "Fully-qualified owner name, e.g. www.tcpwave.com.",
+                  "example": "www.tcpwave.com."
+                },
+                "rrclass": {
+                  "type": "string",
+                  "example": "IN"
+                },
+                "rrtype": {
+                  "type": "string",
+                  "description": "Resource record type.",
+                  "example": "A",
+                  "enum": [
+                    "A",
+                    "AAAA",
+                    "CNAME",
+                    "MX",
+                    "NS",
+                    "TXT",
+                    "PTR",
+                    "SRV"
+                  ]
+                },
+                "ttl": {
+                  "type": "string",
+                  "example": "1200"
+                },
+                "data": {
+                  "type": "string",
+                  "description": "Record data, e.g. an IP address for an A record or a priority+target for MX.",
+                  "example": "10.1.10.5"
+                },
+                "status": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "description": {
+                  "type": "string"
+                },
+                "is_external_rr": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    1
+                  ]
+                }
+              },
+              "required": [
+                "owner",
+                "rrtype",
+                "data"
+              ]
+            }
+          },
+          "organization_name": {
+            "type": "string",
+            "description": "Name of the TCPWave organization (tenant) the resource belongs to.",
+            "example": "EARTH"
+          }
+        },
+        "required": [
+          "name",
+          "organization_name"
+        ]
+      },
+      "ZoneDeleteRequest": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "example": "tcpwave1.com"
+            },
+            "organization_name": {
+              "type": "string",
+              "description": "Name of the TCPWave organization (tenant) the resource belongs to.",
+              "example": "EARTH"
+            }
+          },
+          "required": [
+            "name",
+            "organization_name"
+          ]
+        }
+      },
+      "DhcpScopeCreateRequest": {
+        "type": "object",
+        "properties": {
+          "update_ns_a": {
+            "type": "boolean"
+          },
+          "update_ns_ptr": {
+            "type": "boolean"
+          },
+          "dyn_update_rrs_a": {
+            "type": "boolean"
+          },
+          "dyn_update_rrs_cname": {
+            "type": "boolean"
+          },
+          "dyn_update_rrs_ptr": {
+            "type": "boolean"
+          },
+          "dyn_update_rrs_mx": {
+            "type": "boolean"
+          },
+          "ttl": {
+            "type": "string",
+            "example": "1200"
+          },
+          "subnetAddress": {
+            "type": "string",
+            "description": "Address of the subnet this scope is carved from.",
+            "example": "10.1.10.0"
+          },
+          "scope": {
+            "type": "object",
+            "properties": {
+              "class_code": {
+                "type": "string",
+                "example": "3G Phone"
+              },
+              "description": {
+                "type": "string"
+              },
+              "organization_name": {
+                "type": "string",
+                "description": "Name of the TCPWave organization (tenant) the resource belongs to.",
+                "example": "EARTH"
+              },
+              "primary_dhcp_server": {
+                "type": "string",
+                "example": "ngbrdc-qrs02-sl0984"
+              },
+              "allocation_type": {
+                "type": "string",
+                "enum": [
+                  "dynamic",
+                  "static"
+                ]
+              },
+              "template_name": {
+                "type": "string",
+                "example": "DHCP Option Template"
+              },
+              "allowClassesArray": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "denyClassesArray": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "addressRanges": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "startIP": {
+                      "type": "string",
+                      "example": "10.1.10.201"
+                    },
+                    "endIP": {
+                      "type": "string",
+                      "example": "10.1.10.205"
+                    }
+                  },
+                  "required": [
+                    "startIP",
+                    "endIP"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "organization_name",
+              "addressRanges"
+            ]
+          }
+        },
+        "required": [
+          "subnetAddress",
+          "scope"
+        ]
+      },
+      "DhcpScopeDeleteRequest": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "addressRange": {
+              "type": "string",
+              "example": "10.1.10.205-10.1.10.210"
+            },
+            "subnetAddress": {
+              "type": "string",
+              "example": "10.1.10.0"
+            },
+            "organization_name": {
+              "type": "string",
+              "description": "Name of the TCPWave organization (tenant) the resource belongs to.",
+              "example": "EARTH"
+            }
+          },
+          "required": [
+            "addressRange",
+            "subnetAddress",
+            "organization_name"
+          ]
+        }
+      },
+      "ApiResult": {
+        "type": "object",
+        "description": "TCPWave IPAM API result envelope. Exact fields vary by operation; status/message are consistently present.",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "0/1 style or HTTP-like status code depending on operation."
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  }
+}
