@@ -1,0 +1,4011 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "WhatsUp Gold",
+    "version": "v1",
+    "description": "Progress WhatsUp Gold is a network, server, and application monitoring platform. This spec covers WhatsUp Gold's v1 RESTful API for managing monitored devices, device groups, credentials, device roles, and monitors.",
+    "x-vendor-api-version": "v1"
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}/api/v1",
+      "description": "WhatsUp Gold REST API server.",
+      "variables": {
+        "protocol": {
+          "default": "https",
+          "enum": [
+            "https",
+            "http"
+          ]
+        },
+        "host": {
+          "default": "host.example.com",
+          "description": "WhatsUp Gold server host (no protocol, no path)."
+        },
+        "port": {
+          "default": "9644",
+          "description": "WhatsUp Gold REST API port."
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "Credential"
+    },
+    {
+      "name": "Device"
+    },
+    {
+      "name": "DeviceGroup"
+    },
+    {
+      "name": "Report"
+    },
+    {
+      "name": "DeviceRole"
+    },
+    {
+      "name": "Monitor"
+    },
+    {
+      "name": "Product"
+    },
+    {
+      "name": "Diagnostics"
+    }
+  ],
+  "paths": {
+    "/credentials/-": {
+      "get": {
+        "operationId": "credentialFind",
+        "summary": "Search/list credentials.",
+        "tags": [
+          "Credential"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CredentialList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "post": {
+        "operationId": "credentialAddCredential",
+        "summary": "Create a new credential.",
+        "tags": [
+          "Credential"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Credential"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Credential"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/credentials/-/assignments/-": {
+      "get": {
+        "operationId": "credentialFindAssignments",
+        "summary": "Search credential-to-device assignments.",
+        "tags": [
+          "Credential"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CredentialAssignment"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/credentials/-/config/template": {
+      "get": {
+        "operationId": "getCredentialGetTemplate",
+        "summary": "List config templates applicable to credentials.",
+        "tags": [
+          "Credential"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Credential"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "patch": {
+        "operationId": "credentialApplyCredentialTemplates",
+        "summary": "Bulk-apply config templates to credentials.",
+        "tags": [
+          "Credential"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Credential"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Credential"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/credentials/-/helper": {
+      "get": {
+        "operationId": "credentialGetHelper",
+        "summary": "Get metadata describing available credential types/fields.",
+        "tags": [
+          "Credential"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Credential"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/credentials/{credentialId}": {
+      "get": {
+        "operationId": "credentialGet",
+        "summary": "Get a credential by ID.",
+        "tags": [
+          "Credential"
+        ],
+        "parameters": [
+          {
+            "name": "credentialId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Credential ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Credential"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "put": {
+        "operationId": "credentialUpdateCredential",
+        "summary": "Update a credential.",
+        "tags": [
+          "Credential"
+        ],
+        "parameters": [
+          {
+            "name": "credentialId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Credential ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Credential"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Credential"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "delete": {
+        "operationId": "credentialDeleteCredential",
+        "summary": "Delete a credential.",
+        "tags": [
+          "Credential"
+        ],
+        "parameters": [
+          {
+            "name": "credentialId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Credential ID."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted successfully."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/credentials/{credentialId}/assignments/-": {
+      "get": {
+        "operationId": "credentialGetAssignments",
+        "summary": "Get devices this credential is assigned to.",
+        "tags": [
+          "Credential"
+        ],
+        "parameters": [
+          {
+            "name": "credentialId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Credential ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CredentialAssignment"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "delete": {
+        "operationId": "credentialRemoveCredentialFromAllDevice",
+        "summary": "Remove this credential's assignment from all devices.",
+        "tags": [
+          "Credential"
+        ],
+        "parameters": [
+          {
+            "name": "credentialId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Credential ID."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted successfully."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkIdList"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/credentials/{credentialId}/config/template": {
+      "get": {
+        "operationId": "credentialGetTemplate",
+        "summary": "Get the config template applied via this credential.",
+        "tags": [
+          "Credential"
+        ],
+        "parameters": [
+          {
+            "name": "credentialId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Credential ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Credential"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-groups/{groupId}": {
+      "get": {
+        "operationId": "deviceGroupGetDeviceGroup",
+        "summary": "Get a device group by ID.",
+        "tags": [
+          "DeviceGroup"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device group ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceGroup"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-groups/{groupId}/children": {
+      "get": {
+        "operationId": "deviceGroupSearchChildren",
+        "summary": "List the child groups of a device group.",
+        "tags": [
+          "DeviceGroup"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device group ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceGroupList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-groups/{groupId}/devices": {
+      "get": {
+        "operationId": "deviceGroupSearchDevices",
+        "summary": "List the devices in a device group.",
+        "tags": [
+          "DeviceGroup"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device group ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-groups/{groupId}/devices/-/config/template": {
+      "get": {
+        "operationId": "deviceGroupDeviceTemplates",
+        "summary": "List config templates applied to the devices in a group.",
+        "tags": [
+          "DeviceGroup"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device group ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceGroup"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-groups/{groupId}/devices/-/credentials": {
+      "get": {
+        "operationId": "deviceGroupAssignedCredentials",
+        "summary": "List credentials assigned to the devices in a group.",
+        "tags": [
+          "DeviceGroup"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device group ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CredentialAssignment"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-groups/{groupId}/devices/reports/cpu-utilization": {
+      "get": {
+        "operationId": "returnCPUutilizationreportforadevicegroup",
+        "summary": "CPU utilization report for the devices in a group.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device group ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-groups/{groupId}/devices/reports/device-maintenance-mode": {
+      "get": {
+        "operationId": "deviceGroupReportDeviceMaintenanceMode",
+        "summary": "Maintenance-mode report for the devices in a group.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device group ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-groups/{groupId}/devices/reports/disk-free-space": {
+      "get": {
+        "operationId": "deviceGroupReportDeviceDiskFreeSpaceReport",
+        "summary": "Disk free space report for the devices in a group.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device group ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-groups/{groupId}/devices/reports/disk-utilization": {
+      "get": {
+        "operationId": "deviceGroupReportDeviceDiskUtilizationReport",
+        "summary": "Disk utilization report for the devices in a group.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device group ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-groups/{groupId}/devices/reports/interface-discards": {
+      "get": {
+        "operationId": "deviceGroupReportDeviceInterfaceDiscardsReport",
+        "summary": "Interface discards report for the devices in a group.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device group ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-groups/{groupId}/devices/reports/interface-errors": {
+      "get": {
+        "operationId": "deviceGroupReportDeviceInterfaceErrorsReport",
+        "summary": "Interface errors report for the devices in a group.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device group ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-groups/{groupId}/devices/reports/interface-traffic": {
+      "get": {
+        "operationId": "deviceGroupReportDeviceInterfaceTrafficReport",
+        "summary": "Interface traffic report for the devices in a group.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device group ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-groups/{groupId}/devices/reports/interface-utilization": {
+      "get": {
+        "operationId": "deviceGroupReportDeviceInterfaceUtilizationReport",
+        "summary": "Interface utilization report for the devices in a group.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device group ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-groups/{groupId}/devices/reports/memory-utilization": {
+      "get": {
+        "operationId": "deviceGroupReportDeviceMemoryUtilizationReport",
+        "summary": "Memory utilization report for the devices in a group.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device group ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-groups/{groupId}/devices/reports/ping-availability": {
+      "get": {
+        "operationId": "deviceGroupReportDevicePingAvailabilityReport",
+        "summary": "Ping availability report for the devices in a group.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device group ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-groups/{groupId}/devices/reports/ping-response-time": {
+      "get": {
+        "operationId": "deviceGroupReportDevicePingResponseTimeReport",
+        "summary": "Ping response time report for the devices in a group.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device group ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-groups/{groupId}/devices/reports/state-change": {
+      "get": {
+        "operationId": "deviceGroupReportDeviceStateChangeReport",
+        "summary": "State change report for the devices in a group.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device group ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-groups/{groupId}/poll-now": {
+      "put": {
+        "operationId": "deviceGroupPollNow",
+        "summary": "Force an immediate poll of every device in a group.",
+        "tags": [
+          "DeviceGroup"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device group ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceGroup"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-groups/{groupId}/status": {
+      "get": {
+        "operationId": "deviceGroupGetDeviceGroupStatus",
+        "summary": "Get the aggregate up/down status of a device group.",
+        "tags": [
+          "DeviceGroup"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Device group ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupStatus"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-role/-": {
+      "get": {
+        "operationId": "deviceRoleGetSummaryList",
+        "summary": "List device roles.",
+        "tags": [
+          "DeviceRole"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceRoleList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-role/-/assignments/-": {
+      "get": {
+        "operationId": "deviceRoleAllRoleAssignments",
+        "summary": "List all device role assignments.",
+        "tags": [
+          "DeviceRole"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoleAssignment"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-role/-/config/template": {
+      "get": {
+        "operationId": "returnsetofdeviceroletemplates",
+        "summary": "List config templates for device roles.",
+        "tags": [
+          "DeviceRole"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceRole"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "patch": {
+        "operationId": "deviceRoleApplyTemplates",
+        "summary": "Bulk-apply config templates to device roles.",
+        "tags": [
+          "DeviceRole"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceRole"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceRole"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-role/-/percentVariables": {
+      "get": {
+        "operationId": "deviceRoleGetPercentVariables",
+        "summary": "List percent-variable substitutions available to device role templates.",
+        "tags": [
+          "DeviceRole"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceRole"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-role/{roleId}": {
+      "get": {
+        "operationId": "deviceRoleGetSummaryTemplateById",
+        "summary": "Get a device role by ID.",
+        "tags": [
+          "DeviceRole"
+        ],
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device role ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceRole"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deviceRoleRemoveRoleById",
+        "summary": "Delete a device role.",
+        "tags": [
+          "DeviceRole"
+        ],
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device role ID."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted successfully."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-role/{roleId}/assignments/-": {
+      "get": {
+        "operationId": "deviceRoleRoleAssignmentsById",
+        "summary": "List the devices a role is assigned to.",
+        "tags": [
+          "DeviceRole"
+        ],
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device role ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoleAssignment"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-role/{roleId}/config/template": {
+      "get": {
+        "operationId": "returntemplateforadevicerole",
+        "summary": "Get the config template for a device role.",
+        "tags": [
+          "DeviceRole"
+        ],
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device role ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceRole"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-role/{roleId}/disable": {
+      "put": {
+        "operationId": "deviceRoleDisableRoleById",
+        "summary": "Disable a device role.",
+        "tags": [
+          "DeviceRole"
+        ],
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device role ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceRole"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceRole"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-role/{roleId}/enable": {
+      "put": {
+        "operationId": "deviceRoleEnableRoleById",
+        "summary": "Enable a device role.",
+        "tags": [
+          "DeviceRole"
+        ],
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device role ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceRole"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceRole"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/device-role/{roleId}/restore": {
+      "put": {
+        "operationId": "deviceRoleRestoreSystemDefaultsById",
+        "summary": "Restore a device role to its system defaults.",
+        "tags": [
+          "DeviceRole"
+        ],
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device role ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceRole"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceRole"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/-": {
+      "delete": {
+        "operationId": "deviceBulkDeleteDevice",
+        "summary": "Bulk-delete a list of devices.",
+        "tags": [
+          "Device"
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted successfully."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkIdList"
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "deviceBulkOperationDevice",
+        "summary": "Bulk-update a list of devices.",
+        "tags": [
+          "Device"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceProperties"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/-/config/maintenance": {
+      "patch": {
+        "operationId": "deviceUpdateMaintenanceBatch",
+        "summary": "Bulk-set maintenance mode for a list of devices.",
+        "tags": [
+          "Device"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MaintenanceConfig"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/-/config/maintenance/schedule": {
+      "patch": {
+        "operationId": "deviceUpdateMaintenanceBatchSchedule",
+        "summary": "Bulk-set a maintenance schedule for a list of devices.",
+        "tags": [
+          "Device"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MaintenanceSchedule"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/-/config/polling": {
+      "patch": {
+        "operationId": "deviceUpdatePollingConfigBatch",
+        "summary": "Bulk-update polling configuration for a list of devices.",
+        "tags": [
+          "Device"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PollingConfig"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/-/config/template": {
+      "patch": {
+        "operationId": "deviceApplyTemplates",
+        "summary": "Bulk-apply config templates to a list of devices.",
+        "tags": [
+          "Device"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Device"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/-/poll-now": {
+      "patch": {
+        "operationId": "deviceBulkPollNow",
+        "summary": "Force an immediate poll of a list of devices.",
+        "tags": [
+          "Device"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/-/properties": {
+      "patch": {
+        "operationId": "deviceUpdatePropertiesBatch",
+        "summary": "Bulk-update properties for a list of devices.",
+        "tags": [
+          "Device"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceProperties"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}": {
+      "get": {
+        "operationId": "deviceGetOverview",
+        "summary": "Get a device by ID.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deviceDeleteDevice",
+        "summary": "Delete a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted successfully."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/attributes/-": {
+      "get": {
+        "operationId": "deviceFindAttributes",
+        "summary": "List/search custom attributes on a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Attribute"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "post": {
+        "operationId": "deviceAddAttribute",
+        "summary": "Add a custom attribute to a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Attribute"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deviceDeleteAllAttributesById",
+        "summary": "Delete all custom attributes on a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted successfully."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkIdList"
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "deviceDeleteAttributes",
+        "summary": "Bulk-delete a set of custom attributes on a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Device"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/attributes/{attributeId}": {
+      "get": {
+        "operationId": "deviceGetAttribute",
+        "summary": "Get a single custom attribute on a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          },
+          {
+            "name": "attributeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Custom attribute name/ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "put": {
+        "operationId": "deviceUpdateAttribute",
+        "summary": "Update a custom attribute on a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          },
+          {
+            "name": "attributeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Custom attribute name/ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Attribute"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deviceDeleteAttribute",
+        "summary": "Delete a custom attribute from a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          },
+          {
+            "name": "attributeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Custom attribute name/ID."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted successfully."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/config": {
+      "get": {
+        "operationId": "deviceGetConfig",
+        "summary": "Get device configuration summary.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/config/maintenance": {
+      "put": {
+        "operationId": "deviceUpdateMaintenanceById",
+        "summary": "Set device maintenance mode.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MaintenanceConfig"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/config/maintenance/schedule": {
+      "put": {
+        "operationId": "deviceUpdateMaintenanceSchedule",
+        "summary": "Set a scheduled maintenance window for a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MaintenanceSchedule"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/config/polling": {
+      "get": {
+        "operationId": "deviceGetPollingConfig",
+        "summary": "Get device polling configuration.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PollingConfig"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "put": {
+        "operationId": "deviceUpdatePollingConfig",
+        "summary": "Update device polling configuration.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PollingConfig"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/config/template": {
+      "get": {
+        "operationId": "deviceGetTemplate",
+        "summary": "Get the config template applied to a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/credentials/-": {
+      "get": {
+        "operationId": "deviceCredentials",
+        "summary": "List credentials assigned to a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CredentialAssignment"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "put": {
+        "operationId": "deviceDeviceAssignCredentials",
+        "summary": "Assign credentials to a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CredentialAssignment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deviceDeleteDeviceAssignedCredentials",
+        "summary": "Unassign all credentials from a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted successfully."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkIdList"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/credentials/{credentialId}": {
+      "delete": {
+        "operationId": "deviceDeleteAssignedCredentials",
+        "summary": "Unassign a credential from a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          },
+          {
+            "name": "credentialId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Credential ID."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted successfully."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/poll-now": {
+      "put": {
+        "operationId": "devicePollNow",
+        "summary": "Force an immediate poll of a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/properties": {
+      "get": {
+        "operationId": "deviceGetProperties",
+        "summary": "Get device properties.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceProperties"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "put": {
+        "operationId": "deviceUpdateProperties",
+        "summary": "Update device properties.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceProperties"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/reports/cpu-utilization": {
+      "get": {
+        "operationId": "deviceReportDeviceCpuUtilizationReport",
+        "summary": "CPU utilization report for a device.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/reports/disk-free-space": {
+      "get": {
+        "operationId": "deviceReportDeviceDiskFreeSpaceReport",
+        "summary": "Disk free space report for a device.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/reports/disk-utilization": {
+      "get": {
+        "operationId": "deviceReportDeviceDiskUtilizationReport",
+        "summary": "Disk utilization report for a device.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/reports/interface-discards": {
+      "get": {
+        "operationId": "deviceReportDeviceInterfaceDiscardsReport",
+        "summary": "Interface discards report for a device.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/reports/interface-errors": {
+      "get": {
+        "operationId": "deviceReportDeviceInterfaceErrorsReport",
+        "summary": "Interface errors report for a device.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/reports/interface-traffic": {
+      "get": {
+        "operationId": "deviceReportDeviceInterfaceTrafficReport",
+        "summary": "Interface traffic report for a device.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/reports/interface-utilization": {
+      "get": {
+        "operationId": "deviceReportDeviceInterfaceUtilizationReport",
+        "summary": "Interface utilization report for a device.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/reports/memory-utilization": {
+      "get": {
+        "operationId": "deviceReportDeviceMemoryUtilizationReport",
+        "summary": "Memory utilization report for a device.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/reports/ping-availability": {
+      "get": {
+        "operationId": "deviceReportDevicePingAvailabilityReport",
+        "summary": "Ping availability report for a device.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/reports/ping-response-time": {
+      "get": {
+        "operationId": "deviceReportDevicePingResponseTimeReport",
+        "summary": "Ping response time report for a device.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/reports/state-change": {
+      "get": {
+        "operationId": "deviceReportDeviceStateChangeReport",
+        "summary": "State change report for a device.",
+        "tags": [
+          "Report"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/roles/-": {
+      "get": {
+        "operationId": "deviceGetRoles",
+        "summary": "List roles assigned to a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoleAssignment"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "put": {
+        "operationId": "deviceDeviceAssignRole",
+        "summary": "Assign a role to a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleAssignment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deviceDeleteDeviceAssignedRoles",
+        "summary": "Unassign all roles from a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted successfully."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkIdList"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/roles/brand": {
+      "put": {
+        "operationId": "deviceDeviceAssignBrandRole",
+        "summary": "Assign the brand role to a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleAssignment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/roles/os": {
+      "put": {
+        "operationId": "deviceDeviceAssignOsRole",
+        "summary": "Assign the OS role to a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleAssignment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/roles/{roleId}": {
+      "delete": {
+        "operationId": "deviceDeleteRoleAssignment",
+        "summary": "Unassign a role from a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          },
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device role ID."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted successfully."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/status": {
+      "get": {
+        "operationId": "deviceGetStatus",
+        "summary": "Get the current up/down status of a device.",
+        "tags": [
+          "Device"
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Device ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceStatus"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/errors/{errorId}": {
+      "get": {
+        "operationId": "errorInduceError",
+        "summary": "Retrieve a diagnostic/error-simulation record (internal troubleshooting).",
+        "tags": [
+          "Diagnostics"
+        ],
+        "parameters": [
+          {
+            "name": "errorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Diagnostic/error record ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/monitors/-": {
+      "get": {
+        "operationId": "monitorGetAll",
+        "summary": "List monitors.",
+        "tags": [
+          "Monitor"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonitorList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/monitors/-/config/template": {
+      "get": {
+        "operationId": "monitorGetTemplates",
+        "summary": "List config templates for monitors.",
+        "tags": [
+          "Monitor"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Monitor"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "patch": {
+        "operationId": "monitorApplyMonitorTemplates",
+        "summary": "Bulk-apply config templates to monitors.",
+        "tags": [
+          "Monitor"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Monitor"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Monitor"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/monitors/{monitorId}": {
+      "get": {
+        "operationId": "monitorGetById",
+        "summary": "Get a monitor by ID.",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [
+          {
+            "name": "monitorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Monitor ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Monitor"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/monitors/{monitorId}/config/template": {
+      "get": {
+        "operationId": "monitorGetTemplateById",
+        "summary": "Get the config template for a monitor.",
+        "tags": [
+          "Monitor"
+        ],
+        "parameters": [
+          {
+            "name": "monitorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Monitor ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Monitor"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/product/api": {
+      "get": {
+        "operationId": "productApiVersion",
+        "summary": "Get the REST API version information.",
+        "tags": [
+          "Product"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductInfo"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/product/version": {
+      "get": {
+        "operationId": "productProductVersion",
+        "summary": "Get the WhatsUp Gold product version.",
+        "tags": [
+          "Product"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductInfo"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/product/whoAmI": {
+      "get": {
+        "operationId": "productWhoAmI",
+        "summary": "Get the identity of the currently authenticated user.",
+        "tags": [
+          "Product"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductInfo"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "dynamicToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "WhatsUp Gold OAuth2-style password-grant token, retrieved dynamically by POSTing form-urlencoded credentials to /api/v1/token. Itential Platform extracts the token from the 'access_token' response field and replays it on the Authorization header of every subsequent request. WhatsUp Gold's documented header format is 'Authorization: Bearer <access_token>' -- since Itential Platform's dynamic-retrieval apiKey mechanism replays the extracted value verbatim (with no built-in prefix templating), confirm on your target platform version whether the 'Bearer ' prefix needs to be added manually.",
+        "x-itential-dynamic-retrieval": {
+          "method": "POST",
+          "url": "https://<whatsup-gold-host>:<port>/api/v1/token",
+          "responsePointer": "/access_token"
+        },
+        "x-itential-parameters": [
+          {
+            "name": "grant_type",
+            "in": "body",
+            "x-itential-use-in": [
+              "key"
+            ],
+            "schema": {
+              "type": "string",
+              "default": "password"
+            },
+            "description": "OAuth2 grant type. Always 'password'."
+          },
+          {
+            "name": "username",
+            "in": "body",
+            "x-itential-use-in": [
+              "key"
+            ],
+            "schema": {
+              "type": "string"
+            },
+            "description": "WhatsUp Gold username."
+          },
+          {
+            "name": "password",
+            "in": "body",
+            "x-itential-use-in": [
+              "key"
+            ],
+            "schema": {
+              "type": "string"
+            },
+            "description": "WhatsUp Gold password."
+          }
+        ]
+      }
+    },
+    "schemas": {
+      "Device": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Device ID."
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "hostName": {
+            "type": "string"
+          },
+          "ipAddress": {
+            "type": "string"
+          },
+          "deviceType": {
+            "type": "string"
+          },
+          "brand": {
+            "type": "string"
+          },
+          "os": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "DeviceList": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Device"
+            }
+          },
+          "totalCount": {
+            "type": "integer"
+          }
+        }
+      },
+      "DeviceGroup": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Device group ID."
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "DeviceGroupList": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeviceGroup"
+            }
+          },
+          "totalCount": {
+            "type": "integer"
+          }
+        }
+      },
+      "Credential": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Credential ID."
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "Credential type, e.g. SNMP v1/v2/v3, WMI, SSH, Telnet, ADO, VMware."
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "CredentialList": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Credential"
+            }
+          },
+          "totalCount": {
+            "type": "integer"
+          }
+        }
+      },
+      "CredentialAssignment": {
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "integer"
+          },
+          "credentialId": {
+            "type": "integer"
+          },
+          "credentialType": {
+            "type": "string"
+          }
+        }
+      },
+      "DeviceRole": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Device role ID."
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DeviceRoleList": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeviceRole"
+            }
+          },
+          "totalCount": {
+            "type": "integer"
+          }
+        }
+      },
+      "Monitor": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Monitor ID."
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "Active or Performance monitor."
+          }
+        }
+      },
+      "MonitorList": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Monitor"
+            }
+          },
+          "totalCount": {
+            "type": "integer"
+          }
+        }
+      },
+      "Attribute": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "PollingConfig": {
+        "type": "object",
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "pollInterval": {
+            "type": "integer",
+            "description": "Polling interval, in seconds."
+          }
+        }
+      },
+      "MaintenanceConfig": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "MaintenanceSchedule": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "recurrence": {
+            "type": "string"
+          }
+        }
+      },
+      "DeviceProperties": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Free-form device property bag (key/value pairs configured on the device)."
+      },
+      "DeviceStatus": {
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "up",
+              "down",
+              "maintenance",
+              "unknown"
+            ]
+          }
+        }
+      },
+      "GroupStatus": {
+        "type": "object",
+        "properties": {
+          "groupId": {
+            "type": "string"
+          },
+          "upCount": {
+            "type": "integer"
+          },
+          "downCount": {
+            "type": "integer"
+          },
+          "maintenanceCount": {
+            "type": "integer"
+          }
+        }
+      },
+      "RoleAssignment": {
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "integer"
+          },
+          "roleId": {
+            "type": "integer"
+          },
+          "roleName": {
+            "type": "string"
+          }
+        }
+      },
+      "ReportResult": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "totalCount": {
+            "type": "integer"
+          }
+        },
+        "description": "Time-series report data."
+      },
+      "ProductInfo": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Product/API version metadata."
+      },
+      "GenericResult": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "BulkIdList": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "IDs to operate on."
+          }
+        },
+        "required": [
+          "ids"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "dynamicToken": []
+    }
+  ]
+}
