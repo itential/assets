@@ -62,6 +62,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **HashiCorp** | Terraform Enterprise (HCP Terraform) · Vault (secrets management) |
 | **Infoblox** | NIOS WAPI · Threat Defense BloxOne · Universal DDI BloxOne |
 | **IP Fabric** | Network intelligence |
+| **iTop** | IT service management & CMDB |
 | **Itential** | Platform automation (self-service) |
 | **Jenkins** | Jenkins |
 | **JFrog** | Artifactory |

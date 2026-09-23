@@ -1,0 +1,191 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "iTop",
+    "description": "Authentication: static API token (application token or personal token), sent as the Auth-Token header.\n\niTop is an open-source, web-based IT Service Management and CMDB platform. Its REST/JSON API is a single endpoint (webservices/rest.php) that accepts an `operation` name plus operation-specific parameters (`class`, `key`, `fields`, `output_fields`, ...) and returns a JSON envelope of matching or affected objects. It supports iTop's built-in and custom object classes (tickets such as UserRequest/Incident/Change, CIs, contacts, organizations, and any other class defined in the data model).",
+    "contact": {
+      "name": "Combodo",
+      "url": "https://www.itophub.io/"
+    },
+    "version": "latest",
+    "x-vendor-api-version": "1.3",
+    "x-itential-curated": "Reviewed against the repo's common-CRUD-for-automation policy: iTop's REST/JSON API is a single operation-dispatch endpoint, and all 1 upstream operations are already in scope, covering list_operations, core/check_credentials, and the core/get, core/create, core/update, core/delete, and core/apply_stimulus actions against any object class (tickets, CIs, contacts, organizations, and custom classes). See the repo README for the operation breakdown and the full spec."
+  },
+  "servers": [
+    {
+      "url": "https://ITOP-HOST:443",
+      "description": "Replace ITOP-HOST with your iTop instance's hostname or IP. Set this integration's base_path connection property to the install path plus webservices/rest.php, e.g. /itop/webservices/rest.php."
+    }
+  ],
+  "security": [
+    {
+      "AuthToken": []
+    }
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "tags": [
+          "Core"
+        ],
+        "summary": "callOperation",
+        "operationId": "callOperation",
+        "description": "Executes an iTop REST/JSON API operation. The specific action (list operations, check credentials, or a core/get, core/create, core/update, core/delete, or core/apply_stimulus CRUD/lifecycle call against any object class) is selected by the `operation` field inside `json_data` — see the request body description and examples.",
+        "requestBody": {
+          "description": "REST/JSON operation request, sent as HTML form parameters.",
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/OperationRequest"
+              },
+              "examples": {
+                "list_operations": {
+                  "summary": "List Operations - discover every operation the target iTop supports",
+                  "value": {
+                    "version": "1.3",
+                    "json_data": "{\"operation\": \"list_operations\"}"
+                  }
+                },
+                "check_credentials": {
+                  "summary": "Check Credentials - validate a username/password pair",
+                  "value": {
+                    "version": "1.3",
+                    "json_data": "{\"operation\": \"core/check_credentials\", \"user\": \"jdoe\", \"password\": \"secret\"}"
+                  }
+                },
+                "core_get": {
+                  "summary": "Core Get - search for objects of a class",
+                  "value": {
+                    "version": "1.3",
+                    "json_data": "{\"operation\": \"core/get\", \"class\": \"UserRequest\", \"key\": \"SELECT UserRequest WHERE status = 'new'\", \"output_fields\": \"id, ref, title, status\"}"
+                  }
+                },
+                "core_create": {
+                  "summary": "Core Create - create a new object",
+                  "value": {
+                    "version": "1.3",
+                    "json_data": "{\"operation\": \"core/create\", \"class\": \"UserRequest\", \"fields\": {\"org_id\": \"SELECT Organization WHERE name = 'Demo'\", \"title\": \"Cannot print\"}, \"output_fields\": \"id, friendlyname\"}"
+                  }
+                },
+                "core_update": {
+                  "summary": "Core Update - update fields on an existing object",
+                  "value": {
+                    "version": "1.3",
+                    "json_data": "{\"operation\": \"core/update\", \"class\": \"UserRequest\", \"key\": 15, \"fields\": {\"status\": \"assigned\"}}"
+                  }
+                },
+                "core_delete": {
+                  "summary": "Core Delete - delete an existing object",
+                  "value": {
+                    "version": "1.3",
+                    "json_data": "{\"operation\": \"core/delete\", \"class\": \"UserRequest\", \"key\": 15, \"simulate\": false}"
+                  }
+                },
+                "core_apply_stimulus": {
+                  "summary": "Core Apply Stimulus - trigger a lifecycle state transition",
+                  "value": {
+                    "version": "1.3",
+                    "json_data": "{\"operation\": \"core/apply_stimulus\", \"class\": \"UserRequest\", \"key\": 15, \"stimulus\": \"ev_assign\", \"fields\": {\"agent_id\": 57}}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Request processed. Check `code` in the response body — iTop always answers with HTTP 200, even for application-level errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "AuthToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Auth-Token",
+        "description": "iTop application token or personal token."
+      }
+    },
+    "schemas": {
+      "OperationRequest": {
+        "title": "OperationRequest",
+        "type": "object",
+        "required": [
+          "version",
+          "json_data"
+        ],
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "REST/JSON API version.",
+            "default": "1.3"
+          },
+          "json_data": {
+            "type": "string",
+            "description": "JSON-encoded operation request. Set to a JSON string with an `operation` field plus the parameters that operation requires:\n\n- `list_operations`: `{\"operation\": \"list_operations\"}`\n- `core/check_credentials`: `{\"operation\": \"core/check_credentials\", \"user\": \"...\", \"password\": \"...\"}`\n- `core/get`: `{\"operation\": \"core/get\", \"class\": \"UserRequest\", \"key\": \"SELECT UserRequest WHERE status = 'new'\", \"output_fields\": \"id, ref, title, status\"}`\n- `core/create`: `{\"operation\": \"core/create\", \"class\": \"UserRequest\", \"fields\": {\"org_id\": \"SELECT Organization WHERE name = 'Demo'\", \"title\": \"...\"}, \"output_fields\": \"id, friendlyname\"}`\n- `core/update`: `{\"operation\": \"core/update\", \"class\": \"UserRequest\", \"key\": 15, \"fields\": {\"status\": \"assigned\"}}`\n- `core/delete`: `{\"operation\": \"core/delete\", \"class\": \"UserRequest\", \"key\": 15, \"simulate\": false}`\n- `core/apply_stimulus`: `{\"operation\": \"core/apply_stimulus\", \"class\": \"UserRequest\", \"key\": 15, \"stimulus\": \"ev_assign\", \"fields\": {\"agent_id\": 57}}`\n\n`key` accepts a numeric object ID, an OQL query string, or a criteria object. `class` is any object class defined in the target iTop's data model."
+          }
+        }
+      },
+      "OperationResponse": {
+        "title": "OperationResponse",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "0 on success; non-zero error codes indicate a failure (bad login, missing object, wrong parameters, security restriction, ...)."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable status or error message."
+          },
+          "objects": {
+            "type": "object",
+            "description": "Map of `Class::key` to the matching/affected object, present for core/get, core/create, core/update, and core/apply_stimulus responses.",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ObjectEnvelope"
+            }
+          }
+        }
+      },
+      "ObjectEnvelope": {
+        "title": "ObjectEnvelope",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "class": {
+            "type": "string"
+          },
+          "key": {
+            "type": "integer"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Core",
+      "description": "iTop REST/JSON API operations"
+    }
+  ]
+}
