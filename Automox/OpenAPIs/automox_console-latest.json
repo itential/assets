@@ -1,0 +1,4364 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Automox Console",
+    "description": "Automox is a cloud-native endpoint patch and configuration management platform for Windows, macOS, and Linux devices. The Console API manages devices, device groups, and patch/configuration policies across an organization.",
+    "version": "latest",
+    "x-vendor-api-version": "2021-11-16",
+    "x-itential-curated": "Trimmed to 21 of 44 upstream operations covering device (server) management, device groups, patch/configuration policies (including on-demand remediation), organization details, and user lookups. See the repo README for the full scope and the full spec.",
+    "contact": {
+      "name": "Automox Support",
+      "email": "support@automox.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}",
+      "description": "Automox Console. This platform does not apply OpenAPI server paths automatically \u2014 set the integration instance's base_path to \"/api\"."
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "Batch": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "942b355c-1fdd-4465-af21-0e6c206b35f3"
+          },
+          "total_jobs": {
+            "type": "integer"
+          },
+          "pending_jobs": {
+            "type": "integer"
+          },
+          "processed_jobs": {
+            "type": "integer"
+          },
+          "progress": {
+            "type": "integer"
+          },
+          "failed_jobs": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelled_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "finished_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Command": {
+        "type": "object",
+        "required": [
+          "args",
+          "command_type_name",
+          "exec_time"
+        ],
+        "example": {
+          "command_type_name": "InstallUpdate",
+          "args": "KB12345 KB67890",
+          "exec_time": "2017-06-29T16:39:50.951000+00:00"
+        },
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "server_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "policy_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "command_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "command_type_name": {
+            "type": "string",
+            "enum": [
+              "InstallUpdate",
+              "Reboot"
+            ],
+            "description": "Type of command being issued"
+          },
+          "args": {
+            "type": "string",
+            "nullable": true,
+            "example": "\"KB12345 KB67890\"",
+            "description": "List of patches to apply, or NULL if issuing a Reboot"
+          },
+          "response": {
+            "type": "string"
+          },
+          "response_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "create_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "exec_time": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time",
+            "example": "2017-06-29T16:39:50.951Z",
+            "description": "Time to execute the command, or NULL if issuing a Reboot"
+          }
+        }
+      },
+      "CompatibilityChecks": {
+        "type": "object",
+        "properties": {
+          "low_diskspace": {
+            "type": "boolean"
+          },
+          "missing_secure_token": {
+            "type": "boolean"
+          },
+          "app_store_disconnected": {
+            "type": "boolean"
+          },
+          "missing_powershell": {
+            "type": "boolean"
+          },
+          "missing_wmi_integrity_check": {
+            "type": "boolean"
+          },
+          "wsus_disconnected": {
+            "type": "boolean"
+          },
+          "windows_update_server_disconnected": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DeviceStatus": {
+        "type": "object",
+        "properties": {
+          "device_status": {
+            "type": "string"
+          },
+          "agent_status": {
+            "type": "string"
+          },
+          "policy_status": {
+            "type": "string"
+          },
+          "policy_statuses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "compliant": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "DeviceFilters": {
+        "description": "Device Targeting Filters. See [Device Filter Parameters](/developer-portal/policy_filters_schedule/#device-filters---filter-parameters) for more information.",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "field": {
+              "type": "string",
+              "enum": [
+                "tag",
+                "hostname",
+                "ip_addr",
+                "os_family",
+                "os_version_id",
+                "organizational_unit"
+              ]
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "in",
+                "not_in",
+                "like_any",
+                "not_like_any"
+              ]
+            },
+            "value": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "Organization": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "addr1": {
+            "type": "string"
+          },
+          "addr2": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "zipcode": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "create_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "access_key": {
+            "type": "string"
+          },
+          "server_limit": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "stripe_cust": {
+            "type": "string"
+          },
+          "cc_last": {
+            "type": "string"
+          },
+          "cc_exp": {
+            "type": "string"
+          },
+          "cc_brand": {
+            "type": "string"
+          },
+          "cc_name": {
+            "type": "string"
+          },
+          "billing_interval": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "billing_interval_count": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "trial_end_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "trial_expired": {
+            "type": "boolean"
+          },
+          "sub_plan": {
+            "type": "string"
+          },
+          "sub_systems": {
+            "type": "string"
+          },
+          "sub_create_time": {
+            "type": "string"
+          },
+          "sub_end_time": {
+            "type": "string"
+          },
+          "next_bill_time": {
+            "type": "string"
+          },
+          "rate_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "parent_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "bill_overages": {
+            "type": "boolean"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "legacy_billing": {
+            "type": "boolean"
+          },
+          "billing_name": {
+            "type": "string"
+          },
+          "billing_email": {
+            "type": "string"
+          },
+          "billing_phone": {
+            "type": "string"
+          },
+          "device_limit": {
+            "type": "number",
+            "nullable": true,
+            "description": "If your organization has a server limit (you will have contacted support for this), then this is the value for your organization. Otherwise, null."
+          },
+          "device_count": {
+            "type": "number",
+            "description": "The current number of installed devices for your organization"
+          }
+        }
+      },
+      "PatchPolicy": {
+        "type": "object",
+        "title": "Patch Policy object",
+        "description": "Patch Policy object",
+        "required": [
+          "name",
+          "organization_id",
+          "policy_type_name",
+          "schedule_days",
+          "schedule_time",
+          "configuration",
+          "notes",
+          "server_groups"
+        ],
+        "properties": {
+          "id": {
+            "description": "Policy ID",
+            "type": "integer",
+            "format": "int64"
+          },
+          "organization_id": {
+            "description": "Organization ID for the specified policy",
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "description": "The name of the policy",
+            "type": "string"
+          },
+          "policy_type_name": {
+            "description": "The name of the type of policy you are creating. Optional when updating an existing policy.",
+            "type": "string",
+            "enum": [
+              "patch",
+              "custom",
+              "required_software"
+            ],
+            "x-enumDescriptions": {
+              "patch": "Patch Policy",
+              "custom": "Worklet Policy",
+              "required_software": "Required Software Policy"
+            }
+          },
+          "configuration": {
+            "description": "The policy configuration. This varies depending on the type of policy being used.",
+            "discriminator": {
+              "propertyName": "patch_rule",
+              "mapping": {
+                "all": "#/components/schemas/PatchPolicyConfiguration",
+                "filter": "#/components/schemas/PatchFilterPolicyConfiguration",
+                "manual": "#/components/schemas/PatchPolicyConfiguration",
+                "advanced": "#/components/schemas/PatchAdvancedPolicyConfiguration"
+              }
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PatchPolicyConfiguration"
+              },
+              {
+                "$ref": "#/components/schemas/PatchFilterPolicyConfiguration"
+              },
+              {
+                "$ref": "#/components/schemas/PatchAdvancedPolicyConfiguration"
+              }
+            ]
+          },
+          "schedule_days": {
+            "description": "Decimal value of binary day schedule. See [Policy and Device Filters, and Scheduling - Example Days per Week](/developer-portal/policy_filters_schedule/#example-days-per-week).",
+            "type": "integer",
+            "format": "int64"
+          },
+          "schedule_weeks_of_month": {
+            "description": "Decimal value of binary week schedule. See [Policy and Device Filters, and Scheduling - Example Weeks per Month](/developer-portal/policy_filters_schedule/#example-weeks-per-month).",
+            "type": "integer",
+            "format": "int64"
+          },
+          "schedule_months": {
+            "description": "Decimal value of binary month schedule. See [Policy and Device Filters, and Scheduling - Example Months per Year](/developer-portal/policy_filters_schedule/#example-months-per-year).",
+            "type": "integer",
+            "format": "int64"
+          },
+          "schedule_time": {
+            "description": "Scheduled time for automatic policy execution. Format: `\"hh:mm\"`",
+            "type": "string"
+          },
+          "server_groups": {
+            "description": "An array containing a list of the server group IDs to be affected by the policy.",
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "PatchPolicyConfiguration": {
+        "type": "object",
+        "title": "Patch Policy Configuration",
+        "description": "Policy configuration used for Patch Policies",
+        "required": [
+          "auto_patch",
+          "notify_user",
+          "auto_reboot",
+          "patch_rule"
+        ],
+        "properties": {
+          "auto_patch": {
+            "description": "Enable or disable Auto Patch.",
+            "type": "boolean"
+          },
+          "auto_reboot": {
+            "description": "Enable or disable Auto Reboot.",
+            "type": "boolean"
+          },
+          "notify_user": {
+            "type": "boolean"
+          },
+          "missed_patch_window": {
+            "type": "boolean"
+          },
+          "patch_rule": {
+            "description": "Use only with Patch policy.",
+            "type": "string",
+            "enum": [
+              "all",
+              "filter",
+              "manual",
+              "advanced"
+            ],
+            "x-enumDescriptions": {
+              "all": "Patch All",
+              "filter": "Patch All Except or Patch Only or Patch by Severity",
+              "manual": "Manually Approve",
+              "advanced": "Advanced Patch Policy"
+            }
+          },
+          "filter_type": {
+            "description": "The type of filter being used. Use only with `patch_rule` = `filter`",
+            "type": "string",
+            "enum": [
+              "include",
+              "exclude",
+              "severity"
+            ],
+            "x-enumDescriptions": {
+              "exclude": "Patch All Except",
+              "include": "Patch Only",
+              "severity": "Patch by Severity"
+            }
+          },
+          "device_filters_enabled": {
+            "description": "Enable or disable Device Targeting Filters.",
+            "type": "boolean",
+            "default": false
+          },
+          "device_filters": {
+            "$ref": "#/components/schemas/DeviceFilters"
+          },
+          "include_optional": {
+            "description": "Enable or disable inclusion of optional Windows patches for this policy **NOTE:** Will default to false if not included.",
+            "type": "boolean",
+            "default": false
+          },
+          "notify_reboot_user": {
+            "description": "Display modified notification 15 minutes before patching. This message should inform the user that a reboot will follow patching actions.",
+            "type": "boolean"
+          },
+          "notify_deferred_reboot_user": {
+            "description": "If `true`, this shows a post-install reboot notification message, if `notify_reboot_deferred` is also `true`. If `notify_reboot_deferred` is `false` or `null`, this will sync with the existing `notify_reboot_user` parameter.",
+            "type": "boolean",
+            "nullable": true
+          },
+          "custom_notification_patch_message": {
+            "description": "Message to display before a non-rebooting patch policy executes on a Windows device. Maximum 125 characters",
+            "type": "string",
+            "maxLength": 125
+          },
+          "custom_notification_patch_message_mac": {
+            "description": "Message to display before a non-rebooting patch policy executes on a macOS device. Maximum 70 characters",
+            "type": "string",
+            "maxLength": 70
+          },
+          "custom_notification_reboot_message": {
+            "description": "Message to display before a rebooting patch policy executes on a Windows device. Reboot will follow patching actions. Maximum 125 characters",
+            "type": "string",
+            "maxLength": 125
+          },
+          "custom_notification_reboot_message_mac": {
+            "description": "Message to display before a rebooting patch policy executes on a macOS device. Reboot will follow patching actions. Maximum 70 characters",
+            "type": "string",
+            "maxLength": 70
+          },
+          "custom_notification_max_delays": {
+            "description": "Maximum number of times a user is allowed to defer the reboot. The default is 0.",
+            "type": "integer",
+            "format": "int64",
+            "default": 0
+          },
+          "custom_notification_deferment_periods": {
+            "description": "Integer array: Deferral time periods (hours) that users can choose from. Include up to 3. All 3 must be distinct with a maximum of 24. Default values: 1, 4, 8",
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64",
+              "default": [
+                1,
+                4,
+                8
+              ]
+            }
+          },
+          "custom_pending_reboot_notification_message": {
+            "description": "Custom reboot message.",
+            "type": "string",
+            "maxLength": 125
+          },
+          "custom_pending_reboot_notification_message_mac": {
+            "description": "The custom reboot message for macOS, which overrides `custom_pending_reboot_notification_message` string, if provided.",
+            "type": "string",
+            "maxLength": 70
+          },
+          "custom_pending_reboot_notification_max_delays": {
+            "description": "Maximum number of times a user is allowed to defer the reboot. The default is 0.",
+            "type": "integer",
+            "format": "int64",
+            "default": 0
+          },
+          "custom_pending_reboot_notification_deferment_periods": {
+            "description": "The time period options available to defer a reboot for each deferral selection. Default values: 1, 4, 8",
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64",
+              "default": [
+                1,
+                4,
+                8
+              ]
+            }
+          },
+          "notify_user_message_timeout": {
+            "description": "The amount of time a patch notification appears before timing out and closing. Min: 15 min. Max: 480 min. Default is 15 minutes.",
+            "type": "integer",
+            "default": 15,
+            "minimum": 15,
+            "maximum": 480
+          },
+          "notify_deferred_reboot_user_message_timeout": {
+            "description": "The amount of time a deferrable reboot notification message appears before timing out and closing. Min: 15 min. Max: 480 min. Default is 15 minutes.",
+            "type": "integer",
+            "default": 15,
+            "minimum": 15,
+            "maximum": 480
+          },
+          "notify_user_auto_deferral_enabled": {
+            "description": "If a patch notification times out, apply the highest configured patch deferral.",
+            "type": "boolean",
+            "default": false
+          },
+          "notify_deferred_reboot_user_auto_deferral_enabled": {
+            "description": "If a reboot notification times out, apply the highest configured reboot deferral.",
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "example": {
+          "auto_patch": true,
+          "auto_reboot": true,
+          "notify_user": true,
+          "missed_patch_window": true,
+          "patch_rule": "all",
+          "device_filters_enabled": true,
+          "device_filters": [
+            {
+              "field": "tag",
+              "op": "in",
+              "value": [
+                "Windows",
+                "Win10"
+              ]
+            }
+          ],
+          "include_optional": true,
+          "notify_reboot_user": true,
+          "notify_deferred_reboot_user": true,
+          "custom_notification_patch_message": "Necessary Windows updates are about to be installed!",
+          "custom_notification_patch_message_mac": "Necessary Mac updates are about to be installed!",
+          "custom_notification_reboot_message": "Necessary Windows updates are about to be installed! Reboot Needed!",
+          "custom_notification_reboot_message_mac": "Necessary Mac updates are about to be installed! Reboot Needed!",
+          "custom_notification_max_delays": 0,
+          "custom_notification_deferment_periods": [
+            1,
+            4,
+            8
+          ],
+          "custom_pending_reboot_notification_message": "Your computer needs to restart to finish installing updates!",
+          "custom_pending_reboot_notification_message_mac": "Your Mac needs to restart to finish installing updates!",
+          "custom_pending_reboot_notification_max_delays": 0,
+          "custom_pending_reboot_notification_deferment_periods": [
+            2,
+            4,
+            6
+          ],
+          "notify_user_message_timeout": 15,
+          "notify_deferred_reboot_user_timeout": 15,
+          "notify_user_auto_deferral_enabled": false,
+          "notify_deferred_reboot_user_auto_deferral_enabled": false
+        }
+      },
+      "RequiredSoftwarePolicy": {
+        "type": "object",
+        "title": "Required Software Policy",
+        "description": "Required Software Policy. *NOTE: To upload installation file, see [/policies/{id}/files](/openapi/axconsole/operation/uploadPolicyFile)*",
+        "required": [
+          "name",
+          "organization_id",
+          "policy_type_name",
+          "schedule_days",
+          "schedule_time",
+          "configuration",
+          "notes",
+          "server_groups"
+        ],
+        "properties": {
+          "id": {
+            "description": "Policy ID",
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "description": "The name of the policy.",
+            "type": "string"
+          },
+          "organization_id": {
+            "description": "Organization ID for the specified policy",
+            "type": "integer",
+            "format": "int64"
+          },
+          "policy_type_name": {
+            "description": "The name of the type of policy you are creating. Optional when updating an existing policy.",
+            "type": "string",
+            "enum": [
+              "patch",
+              "custom",
+              "required_software"
+            ],
+            "default": "required_software",
+            "x-enumDescriptions": {
+              "patch": "Patch Policy",
+              "custom": "Worklet Policy",
+              "required_software": "Required Software Policy"
+            }
+          },
+          "configuration": {
+            "$ref": "#/components/schemas/RequiredSoftwarePolicyConfiguration"
+          },
+          "schedule_days": {
+            "description": "Decimal value of binary day schedule. See [Policy and Device Filters, and Scheduling - Example Days per Week](/developer-portal/policy_filters_schedule/#example-days-per-week).",
+            "type": "integer",
+            "format": "int64"
+          },
+          "schedule_weeks_of_month": {
+            "description": "Decimal value of binary week schedule. See [Policy and Device Filters, and Scheduling - Example Weeks per Month](/developer-portal/policy_filters_schedule/#example-weeks-per-month).",
+            "type": "integer",
+            "format": "int64"
+          },
+          "schedule_months": {
+            "description": "Decimal value of binary month schedule. See [Policy and Device Filters, and Scheduling - Example Months per Year](/developer-portal/policy_filters_schedule/#example-months-per-year).",
+            "type": "integer",
+            "format": "int64"
+          },
+          "schedule_time": {
+            "description": "Scheduled time for automatic policy execution. Format: `\"hh:mm\"`",
+            "type": "string"
+          },
+          "server_groups": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        },
+        "example": {
+          "name": "Test RequiredSoftwarePolicy",
+          "policy_type_name": "required_software",
+          "organization_id": 9999,
+          "schedule_days": 42,
+          "schedule_weeks_of_month": 20,
+          "schedule_months": 4680,
+          "schedule_time": "12:00",
+          "configuration": {
+            "os_family": "Windows",
+            "package_name": "NotePadPlusPlus",
+            "package_version": "7.8.4",
+            "evaluation_code": null,
+            "remediation_code": null,
+            "installation_code": ".\\npp.7.8.4.Installer.x64.exe /S"
+          },
+          "notify_user": true,
+          "server_groups": [
+            250624,
+            90125
+          ],
+          "notes": "Here are some notes"
+        }
+      },
+      "CustomPolicy": {
+        "type": "object",
+        "title": "Custom (Worklet) Policy",
+        "description": "Custom (Worklet) Policy object",
+        "required": [
+          "name",
+          "organization_id",
+          "policy_type_name",
+          "schedule_days",
+          "schedule_time",
+          "configuration",
+          "notes",
+          "server_groups"
+        ],
+        "properties": {
+          "id": {
+            "description": "Policy ID",
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "organization_id": {
+            "description": "Organization ID for the specified policy",
+            "type": "integer",
+            "format": "int64"
+          },
+          "policy_type_name": {
+            "type": "string",
+            "enum": [
+              "patch",
+              "custom",
+              "required_software"
+            ],
+            "default": "custom",
+            "x-enumDescriptions": {
+              "patch": "Patch Policy",
+              "custom": "Worklet Policy",
+              "required_software": "Required Software Policy"
+            }
+          },
+          "configuration": {
+            "$ref": "#/components/schemas/CustomPolicyConfiguration"
+          },
+          "schedule_days": {
+            "description": "Decimal value of binary day schedule. See [Policy and Device Filters, and Scheduling - Example Days per Week](/developer-portal/policy_filters_schedule/#example-days-per-week).",
+            "type": "integer",
+            "format": "int64"
+          },
+          "schedule_weeks_of_month": {
+            "description": "Decimal value of binary week schedule. See [Policy and Device Filters, and Scheduling - Example Weeks per Month](/developer-portal/policy_filters_schedule/#example-weeks-per-month).",
+            "type": "integer",
+            "format": "int64"
+          },
+          "schedule_months": {
+            "description": "Decimal value of binary month schedule. See [Policy and Device Filters, and Scheduling - Example Months per Year](/developer-portal/policy_filters_schedule/#example-months-per-year).",
+            "type": "integer",
+            "format": "int64"
+          },
+          "schedule_time": {
+            "description": "Scheduled time for automatic policy execution. Format: `\"hh:mm\"`",
+            "type": "string"
+          },
+          "server_groups": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "PatchAdvancedPolicyConfiguration": {
+        "type": "object",
+        "required": [
+          "auto_patch",
+          "auto_reboot"
+        ],
+        "properties": {
+          "auto_patch": {
+            "description": "Enable or Disable automatic execution of the policy.",
+            "type": "boolean"
+          },
+          "missed_patch_window": {
+            "description": "Enable or Disable the Missed Patch Window setting.",
+            "type": "boolean"
+          },
+          "patch_rule": {
+            "description": "Use only with the `patch` policy type.",
+            "type": "string",
+            "default": "advanced",
+            "enum": [
+              "all",
+              "filter",
+              "manual",
+              "advanced"
+            ],
+            "x-enumDescriptions": {
+              "all": "Patch All",
+              "filter": "Patch All Except or Patch Only or Patch by Severity",
+              "manual": "Manually Approve",
+              "advanced": "Advanced Patch Policy"
+            }
+          },
+          "auto_reboot": {
+            "description": "Enable or Disable automatic reboots following policy execution.",
+            "type": "boolean"
+          },
+          "device_filters_enabled": {
+            "description": "Enable or disable Device Filters.",
+            "type": "boolean",
+            "default": false
+          },
+          "device_filters": {
+            "$ref": "#/components/schemas/DeviceFilters"
+          },
+          "advanced_filter": {
+            "description": "Object array. Include one object per advanced filter line. See [Policy and Device Filters, and Scheduling - Advanced Filters](/developer-portal/policy_filters_schedule/#advanced-filters)",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "left": {
+                  "type": "string",
+                  "enum": [
+                    "display-name",
+                    "severity",
+                    "patch-source",
+                    "patch-os",
+                    "type",
+                    "patch-days-old"
+                  ],
+                  "x-enumDescriptions": {
+                    "display-name": "Filter by display name",
+                    "severity": "Filter by severity",
+                    "patch-source": "Filter by patch source",
+                    "patch-os": "Filter by patch OS",
+                    "type": "Filter by type",
+                    "patch-days-old": "Filter by patch age"
+                  }
+                },
+                "right": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "text string",
+                        "other",
+                        "none",
+                        "low",
+                        "medium",
+                        "high",
+                        "critical",
+                        "windowsupdate",
+                        "opera",
+                        "mozilla",
+                        "adobe",
+                        "oracle",
+                        "apple",
+                        "microsoft",
+                        "windows",
+                        "mac",
+                        "linux",
+                        "upgrades",
+                        "updates",
+                        "update-rollups",
+                        "service-packs",
+                        "security-updates",
+                        "tools",
+                        "guidance",
+                        "feature-packs",
+                        "developer-kits",
+                        "definition-updates",
+                        "critical-updates",
+                        "connectors",
+                        "application"
+                      ],
+                      "x-enumDescriptions": {
+                        "text string": "Enter a text string. Use to filter by Display Name.",
+                        "other": "Use to filter by Severity",
+                        "low": "Use to filter by Severity",
+                        "medium": "Use to filter by Severity",
+                        "high": "Use to filter by Severity",
+                        "critical": "Use to filter by Severity",
+                        "windowsupdate": "Use to filter by Patch Source",
+                        "opera": "Use to filter by Patch Source",
+                        "mozilla": "Use to filter by Patch Source",
+                        "adobe": "Use to filter by Patch Source",
+                        "oracle": "Use to filter by Patch Source",
+                        "apple": "Use to filter by Patch Source",
+                        "microsoft": "Use to filter by Patch Source",
+                        "windows": "Use to filter by Patch OS",
+                        "mac": "Use to filter by Patch OS",
+                        "linux": "Use to filter by Patch OS",
+                        "upgrades": "Use to filter by Type",
+                        "updates": "Use to filter by Type",
+                        "update-rollups": "Use to filter by Type",
+                        "service-packs": "Use to filter by Type",
+                        "security-updates": "Use to filter by Type",
+                        "tools": "Use to filter by Type",
+                        "guidance": "Use to filter by Type",
+                        "feature-packs": "Use to filter by Type",
+                        "developer-kits": "Use to filter by Type",
+                        "definition-updates": "Use to filter by Type",
+                        "critical-updates": "Use to filter by Type",
+                        "connectors": "Use to filter by Type",
+                        "application": "Use to filter by Type"
+                      }
+                    },
+                    {
+                      "type": "integer",
+                      "description": "Use with `patch-days-old`",
+                      "minimum": 1,
+                      "maximum": 180
+                    }
+                  ]
+                },
+                "condition": {
+                  "type": "string",
+                  "enum": [
+                    "contains",
+                    "does-not-contain",
+                    "is",
+                    "is-not",
+                    "less-than",
+                    "less-than-or-equal-to",
+                    "greater-than",
+                    "greater-than-or-equal-to"
+                  ],
+                  "x-enumDescriptions": {
+                    "contains": "Use with `display-name`",
+                    "does-not-contain": "Use with `display-name`",
+                    "is": "Use with `severity`, `patch-source`, `patch-os`, `type`, `patch-days-old`",
+                    "is-not": "Use with `severity`, `patch-source`, `patch-os`, `type`, `patch-days-old`",
+                    "less-than": "Use with `patch-days-old`",
+                    "less-than-or-equal-to": "Use with `severity`, `patch-days-old`",
+                    "greater-than-or-equal-to": "Use with `severity`, `patch-days-old`"
+                  }
+                }
+              }
+            }
+          },
+          "include_optional": {
+            "description": "Enable or disable inclusion of optional Windows patches for this policy **NOTE:** Will default to false if not included.",
+            "type": "boolean",
+            "default": false
+          },
+          "notify_reboot_user": {
+            "description": "Display modified notification 15 minutes before patching. This message should inform the user that a reboot will follow patching actions.",
+            "type": "boolean"
+          },
+          "notify_deferred_reboot_user": {
+            "description": "If `true`, this shows a post-install reboot notification message, if `notify_reboot_deferred` is also `true`. If `notify_reboot_deferred` is `false` or `null`, this will sync with the existing `notify_reboot_user` parameter.",
+            "type": "boolean",
+            "nullable": true
+          },
+          "custom_notification_patch_message": {
+            "description": "Message to display before a non-rebooting patch policy executes on a Windows device. Maximum 125 characters",
+            "type": "string",
+            "maxLength": 125
+          },
+          "custom_notification_patch_message_mac": {
+            "description": "Message to display before a non-rebooting patch policy executes on a macOS device. Maximum 70 characters",
+            "type": "string",
+            "maxLength": 70
+          },
+          "custom_notification_reboot_message": {
+            "description": "Message to display before a rebooting patch policy executes on a Windows device. Reboot will follow patching actions. Maximum 125 characters",
+            "type": "string",
+            "maxLength": 125
+          },
+          "custom_notification_reboot_message_mac": {
+            "description": "Message to display before a rebooting patch policy executes on a macOS device. Reboot will follow patching actions. Maximum 70 characters",
+            "type": "string",
+            "maxLength": 70
+          },
+          "custom_notification_max_delays": {
+            "description": "Maximum number of times a user is allowed to defer the reboot. The default is 0.",
+            "type": "integer",
+            "format": "int64",
+            "default": 0
+          },
+          "custom_notification_deferment_periods": {
+            "description": "Integer array: Deferral time periods (hours) that users can choose from. Include up to 3. All 3 must be distinct with a maximum of 24. Default values: 1, 4, 8",
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64",
+              "default": [
+                1,
+                4,
+                8
+              ]
+            }
+          },
+          "custom_pending_reboot_notification_message": {
+            "description": "Custom reboot message.",
+            "type": "string",
+            "maxLength": 125
+          },
+          "custom_pending_reboot_notification_message_mac": {
+            "description": "The custom reboot message for macOS, which overrides `custom_pending_reboot_notification_message` string, if provided.",
+            "type": "string",
+            "maxLength": 70
+          },
+          "custom_pending_reboot_notification_max_delays": {
+            "description": "Maximum number of times a user is allowed to defer the reboot. The default is 0.",
+            "type": "integer",
+            "format": "int64",
+            "default": 0
+          },
+          "custom_pending_reboot_notification_deferment_periods": {
+            "description": "The time period options available to defer a reboot for each deferral selection. Default values: 1, 4, 8",
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64",
+              "default": [
+                1,
+                4,
+                8
+              ]
+            }
+          },
+          "notify_user_message_timeout": {
+            "description": "The amount of time a patch notification appears before timing out and closing. Min: 15 min. Max: 480 min. Default is 15 minutes.",
+            "type": "integer",
+            "default": 15,
+            "minimum": 15,
+            "maximum": 480
+          },
+          "notify_deferred_reboot_user_message_timeout": {
+            "description": "The amount of time a deferrable reboot notification message appears before timing out and closing. Min: 15 min. Max: 480 min. Default is 15 minutes.",
+            "type": "integer",
+            "default": 15,
+            "minimum": 15,
+            "maximum": 480
+          },
+          "notify_user_auto_deferral_enabled": {
+            "description": "If a patch notification times out, apply the highest configured patch deferral.",
+            "type": "boolean",
+            "default": false
+          },
+          "notify_deferred_reboot_user_auto_deferral_enabled": {
+            "description": "If a reboot notification times out, apply the highest configured reboot deferral.",
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "example": {
+          "auto_patch": true,
+          "auto_reboot": true,
+          "notify_user": true,
+          "missed_patch_window": true,
+          "advanced_filter": [
+            {
+              "left": "severity",
+              "condition": "is",
+              "right": "critical"
+            },
+            {
+              "left": "patch-os",
+              "condition": "is",
+              "right": "windows"
+            }
+          ],
+          "patch_rule": "advanced",
+          "device_filters_enabled": true,
+          "device_filters": [
+            {
+              "field": "tag",
+              "op": "in",
+              "value": [
+                "Windows",
+                "Win10"
+              ]
+            }
+          ],
+          "include_optional": true,
+          "notify_reboot_user": true,
+          "notify_deferred_reboot_user": true,
+          "custom_notification_patch_message": "Necessary Windows updates are about to be installed!",
+          "custom_notification_patch_message_mac": "Necessary Mac updates are about to be installed!",
+          "custom_notification_reboot_message": "Necessary Windows updates are about to be installed! Reboot Needed!",
+          "custom_notification_reboot_message_mac": "Necessary Mac updates are about to be installed! Reboot Needed!",
+          "custom_notification_max_delays": 0,
+          "custom_notification_deferment_periods": [
+            1,
+            4,
+            8
+          ],
+          "custom_pending_reboot_notification_message": "Your computer needs to restart to finish installing updates!",
+          "custom_pending_reboot_notification_message_mac": "Your Mac needs to restart to finish installing updates!",
+          "custom_pending_reboot_notification_max_delays": 0,
+          "custom_pending_reboot_notification_deferment_periods": [
+            2,
+            4,
+            6
+          ],
+          "notify_user_message_timeout": 15,
+          "notify_deferred_reboot_user_timeout": 15,
+          "notify_user_auto_deferral_enabled": false,
+          "notify_deferred_reboot_user_auto_deferral_enabled": false
+        }
+      },
+      "CustomPolicyConfiguration": {
+        "type": "object",
+        "required": [
+          "auto_reboot"
+        ],
+        "properties": {
+          "auto_reboot": {
+            "description": "Enable or Disable automatic reboots following policy execution.",
+            "type": "boolean"
+          },
+          "notify_reboot_user": {
+            "description": "Display modified notification 15 minutes before patching. This message should inform the user that a reboot will follow patching actions.",
+            "type": "boolean"
+          },
+          "device_filters_enabled": {
+            "description": "Enable or disable Device Filters.",
+            "type": "boolean"
+          },
+          "device_filters": {
+            "$ref": "#/components/schemas/DeviceFilters"
+          },
+          "missed_patch_window": {
+            "description": "Enable or Disable the Missed Patch Window setting",
+            "type": "boolean"
+          },
+          "os_family": {
+            "description": "Define the OS family of the worklet policy",
+            "type": "string",
+            "enum": [
+              "Windows",
+              "Mac",
+              "Linux"
+            ]
+          },
+          "evaluation_code": {
+            "description": "The evaluation code of the worklet.",
+            "type": "string"
+          },
+          "remediation_code": {
+            "description": "The remediation code of the worklet.",
+            "type": "string"
+          }
+        }
+      },
+      "PatchFilterPolicyConfiguration": {
+        "type": "object",
+        "required": [
+          "auto_patch",
+          "patch_rule",
+          "auto_reboot"
+        ],
+        "properties": {
+          "auto_patch": {
+            "description": "Enable or Disable automatic execution of the policy.",
+            "type": "boolean"
+          },
+          "auto_reboot": {
+            "description": "Enable or Disable automatic reboots following policy execution.",
+            "type": "boolean"
+          },
+          "patch_rule": {
+            "description": "Use only with Patch policy.",
+            "type": "string",
+            "default": "filter",
+            "enum": [
+              "all",
+              "filter",
+              "manual",
+              "advanced"
+            ],
+            "x-enumDescriptions": {
+              "all": "Patch All",
+              "filter": "Patch All Except or Patch Only or Patch by Severity",
+              "manual": "Manually Approve",
+              "advanced": "Advanced Patch Policy"
+            }
+          },
+          "filter_type": {
+            "description": "Use only with `patch_rule` of `filter`",
+            "type": "string",
+            "enum": [
+              "include",
+              "exclude",
+              "severity"
+            ],
+            "x-enumDescriptions": {
+              "exclude": "Patch All Except",
+              "include": "Patch Only",
+              "severity": "Patch by Severity"
+            }
+          },
+          "filters": {
+            "description": "Define packages to filter on. Use with `patch_rule` of `filter` and `filter_type` of `include` or `exclude`",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "device_filters_enabled": {
+            "description": "Enable or disable Device Filters.",
+            "type": "boolean",
+            "default": false
+          },
+          "device_filters": {
+            "$ref": "#/components/schemas/DeviceFilters"
+          },
+          "severity_filter": {
+            "description": "Use only where `filter_type` is `severity`",
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "none",
+                "unknown",
+                "low",
+                "medium",
+                "high",
+                "critical"
+              ]
+            }
+          },
+          "notify_reboot_user": {
+            "description": "Display modified notification 15 minutes before patching. This message should inform the user that a reboot will follow patching actions.",
+            "type": "boolean"
+          },
+          "notify_deferred_reboot_user": {
+            "description": "If `true`, this shows a post-install reboot notification message, if `notify_reboot_deferred` is also `true`. If `notify_reboot_deferred` is `false` or `null`, this will sync with the existing `notify_reboot_user` parameter.",
+            "type": "boolean",
+            "nullable": true
+          },
+          "custom_notification_max_delays": {
+            "description": "Number of deferral chances before patching is forced.",
+            "type": "integer",
+            "format": "int64"
+          },
+          "custom_notification_patch_message": {
+            "description": "Message to display before a non-rebooting patch policy executes on a Windows device. Maximum 125 characters",
+            "type": "string",
+            "maxLength": 125
+          },
+          "custom_notification_reboot_message": {
+            "description": "Message to display before a rebooting patch policy executes on a Windows device. Reboot will follow patching actions. Maximum 125 characters",
+            "type": "string",
+            "maxLength": 125
+          },
+          "custom_notification_deferment_periods": {
+            "description": "Integer array: Deferral time periods (hours) that users can choose from. Include up to 3. All 3 must be distinct with a maximum of 24",
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "default": [
+                1,
+                4,
+                8
+              ]
+            }
+          },
+          "custom_notification_patch_message_mac": {
+            "description": "Message to display before a non-rebooting patch policy executes on a macOS device. Maximum 70 characters",
+            "type": "string",
+            "maxLength": 70
+          },
+          "custom_notification_reboot_message_mac": {
+            "description": "The custom reboot message for macOS, which overrides `custom_pending_reboot_notification_message` string, if provided.",
+            "type": "string",
+            "maxLength": 70
+          },
+          "custom_pending_reboot_notification_message": {
+            "description": "Custom reboot message.",
+            "type": "string",
+            "maxLength": 125
+          },
+          "notify_user_message_timeout": {
+            "description": "The amount of time a patch notification appears before timing out and closing. Min: 15 min. Max: 480 min. Default is 15 minutes.",
+            "type": "integer",
+            "default": 15,
+            "minimum": 15,
+            "maximum": 480
+          },
+          "notify_user_auto_deferral_enabled": {
+            "description": "If a patch notification times out, apply the highest configured patch deferral.",
+            "type": "boolean"
+          },
+          "notify_deferred_reboot_user_message_timeout": {
+            "description": "The amount of time a deferrable reboot notification message appears before timing out and closing. Min: 15 min. Max: 480 min. Default is 15 minutes.",
+            "type": "integer",
+            "default": 15,
+            "minimum": 15,
+            "maximum": 480
+          },
+          "notify_deferred_reboot_user_auto_deferral_enabled": {
+            "description": "If a reboot notification times out, apply the highest configured reboot deferral.",
+            "type": "boolean"
+          },
+          "custom_pending_reboot_notification_max_delays": {
+            "description": "Maximum number of times a user is allowed to defer the reboot. The default is 0.",
+            "type": "integer",
+            "format": "int64",
+            "default": 0
+          },
+          "custom_pending_reboot_notification_message_mac": {
+            "description": "Message to display before a rebooting patch policy executes on a macOS device. Reboot will follow patching actions. Maximum 70 characters",
+            "type": "string",
+            "maxLength": 70
+          },
+          "custom_pending_reboot_notification_deferment_periods": {
+            "description": "The time period options available to defer a reboot for each deferral selection. Default values: 1, 4, 8",
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "default": [
+                1,
+                4,
+                8
+              ]
+            }
+          }
+        }
+      },
+      "RequiredSoftwarePolicyConfiguration": {
+        "type": "object",
+        "required": [
+          "package_name",
+          "package_version",
+          "installation_code"
+        ],
+        "properties": {
+          "device_filters_enabled": {
+            "description": "Enable or disable Device Filters.",
+            "type": "boolean",
+            "default": false
+          },
+          "device_filters": {
+            "$ref": "#/components/schemas/DeviceFilters"
+          },
+          "missed_patch_window": {
+            "description": "Enable or Disable Missed Patch Window setting",
+            "type": "boolean"
+          },
+          "os_family": {
+            "type": "string"
+          },
+          "package_name": {
+            "type": "string"
+          },
+          "package_version": {
+            "type": "string"
+          },
+          "installation_code": {
+            "type": "string"
+          }
+        }
+      },
+      "Server": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "os_version_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "server_group_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "organization_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "instance_id": {
+            "type": "string"
+          },
+          "refresh_interval": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "last_update_time": {
+            "type": "string"
+          },
+          "last_refresh_time": {
+            "type": "string"
+          },
+          "uptime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "needs_reboot": {
+            "type": "boolean"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "create_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "os_version": {
+            "type": "string"
+          },
+          "os_name": {
+            "type": "string"
+          },
+          "os_family": {
+            "type": "string"
+          },
+          "ip_addrs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "ip_addrs_private": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "patches": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "details": {
+            "$ref": "#/components/schemas/ServerDetail"
+          },
+          "agent_version": {
+            "type": "string"
+          },
+          "custom_name": {
+            "type": "string"
+          },
+          "exception": {
+            "type": "boolean"
+          },
+          "total_count": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "is_compatible": {
+            "type": "boolean"
+          },
+          "compatibility_checks": {
+            "$ref": "#/components/schemas/CompatibilityChecks"
+          },
+          "policy_status": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "organization_id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "policy_id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "server_id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "policy_name": {
+                  "type": "string"
+                },
+                "policy_type_name": {
+                  "type": "string",
+                  "enum": [
+                    "patch",
+                    "custom",
+                    "required_software"
+                  ],
+                  "x-enumDescriptions": {
+                    "patch": "Patch Policy",
+                    "custom": "Worklet Policy",
+                    "required_software": "Required Software Policy"
+                  }
+                },
+                "status": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "result": {
+                  "type": "string"
+                },
+                "create_time": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "last_scan_failed": {
+            "type": "boolean"
+          },
+          "pending": {
+            "type": "boolean"
+          },
+          "compliant": {
+            "type": "boolean"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "commands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Command"
+            }
+          },
+          "pending_patches": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "connected": {
+            "type": "boolean"
+          },
+          "last_process_time": {
+            "type": "string"
+          },
+          "next_patch_time": {
+            "type": "string"
+          },
+          "notification_count": {
+            "type": "integer"
+          },
+          "reboot_notification_count": {
+            "type": "integer"
+          },
+          "patch_deferral_count": {
+            "type": "integer"
+          },
+          "is_delayed_by_notification": {
+            "type": "boolean"
+          },
+          "reboot_is_delayed_by_notification": {
+            "type": "boolean"
+          },
+          "is_delayed_by_user": {
+            "type": "boolean"
+          },
+          "reboot_is_delayed_by_user": {
+            "type": "boolean"
+          },
+          "last_disconnect_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "needs_attention": {
+            "type": "boolean"
+          },
+          "serial_number": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DeviceStatus"
+          },
+          "last_logged_in_user": {
+            "type": "string"
+          }
+        }
+      },
+      "ServerWithPolicies": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "os_version_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "server_group_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "organization_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "instance_id": {
+            "type": "string"
+          },
+          "refresh_interval": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "last_update_time": {
+            "type": "string"
+          },
+          "last_refresh_time": {
+            "type": "string"
+          },
+          "uptime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "needs_reboot": {
+            "type": "boolean"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "create_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "os_version": {
+            "type": "string"
+          },
+          "os_name": {
+            "type": "string"
+          },
+          "os_family": {
+            "type": "string"
+          },
+          "ip_addrs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "ip_addrs_private": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hostname": {
+            "type": "string"
+          },
+          "patches": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "details": {
+            "$ref": "#/components/schemas/ServerDetail"
+          },
+          "agent_version": {
+            "type": "string"
+          },
+          "custom_name": {
+            "type": "string"
+          },
+          "exception": {
+            "type": "boolean"
+          },
+          "total_count": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "server_policies": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/PatchPolicy"
+                },
+                {
+                  "$ref": "#/components/schemas/CustomPolicy"
+                },
+                {
+                  "$ref": "#/components/schemas/RequiredSoftwarePolicy"
+                }
+              ]
+            }
+          },
+          "policy_status": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "organization_id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "policy_id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "server_id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "policy_name": {
+                  "type": "string"
+                },
+                "policy_type_name": {
+                  "type": "string",
+                  "enum": [
+                    "patch",
+                    "custom",
+                    "required_software"
+                  ],
+                  "x-enumDescriptions": {
+                    "patch": "Patch Policy",
+                    "custom": "Worklet Policy",
+                    "required_software": "Required Software Policy"
+                  }
+                },
+                "status": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "result": {
+                  "type": "string"
+                },
+                "create_time": {
+                  "type": "string"
+                },
+                "next_remediation": {
+                  "type": "string",
+                  "nullable": true,
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "last_scan_failed": {
+            "type": "boolean"
+          },
+          "pending": {
+            "type": "boolean"
+          },
+          "compliant": {
+            "type": "boolean"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "commands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Command"
+            }
+          },
+          "pending_patches": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "connected": {
+            "type": "boolean"
+          },
+          "last_process_time": {
+            "type": "string"
+          },
+          "next_patch_time": {
+            "type": "string"
+          },
+          "notification_count": {
+            "type": "integer"
+          },
+          "reboot_notification_count": {
+            "type": "integer"
+          },
+          "patch_deferral_count": {
+            "type": "integer"
+          },
+          "is_delayed_by_notification": {
+            "type": "boolean"
+          },
+          "reboot_is_delayed_by_notification": {
+            "type": "boolean"
+          },
+          "is_delayed_by_user": {
+            "type": "boolean"
+          },
+          "reboot_is_delayed_by_user": {
+            "type": "boolean"
+          },
+          "last_disconnect_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "needs_attention": {
+            "type": "boolean"
+          },
+          "serial_number": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DeviceStatus"
+          },
+          "last_logged_in_user": {
+            "type": "string"
+          }
+        }
+      },
+      "ServerDetail": {
+        "type": "object",
+        "properties": {
+          "CPU": {
+            "type": "string"
+          },
+          "DISKS": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "SIZE": {
+                  "type": "string"
+                },
+                "TYPE": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "MODEL": {
+            "type": "string"
+          },
+          "NICS": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "CONNECTED": {
+                  "type": "boolean"
+                },
+                "DEVICE": {
+                  "type": "string"
+                },
+                "IPS": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "MAC": {
+                  "type": "string"
+                },
+                "TYPE": {
+                  "type": "string"
+                },
+                "VENDOR": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "RAM": {
+            "type": "string"
+          },
+          "SERIAL": {
+            "type": "string"
+          },
+          "SERVICETAG": {
+            "type": "string"
+          },
+          "VENDOR": {
+            "type": "string"
+          },
+          "VERSION": {
+            "type": "string"
+          }
+        }
+      },
+      "ServerGroup": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "organization_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "refresh_interval": {
+            "type": "integer"
+          },
+          "parent_server_group_id": {
+            "type": "integer"
+          },
+          "ui_color": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "enable_os_auto_update": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "server_count": {
+            "type": "integer"
+          },
+          "wsus_config": {
+            "$ref": "#/components/schemas/WsusConfig"
+          },
+          "policies": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "ServerGroupCreateOrUpdateRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "refresh_interval",
+          "parent_server_group_id"
+        ],
+        "properties": {
+          "name": {
+            "description": "Name of the group",
+            "type": "string"
+          },
+          "refresh_interval": {
+            "description": "Frequency of device refreshes (scans) in minutes. Minimum: 360 Maximum: 1440",
+            "type": "integer",
+            "minimum": 360,
+            "maximum": 1440
+          },
+          "parent_server_group_id": {
+            "description": "ID of the parent group. Use the organization's Default Group ID to make this a top-level group. See [About Automox API - Default Group ID](/developer-portal/about-ax-api#Default-Group-ID)",
+            "type": "integer"
+          },
+          "ui_color": {
+            "description": "The highlight color for the group. Primarily used on the System Management view. Format: #059F1D",
+            "type": "string"
+          },
+          "notes": {
+            "description": "Use to define notes that are displayed while editing the policy",
+            "type": "string"
+          },
+          "enable_os_auto_update": {
+            "description": "Enforce automatic update settings Options: `null`: Keep Device's Setting. `true`: Enable OS automatic updates. `false`: Disable OS automatic updates.",
+            "type": "boolean",
+            "nullable": true
+          },
+          "enable_wsus": {
+            "description": "Enforce WSUS settings for Windows devices. Options: `null`: Keep Device's Setting. `true`: force WSUS. `false`: force Windows Update.",
+            "type": "boolean",
+            "nullable": true
+          },
+          "wsus_server": {
+            "description": "WSUS server address. Use with `enable_wsus`. Format: `\"https://myserver.com:8530\"`",
+            "type": "string"
+          },
+          "policies": {
+            "description": "List of Policies to link to this group.",
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "firstname": {
+            "type": "string"
+          },
+          "lastname": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "features": {
+            "type": "object",
+            "properties": {
+              "mo": {
+                "type": "boolean"
+              }
+            }
+          },
+          "prefs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "user_id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "pref_name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "orgs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserOrgs"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "saml_enabled": {
+            "type": "boolean"
+          },
+          "rbac_roles": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "organization_id": {
+                  "type": "integer",
+                  "format": "int64"
+                }
+              }
+            }
+          }
+        }
+      },
+      "UserOrgs": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "access_key": {
+            "type": "string"
+          },
+          "trial_end_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "trial_expired": {
+            "type": "boolean"
+          }
+        }
+      },
+      "WsusConfig": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "server_group_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "is_managed": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "server_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "responses": {
+      "Error": {
+        "description": "Invalid Request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "errors": {
+                  "type": "array",
+                  "maxItems": 1,
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "example": {
+              "errors": [
+                "Validation Error"
+              ]
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Access token is missing or invalid",
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "errors": {
+                  "type": "array",
+                  "maxItems": 1,
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "example": {
+              "errors": [
+                "Unauthorized"
+              ]
+            }
+          }
+        }
+      },
+      "UnauthorizedAction": {
+        "description": "You do not have permission to perform this action.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "description": "Unauthorized",
+              "type": "object",
+              "properties": {
+                "errors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "errors"
+              ]
+            },
+            "examples": {
+              "Unauthorized for this action.": {
+                "value": {
+                  "errors": [
+                    "Unauthorized"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "RateLimit": {
+        "description": "Too many requests",
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "errors": {
+                  "type": "array",
+                  "maxItems": 1,
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "example": {
+              "errors": [
+                "Too Many Requests!"
+              ]
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Entity not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "errors": {
+                  "type": "array",
+                  "maxItems": 1,
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "example": {
+              "errors": [
+                "Not found."
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/servers": {
+      "get": {
+        "tags": [
+          "Devices"
+        ],
+        "summary": "List All Devices",
+        "description": "Retrieves a detailed list of all devices (server objects) for the authenticated user.",
+        "operationId": "getDevices",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "query",
+            "description": "Filter based on membership to a specific Server Group ID",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "PS_VERSION",
+            "in": "query",
+            "description": "Shows version of PowerShell running on the device, if applicable.",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "o",
+            "in": "query",
+            "description": "Organization ID. Response will include devices for the specified Automox Organization. The organization will be assumed based on the API key, if not specified.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pending",
+            "in": "query",
+            "description": "Filter based on status of pending patches. Format: `pending=1`",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "patchStatus",
+            "in": "query",
+            "description": "Filter based on presence of ANY available patches that aren't already installed. Value must be 'missing' Format: `patchStatus=missing`",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "missing"
+            }
+          },
+          {
+            "name": "policyId",
+            "in": "query",
+            "description": "Filter based on association to a given Policy ID. Format: `policyId=12345`",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "exception",
+            "in": "query",
+            "description": "Filter based on the exception property to exclude the device from reports. Device is still monitored when excluded from reports and statistics. Format: `exception=1`",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "managed",
+            "in": "query",
+            "description": "Filter based on device's Managed status. Unmanaged indicates no linked policies. Format: `managed=0`",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "A limit on the number of results to be returned, between 1 and 500, with a default of 500. Use with page parameter. See [About Automox API - Pagination](/developer-portal/about-ax-api/#pagination)",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 500,
+              "default": 500
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The page of results you wish to be returned with page numbers starting at 0. See [About Automox API - Pagination](/developer-portal/about-ax-api/#pagination)",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "style": "deepObject",
+            "allowReserved": true,
+            "explode": true,
+            "description": "Filter on compatible devices",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "is_compatible": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          {
+            "name": "sortColumns[]",
+            "in": "query",
+            "description": "The column you want to sort by.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "is_compatible"
+              ]
+            }
+          },
+          {
+            "name": "sortDir",
+            "in": "query",
+            "description": "The sort direction, ascending or descending.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "x-enumDescriptions": {
+                "asc": "Ascending order",
+                "desc": "Descending order"
+              }
+            }
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{ \"Authorization\" = \"Bearer $apiKey\" }\n$url = \"https://console.automox.com/api/servers?o=:orgID&page=0&limit=500\"\n\n$response = (Invoke-WebRequest -Method Get -Uri $url -Headers $headers).Content\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Server"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimit"
+          }
+        }
+      }
+    },
+    "/servers/{id}": {
+      "get": {
+        "tags": [
+          "Devices"
+        ],
+        "summary": "List a Specific Device",
+        "description": "Returns a specific device (server object) for the authenticated user.",
+        "operationId": "getServer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Server ID for the specified device.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "o",
+            "in": "query",
+            "description": "Organization ID for the specified device.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "PS_VERSION",
+            "in": "query",
+            "description": "The version of PowerShell running on the device.",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{ \"Authorization\" = \"Bearer $apiKey\" }\n$url = \"https://console.automox.com/api/servers/123456?o=0000\"\n\n$response = (Invoke-WebRequest -Method Get -Uri $url -Headers $headers).Content\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerWithPolicies"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimit"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Devices"
+        ],
+        "summary": "Updates a device (server object).",
+        "description": "Send a JSON object in the request body to update device details).",
+        "operationId": "updateDevice",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Server ID for the specified device.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "o",
+            "in": "query",
+            "description": "Organization ID for the specified device.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Device update",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "server_group_id",
+                  "exception"
+                ],
+                "properties": {
+                  "server_group_id": {
+                    "description": "Server Group ID for the specified group.",
+                    "type": "integer"
+                  },
+                  "ip_addrs": {
+                    "description": "Server IP address.",
+                    "type": "string"
+                  },
+                  "exception": {
+                    "description": "Use the exception property to exclude the device from reports and statistics.",
+                    "type": "boolean"
+                  },
+                  "tags": {
+                    "description": "List of tags.",
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "custom_name": {
+                    "description": "Custom name that will display in the console instead of the hostname.",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{\n    \"Authorization\" = \"Bearer $apiKey\"\n    \"Content-Type\" = \"application/json\"\n}\n$body = @\"\n{\n    \"server_group_id\": 12345,\n    \"tags\": [\n        \"Tag1\",\n        \"Tag2\",\n        \"Tag3\"\n    ],\n    \"custom_name\": null,\n    \"exception\": false\n}\n\"@\n$url = \"https://console.automox.com/api/servers/123456?o=0000\"\n\nInvoke-WebRequest -Method Put -Uri $url -Headers $headers -Body $body\n"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Update Successful"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Devices"
+        ],
+        "summary": "Deletes a device (server object) from the organization.",
+        "description": "**NOTE:** The associated command queue will be purged. Any pending custom commands for the device are removed.",
+        "operationId": "deleteDevice",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Server ID for the specified device",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "o",
+            "in": "query",
+            "description": "Organization ID for the specified device",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{ \"Authorization\" = \"Bearer $apiKey\" }\n$url = \"https://console.automox.com/api/servers/123456?o=0000\"\n\nInvoke-WebRequest -Method Delete -Uri $url -Headers $headers\n"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete Successful"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/servers/batch": {
+      "post": {
+        "tags": [
+          "Devices"
+        ],
+        "summary": "Updates multiple devices (server objects).",
+        "description": "Updates multiple devices (server objects) in a batch.",
+        "operationId": "batchUpdateDevices",
+        "parameters": [
+          {
+            "name": "o",
+            "in": "query",
+            "description": "Organization ID for the specified devices",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Update devices",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "devices",
+                  "actions"
+                ],
+                "properties": {
+                  "devices": {
+                    "description": "List of device (server) ids",
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 500,
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "actions": {
+                    "description": "Array of different actions to take on each device",
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "attribute": {
+                          "description": "Name of the attribute",
+                          "type": "string",
+                          "enum": [
+                            "tags"
+                          ]
+                        },
+                        "action": {
+                          "description": "What action should be taken",
+                          "type": "string",
+                          "enum": [
+                            "apply",
+                            "remove"
+                          ]
+                        },
+                        "value": {
+                          "description": "The value to use for the action",
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{\n    \"Authorization\" = \"Bearer $apiKey\"\n    \"Content-Type\" = \"application/json\"\n  }\n$body = @\"\n  {\n      \"devices\": [1,2,3],\n      \"actions\": [\n        {\n          \"action\": \"apply\",\n          \"attribute\": \"tags\",\n          \"value\": [\"Tag1\", \"Tag2\"]\n        }\n      ]\n  }\n  \"@\n\n$url = \"https://console.automox.com/api/servers/batch?o=0\"\n\nInvoke-WebRequest -Method Post -Uri $url -Headers $headers -Body $body\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Batch"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimit"
+          }
+        }
+      }
+    },
+    "/servers/{id}/queues": {
+      "get": {
+        "tags": [
+          "Devices",
+          "Commands"
+        ],
+        "summary": "Upcoming Commands Queue for Specific Device",
+        "description": "Returns the queue of upcoming commands for the specified device.",
+        "operationId": "getDeviceQueues",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Server ID for the specified device.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "o",
+            "in": "query",
+            "description": "Organization ID for the specified device.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{ \"Authorization\" = \"Bearer $apiKey\" }\n$url = \"https://console.automox.com/api/servers/123456/queues?o=0000\"\n\n$response = (Invoke-WebRequest -Method Get -Uri $url -Headers $headers).Content\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Command"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimit"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Devices",
+          "Commands"
+        ],
+        "summary": "Issue a command to a device",
+        "description": "Force a device to Scan, Patch, or Reboot for immediate execution. **Note: The `installAllUpdates` option ignores any Policy Filters**",
+        "operationId": "issueDeviceCommand",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Server ID for the specified device",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "o",
+            "in": "query",
+            "description": "Organization ID for the specified device",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "command_type_name"
+                ],
+                "properties": {
+                  "command_type_name": {
+                    "type": "string",
+                    "enum": [
+                      "GetOS",
+                      "InstallUpdate",
+                      "InstallAllUpdates",
+                      "policy_{policy_id}_test",
+                      "policy_{policy_id}_remediate",
+                      "Reboot"
+                    ],
+                    "x-enumDescriptions": {
+                      "GetOS": "Triggers a device scan.",
+                      "InstallUpdate": "Installs a specific patch.",
+                      "InstallAllUpdates": "Installs all available patches. **NOTE: This ignores any Policy Filters!**",
+                      "policy_{policy_id}_test": "Evaluates compliance against a Worklet.",
+                      "policy_{policy_id}_remediate": "Forces remediation of a Worklet or Required Software Policy.",
+                      "Reboot": "Forces a reboot."
+                    }
+                  },
+                  "args": {
+                    "type": "string",
+                    "description": "Only needed for `InstallUpdate`. Includes the name of the patches to install."
+                  }
+                }
+              },
+              "examples": {
+                "getOS": {
+                  "summary": "Trigger a scan of the target device",
+                  "value": {
+                    "command_type_name": "GetOS"
+                  }
+                },
+                "InstallUpdate": {
+                  "summary": "Install a specific patch",
+                  "value": {
+                    "command_type_name": "InstallUpdate",
+                    "args": "KB12345 KB67890"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{\n    \"Authorization\" = \"Bearer $apiKey\"\n    \"Content-Type\" = \"application/json\"\n}\n$body = @{\n  command_type_name = \"Reboot\"\n}\n\n$url = \"https://console.automox.com/api/servers/123456/queues?o=0000\"\n\nInvoke-WebRequest -Method Post -Uri $url -Headers $headers -Body ($body | ConvertTo-Json)\n"
+          },
+          {
+            "lang": "PowerShell",
+            "label": "PowerShell (with ARGS)",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{\n    \"Authorization\" = \"Bearer $apiKey\"\n    \"Content-Type\" = \"application/json\"\n}\n$body = @{\n  command_type_name = \"InstallUpdate\"\n  args = \"2e7e5661-f7c8-4a21-a65a-52d0fdf8841a\"\n}\n\n$url = \"https://console.automox.com/api/servers/123456/queues?o=0000\"\n\nInvoke-WebRequest -Method Post -Uri $url -Headers $headers -Body ($body | ConvertTo-Json)\n"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Command submitted successfully"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          }
+        }
+      }
+    },
+    "/servergroups": {
+      "get": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "List All Group Objects",
+        "description": "Retrieves all server group objects for the authenticated user.",
+        "operationId": "getServerGroups",
+        "parameters": [
+          {
+            "name": "o",
+            "in": "query",
+            "description": "Organization ID for retrieving groups.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The page of results you wish to be returned with page numbers starting at 0. See [About Automox API - Pagination](/developer-portal/about-ax-api/#pagination)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 500,
+              "default": 500
+            },
+            "in": "query",
+            "name": "limit",
+            "description": "A limit on the number of results to be returned, between 1 and 500, with a default of 500. Use with `page` parameter. See [About Automox API - Pagination](/developer-portal/about-ax-api/#pagination)",
+            "required": false
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{ \"Authorization\" = \"Bearer $apiKey\" }\n$url = \"https://console.automox.com/api/servergroups?o=0000\"\n\n$response = (Invoke-WebRequest -Method Get -Uri $url -Headers $headers).Content\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServerGroup"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimit"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "Creates a new server group.",
+        "description": "Creates a new server group.",
+        "operationId": "createServerGroup",
+        "parameters": [
+          {
+            "name": "o",
+            "in": "query",
+            "description": "Organization ID for the created group.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServerGroupCreateOrUpdateRequest"
+              }
+            }
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{\n    \"Authorization\" = \"Bearer $apiKey\"\n    \"Content-Type\" = \"application/json\"\n  }\n$body = @\"\n  {\n      \"name\": \"API Creation\",\n      \"refresh_interval\": 1440,\n      \"parent_server_group_id\": 23500,\n      \"ui_color\": \"#FFFFFF\",\n      \"notes\": \"2 Policies, White, Force WSUS\",\n      \"enable_os_auto_update\": false,\n      \"enable_wsus\": true,\n      \"wsus_server\": \"http://myserver.com:8530\",\n      \"policies\": [\n          18627,\n          22645\n      ]\n  }\n  \"@\n\n$url = \"https://console.automox.com/api/servergroups?o=0000\"\n\nInvoke-WebRequest -Method Post -Uri $url -Headers $headers -Body $body\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerGroup"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          }
+        }
+      }
+    },
+    "/servergroups/{id}": {
+      "get": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "List Specific Group Object",
+        "description": "Returns a specific server group object for the authenticated user.",
+        "operationId": "getServerGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Server Group ID for the specified group.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "o",
+            "in": "query",
+            "description": "Organization ID for the specified group.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{ \"Authorization\" = \"Bearer $apiKey\" }\n$url = \"https://console.automox.com/api/servergroups/12345?o=0000\"\n\n$response = (Invoke-WebRequest -Method Get -Uri $url -Headers $headers).Content\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerGroup"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimit"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "Updates an existing server group.",
+        "description": "Updates server group settings.",
+        "operationId": "updateServerGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Server Group ID for the specified group.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "o",
+            "in": "query",
+            "description": "Organization ID for the created group.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServerGroupCreateOrUpdateRequest"
+              }
+            }
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{\n    \"Authorization\" = \"Bearer $apiKey\"\n    \"Content-Type\" = \"application/json\"\n}\n$body = @\"\n{\n    \"name\": \"API Modified\",\n    \"refresh_interval\": 1380,\n    \"parent_server_group_id\": 23500,\n    \"ui_color\": \"#E9FF03\",\n    \"notes\": \"3 Policies, Lemonade Color, Force WinUpdate\",\n    \"enable_os_auto_update\": false,\n  \"enable_wsus\": false,\n    \"policies\": [\n        18627,\n        22645,\n        25754\n    ]\n}\n\"@\n\n$url = \"https://console.automox.com/api/servergroups/123456?o=0000\"\n\nInvoke-WebRequest -Method Put -Uri $url -Headers $headers -Body $body\n"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Operation"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Groups"
+        ],
+        "summary": "Deletes a server group.",
+        "description": "**NOTE:** Any devices that belong to the deleted group will be moved to the organization's Default Group",
+        "operationId": "deleteServerGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Server Group ID for the specified group.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "o",
+            "in": "query",
+            "description": "Organization ID for the created group.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{ \"Authorization\" = \"Bearer $apiKey\" }\n$url = \"https://console.automox.com/api/servergroups/12345?o=0000\"\n\nInvoke-WebRequest -Method Delete -Uri $url -Headers $headers\n"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deletion Successful"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/orgs": {
+      "get": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "Organization Details",
+        "description": "Returns a detailed list of all organizations for the authenticated user.",
+        "operationId": "getOrganizations",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "in": "query",
+            "name": "page",
+            "description": "The page of results you wish to be returned with page numbers starting at 0. See [About Automox API - Pagination](/developer-portal/about-ax-api/#pagination)"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 500,
+              "default": 500
+            },
+            "in": "query",
+            "name": "limit",
+            "description": "A limit on the number of results to be returned, between 1 and 500, with a default of 500. Use with `page` parameter. See [About Automox API - Pagination](/developer-portal/about-ax-api/#pagination)"
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{ \"Authorization\" = \"Bearer $apiKey\" }\n$url = \"https://console.automox.com/api/orgs\"\n\n$response = (Invoke-WebRequest -Method Get -Uri $url -Headers $headers).Content\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Organization"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimit"
+          }
+        }
+      }
+    },
+    "/policies": {
+      "get": {
+        "tags": [
+          "Policies"
+        ],
+        "summary": "List All Policy Objects",
+        "description": "Retrieves a list of all policy objects for the authenticated user.",
+        "operationId": "getPolicies",
+        "parameters": [
+          {
+            "name": "o",
+            "in": "query",
+            "description": "Organization ID for retrieving policies",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "in": "query",
+            "name": "page",
+            "description": "The page of results you wish to be returned with page numbers starting at 0. See [About Automox API - Pagination](/developer-portal/about-ax-api/#pagination)"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 500,
+              "default": 500
+            },
+            "in": "query",
+            "name": "limit",
+            "description": "A limit on the number of results to be returned, between 1 and 500, with a default of 500. Use with `page` parameter. See [About Automox API - Pagination](/developer-portal/about-ax-api/#pagination)"
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{ \"Authorization\" = \"Bearer $apiKey\" }\n$url = \"https://console.automox.com/api/policies?o=0000\"\n\n$response = (Invoke-WebRequest -Method Get -Uri $url -Headers $headers).Content\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/components/schemas/PatchPolicy"
+                      },
+                      {
+                        "$ref": "#/components/schemas/RequiredSoftwarePolicy"
+                      },
+                      {
+                        "$ref": "#/components/schemas/CustomPolicy"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimit"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Policies"
+        ],
+        "summary": "Create a New Policy",
+        "description": "Creates a new policy for a specified organization. For more info on filter types and scheduling, see [Policy and Device Filters, and Scheduling](/developer-portal/policy_filters_schedule).",
+        "operationId": "createPolicy",
+        "parameters": [
+          {
+            "name": "o",
+            "in": "query",
+            "description": "Organization ID for the specified policy.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "discriminator": {
+                  "propertyName": "policy_type_name",
+                  "mapping": {
+                    "patch": "#/components/schemas/PatchPolicy",
+                    "custom": "#/components/schemas/CustomPolicy",
+                    "required_software": "#/components/schemas/RequiredSoftwarePolicy"
+                  }
+                }
+              },
+              "examples": {
+                "PatchAll": {
+                  "summary": "A Patch All Policy",
+                  "value": {
+                    "name": "Test Patch All Policy",
+                    "policy_type_name": "patch",
+                    "organization_id": 9999,
+                    "schedule_days": 42,
+                    "schedule_weeks_of_month": 20,
+                    "schedule_months": 4680,
+                    "schedule_time": "12:00",
+                    "configuration": {
+                      "auto_patch": true,
+                      "notify_user": true,
+                      "auto_reboot": true,
+                      "patch_rule": "all",
+                      "filter_type": "all",
+                      "missed_patch_window": false,
+                      "device_filters_enabled": true,
+                      "device_filters": [
+                        {
+                          "field": "tag",
+                          "op": "in",
+                          "value": [
+                            "Windows",
+                            "Win10"
+                          ]
+                        }
+                      ],
+                      "include_optional": true,
+                      "notify_reboot_user": true,
+                      "notify_deferred_reboot_user": true,
+                      "custom_notification_patch_message": "Important updates are going to be installed!",
+                      "custom_notification_patch_message_mac": "Important updates are going to be installed!",
+                      "custom_notification_reboot_message": "Reboot needed to finish installing updates!",
+                      "custom_notification_reboot_message_mac": "Reboot needed to finish installing updates!",
+                      "custom_notification_max_delays": 3,
+                      "custom_notification_deferment_periods": [
+                        1,
+                        4,
+                        8
+                      ],
+                      "custom_pending_reboot_notification_message": "Your computer needs to reboot to install updates!",
+                      "custom_pending_reboot_notification_message_mac": "Your computer needs to reboot to install updates!",
+                      "custom_pending_reboot_notification_deferment_periods": [
+                        1,
+                        4,
+                        8
+                      ],
+                      "notify_user_message_timeout": 15,
+                      "notify_deferred_reboot_user_message_timeout": 15,
+                      "notify_user_auto_deferral_enabled": true,
+                      "notify_deferred_reboot_user_auto_deferral_enabled": true
+                    },
+                    "server_groups": [
+                      250624,
+                      90125
+                    ],
+                    "notes": "Here are some notes"
+                  }
+                },
+                "RequiredSoftwarePolicy": {
+                  "summary": "A Required Software Policy",
+                  "value": {
+                    "name": "Test Required Software Policy",
+                    "policy_type_name": "required_software",
+                    "organization_id": 9999,
+                    "schedule_days": 42,
+                    "schedule_weeks_of_month": 20,
+                    "schedule_months": 4680,
+                    "schedule_time": "12:00",
+                    "configuration": {
+                      "os_family": "Windows",
+                      "package_name": "NotePadPlusPlus",
+                      "package_version": "7.8.4",
+                      "evaluation_code": null,
+                      "remediation_code": null,
+                      "installation_code": ".\\npp.7.8.4.Installer.x64.exe /S"
+                    },
+                    "notify_user": true,
+                    "server_groups": [
+                      250624,
+                      90125
+                    ],
+                    "notes": "Here are some notes"
+                  }
+                },
+                "PatchAdvancedFilterPolicy": {
+                  "summary": "A Patch Policy using Advanced Filters",
+                  "value": {
+                    "name": "Advanced Policy",
+                    "policy_type_name": "patch",
+                    "organization_id": 9999,
+                    "schedule_days": 42,
+                    "schedule_weeks_of_month": 20,
+                    "schedule_months": 4680,
+                    "schedule_time": "00:00",
+                    "configuration": {
+                      "auto_patch": true,
+                      "auto_reboot": true,
+                      "patch_rule": "advanced",
+                      "advanced_filter": [
+                        {
+                          "left": "patch-os",
+                          "right": "windows",
+                          "condition": "is"
+                        },
+                        {
+                          "left": "patch-source",
+                          "right": "windowsupdate",
+                          "condition": "is"
+                        }
+                      ],
+                      "missed_patch_window": false,
+                      "device_filters_enabled": true,
+                      "device_filters": [
+                        {
+                          "field": "tag",
+                          "op": "in",
+                          "value": [
+                            "Windows",
+                            "Win10"
+                          ]
+                        }
+                      ],
+                      "include_optional": true,
+                      "notify_reboot_user": true,
+                      "notify_deferred_reboot_user": true,
+                      "custom_notification_patch_message": "Important updates are going to be installed!",
+                      "custom_notification_patch_message_mac": "Important updates are going to be installed!",
+                      "custom_notification_reboot_message": "Reboot needed to finish installing updates!",
+                      "custom_notification_reboot_message_mac": "Reboot needed to finish installing updates!",
+                      "custom_notification_max_delays": 3,
+                      "custom_notification_deferment_periods": [
+                        1,
+                        4,
+                        8
+                      ],
+                      "custom_pending_reboot_notification_message": "Your computer needs to reboot to install updates!",
+                      "custom_pending_reboot_notification_message_mac": "Your computer needs to reboot to install updates!",
+                      "custom_pending_reboot_notification_deferment_periods": [
+                        1,
+                        4,
+                        8
+                      ],
+                      "notify_user_message_timeout": 15,
+                      "notify_deferred_reboot_user_message_timeout": 15,
+                      "notify_user_auto_deferral_enabled": true,
+                      "notify_deferred_reboot_user_auto_deferral_enabled": true,
+                      "notify_user": true
+                    },
+                    "server_groups": [
+                      250624,
+                      90125
+                    ],
+                    "notes": "Here are some notes"
+                  }
+                },
+                "ManualPolicy": {
+                  "summary": "Manual Approval Policy",
+                  "value": {
+                    "name": "Manual Approval",
+                    "policy_type_name": "patch",
+                    "organization_id": 9999,
+                    "schedule_days": 42,
+                    "schedule_weeks_of_month": 20,
+                    "schedule_months": 4680,
+                    "schedule_time": "12:00",
+                    "configuration": {
+                      "auto_patch": true,
+                      "patch_rule": "manual",
+                      "auto_reboot": true,
+                      "notify_user": true,
+                      "evaluation_code": null,
+                      "include_optional": false,
+                      "remediation_code": null,
+                      "installation_code": null,
+                      "notify_reboot_user": true,
+                      "use_scheduled_timezone": false,
+                      "notify_deferred_reboot_user": true,
+                      "custom_notification_max_delays": 3,
+                      "custom_notification_patch_message": "System Update: An important update will be installed.",
+                      "custom_notification_reboot_message": "An important update will be installed; reboot may be required.",
+                      "custom_notification_deferment_periods": [
+                        1,
+                        4,
+                        8
+                      ],
+                      "custom_notification_patch_message_mac": "System Update: An important update will be installed.",
+                      "custom_notification_reboot_message_mac": "An important update will be installed; reboot may be required.",
+                      "custom_pending_reboot_notification_message": "Updates require reboot: Please save your work.",
+                      "notify_deferred_reboot_user_message_timeout": 15,
+                      "custom_pending_reboot_notification_max_delays": 3,
+                      "custom_pending_reboot_notification_message_mac": "Updates require reboot: Please save your work.",
+                      "notify_deferred_reboot_user_auto_deferral_enabled": false,
+                      "custom_pending_reboot_notification_deferment_periods": [
+                        1,
+                        4,
+                        8
+                      ]
+                    },
+                    "server_groups": [
+                      250624,
+                      90125
+                    ],
+                    "notes": "Here are some notes"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{\n    \"Authorization\" = \"Bearer $apiKey\"\n    \"Content-Type\" = \"application/json\"\n}\n$url = \"https://console.automox.com/api/policies?o=9999\"\n$body = @\" {\n  \"name\": \"Patch All Policy\",\n  \"policy_type_name\": \"patch\",\n  \"organization_id\": 9999,\n  \"schedule_days\": 42,\n  \"schedule_weeks_of_month\": 20,\n  \"schedule_months\": 4680,\n  \"schedule_time\": \"12:00\",\n  \"configuration\": {\n      \"auto_patch\": true,\n      \"notify_user\": true,\n      \"auto_reboot\": true,\n      \"patch_rule\": \"all\",\n      \"filter_type\": \"all\",\n      \"missed_patch_window\": false,\n      \"device_filters_enabled\": true,\n      \"device_filters\": [\n          {\n              \"field\": \"tag\",\n              \"op\": \"in\",\n              \"value\": [\n                  \"Windows\",\n                  \"Win10\"\n              ]\n          }\n      ],\n      \"include_optional\": true,\n      \"notify_reboot_user\": true,\n      \"notify_deferred_reboot_user\": true,\n      \"custom_notification_patch_message\": \"Important updates are going to be installed!\",\n      \"custom_notification_patch_message_mac\": \"Important updates are going to be installed!\",\n      \"custom_notification_reboot_message\": \"Reboot needed to finish installing updates!\",\n      \"custom_notification_reboot_message_mac\": \"Reboot needed to finish installing updates!\",\n      \"custom_notification_max_delays\": 3,\n      \"custom_notification_deferment_periods\": [\n          1,\n          4,\n          8\n      ],\n      \"custom_pending_reboot_notification_message\": \"Your computer needs to reboot to install updates!\",\n      \"custom_pending_reboot_notification_message_mac\": \"Your computer needs to reboot to install updates!\",\n      \"custom_pending_reboot_notification_deferment_periods\": [\n          1,\n          4,\n          8\n      ],\n      \"notify_user_message_timeout\": 15,\n      \"notify_deferred_reboot_user_message_timeout\": 15,\n      \"notify_user_auto_deferral_enabled\": true,\n      \"notify_deferred_reboot_user_auto_deferral_enabled\": true\n  },\n  \"notify_user\": true,\n  \"server_groups\": [\n      250624,\n      90125\n  ],\n  \"notes\": \"Here are some notes\"\n} \"@\nInvoke-WebRequest -Method Post -Uri $url -Headers $headers -Body $body\n"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimit"
+          }
+        }
+      }
+    },
+    "/policies/{id}": {
+      "get": {
+        "tags": [
+          "Policies"
+        ],
+        "summary": "List Specific Policy Object",
+        "description": "Returns a specific policy object for the authenticated user.",
+        "operationId": "getPolicy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Policy ID for the specified policy",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "o",
+            "in": "query",
+            "description": "Organization ID for the specified policy",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{ \"Authorization\" = \"Bearer $apiKey\" }\n$url = \"https://console.automox.com/api/policies/12345?o=0000\"\n\n$response = (Invoke-WebRequest -Method Get -Uri $url -Headers $headers).Content\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/PatchPolicy"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CustomPolicy"
+                    },
+                    {
+                      "$ref": "#/components/schemas/RequiredSoftwarePolicy"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimit"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Policies"
+        ],
+        "summary": "Updates a specific policy object for the authenticated user.",
+        "description": "Updates a specific policy object for the authenticated user. For more info on filter types and scheduling, see [Policy and Device Filters, and Scheduling](/developer-portal/policy_filters_schedule).",
+        "operationId": "updatePolicy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Policy ID for the specified policy",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "o",
+            "in": "query",
+            "description": "Organization ID for the specified policy",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "discriminator": {
+                  "propertyName": "policy_type_name",
+                  "mapping": {
+                    "patch": "#/components/schemas/PatchPolicy",
+                    "custom": "#/components/schemas/CustomPolicy",
+                    "required_software": "#/components/schemas/RequiredSoftwarePolicy"
+                  }
+                }
+              },
+              "examples": {
+                "PatchAll": {
+                  "summary": "A Patch All Policy",
+                  "value": {
+                    "name": "Test Patch All Policy",
+                    "policy_type_name": "patch",
+                    "organization_id": 9999,
+                    "schedule_days": 42,
+                    "schedule_weeks_of_month": 20,
+                    "schedule_months": 4680,
+                    "schedule_time": "12:00",
+                    "configuration": {
+                      "auto_patch": true,
+                      "notify_user": true,
+                      "auto_reboot": true,
+                      "patch_rule": "all",
+                      "filter_type": "all",
+                      "missed_patch_window": false,
+                      "device_filters_enabled": true,
+                      "device_filters": [
+                        {
+                          "field": "tag",
+                          "op": "in",
+                          "value": [
+                            "Windows",
+                            "Win10"
+                          ]
+                        }
+                      ],
+                      "include_optional": true,
+                      "notify_reboot_user": true,
+                      "notify_deferred_reboot_user": true,
+                      "custom_notification_patch_message": "Important updates are going to be installed!",
+                      "custom_notification_patch_message_mac": "Important updates are going to be installed!",
+                      "custom_notification_reboot_message": "Reboot needed to finish installing updates!",
+                      "custom_notification_reboot_message_mac": "Reboot needed to finish installing updates!",
+                      "custom_notification_max_delays": 3,
+                      "custom_notification_deferment_periods": [
+                        1,
+                        4,
+                        8
+                      ],
+                      "custom_pending_reboot_notification_message": "Your computer needs to reboot to install updates!",
+                      "custom_pending_reboot_notification_message_mac": "Your computer needs to reboot to install updates!",
+                      "custom_pending_reboot_notification_deferment_periods": [
+                        1,
+                        4,
+                        8
+                      ],
+                      "notify_user_message_timeout": 15,
+                      "notify_deferred_reboot_user_message_timeout": 15,
+                      "notify_user_auto_deferral_enabled": true,
+                      "notify_deferred_reboot_user_auto_deferral_enabled": true
+                    },
+                    "server_groups": [
+                      250624,
+                      90125
+                    ],
+                    "notes": "Here are some notes"
+                  }
+                },
+                "RequiredSoftwarePolicy": {
+                  "summary": "A Required Software Policy",
+                  "value": {
+                    "name": "Test Required Software Policy",
+                    "policy_type_name": "required_software",
+                    "organization_id": 9999,
+                    "schedule_days": 42,
+                    "schedule_weeks_of_month": 20,
+                    "schedule_months": 4680,
+                    "schedule_time": "12:00",
+                    "configuration": {
+                      "os_family": "Windows",
+                      "package_name": "NotePadPlusPlus",
+                      "package_version": "7.8.4",
+                      "evaluation_code": null,
+                      "remediation_code": null,
+                      "installation_code": ".\\npp.7.8.4.Installer.x64.exe /S"
+                    },
+                    "notify_user": true,
+                    "server_groups": [
+                      250624,
+                      90125
+                    ],
+                    "notes": "Here are some notes"
+                  }
+                },
+                "PatchAdvancedFilterPolicy": {
+                  "summary": "A Patch Policy using Advanced Filters",
+                  "value": {
+                    "name": "Advanced Policy",
+                    "policy_type_name": "patch",
+                    "organization_id": 9999,
+                    "schedule_days": 42,
+                    "schedule_weeks_of_month": 20,
+                    "schedule_months": 4680,
+                    "schedule_time": "00:00",
+                    "configuration": {
+                      "auto_patch": true,
+                      "auto_reboot": true,
+                      "patch_rule": "advanced",
+                      "advanced_filter": [
+                        {
+                          "left": "patch-os",
+                          "right": "windows",
+                          "condition": "is"
+                        },
+                        {
+                          "left": "patch-source",
+                          "right": "windowsupdate",
+                          "condition": "is"
+                        }
+                      ],
+                      "missed_patch_window": false,
+                      "device_filters_enabled": true,
+                      "device_filters": [
+                        {
+                          "field": "tag",
+                          "op": "in",
+                          "value": [
+                            "Windows",
+                            "Win10"
+                          ]
+                        }
+                      ],
+                      "include_optional": true,
+                      "notify_reboot_user": true,
+                      "notify_deferred_reboot_user": true,
+                      "custom_notification_patch_message": "Important updates are going to be installed!",
+                      "custom_notification_patch_message_mac": "Important updates are going to be installed!",
+                      "custom_notification_reboot_message": "Reboot needed to finish installing updates!",
+                      "custom_notification_reboot_message_mac": "Reboot needed to finish installing updates!",
+                      "custom_notification_max_delays": 3,
+                      "custom_notification_deferment_periods": [
+                        1,
+                        4,
+                        8
+                      ],
+                      "custom_pending_reboot_notification_message": "Your computer needs to reboot to install updates!",
+                      "custom_pending_reboot_notification_message_mac": "Your computer needs to reboot to install updates!",
+                      "custom_pending_reboot_notification_deferment_periods": [
+                        1,
+                        4,
+                        8
+                      ],
+                      "notify_user_message_timeout": 15,
+                      "notify_deferred_reboot_user_message_timeout": 15,
+                      "notify_user_auto_deferral_enabled": true,
+                      "notify_deferred_reboot_user_auto_deferral_enabled": true,
+                      "notify_user": true
+                    },
+                    "server_groups": [
+                      250624,
+                      90125
+                    ],
+                    "notes": "Here are some notes"
+                  }
+                },
+                "ManualPolicy": {
+                  "summary": "Manual Approval Policy",
+                  "value": {
+                    "name": "Manual Approval",
+                    "policy_type_name": "patch",
+                    "organization_id": 9999,
+                    "schedule_days": 42,
+                    "schedule_weeks_of_month": 20,
+                    "schedule_months": 4680,
+                    "schedule_time": "12:00",
+                    "configuration": {
+                      "auto_patch": true,
+                      "patch_rule": "manual",
+                      "auto_reboot": true,
+                      "notify_user": true,
+                      "evaluation_code": null,
+                      "include_optional": false,
+                      "remediation_code": null,
+                      "installation_code": null,
+                      "notify_reboot_user": true,
+                      "use_scheduled_timezone": false,
+                      "notify_deferred_reboot_user": true,
+                      "custom_notification_max_delays": 3,
+                      "custom_notification_patch_message": "System Update: An important update will be installed.",
+                      "custom_notification_reboot_message": "An important update will be installed; reboot may be required.",
+                      "custom_notification_deferment_periods": [
+                        1,
+                        4,
+                        8
+                      ],
+                      "custom_notification_patch_message_mac": "System Update: An important update will be installed.",
+                      "custom_notification_reboot_message_mac": "An important update will be installed; reboot may be required.",
+                      "custom_pending_reboot_notification_message": "Updates require reboot: Please save your work.",
+                      "notify_deferred_reboot_user_message_timeout": 15,
+                      "custom_pending_reboot_notification_max_delays": 3,
+                      "custom_pending_reboot_notification_message_mac": "Updates require reboot: Please save your work.",
+                      "notify_deferred_reboot_user_auto_deferral_enabled": false,
+                      "custom_pending_reboot_notification_deferment_periods": [
+                        1,
+                        4,
+                        8
+                      ]
+                    },
+                    "server_groups": [
+                      250624,
+                      90125
+                    ],
+                    "notes": "Here are some notes"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{\n    \"Authorization\" = \"Bearer $apiKey\"\n    \"Content-Type\" = \"application/json\"\n  }\n$url = \"https://console.automox.com/api/policies/12345?o=0000\"\n$body = @\"\n  {\n    \"name\": \"API Created\",\n    \"policy_type_name\": \"patch\",\n    \"organization_id\": 0000,\n    \"configuration\": {\n      \"auto_patch\": false,\n      \"auto_reboot\": true,\n      \"notify_reboot_user\": true,\n      \"notify_user\": true,\n      \"missed_patch_window\": true,\n      \"patch_rule\": \"advanced\",\n      \"filters\": [\"*KB2267602*\",\"*Exclude This Too*\"],\n      \"severity_filter\": [\"low\",\"medium\",\"high\",\"critical\",\"none\",\"unknown\"],\n      \"include_optional\": true,\n      \"custom_notification_patch_message\": \"Notification Text before normal patch - Windows - Max 125 Char\",\n      \"custom_notification_reboot_message\": \"Notification Text before reboot patch - Windows - Max 125 Char\",\n      \"custom_notification_patch_message_mac\": \"Notification Text before normal patch - Mac - Max 70 Char\",\n      \"custom_notification_reboot_message_mac\": \"Notification Text before reboot patch - Mac - Max 70 Char\",\n      \"custom_notification_max_delays\": 3,\n      \"custom_notification_deferment_periods\": [1, 4, 8],\n      \"notify_user_message_timeout\": 120,\n      \"notify_user_auto_deferral_enabled\": false,\n      \"notify_deferred_reboot_user_message_timeout\": 120,\n      \"notify_deferred_reboot_user_auto_deferral_enabled\": true,\n      \"advanced_filter\": [\n              {\n                  \"left\": \"patch-source\",\n                  \"right\": \"windowsupdate\",\n                  \"condition\": \"is\"\n              },\n              {\n                  \"left\": \"severity\",\n                  \"right\": \"medium\",\n                  \"condition\": \"greater-than-or-equal-to\"\n              }\n          ],\n          \"device_filters\": [\n              {\n                  \"field\": \"os_family\",\n                  \"op\": \"in\",\n                  \"value\": [\"Windows\"]\n              },\n              {\n                  \"field\": \"hostname\",\n                  \"op\": \"like_any\",\n                  \"value\": [\"WinDev2104Eval\"]\n              }\n            ],\n    },\n    \"schedule_days\": 146,\n    \"schedule_weeks_of_month\": 42,\n    \"schedule_months\": 4162,\n    \"schedule_time\": \"01:00\",\n    \"notes\": \"Patch every Mon,Thu,Fri\\n1st,3rd,5th Week\\nJan,Jun,Dec\",\n    \"server_groups\": [\n      250624,\n      90125\n    ]\n  }\n  \"@\nInvoke-WebRequest -Method Put -Uri $url -Headers $headers -Body $body\n"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Update Successful"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Policies"
+        ],
+        "summary": "Delete Specific Policy Object",
+        "description": "Deletes a specific policy object for the authenticated user.",
+        "operationId": "deletePolicy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Policy ID for the specified policy",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "o",
+            "in": "query",
+            "description": "Organization ID for the specified policy",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{ \"Authorization\" = \"Bearer $apiKey\" }\n$url = \"https://console.automox.com/api/policies/12345?o=0000\"\n$response = (Invoke-WebRequest -Method Delete -Uri $url -Headers $headers).Content\n"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Operation"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimit"
+          }
+        }
+      }
+    },
+    "/policies/{id}/action": {
+      "post": {
+        "tags": [
+          "Policies"
+        ],
+        "summary": "Schedule a Policy for Immediate Remediation",
+        "description": "Schedule a policy for immediate remediation.",
+        "operationId": "executePolicy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Policy ID for the specified policy",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "o",
+            "in": "query",
+            "description": "Organization ID for the specified policy",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "action",
+            "in": "query",
+            "description": "Specify the action to be taken. Possible values: `remediateAll`, `remediateServer` Format: `action=remediateServer`",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "remediateAll",
+                "remediateServer"
+              ]
+            }
+          },
+          {
+            "name": "serverId",
+            "in": "query",
+            "description": "Specify the specific Server to run the policy for. Only applicable when action is set to \"remediateServer\" Format: serverId=123456",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{ \"Authorization\" = \"Bearer $apiKey\" }\n$url = \"https://console.automox.com/api/policies/12345/action?o=0000&action=remediateServer&serverId=123456\"\n\nInvoke-WebRequest -Method POST -Uri $url -Headers $headers\n"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Action Started Successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimit"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "List All Users With Access to a Given Organization",
+        "description": "Retrieves a list of all users with access to an organization",
+        "operationId": "getUsers",
+        "parameters": [
+          {
+            "name": "o",
+            "in": "query",
+            "description": "The Organization whose users you wish to list. If you omit this value, the application will detect and use your default Organization.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "in": "query",
+            "name": "page",
+            "description": "The page of results you wish to be returned with page numbers starting at 0. See [About Automox API - Pagination](/developer-portal/about-ax-api/#pagination)"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "default": 500,
+              "minimum": 1,
+              "maximum": 500
+            },
+            "in": "query",
+            "name": "limit",
+            "description": "A limit on the number of results to be returned, between 1 and 500 with a default of 500. Use with `page` parameter. See [About Automox API - Pagination](/developer-portal/about-ax-api/#pagination)"
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{\n    \"Authorization\" = \"Bearer $apiKey\"\n}\n\n$url = \"https://console.automox.com/api/users?o=0000\"\n\nInvoke-WebRequest -Method Get -Uri $url -Headers $headers\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimit"
+          }
+        }
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Retrieves a user by user ID",
+        "description": "Retrieves a user by user ID",
+        "operationId": "getUserById",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "The User ID of the user to retrieve",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "o",
+            "in": "query",
+            "description": "The Organization whose users you wish to list. If you omit this value, the application will detect and use your default Organization.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "PowerShell",
+            "source": "$apiKey = 'your_automox_api_key'\n$headers = @{\n    \"Authorization\" = \"Bearer $apiKey\"\n}\n\n$url = 'https://console.automox.com/api/users/999999?o=0000'\n\nInvoke-WebRequest -Method Get -Uri $url -Headers $headers\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedAction"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimit"
+          }
+        }
+      }
+    }
+  }
+}
