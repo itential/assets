@@ -81,6 +81,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **New Relic** | Observability |
 | **NVD** | National Vulnerability Database (CVE / CPE) |
 | **Okta** | Identity management |
+| **OP5** | Naemon/Nagios-core network and infrastructure monitoring (op5 Monitor, by ITRS Group) |
 | **OpenAI** | AI / LLM APIs |
 | **OpsRamp** | IT operations management (monitoring, alerting, incident management) |
 | **Paessler** | PRTG monitoring |

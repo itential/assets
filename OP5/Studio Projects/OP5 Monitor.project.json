@@ -1,0 +1,4690 @@
+{
+  "name": "OP5 Monitor",
+  "description": "Atomic automation workflows for common OP5 Monitor operations (hosts, services, host/service groups, contacts/contactgroups, timeperiods, config change lifecycle, filter queries, and external commands), wired to the OP5 Monitor:latest Integration Model.",
+  "components": [
+    {
+      "iid": 0,
+      "reference": "a40264c5-66b9-4490-b4d9-08291ea61b2b",
+      "type": "workflow",
+      "folder": "/Command",
+      "document": {
+        "name": "Submit an external command",
+        "description": "Submit an external command",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1000": {
+            "name": "postcommand",
+            "canvasName": "postcommand",
+            "summary": "Submit an external command",
+            "description": "Submits a Naemon/Nagios external command by name (acknowledge, downtime, comment, enable/disable checks or notifications, forced re-check). See the op5 Monitor command reference (per-instance at /api/help/command) for the full parameter set per command.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "command": "$var.job.command",
+                "body": {
+                  "host_name": "$var.job.host_name",
+                  "service_description": "$var.job.service_description",
+                  "comment": "$var.job.comment",
+                  "author": "$var.job.author",
+                  "sticky": "$var.job.sticky",
+                  "notify": "$var.job.notify",
+                  "persistent": "$var.job.persistent",
+                  "start_time": "$var.job.start_time",
+                  "end_time": "$var.job.end_time",
+                  "fixed": "$var.job.fixed",
+                  "duration": "$var.job.duration",
+                  "trigger_id": "$var.job.trigger_id",
+                  "downtime_id": "$var.job.downtime_id",
+                  "comment_id": "$var.job.comment_id"
+                }
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1000": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1000": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "command": {
+              "type": "string",
+              "description": "Name of the external command to submit.",
+              "enum": [
+                "ACKNOWLEDGE_HOST_PROBLEM",
+                "ACKNOWLEDGE_SVC_PROBLEM",
+                "REMOVE_HOST_ACKNOWLEDGEMENT",
+                "REMOVE_SVC_ACKNOWLEDGEMENT",
+                "SCHEDULE_HOST_DOWNTIME",
+                "SCHEDULE_SVC_DOWNTIME",
+                "SCHEDULE_HOSTGROUP_HOST_DOWNTIME",
+                "SCHEDULE_SERVICEGROUP_SVC_DOWNTIME",
+                "DEL_HOST_DOWNTIME",
+                "DEL_SVC_DOWNTIME",
+                "ADD_HOST_COMMENT",
+                "ADD_SVC_COMMENT",
+                "DEL_HOST_COMMENT",
+                "DEL_SVC_COMMENT",
+                "ENABLE_HOST_NOTIFICATIONS",
+                "DISABLE_HOST_NOTIFICATIONS",
+                "ENABLE_SVC_NOTIFICATIONS",
+                "DISABLE_SVC_NOTIFICATIONS",
+                "ENABLE_HOST_CHECK",
+                "DISABLE_HOST_CHECK",
+                "ENABLE_SVC_CHECK",
+                "DISABLE_SVC_CHECK",
+                "SCHEDULE_FORCED_HOST_CHECK",
+                "SCHEDULE_FORCED_SVC_CHECK"
+              ]
+            },
+            "host_name": {
+              "type": "string",
+              "description": "Target host name."
+            },
+            "service_description": {
+              "type": "string",
+              "description": "Target service description (service-level commands only)."
+            },
+            "comment": {
+              "type": "string",
+              "description": "Comment text attached to the command."
+            },
+            "author": {
+              "type": "string",
+              "description": "Author name attributed to the command."
+            },
+            "sticky": {
+              "type": "boolean",
+              "description": "For acknowledgements: keep the acknowledgement until the host/service fully recovers."
+            },
+            "notify": {
+              "type": "boolean",
+              "description": "Whether to send a notification for this command."
+            },
+            "persistent": {
+              "type": "boolean",
+              "description": "Whether the comment/acknowledgement survives program restarts."
+            },
+            "start_time": {
+              "type": "string",
+              "description": "Unix timestamp the downtime starts."
+            },
+            "end_time": {
+              "type": "string",
+              "description": "Unix timestamp the downtime ends."
+            },
+            "fixed": {
+              "type": "boolean",
+              "description": "Whether a downtime is fixed (true) or flexible (false)."
+            },
+            "duration": {
+              "type": "integer",
+              "description": "Duration in seconds, used for flexible downtimes."
+            },
+            "trigger_id": {
+              "type": "integer",
+              "description": "Downtime ID that triggers this one, 0 for non-triggered."
+            },
+            "downtime_id": {
+              "type": "integer",
+              "description": "ID of the downtime to remove (DEL_*_DOWNTIME commands)."
+            },
+            "comment_id": {
+              "type": "integer",
+              "description": "ID of the comment to remove (DEL_*_COMMENT commands)."
+            }
+          },
+          "required": [
+            "command",
+            "host_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 1,
+      "reference": "08721bfb-c076-4346-96f5-010da83f01f0",
+      "type": "workflow",
+      "folder": "/Config",
+      "document": {
+        "name": "Revert pending configuration changes",
+        "description": "Revert pending configuration changes",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1001": {
+            "name": "revertchanges",
+            "canvasName": "revertchanges",
+            "summary": "Revert pending configuration changes",
+            "description": "Discards all pending configuration changes made via the config API (equivalent to Undo in the UI).",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1001": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1001": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 2,
+      "reference": "983e4592-9ea2-4b26-9c3b-5a01d1f96e04",
+      "type": "workflow",
+      "folder": "/Config",
+      "document": {
+        "name": "List pending configuration changes",
+        "description": "List pending configuration changes",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1002": {
+            "name": "listpendingchanges",
+            "canvasName": "listpendingchanges",
+            "summary": "List pending configuration changes",
+            "description": "Lists configuration changes made via the config API that have not yet been saved.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1002": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1002": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 3,
+      "reference": "7754a193-91d8-45fe-9fb6-6b6024283ba7",
+      "type": "workflow",
+      "folder": "/Config",
+      "document": {
+        "name": "Save pending configuration changes",
+        "description": "Save pending configuration changes",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1003": {
+            "name": "savechanges",
+            "canvasName": "savechanges",
+            "summary": "Save pending configuration changes",
+            "description": "Writes all pending configuration changes to their configuration files and reloads the monitoring core.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1003": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1003": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 4,
+      "reference": "6f995a69-ab37-40ac-b8a7-210750fbccec",
+      "type": "workflow",
+      "folder": "/Contacts",
+      "document": {
+        "name": "List contacts",
+        "description": "List contacts",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1004": {
+            "name": "listcontacts",
+            "canvasName": "listcontacts",
+            "summary": "List contacts",
+            "description": "Lists configured contact objects.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1004": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1004": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 5,
+      "reference": "8e7a5d7d-72df-454a-a5fc-610236411204",
+      "type": "workflow",
+      "folder": "/Contacts",
+      "document": {
+        "name": "Create a contact",
+        "description": "Create a contact",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1005": {
+            "name": "createcontact",
+            "canvasName": "createcontact",
+            "summary": "Create a contact",
+            "description": "Creates a new contact object in the pending configuration.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "body": {
+                  "file_id": "$var.job.file_id",
+                  "contact_name": "$var.job.contact_name",
+                  "alias": "$var.job.alias",
+                  "email": "$var.job.email",
+                  "host_notification_options": "$var.job.host_notification_options",
+                  "host_notification_period": "$var.job.host_notification_period",
+                  "service_notification_options": "$var.job.service_notification_options",
+                  "service_notification_period": "$var.job.service_notification_period",
+                  "contactgroups": "$var.job.contactgroups"
+                }
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1005": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1005": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "file_id": {
+              "type": "string",
+              "description": "Configuration file the object is written to (e.g. \"etc/contacts.cfg\")."
+            },
+            "contact_name": {
+              "type": "string",
+              "description": "Unique contact name."
+            },
+            "alias": {
+              "type": "string",
+              "description": "Descriptive alias for the contact."
+            },
+            "email": {
+              "type": "string",
+              "description": "Contact email address."
+            },
+            "host_notification_options": {
+              "type": "array",
+              "description": "Host notification option flags, e.g. [\"d\",\"u\",\"r\"].",
+              "items": {
+                "type": "string"
+              }
+            },
+            "host_notification_period": {
+              "type": "string",
+              "description": "Timeperiod name host notifications are allowed in."
+            },
+            "service_notification_options": {
+              "type": "array",
+              "description": "Service notification option flags, e.g. [\"w\",\"c\",\"u\",\"r\"].",
+              "items": {
+                "type": "string"
+              }
+            },
+            "service_notification_period": {
+              "type": "string",
+              "description": "Timeperiod name service notifications are allowed in."
+            },
+            "contactgroups": {
+              "type": "array",
+              "description": "Contactgroup names this contact belongs to.",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "contact_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 6,
+      "reference": "6a066014-1160-46c4-b328-34e90bbaaa57",
+      "type": "workflow",
+      "folder": "/Contacts",
+      "document": {
+        "name": "Delete a contact",
+        "description": "Delete a contact",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1006": {
+            "name": "deletecontact",
+            "canvasName": "deletecontact",
+            "summary": "Delete a contact",
+            "description": "Removes the given contact from the pending configuration.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "contact_name": "$var.job.contact_name"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1006": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1006": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "contact_name": {
+              "type": "string",
+              "description": "Contact name."
+            }
+          },
+          "required": [
+            "contact_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 7,
+      "reference": "2778d581-fa65-4f46-b46b-d6bc0f697ccc",
+      "type": "workflow",
+      "folder": "/Contacts",
+      "document": {
+        "name": "Get a contact by name",
+        "description": "Get a contact by name",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1007": {
+            "name": "getcontact",
+            "canvasName": "getcontact",
+            "summary": "Get a contact by name",
+            "description": "Returns configuration for the given contact.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "contact_name": "$var.job.contact_name"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1007": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1007": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "contact_name": {
+              "type": "string",
+              "description": "Contact name."
+            }
+          },
+          "required": [
+            "contact_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 8,
+      "reference": "f0d52fe5-b32e-4dae-997c-f0f8cb8ca6c6",
+      "type": "workflow",
+      "folder": "/Contacts",
+      "document": {
+        "name": "Update a contact",
+        "description": "Update a contact",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1008": {
+            "name": "updatecontact",
+            "canvasName": "updatecontact",
+            "summary": "Update a contact",
+            "description": "Partially updates the given contact's configuration in the pending configuration. Set a field to null to remove a custom variable.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "contact_name": "$var.job.contact_name",
+                "body": {}
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1008": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1008": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "contact_name": {
+              "type": "string",
+              "description": "Contact name."
+            }
+          },
+          "required": [
+            "contact_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 9,
+      "reference": "c9d282ce-e82d-4ea6-a84d-627f93d02946",
+      "type": "workflow",
+      "folder": "/Contactgroups",
+      "document": {
+        "name": "List contactgroups",
+        "description": "List contactgroups",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1009": {
+            "name": "listcontactgroups",
+            "canvasName": "listcontactgroups",
+            "summary": "List contactgroups",
+            "description": "Lists configured contactgroup objects.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1009": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1009": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 10,
+      "reference": "9c21ec3f-5c02-4230-9da9-7f8fe1796702",
+      "type": "workflow",
+      "folder": "/Contactgroups",
+      "document": {
+        "name": "Create a contactgroup",
+        "description": "Create a contactgroup",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "100a": {
+            "name": "createcontactgroup",
+            "canvasName": "createcontactgroup",
+            "summary": "Create a contactgroup",
+            "description": "Creates a new contactgroup object in the pending configuration.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "body": {
+                  "file_id": "$var.job.file_id",
+                  "contactgroup_name": "$var.job.contactgroup_name",
+                  "alias": "$var.job.alias",
+                  "members": "$var.job.members"
+                }
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "100a": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "100a": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "file_id": {
+              "type": "string",
+              "description": "Configuration file the object is written to (e.g. \"etc/contactgroups.cfg\")."
+            },
+            "contactgroup_name": {
+              "type": "string",
+              "description": "Unique contactgroup name."
+            },
+            "alias": {
+              "type": "string",
+              "description": "Descriptive alias for the contactgroup."
+            },
+            "members": {
+              "type": "array",
+              "description": "Contact names that belong to this contactgroup.",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "contactgroup_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 11,
+      "reference": "40f0fb43-4cd7-4dc4-867d-79dce68bf268",
+      "type": "workflow",
+      "folder": "/Contactgroups",
+      "document": {
+        "name": "Delete a contactgroup",
+        "description": "Delete a contactgroup",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "100b": {
+            "name": "deletecontactgroup",
+            "canvasName": "deletecontactgroup",
+            "summary": "Delete a contactgroup",
+            "description": "Removes the given contactgroup from the pending configuration.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "contactgroup_name": "$var.job.contactgroup_name"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "100b": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "100b": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "contactgroup_name": {
+              "type": "string",
+              "description": "Contactgroup name."
+            }
+          },
+          "required": [
+            "contactgroup_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 12,
+      "reference": "a5bba3a2-7253-475f-89b8-3a3d8c3622b2",
+      "type": "workflow",
+      "folder": "/Contactgroups",
+      "document": {
+        "name": "Get a contactgroup by name",
+        "description": "Get a contactgroup by name",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "100c": {
+            "name": "getcontactgroup",
+            "canvasName": "getcontactgroup",
+            "summary": "Get a contactgroup by name",
+            "description": "Returns configuration for the given contactgroup.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "contactgroup_name": "$var.job.contactgroup_name"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "100c": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "100c": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "contactgroup_name": {
+              "type": "string",
+              "description": "Contactgroup name."
+            }
+          },
+          "required": [
+            "contactgroup_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 13,
+      "reference": "ca4bf55d-01ac-4eba-913c-869e55a3cd44",
+      "type": "workflow",
+      "folder": "/Contactgroups",
+      "document": {
+        "name": "Update a contactgroup",
+        "description": "Update a contactgroup",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "100d": {
+            "name": "updatecontactgroup",
+            "canvasName": "updatecontactgroup",
+            "summary": "Update a contactgroup",
+            "description": "Partially updates the given contactgroup's configuration in the pending configuration. Set a field to null to remove a custom variable.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "contactgroup_name": "$var.job.contactgroup_name",
+                "body": {}
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "100d": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "100d": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "contactgroup_name": {
+              "type": "string",
+              "description": "Contactgroup name."
+            }
+          },
+          "required": [
+            "contactgroup_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 14,
+      "reference": "2e79d509-b136-42b1-a656-8054e1ae15c4",
+      "type": "workflow",
+      "folder": "/Hosts",
+      "document": {
+        "name": "List hosts",
+        "description": "List hosts",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "100e": {
+            "name": "listhosts",
+            "canvasName": "listhosts",
+            "summary": "List hosts",
+            "description": "Lists configured host objects.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "100e": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "100e": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 15,
+      "reference": "f6153fe5-9cc7-4bb6-b3e8-4fd9c9be1141",
+      "type": "workflow",
+      "folder": "/Hosts",
+      "document": {
+        "name": "Create a host",
+        "description": "Create a host",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "100f": {
+            "name": "createhost",
+            "canvasName": "createhost",
+            "summary": "Create a host",
+            "description": "Creates a new host object in the pending configuration.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "body": {
+                  "file_id": "$var.job.file_id",
+                  "host_name": "$var.job.host_name",
+                  "alias": "$var.job.alias",
+                  "address": "$var.job.address",
+                  "template": "$var.job.template",
+                  "max_check_attempts": "$var.job.max_check_attempts",
+                  "check_period": "$var.job.check_period",
+                  "notification_interval": "$var.job.notification_interval",
+                  "notification_period": "$var.job.notification_period",
+                  "notification_options": "$var.job.notification_options",
+                  "contact_groups": "$var.job.contact_groups",
+                  "hostgroups": "$var.job.hostgroups"
+                }
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "100f": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "100f": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "file_id": {
+              "type": "string",
+              "description": "Configuration file the object is written to (e.g. \"etc/hosts.cfg\")."
+            },
+            "host_name": {
+              "type": "string",
+              "description": "Unique host name."
+            },
+            "alias": {
+              "type": "string",
+              "description": "Descriptive alias for the host."
+            },
+            "address": {
+              "type": "string",
+              "description": "IP address or FQDN Naemon/Nagios uses to reach the host."
+            },
+            "template": {
+              "type": "string",
+              "description": "Name of the host template to inherit from."
+            },
+            "max_check_attempts": {
+              "type": "string",
+              "description": "Number of check attempts before a host is considered hard-down."
+            },
+            "check_period": {
+              "type": "string",
+              "description": "Timeperiod name the host is actively checked in."
+            },
+            "notification_interval": {
+              "type": "string",
+              "description": "Minutes between repeat notifications."
+            },
+            "notification_period": {
+              "type": "string",
+              "description": "Timeperiod name notifications are allowed in."
+            },
+            "notification_options": {
+              "type": "array",
+              "description": "Notification option flags, e.g. [\"d\",\"u\",\"r\"].",
+              "items": {
+                "type": "string"
+              }
+            },
+            "contact_groups": {
+              "type": "array",
+              "description": "Contact group names notified about this host.",
+              "items": {
+                "type": "string"
+              }
+            },
+            "hostgroups": {
+              "type": "array",
+              "description": "Hostgroup names this host belongs to.",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "host_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 16,
+      "reference": "1c9c62a5-e03f-4ccf-8725-9683025933a6",
+      "type": "workflow",
+      "folder": "/Hosts",
+      "document": {
+        "name": "Delete a host",
+        "description": "Delete a host",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1010": {
+            "name": "deletehost",
+            "canvasName": "deletehost",
+            "summary": "Delete a host",
+            "description": "Removes the given host from the pending configuration.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "host_name": "$var.job.host_name"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1010": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1010": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "host_name": {
+              "type": "string",
+              "description": "Host name."
+            }
+          },
+          "required": [
+            "host_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 17,
+      "reference": "47d2f89e-7ce5-4125-bbc8-dc9776ce1f6c",
+      "type": "workflow",
+      "folder": "/Hosts",
+      "document": {
+        "name": "Get a host by name",
+        "description": "Get a host by name",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1011": {
+            "name": "gethost",
+            "canvasName": "gethost",
+            "summary": "Get a host by name",
+            "description": "Returns configuration for the given host.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "host_name": "$var.job.host_name"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1011": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1011": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "host_name": {
+              "type": "string",
+              "description": "Host name."
+            }
+          },
+          "required": [
+            "host_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 18,
+      "reference": "3479c347-13d8-4bf3-a054-285362c9f454",
+      "type": "workflow",
+      "folder": "/Hosts",
+      "document": {
+        "name": "Update a host",
+        "description": "Update a host",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1012": {
+            "name": "updatehost",
+            "canvasName": "updatehost",
+            "summary": "Update a host",
+            "description": "Partially updates the given host's configuration in the pending configuration. Set a field to null to remove a custom variable.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "host_name": "$var.job.host_name",
+                "body": {}
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1012": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1012": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "host_name": {
+              "type": "string",
+              "description": "Host name."
+            }
+          },
+          "required": [
+            "host_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 19,
+      "reference": "e3e75575-1a07-44cc-b6e5-692f4fad2222",
+      "type": "workflow",
+      "folder": "/Hostgroups",
+      "document": {
+        "name": "List hostgroups",
+        "description": "List hostgroups",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1013": {
+            "name": "listhostgroups",
+            "canvasName": "listhostgroups",
+            "summary": "List hostgroups",
+            "description": "Lists configured hostgroup objects.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1013": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1013": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 20,
+      "reference": "babaf303-2a09-4f2d-97b0-e283b6fc9ec8",
+      "type": "workflow",
+      "folder": "/Hostgroups",
+      "document": {
+        "name": "Create a hostgroup",
+        "description": "Create a hostgroup",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1014": {
+            "name": "createhostgroup",
+            "canvasName": "createhostgroup",
+            "summary": "Create a hostgroup",
+            "description": "Creates a new hostgroup object in the pending configuration.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "body": {
+                  "file_id": "$var.job.file_id",
+                  "hostgroup_name": "$var.job.hostgroup_name",
+                  "alias": "$var.job.alias",
+                  "members": "$var.job.members"
+                }
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1014": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1014": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "file_id": {
+              "type": "string",
+              "description": "Configuration file the object is written to (e.g. \"etc/hostgroups.cfg\")."
+            },
+            "hostgroup_name": {
+              "type": "string",
+              "description": "Unique hostgroup name."
+            },
+            "alias": {
+              "type": "string",
+              "description": "Descriptive alias for the hostgroup."
+            },
+            "members": {
+              "type": "array",
+              "description": "Host names that belong to this hostgroup.",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "hostgroup_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 21,
+      "reference": "e0e174e3-7e24-4a46-98b4-080e71ff0cdf",
+      "type": "workflow",
+      "folder": "/Hostgroups",
+      "document": {
+        "name": "Delete a hostgroup",
+        "description": "Delete a hostgroup",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1015": {
+            "name": "deletehostgroup",
+            "canvasName": "deletehostgroup",
+            "summary": "Delete a hostgroup",
+            "description": "Removes the given hostgroup from the pending configuration.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "hostgroup_name": "$var.job.hostgroup_name"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1015": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1015": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "hostgroup_name": {
+              "type": "string",
+              "description": "Hostgroup name."
+            }
+          },
+          "required": [
+            "hostgroup_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 22,
+      "reference": "dc32085d-95b0-4fc4-bf0b-080a9f3f74dc",
+      "type": "workflow",
+      "folder": "/Hostgroups",
+      "document": {
+        "name": "Get a hostgroup by name",
+        "description": "Get a hostgroup by name",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1016": {
+            "name": "gethostgroup",
+            "canvasName": "gethostgroup",
+            "summary": "Get a hostgroup by name",
+            "description": "Returns configuration for the given hostgroup.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "hostgroup_name": "$var.job.hostgroup_name"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1016": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1016": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "hostgroup_name": {
+              "type": "string",
+              "description": "Hostgroup name."
+            }
+          },
+          "required": [
+            "hostgroup_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 23,
+      "reference": "b953e62d-26b8-402a-a8a3-72b57b365120",
+      "type": "workflow",
+      "folder": "/Hostgroups",
+      "document": {
+        "name": "Update a hostgroup",
+        "description": "Update a hostgroup",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1017": {
+            "name": "updatehostgroup",
+            "canvasName": "updatehostgroup",
+            "summary": "Update a hostgroup",
+            "description": "Partially updates the given hostgroup's configuration in the pending configuration. Set a field to null to remove a custom variable.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "hostgroup_name": "$var.job.hostgroup_name",
+                "body": {}
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1017": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1017": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "hostgroup_name": {
+              "type": "string",
+              "description": "Hostgroup name."
+            }
+          },
+          "required": [
+            "hostgroup_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 24,
+      "reference": "4bb49bc5-88ab-4a19-8622-006b054815dd",
+      "type": "workflow",
+      "folder": "/Services",
+      "document": {
+        "name": "List services",
+        "description": "List services",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1018": {
+            "name": "listservices",
+            "canvasName": "listservices",
+            "summary": "List services",
+            "description": "Lists configured service objects.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1018": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1018": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 25,
+      "reference": "0c26f997-2790-428c-a3cc-0341670b50ec",
+      "type": "workflow",
+      "folder": "/Services",
+      "document": {
+        "name": "Create a service",
+        "description": "Create a service",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1019": {
+            "name": "createservice",
+            "canvasName": "createservice",
+            "summary": "Create a service",
+            "description": "Creates a new service object in the pending configuration.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "body": {
+                  "file_id": "$var.job.file_id",
+                  "host_name": "$var.job.host_name",
+                  "service_description": "$var.job.service_description",
+                  "template": "$var.job.template",
+                  "check_command": "$var.job.check_command",
+                  "check_command_args": "$var.job.check_command_args",
+                  "max_check_attempts": "$var.job.max_check_attempts",
+                  "check_period": "$var.job.check_period",
+                  "notification_interval": "$var.job.notification_interval",
+                  "notification_period": "$var.job.notification_period",
+                  "notification_options": "$var.job.notification_options",
+                  "contact_groups": "$var.job.contact_groups",
+                  "servicegroups": "$var.job.servicegroups"
+                }
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1019": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1019": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "file_id": {
+              "type": "string",
+              "description": "Configuration file the object is written to (e.g. \"etc/services.cfg\")."
+            },
+            "host_name": {
+              "type": "string",
+              "description": "Host name the service is attached to."
+            },
+            "service_description": {
+              "type": "string",
+              "description": "Unique service description on the host."
+            },
+            "template": {
+              "type": "string",
+              "description": "Name of the service template to inherit from."
+            },
+            "check_command": {
+              "type": "string",
+              "description": "Check command name."
+            },
+            "check_command_args": {
+              "type": "string",
+              "description": "Argument string appended to check_command, ! separated."
+            },
+            "max_check_attempts": {
+              "type": "string",
+              "description": "Number of check attempts before a service is considered hard-critical."
+            },
+            "check_period": {
+              "type": "string",
+              "description": "Timeperiod name the service is actively checked in."
+            },
+            "notification_interval": {
+              "type": "string",
+              "description": "Minutes between repeat notifications."
+            },
+            "notification_period": {
+              "type": "string",
+              "description": "Timeperiod name notifications are allowed in."
+            },
+            "notification_options": {
+              "type": "array",
+              "description": "Notification option flags, e.g. [\"w\",\"c\",\"u\",\"r\"].",
+              "items": {
+                "type": "string"
+              }
+            },
+            "contact_groups": {
+              "type": "array",
+              "description": "Contact group names notified about this service.",
+              "items": {
+                "type": "string"
+              }
+            },
+            "servicegroups": {
+              "type": "array",
+              "description": "Servicegroup names this service belongs to.",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "host_name",
+            "service_description"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 26,
+      "reference": "4551e242-d687-4d8b-b52c-e869b06ee6f8",
+      "type": "workflow",
+      "folder": "/Services",
+      "document": {
+        "name": "Delete a service",
+        "description": "Delete a service",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "101a": {
+            "name": "deleteservice",
+            "canvasName": "deleteservice",
+            "summary": "Delete a service",
+            "description": "Removes the given service from the pending configuration.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "service_id": "$var.job.service_id"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "101a": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "101a": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "service_id": {
+              "type": "string",
+              "description": "Service identifier in \"host_name;service_description\" form."
+            }
+          },
+          "required": [
+            "service_id"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 27,
+      "reference": "0ee2fbe8-96fb-422b-b0d8-186d38e5d75d",
+      "type": "workflow",
+      "folder": "/Services",
+      "document": {
+        "name": "Get a service by name",
+        "description": "Get a service by name",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "101b": {
+            "name": "getservice",
+            "canvasName": "getservice",
+            "summary": "Get a service by name",
+            "description": "Returns configuration for the given service.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "service_id": "$var.job.service_id"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "101b": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "101b": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "service_id": {
+              "type": "string",
+              "description": "Service identifier in \"host_name;service_description\" form."
+            }
+          },
+          "required": [
+            "service_id"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 28,
+      "reference": "681ece91-055b-4d72-9ea6-b1ea80e36d9b",
+      "type": "workflow",
+      "folder": "/Services",
+      "document": {
+        "name": "Update a service",
+        "description": "Update a service",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "101c": {
+            "name": "updateservice",
+            "canvasName": "updateservice",
+            "summary": "Update a service",
+            "description": "Partially updates the given service's configuration in the pending configuration. Set a field to null to remove a custom variable.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "service_id": "$var.job.service_id",
+                "body": {}
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "101c": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "101c": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "service_id": {
+              "type": "string",
+              "description": "Service identifier in \"host_name;service_description\" form."
+            }
+          },
+          "required": [
+            "service_id"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 29,
+      "reference": "d550a8bf-c017-4333-b272-759a1ea0cb46",
+      "type": "workflow",
+      "folder": "/Servicegroups",
+      "document": {
+        "name": "List servicegroups",
+        "description": "List servicegroups",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "101d": {
+            "name": "listservicegroups",
+            "canvasName": "listservicegroups",
+            "summary": "List servicegroups",
+            "description": "Lists configured servicegroup objects.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "101d": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "101d": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 30,
+      "reference": "59972202-0299-4df8-b491-ae7372650022",
+      "type": "workflow",
+      "folder": "/Servicegroups",
+      "document": {
+        "name": "Create a servicegroup",
+        "description": "Create a servicegroup",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "101e": {
+            "name": "createservicegroup",
+            "canvasName": "createservicegroup",
+            "summary": "Create a servicegroup",
+            "description": "Creates a new servicegroup object in the pending configuration.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "body": {
+                  "file_id": "$var.job.file_id",
+                  "servicegroup_name": "$var.job.servicegroup_name",
+                  "alias": "$var.job.alias",
+                  "members": "$var.job.members"
+                }
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "101e": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "101e": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "file_id": {
+              "type": "string",
+              "description": "Configuration file the object is written to (e.g. \"etc/servicegroups.cfg\")."
+            },
+            "servicegroup_name": {
+              "type": "string",
+              "description": "Unique servicegroup name."
+            },
+            "alias": {
+              "type": "string",
+              "description": "Descriptive alias for the servicegroup."
+            },
+            "members": {
+              "type": "array",
+              "description": "Members in \"host_name;service_description\" form.",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "servicegroup_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 31,
+      "reference": "8ebb8c02-1f14-4a79-9b97-086b0597e9cc",
+      "type": "workflow",
+      "folder": "/Servicegroups",
+      "document": {
+        "name": "Delete a servicegroup",
+        "description": "Delete a servicegroup",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "101f": {
+            "name": "deleteservicegroup",
+            "canvasName": "deleteservicegroup",
+            "summary": "Delete a servicegroup",
+            "description": "Removes the given servicegroup from the pending configuration.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "servicegroup_name": "$var.job.servicegroup_name"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "101f": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "101f": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "servicegroup_name": {
+              "type": "string",
+              "description": "Servicegroup name."
+            }
+          },
+          "required": [
+            "servicegroup_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 32,
+      "reference": "8c3dd198-a4d4-4d86-bcb6-777ed205942f",
+      "type": "workflow",
+      "folder": "/Servicegroups",
+      "document": {
+        "name": "Get a servicegroup by name",
+        "description": "Get a servicegroup by name",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1020": {
+            "name": "getservicegroup",
+            "canvasName": "getservicegroup",
+            "summary": "Get a servicegroup by name",
+            "description": "Returns configuration for the given servicegroup.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "servicegroup_name": "$var.job.servicegroup_name"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1020": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1020": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "servicegroup_name": {
+              "type": "string",
+              "description": "Servicegroup name."
+            }
+          },
+          "required": [
+            "servicegroup_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 33,
+      "reference": "3edaeee5-a323-4866-9ce3-e44d4a875843",
+      "type": "workflow",
+      "folder": "/Servicegroups",
+      "document": {
+        "name": "Update a servicegroup",
+        "description": "Update a servicegroup",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1021": {
+            "name": "updateservicegroup",
+            "canvasName": "updateservicegroup",
+            "summary": "Update a servicegroup",
+            "description": "Partially updates the given servicegroup's configuration in the pending configuration. Set a field to null to remove a custom variable.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "servicegroup_name": "$var.job.servicegroup_name",
+                "body": {}
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1021": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1021": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "servicegroup_name": {
+              "type": "string",
+              "description": "Servicegroup name."
+            }
+          },
+          "required": [
+            "servicegroup_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 34,
+      "reference": "89296439-59e4-4332-b964-91efcf5c6c87",
+      "type": "workflow",
+      "folder": "/Timeperiods",
+      "document": {
+        "name": "List timeperiods",
+        "description": "List timeperiods",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1022": {
+            "name": "listtimeperiods",
+            "canvasName": "listtimeperiods",
+            "summary": "List timeperiods",
+            "description": "Lists configured timeperiod objects.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1022": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1022": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 35,
+      "reference": "d3ea36b3-2141-4caf-9a32-c385165717a0",
+      "type": "workflow",
+      "folder": "/Timeperiods",
+      "document": {
+        "name": "Create a timeperiod",
+        "description": "Create a timeperiod",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1023": {
+            "name": "createtimeperiod",
+            "canvasName": "createtimeperiod",
+            "summary": "Create a timeperiod",
+            "description": "Creates a new timeperiod object in the pending configuration.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "body": {
+                  "file_id": "$var.job.file_id",
+                  "timeperiod_name": "$var.job.timeperiod_name",
+                  "alias": "$var.job.alias",
+                  "monday": "$var.job.monday",
+                  "tuesday": "$var.job.tuesday",
+                  "wednesday": "$var.job.wednesday",
+                  "thursday": "$var.job.thursday",
+                  "friday": "$var.job.friday",
+                  "saturday": "$var.job.saturday",
+                  "sunday": "$var.job.sunday"
+                }
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1023": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1023": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "file_id": {
+              "type": "string",
+              "description": "Configuration file the object is written to (e.g. \"etc/timeperiods.cfg\")."
+            },
+            "timeperiod_name": {
+              "type": "string",
+              "description": "Unique timeperiod name."
+            },
+            "alias": {
+              "type": "string",
+              "description": "Descriptive alias for the timeperiod."
+            },
+            "monday": {
+              "type": "string",
+              "description": "Monday time ranges, e.g. \"00:00-24:00\"."
+            },
+            "tuesday": {
+              "type": "string",
+              "description": "Tuesday time ranges."
+            },
+            "wednesday": {
+              "type": "string",
+              "description": "Wednesday time ranges."
+            },
+            "thursday": {
+              "type": "string",
+              "description": "Thursday time ranges."
+            },
+            "friday": {
+              "type": "string",
+              "description": "Friday time ranges."
+            },
+            "saturday": {
+              "type": "string",
+              "description": "Saturday time ranges."
+            },
+            "sunday": {
+              "type": "string",
+              "description": "Sunday time ranges."
+            }
+          },
+          "required": [
+            "timeperiod_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 36,
+      "reference": "f6454bcf-af25-4da8-a6c9-e8168bed0461",
+      "type": "workflow",
+      "folder": "/Timeperiods",
+      "document": {
+        "name": "Delete a timeperiod",
+        "description": "Delete a timeperiod",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1024": {
+            "name": "deletetimeperiod",
+            "canvasName": "deletetimeperiod",
+            "summary": "Delete a timeperiod",
+            "description": "Removes the given timeperiod from the pending configuration.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "timeperiod_name": "$var.job.timeperiod_name"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1024": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1024": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "timeperiod_name": {
+              "type": "string",
+              "description": "Timeperiod name."
+            }
+          },
+          "required": [
+            "timeperiod_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 37,
+      "reference": "f3a90f23-e4c0-43af-babb-d52f9464eae9",
+      "type": "workflow",
+      "folder": "/Timeperiods",
+      "document": {
+        "name": "Get a timeperiod by name",
+        "description": "Get a timeperiod by name",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1025": {
+            "name": "gettimeperiod",
+            "canvasName": "gettimeperiod",
+            "summary": "Get a timeperiod by name",
+            "description": "Returns configuration for the given timeperiod.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "timeperiod_name": "$var.job.timeperiod_name"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1025": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1025": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "timeperiod_name": {
+              "type": "string",
+              "description": "Timeperiod name."
+            }
+          },
+          "required": [
+            "timeperiod_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 38,
+      "reference": "2cb89ee5-86fe-4f61-ab28-0ea9f50555a4",
+      "type": "workflow",
+      "folder": "/Timeperiods",
+      "document": {
+        "name": "Update a timeperiod",
+        "description": "Update a timeperiod",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1026": {
+            "name": "updatetimeperiod",
+            "canvasName": "updatetimeperiod",
+            "summary": "Update a timeperiod",
+            "description": "Partially updates the given timeperiod's configuration in the pending configuration. Set a field to null to remove a custom variable.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "timeperiod_name": "$var.job.timeperiod_name",
+                "body": {}
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1026": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1026": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "timeperiod_name": {
+              "type": "string",
+              "description": "Timeperiod name."
+            }
+          },
+          "required": [
+            "timeperiod_name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 39,
+      "reference": "56ed30f6-8fb0-481c-879e-e35003c57095",
+      "type": "workflow",
+      "folder": "/Filter",
+      "document": {
+        "name": "Count objects matching a filter",
+        "description": "Count objects matching a filter",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1027": {
+            "name": "filtercount",
+            "canvasName": "filtercount",
+            "summary": "Count objects matching a filter",
+            "description": "Returns the number of objects matching the given list-view filter query, without returning the objects themselves.",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "query": "$var.job.query"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1027": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1027": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "List-view filter expression, e.g. \"[services] state != 0\"."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 40,
+      "reference": "29c9fe54-d48d-4853-ad3f-2b28a53569cb",
+      "type": "workflow",
+      "folder": "/Filter",
+      "document": {
+        "name": "Query hosts, services, or other objects by filter",
+        "description": "Query hosts, services, or other objects by filter",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1028": {
+            "name": "filterquery",
+            "canvasName": "filterquery",
+            "summary": "Query hosts, services, or other objects by filter",
+            "description": "Retrieves live status and configuration data (hosts, services, hostgroups, servicegroups, contacts, downtimes, comments, log entries) using the list-view filter query language, e.g. \"[hosts] state != 0\".",
+            "location": "Adapter",
+            "locationType": "OP5 Monitor:latest",
+            "app": "OP5 Monitor:latest",
+            "type": "automatic",
+            "displayName": "OP5 Monitor",
+            "variables": {
+              "incoming": {
+                "adapter_id": "OP5",
+                "query": "$var.job.query",
+                "columns": "$var.job.columns",
+                "limit": "$var.job.limit",
+                "offset": "$var.job.offset",
+                "sort": "$var.job.sort"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1028": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1028": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "List-view filter expression, e.g. \"[hosts] state != 0\"."
+            },
+            "columns": {
+              "type": "string",
+              "description": "Comma-separated list of columns to return."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Maximum number of rows to return."
+            },
+            "offset": {
+              "type": "integer",
+              "description": "Number of rows to skip."
+            },
+            "sort": {
+              "type": "string",
+              "description": "Column to sort by, prefix with - for descending."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "type": "object",
+              "description": "Full HTTP response envelope from the OP5 Monitor adapter task (ok, url, status, headers, text, body)."
+            }
+          }
+        },
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    }
+  ],
+  "folders": [
+    {
+      "nodeType": "folder",
+      "name": "Command",
+      "children": [
+        {
+          "iid": 0,
+          "nodeType": "component"
+        }
+      ]
+    },
+    {
+      "nodeType": "folder",
+      "name": "Config",
+      "children": [
+        {
+          "iid": 1,
+          "nodeType": "component"
+        },
+        {
+          "iid": 2,
+          "nodeType": "component"
+        },
+        {
+          "iid": 3,
+          "nodeType": "component"
+        }
+      ]
+    },
+    {
+      "nodeType": "folder",
+      "name": "Contacts",
+      "children": [
+        {
+          "iid": 4,
+          "nodeType": "component"
+        },
+        {
+          "iid": 5,
+          "nodeType": "component"
+        },
+        {
+          "iid": 6,
+          "nodeType": "component"
+        },
+        {
+          "iid": 7,
+          "nodeType": "component"
+        },
+        {
+          "iid": 8,
+          "nodeType": "component"
+        }
+      ]
+    },
+    {
+      "nodeType": "folder",
+      "name": "Contactgroups",
+      "children": [
+        {
+          "iid": 9,
+          "nodeType": "component"
+        },
+        {
+          "iid": 10,
+          "nodeType": "component"
+        },
+        {
+          "iid": 11,
+          "nodeType": "component"
+        },
+        {
+          "iid": 12,
+          "nodeType": "component"
+        },
+        {
+          "iid": 13,
+          "nodeType": "component"
+        }
+      ]
+    },
+    {
+      "nodeType": "folder",
+      "name": "Hosts",
+      "children": [
+        {
+          "iid": 14,
+          "nodeType": "component"
+        },
+        {
+          "iid": 15,
+          "nodeType": "component"
+        },
+        {
+          "iid": 16,
+          "nodeType": "component"
+        },
+        {
+          "iid": 17,
+          "nodeType": "component"
+        },
+        {
+          "iid": 18,
+          "nodeType": "component"
+        }
+      ]
+    },
+    {
+      "nodeType": "folder",
+      "name": "Hostgroups",
+      "children": [
+        {
+          "iid": 19,
+          "nodeType": "component"
+        },
+        {
+          "iid": 20,
+          "nodeType": "component"
+        },
+        {
+          "iid": 21,
+          "nodeType": "component"
+        },
+        {
+          "iid": 22,
+          "nodeType": "component"
+        },
+        {
+          "iid": 23,
+          "nodeType": "component"
+        }
+      ]
+    },
+    {
+      "nodeType": "folder",
+      "name": "Services",
+      "children": [
+        {
+          "iid": 24,
+          "nodeType": "component"
+        },
+        {
+          "iid": 25,
+          "nodeType": "component"
+        },
+        {
+          "iid": 26,
+          "nodeType": "component"
+        },
+        {
+          "iid": 27,
+          "nodeType": "component"
+        },
+        {
+          "iid": 28,
+          "nodeType": "component"
+        }
+      ]
+    },
+    {
+      "nodeType": "folder",
+      "name": "Servicegroups",
+      "children": [
+        {
+          "iid": 29,
+          "nodeType": "component"
+        },
+        {
+          "iid": 30,
+          "nodeType": "component"
+        },
+        {
+          "iid": 31,
+          "nodeType": "component"
+        },
+        {
+          "iid": 32,
+          "nodeType": "component"
+        },
+        {
+          "iid": 33,
+          "nodeType": "component"
+        }
+      ]
+    },
+    {
+      "nodeType": "folder",
+      "name": "Timeperiods",
+      "children": [
+        {
+          "iid": 34,
+          "nodeType": "component"
+        },
+        {
+          "iid": 35,
+          "nodeType": "component"
+        },
+        {
+          "iid": 36,
+          "nodeType": "component"
+        },
+        {
+          "iid": 37,
+          "nodeType": "component"
+        },
+        {
+          "iid": 38,
+          "nodeType": "component"
+        }
+      ]
+    },
+    {
+      "nodeType": "folder",
+      "name": "Filter",
+      "children": [
+        {
+          "iid": 39,
+          "nodeType": "component"
+        },
+        {
+          "iid": 40,
+          "nodeType": "component"
+        }
+      ]
+    }
+  ],
+  "_id": "1aba01a0363f43c9bda2b7b2",
+  "iid": 1,
+  "thumbnail": "",
+  "backgroundColor": "",
+  "created": "2026-09-23T12:41:37.660Z",
+  "createdBy": {
+    "_id": "000000000000000000000000",
+    "provenance": "local",
+    "username": "admin@itential"
+  },
+  "lastUpdated": "2026-09-23T12:41:37.660Z",
+  "lastUpdatedBy": {
+    "_id": "000000000000000000000000",
+    "provenance": "local",
+    "username": "admin@itential"
+  }
+}
