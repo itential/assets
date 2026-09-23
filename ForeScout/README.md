@@ -56,12 +56,7 @@ Authentication is a JWT, retrieved dynamically by posting Web API credentials to
         "password": "<web-api-password>"
       }
     }
-  },
-  "tls": {
-    "enabled": true,
-    "rejectUnauthorized": false
-  },
-  "variables": {}
+  }
 }
 ```
 

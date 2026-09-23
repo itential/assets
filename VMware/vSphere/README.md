@@ -80,13 +80,7 @@ Import `vmware_vsphere_vcenter-latest.json` as an Integration Model in **Admin >
         "Authorization": "Basic <base64(username:password)>"
       }
     }
-  },
-  "tls": {
-    "enabled": true,
-    "rejectUnauthorized": false
-  },
-  "variables": {},
-  "version": "latest"
+  }
 }
 ```
 
@@ -130,13 +124,7 @@ Import `vmware_vsphere_automation-latest.json` as an Integration Model in **Admi
         "Authorization": "Basic <base64(username:password)>"
       }
     }
-  },
-  "tls": {
-    "enabled": true,
-    "rejectUnauthorized": false
-  },
-  "variables": {},
-  "version": "latest"
+  }
 }
 ```
 

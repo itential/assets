@@ -52,13 +52,7 @@ Before importing the project, configure the `Palo Alto Panorama:11.1` Integratio
     "apiKeyHeader": {
       "value": "<your-panorama-api-key>"
     }
-  },
-  "tls": {
-    "enabled": true,
-    "rejectUnauthorized": false
-  },
-  "variables": {},
-  "version": "11.1"
+  }
 }
 ```
 

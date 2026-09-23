@@ -58,13 +58,7 @@ Authentication exchanges a CSP API token (generated in the VMware Cloud Services
         "refresh_token": "<your-csp-api-token>"
       }
     }
-  },
-  "tls": {
-    "enabled": true,
-    "rejectUnauthorized": true
-  },
-  "variables": {},
-  "version": "latest"
+  }
 }
 ```
 

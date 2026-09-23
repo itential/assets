@@ -51,12 +51,7 @@ Authentication is a static API token, generated in the Management Center console
     "apiKeyAuth": {
       "value": "<api-token>"
     }
-  },
-  "tls": {
-    "enabled": true,
-    "rejectUnauthorized": false
-  },
-  "variables": {}
+  }
 }
 ```
 
