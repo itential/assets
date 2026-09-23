@@ -51,13 +51,7 @@ RDAP:
     "host": "rdap.arin.net",
     "base_path": ""
   },
-  "authentication": {},
-  "tls": {
-    "enabled": true,
-    "rejectUnauthorized": true
-  },
-  "variables": {},
-  "version": "latest"
+  "authentication": {}
 }
 ```
 
@@ -69,13 +63,7 @@ Whois-RWS (if used):
     "host": "whois.arin.net",
     "base_path": ""
   },
-  "authentication": {},
-  "tls": {
-    "enabled": true,
-    "rejectUnauthorized": true
-  },
-  "variables": {},
-  "version": "latest"
+  "authentication": {}
 }
 ```
 

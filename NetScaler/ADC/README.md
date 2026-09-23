@@ -57,13 +57,7 @@ Import one of the OpenAPI specs from `OpenAPIs/` as an Integration Model in **Ad
     "nitroPass": {
       "value": "<password>"
     }
-  },
-  "tls": {
-    "enabled": true,
-    "rejectUnauthorized": false
-  },
-  "variables": {},
-  "version": "latest"
+  }
 }
 ```
 

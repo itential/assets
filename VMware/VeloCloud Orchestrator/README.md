@@ -53,13 +53,7 @@ Import one of the OpenAPI specs from `OpenAPIs/` as an Integration Model in **Ad
     "apiToken": {
       "value": "Token <api_token>"
     }
-  },
-  "tls": {
-    "enabled": true,
-    "rejectUnauthorized": true
-  },
-  "variables": {},
-  "version": "latest"
+  }
 }
 ```
 

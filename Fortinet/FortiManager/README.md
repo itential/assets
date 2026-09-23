@@ -41,13 +41,7 @@ Import `fortimanager-latest.json` as an Integration Model in **Admin > Integrati
     "type": "http",
     "scheme": "bearer",
     "token": "<FortiManager API token>"
-  },
-  "tls": {
-    "enabled": true,
-    "rejectUnauthorized": false
-  },
-  "variables": {},
-  "version": "latest"
+  }
 }
 ```
 
