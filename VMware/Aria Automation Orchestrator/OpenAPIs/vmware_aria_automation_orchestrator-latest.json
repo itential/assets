@@ -1,0 +1,1095 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "VMware Aria Automation Orchestrator",
+    "description": "Authentication: HTTP Basic (against vCenter Single Sign-On). VMware Aria Automation Orchestrator (formerly vRealize Orchestrator) is VMware's workflow automation engine, orchestrating tasks across vSphere, NSX, and other VMware and third-party systems. Its REST API exposes workflows, workflow runs, actions, categories, configurations, and packages as resources at predefined URLs.",
+    "version": "latest",
+    "x-vendor-api-version": "8.x",
+    "x-itential-curated": "Reviewed against the repo's common-CRUD-for-automation policy: all 21 documented operations are already in scope, so the full spec is carried through as -latest. See the repo README for the operation breakdown and the full spec."
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}",
+      "description": "Automation Orchestrator server. This platform does not apply OpenAPI server variables/paths automatically -- set the integration instance's server.base_path to \"/vco/api\".",
+      "variables": {
+        "protocol": {
+          "default": "https",
+          "enum": [
+            "https",
+            "http"
+          ]
+        },
+        "host": {
+          "default": "orchestrator.example.com",
+          "description": "Automation Orchestrator server FQDN or IP (no protocol, no path)."
+        },
+        "port": {
+          "default": "443"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "Link": {
+        "type": "object",
+        "properties": {
+          "rel": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "LinkedList": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer"
+          },
+          "link": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        }
+      },
+      "Parameter": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "value": {
+            "type": "object"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "Workflow": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "input-parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Parameter"
+            }
+          },
+          "output-parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Parameter"
+            }
+          },
+          "link": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        }
+      },
+      "ExecutionContext": {
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Parameter"
+            }
+          }
+        }
+      },
+      "WorkflowExecution": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "workflow-id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "running",
+              "waiting",
+              "waiting-signal",
+              "completed",
+              "failed",
+              "canceled"
+            ]
+          },
+          "start-date": {
+            "type": "string"
+          },
+          "end-date": {
+            "type": "string"
+          },
+          "initiator": {
+            "type": "string"
+          },
+          "input-parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Parameter"
+            }
+          },
+          "output-parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Parameter"
+            }
+          },
+          "link": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        }
+      },
+      "WorkflowExecutionState": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "WorkflowExecutionLogs": {
+        "type": "object",
+        "properties": {
+          "log-messages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "severity": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "time-stamp": {
+                  "type": "string"
+                },
+                "source-name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "UserInteraction": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "input-parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Parameter"
+            }
+          },
+          "link": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        }
+      },
+      "Action": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "module": {
+            "type": "string"
+          },
+          "output-type": {
+            "type": "string"
+          },
+          "input-parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Parameter"
+            }
+          },
+          "link": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        }
+      },
+      "Category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "link": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        }
+      },
+      "ConfigurationElement": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Parameter"
+            }
+          },
+          "link": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        }
+      },
+      "ConfigurationAttributeValue": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "value": {
+            "type": "object"
+          }
+        }
+      },
+      "Package": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "link": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/workflows": {
+      "get": {
+        "operationId": "listWorkflows",
+        "summary": "List/find workflows",
+        "description": "Lists workflows in the inventory. Use the conditions query parameter to find a workflow by full name (name={value}) or by keyword (name~{value}).",
+        "parameters": [
+          {
+            "name": "conditions",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter expression, e.g. name={workflowFullName} or name~{keyword}."
+          },
+          {
+            "name": "maxResult",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "startIndex",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of matching workflows.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkedList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflows/{id}": {
+      "get": {
+        "operationId": "getWorkflow",
+        "summary": "Get workflow definition",
+        "description": "Retrieves a workflow's definition, including its input/output parameters and links to its available runs and input form schema.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workflow definition.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workflow"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflows/{id}/executions": {
+      "post": {
+        "operationId": "runWorkflow",
+        "summary": "Run a workflow",
+        "description": "Starts a new execution of the workflow. Provide input parameter values in the execution-context of the request body; an empty execution-context runs the workflow with its default parameter values, where available. Returns 202 Accepted with a Location header pointing to the new execution.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExecutionContext"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Execution accepted."
+          }
+        }
+      },
+      "get": {
+        "operationId": "listWorkflowExecutions",
+        "summary": "List workflow runs",
+        "description": "Lists the available execution (run) instances of the workflow, with their start/end dates, status, and initiator.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "maxResult",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "startIndex",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of workflow runs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkedList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflows/{id}/executions/{executionId}": {
+      "get": {
+        "operationId": "getWorkflowExecution",
+        "summary": "Get a workflow run",
+        "description": "Retrieves a particular workflow run's input parameters, initiator, dates, and run state.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "executionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workflow run.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowExecution"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflows/{id}/executions/{executionId}/state": {
+      "get": {
+        "operationId": "getWorkflowExecutionState",
+        "summary": "Get a workflow run's state",
+        "description": "Retrieves additional information about the state of a workflow run.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "executionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workflow run state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowExecutionState"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "cancelWorkflowExecution",
+        "summary": "Cancel a workflow run",
+        "description": "Terminates a running workflow execution.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "executionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Workflow run canceled."
+          }
+        }
+      }
+    },
+    "/workflows/{id}/executions/{executionId}/logs": {
+      "get": {
+        "operationId": "getWorkflowExecutionLogs",
+        "summary": "Get a workflow run's logs",
+        "description": "Retrieves the log messages generated during a workflow run.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "executionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "severity",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workflow run logs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowExecutionLogs"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflows/{id}/executions/{executionId}/interaction": {
+      "post": {
+        "operationId": "answerWorkflowUserInteraction",
+        "summary": "Answer a waiting user interaction",
+        "description": "Provides input parameter values for a workflow run that is waiting on a user interaction, in an execution-context element in the request body. Returns 204 No Content on success.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "executionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExecutionContext"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "User interaction answered."
+          }
+        }
+      }
+    },
+    "/catalog/System/UserInteraction": {
+      "get": {
+        "operationId": "listUserInteractions",
+        "summary": "List user interactions",
+        "description": "Lists user interaction objects. Waiting interactions have a state variable with value waiting; filter with status=0 to return only waiting interactions.",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "0 returns only waiting interactions."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of user interactions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkedList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/catalog/System/UserInteraction/{id}": {
+      "get": {
+        "operationId": "getUserInteraction",
+        "summary": "Get a user interaction",
+        "description": "Retrieves a single user interaction's inventory item details.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User interaction.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInteraction"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/actions": {
+      "get": {
+        "operationId": "listActions",
+        "summary": "List actions",
+        "description": "Lists the actions available in the inventory.",
+        "parameters": [
+          {
+            "name": "conditions",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "maxResult",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "startIndex",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of actions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkedList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/actions/{id}": {
+      "get": {
+        "operationId": "getAction",
+        "summary": "Get an action",
+        "description": "Retrieves an action's inputs, output type, name, description, version, and related links.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Action definition.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Action"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "operationId": "listCategories",
+        "summary": "List categories",
+        "description": "Lists the categories used to organize workflows, actions, and other inventory objects.",
+        "parameters": [
+          {
+            "name": "conditions",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of categories.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkedList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/{id}": {
+      "get": {
+        "operationId": "getCategory",
+        "summary": "Get a category",
+        "description": "Retrieves a single category's details.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/configurations": {
+      "get": {
+        "operationId": "listConfigurations",
+        "summary": "List configuration elements",
+        "description": "Lists the configuration elements (reusable named attribute sets) in the inventory.",
+        "parameters": [
+          {
+            "name": "conditions",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "maxResult",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "startIndex",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of configuration elements.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkedList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/configurations/{id}": {
+      "get": {
+        "operationId": "getConfiguration",
+        "summary": "Get a configuration element",
+        "description": "Retrieves a configuration element's definition and its attributes.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Configuration element.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigurationElement"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/configurations/{id}/attributes": {
+      "get": {
+        "operationId": "listConfigurationAttributes",
+        "summary": "List a configuration element's attributes",
+        "description": "Retrieves the attribute values of a configuration element.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of attribute values.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkedList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/configurations/{id}/attributes/{attributeName}": {
+      "put": {
+        "operationId": "setConfigurationAttributeValue",
+        "summary": "Set a configuration attribute value",
+        "description": "Sets the value of a single attribute on a configuration element.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "attributeName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfigurationAttributeValue"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Attribute value updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigurationAttributeValue"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/packages": {
+      "get": {
+        "operationId": "listPackages",
+        "summary": "List packages",
+        "description": "Lists the packages available in the inventory. Packages bundle workflows, actions, configurations, and other objects for distribution.",
+        "responses": {
+          "200": {
+            "description": "List of packages.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkedList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/packages/{id}": {
+      "get": {
+        "operationId": "getPackage",
+        "summary": "Get a package",
+        "description": "Retrieves a single package's details and contents.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Package.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Package"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
