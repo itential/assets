@@ -34,7 +34,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **ARIN** | RDAP · Whois-RWS |
 | **Arista** | EOS |
 | **Aruba** | Central · ClearPass · EdgeConnect |
-| **Atlassian** | Bitbucket Cloud · Confluence Cloud · Confluence Server & Data Center · Jira Cloud · Jira Server & Data Center · Opsgenie |
+| **Atlassian** | Bitbucket Cloud · Confluence Cloud · Confluence Server & Data Center · Jira Cloud · Jira Server & Data Center · Jira Service Management · Opsgenie |
 | **Automox** | Cloud-native endpoint patch & configuration management |
 | **AWS** | API Gateway · CloudFormation · Cognito · Connect · Direct Connect · EC2 · EKS · Lambda · Network Firewall · Organizations · Route 53 · S3 · Secrets Manager |
 | **BigPanda** | AIOps / incident correlation |
