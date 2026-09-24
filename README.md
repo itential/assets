@@ -127,6 +127,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Versa** | Director |
 | **VMware** | Aria Automation Orchestrator · Avi Load Balancer · Cloud on AWS · NSX · VeloCloud Orchestrator · vSphere vCenter |
 | **WatchGuard** | Firebox (cloud-managed firewall configuration) |
+| **Zero Networks** | Microsegmentation / network security |
 | **Zoom** | Meetings / collaboration |
 | **Zscaler** | ZIA · ZPA |
 
