@@ -29,7 +29,7 @@ This project provides OpenAPI specs for automating against Jira Service Manageme
 - [OpenAPIs](#openapis)
   - [`atlassian_jira_service_management_basic_auth-latest.json`](#atlassian_jira_service_management_basic_auth-latestjson)
   - [`atlassian_jira_service_management_oauth2_3lo-latest.json`](#atlassian_jira_service_management_oauth2_3lo-latestjson)
-  - [`atlassian_jira_service_management-1001.0.0-SNAPSHOT-44cdd07c042959317ed5591bf79dbcd9369f3610.json`](#atlassian_jira_service_management-100100-snapshot-44cdd07c042959317ed5591bf79dbcd9369f3610json)
+  - [`atlassian_jira_service_management-3.json`](#atlassian_jira_service_management-3json)
 
 ## Contents
 
@@ -287,7 +287,7 @@ Create/Update workflows accept the request body as a single pre-built `requestBo
 |---|---|---|---|
 | [`atlassian_jira_service_management_basic_auth-latest.json`](./OpenAPIs/atlassian_jira_service_management_basic_auth-latest.json) | latest (curated) | 65 | Basic Auth variant — actively-maintained spec, trimmed to common CRUD for automation, see breakdown below |
 | [`atlassian_jira_service_management_oauth2_3lo-latest.json`](./OpenAPIs/atlassian_jira_service_management_oauth2_3lo-latest.json) | latest (curated) | 65 | OAuth 2.0 (3LO) variant — same curated operation set as the Basic Auth spec above, different `securityScheme` |
-| [`atlassian_jira_service_management-1001.0.0-SNAPSHOT-44cdd07c042959317ed5591bf79dbcd9369f3610.json`](./OpenAPIs/atlassian_jira_service_management-1001.0.0-SNAPSHOT-44cdd07c042959317ed5591bf79dbcd9369f3610.json) | 1001.0.0-SNAPSHOT-44cdd07c042959317ed5591bf79dbcd9369f3610 | 75 | Full spec for the Jira Service Management REST API surface (75 operations) |
+| [`atlassian_jira_service_management-3.json`](./OpenAPIs/atlassian_jira_service_management-3.json) | 1001.0.0-SNAPSHOT-44cdd07c042959317ed5591bf79dbcd9369f3610 | 75 | Full spec for the Jira Service Management REST API surface (75 operations) |
 
 ### `atlassian_jira_service_management_basic_auth-latest.json`
 
@@ -316,6 +316,6 @@ Resources included, by category:
 
 Identical resource/operation set to `atlassian_jira_service_management_basic_auth-latest.json` above — same 65 operations, same categories — with `securityScheme` replaced by an `oauth2` `authorizationCode` flow instead of `basicAuth`. Shares that spec's `info.title`/`info.version` by design; see [OAuth 2.0 (3LO)](#oauth-20-3lo) under Integration Configuration for why and how that affects importing it.
 
-### `atlassian_jira_service_management-1001.0.0-SNAPSHOT-44cdd07c042959317ed5591bf79dbcd9369f3610.json`
+### `atlassian_jira_service_management-3.json`
 
 Full, unmodified vendor spec — the vendor's complete API surface, preserved as-is. See `atlassian_jira_service_management_basic_auth-latest.json` above for the curated subset if you just need common CRUD automation.
