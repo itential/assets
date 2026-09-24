@@ -1,0 +1,346 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Check Point Reputation Service",
+    "description": "Check Point's ThreatCloud reputation lookup service for URLs, IP addresses, and file hashes (md5/sha1/sha256), returning classification, risk score, and contextual threat data for SIEM/SOAR enrichment. Authentication: API key exchanged for a short-lived session token (see Connection Properties in the README).",
+    "version": "latest",
+    "x-vendor-api-version": "1.0.0",
+    "x-itential-curated": "Reviewed against the repo's common-CRUD-for-automation policy: the upstream spec has only two operations total. The session-token endpoint is modeled via dynamic-retrieval auth rather than as a callable operation, leaving 1 of 1 remaining upstream operations in scope: the resource reputation query. See the repo README for detail and the full spec."
+  },
+  "servers": [
+    {
+      "url": "https://rep.checkpoint.com"
+    }
+  ],
+  "security": [
+    {
+      "token": []
+    }
+  ],
+  "paths": {
+    "/{service}-rep/service/v3.0/query": {
+      "post": {
+        "summary": "Query your resource",
+        "tags": [
+          "Query"
+        ],
+        "parameters": [
+          {
+            "name": "Client-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "service",
+            "in": "path",
+            "description": "The service you want to query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "url",
+                "ip",
+                "file"
+              ]
+            }
+          },
+          {
+            "name": "resource",
+            "in": "query",
+            "description": "The resource you want to query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReputationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReputationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "Unauthorized": {
+        "description": "Invalid Client-Key header"
+      },
+      "BadRequest": {
+        "description": "Bad Request - Check the request paremters"
+      },
+      "Forbidden": {
+        "description": "Invalid token header"
+      },
+      "TooManyRequests": {
+        "description": "Quota exceeded"
+      },
+      "NotFound": {
+        "description": "The requested URL was not found"
+      }
+    },
+    "schemas": {
+      "ReputationSingleRequest": {
+        "properties": {
+          "resource": {
+            "type": "string"
+          }
+        }
+      },
+      "ReputationRequest": {
+        "properties": {
+          "request": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReputationSingleRequest"
+            }
+          }
+        },
+        "required": [
+          "request"
+        ]
+      },
+      "ReputationResponse": {
+        "properties": {
+          "risk": {
+            "type": "number",
+            "example": 0
+          },
+          "resource": {
+            "type": "string",
+            "example": "http://google.com"
+          },
+          "reputation": {
+            "$ref": "#/components/schemas/ReputationClassification"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ReputationStatus"
+          },
+          "context": {
+            "$ref": "#/components/schemas/ReputationResponseContext"
+          }
+        }
+      },
+      "ReputationClassification": {
+        "properties": {
+          "classification": {
+            "type": "string",
+            "example": "Benign"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "N/A",
+              "Low",
+              "Medium",
+              "High",
+              "Critical"
+            ]
+          },
+          "Confidence": {
+            "type": "string",
+            "enum": [
+              "Low",
+              "Medium",
+              "High"
+            ]
+          }
+        }
+      },
+      "ReputationStatus": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "enum": [
+              2001,
+              2002
+            ]
+          },
+          "label": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "PARTIAL_SUCCESS"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "enum": [
+              "Succeeded to generate reputation",
+              "Some vendors are unavailable"
+            ]
+          }
+        }
+      },
+      "ReputationResponseContext": {
+        "type": "object",
+        "properties": {
+          "asn": {
+            "type": "number",
+            "description": "ASN of the IP (IP)"
+          },
+          "as_owner": {
+            "type": "string",
+            "description": "ASN owner of the IP (IP)"
+          },
+          "safe": {
+            "type": "boolean",
+            "description": "exists and true if certified safe (URL)"
+          },
+          "malware_family": {
+            "type": "string",
+            "description": "the malware family associated with the resource  (URL/FILE/IP)"
+          },
+          "protection_name": {
+            "type": "string",
+            "description": "The protection name returned from Malware Service / AntiVirus (URL/FILE)"
+          },
+          "redirections": {
+            "type": "array",
+            "description": "The redirections of the resource (URL)",
+            "items": {
+              "type": "string"
+            }
+          },
+          "malware_types": {
+            "type": "array",
+            "description": "The malware types (FILE)",
+            "items": {
+              "type": "string"
+            }
+          },
+          "categories": {
+            "type": "array",
+            "description": "URLF categories (URL)",
+            "items": {
+              "type": "string"
+            }
+          },
+          "location": {
+            "type": "object",
+            "description": "geo location information (IP)",
+            "properties": {
+              "region": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "postalCode": {
+                "type": "string"
+              },
+              "latitude": {
+                "type": "number"
+              },
+              "longitude": {
+                "type": "number"
+              },
+              "dma_code": {
+                "type": "integer"
+              },
+              "area_code": {
+                "type": "integer"
+              },
+              "metro_code": {
+                "type": "integer"
+              }
+            }
+          },
+          "related_resources": {
+            "type": "object",
+            "description": "(FILE)",
+            "properties": {
+              "similar_files_found": {
+                "description": "How many similar files found",
+                "type": "number"
+              },
+              "similar_files_details": {
+                "description": "Information about the similar file",
+                "type": "object",
+                "properties": {
+                  "md5": {
+                    "type": "string"
+                  },
+                  "file_type": {
+                    "type": "string"
+                  },
+                  "classification": {
+                    "type": "string"
+                  },
+                  "malware_family": {
+                    "type": "string"
+                  },
+                  "confidence": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "token": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "token",
+        "description": "Session token retrieved dynamically via GET /rep-auth/service/v1.0/request using the Client-Key header, and replayed on the token header of every subsequent request. The response is a raw token string (format exp=...~acl=...~hmac=...), not a JSON envelope, so responsePointer is intentionally blank -- Itential Platform treats an empty JSON Pointer as 'use the whole raw response body'. The token is valid for 30 minutes; Itential Platform re-retrieves it automatically before each request. The Client-Key header itself must also be supplied on every query call (see the Client-Key parameter on the query operation) since Itential Platform's dynamic-retrieval only auto-injects a single header.",
+        "x-itential-dynamic-retrieval": {
+          "method": "GET",
+          "url": "https://rep.checkpoint.com/rep-auth/service/v1.0/request",
+          "responsePointer": ""
+        },
+        "x-itential-parameters": [
+          {
+            "name": "Client-Key",
+            "in": "header",
+            "x-itential-use-in": [
+              "key"
+            ],
+            "schema": {
+              "type": "string"
+            },
+            "description": "Check Point Reputation Service trial/production API key, sent as the Client-Key header on the token-retrieval call."
+          }
+        ]
+      }
+    }
+  }
+}
