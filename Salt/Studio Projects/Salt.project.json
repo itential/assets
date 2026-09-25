@@ -1,0 +1,1227 @@
+{
+  "_id": "15dd3d9f3831404fa73b7eaf",
+  "name": "Salt",
+  "description": "Workflows covering Salt's rest_cherrypy netapi command execution, job tracking, minion inventory, and key management REST API operations, organized by category.",
+  "components": [
+    {
+      "iid": 0,
+      "type": "workflow",
+      "reference": "2198d410-d9a2-4e1f-abba-5f60a23a3ea2",
+      "folder": "/Execution",
+      "document": {
+        "name": "Run Command",
+        "description": "Run Command",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "a1": {
+            "name": "runCommand",
+            "canvasName": "runCommand",
+            "summary": "Run Command",
+            "description": "Publish one or more lowstate commands and wait for the result.",
+            "location": "Adapter",
+            "locationType": "Salt:latest",
+            "app": "Salt:latest",
+            "type": "automatic",
+            "displayName": "Salt",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Salt",
+                "bodyContentType": "application/json",
+                "requestBodyPayload": "$var.job.commands"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "a1": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a1": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "commands": {
+              "type": "array",
+              "description": "Lowstate commands to run.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "client": {
+                    "type": "string",
+                    "enum": [
+                      "local",
+                      "local_async",
+                      "runner",
+                      "runner_async",
+                      "wheel",
+                      "wheel_async",
+                      "ssh"
+                    ],
+                    "description": "Salt netapi client to dispatch through."
+                  },
+                  "tgt": {
+                    "type": "string",
+                    "description": "Target expression (minion ID, glob, grain/compound match, etc.)."
+                  },
+                  "tgt_type": {
+                    "type": "string",
+                    "enum": [
+                      "glob",
+                      "pcre",
+                      "list",
+                      "grain",
+                      "grain_pcre",
+                      "pillar",
+                      "pillar_pcre",
+                      "compound",
+                      "nodegroup",
+                      "ipcidr"
+                    ],
+                    "description": "How to interpret tgt."
+                  },
+                  "fun": {
+                    "type": "string",
+                    "description": "Execution/runner/wheel function to call, e.g. 'test.ping'."
+                  },
+                  "arg": {
+                    "type": "array",
+                    "items": {},
+                    "description": "Positional arguments passed to fun."
+                  },
+                  "kwarg": {
+                    "type": "object",
+                    "description": "Keyword arguments passed to fun."
+                  },
+                  "timeout": {
+                    "type": "integer",
+                    "description": "Seconds to wait for minion replies."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "return": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "One result object per lowstate command submitted."
+            }
+          }
+        },
+        "last_updated": "2026-09-23T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "6cb43672-fca6-4b90-a384-9bc743339878",
+        "created": "2026-09-23T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 1,
+      "type": "workflow",
+      "reference": "73d1200f-d1d9-4d0b-860d-d2e6acb54e53",
+      "folder": "/Execution",
+      "document": {
+        "name": "Run Command Async",
+        "description": "Run Command Async",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "a1": {
+            "name": "runCommandAsync",
+            "canvasName": "runCommandAsync",
+            "summary": "Run Command Async",
+            "description": "Start an execution-module function against targeted minions asynchronously and return a job ID immediately.",
+            "location": "Adapter",
+            "locationType": "Salt:latest",
+            "app": "Salt:latest",
+            "type": "automatic",
+            "displayName": "Salt",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Salt",
+                "bodyContentType": "application/json",
+                "requestBodyPayload": "$var.job.commands"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "a1": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a1": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "commands": {
+              "type": "array",
+              "description": "Lowstate commands to run asynchronously.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "client": {
+                    "type": "string",
+                    "enum": [
+                      "local",
+                      "local_async",
+                      "runner",
+                      "runner_async",
+                      "wheel",
+                      "wheel_async",
+                      "ssh"
+                    ],
+                    "description": "Salt netapi client to dispatch through."
+                  },
+                  "tgt": {
+                    "type": "string",
+                    "description": "Target expression (minion ID, glob, grain/compound match, etc.)."
+                  },
+                  "tgt_type": {
+                    "type": "string",
+                    "enum": [
+                      "glob",
+                      "pcre",
+                      "list",
+                      "grain",
+                      "grain_pcre",
+                      "pillar",
+                      "pillar_pcre",
+                      "compound",
+                      "nodegroup",
+                      "ipcidr"
+                    ],
+                    "description": "How to interpret tgt."
+                  },
+                  "fun": {
+                    "type": "string",
+                    "description": "Execution/runner/wheel function to call, e.g. 'test.ping'."
+                  },
+                  "arg": {
+                    "type": "array",
+                    "items": {},
+                    "description": "Positional arguments passed to fun."
+                  },
+                  "kwarg": {
+                    "type": "object",
+                    "description": "Keyword arguments passed to fun."
+                  },
+                  "timeout": {
+                    "type": "integer",
+                    "description": "Seconds to wait for minion replies."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "return": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "jid": {
+                    "type": "string",
+                    "description": "Job ID assigned to the async execution."
+                  },
+                  "minions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "_links": {
+              "type": "object",
+              "description": "HATEOAS links, including the /jobs/<jid> URL for polling the result."
+            }
+          }
+        },
+        "last_updated": "2026-09-23T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "9e6548aa-0c60-408f-8578-dfe2c490b733",
+        "created": "2026-09-23T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 2,
+      "type": "workflow",
+      "reference": "7d86fd80-b85c-490c-8f03-774c37ed4b16",
+      "folder": "/Minions",
+      "document": {
+        "name": "List Minions",
+        "description": "List Minions",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "a1": {
+            "name": "listMinions",
+            "canvasName": "listMinions",
+            "summary": "List Minions",
+            "description": "List all known minions and their full grain data.",
+            "location": "Adapter",
+            "locationType": "Salt:latest",
+            "app": "Salt:latest",
+            "type": "automatic",
+            "displayName": "Salt",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Salt"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "a1": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a1": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "return": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "description": "Map of minion ID to its full grain set."
+              }
+            }
+          }
+        },
+        "last_updated": "2026-09-23T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "46b985a1-16e3-4375-b424-3c0e8c47560f",
+        "created": "2026-09-23T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 3,
+      "type": "workflow",
+      "reference": "5e9f6058-0b63-44d0-b0f8-835cab8bcbf5",
+      "folder": "/Minions",
+      "document": {
+        "name": "Get Minion",
+        "description": "Get Minion",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "a1": {
+            "name": "getMinion",
+            "canvasName": "getMinion",
+            "summary": "Get Minion",
+            "description": "Retrieve grain data for a single minion.",
+            "location": "Adapter",
+            "locationType": "Salt:latest",
+            "app": "Salt:latest",
+            "type": "automatic",
+            "displayName": "Salt",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Salt",
+                "mid": "$var.job.mid"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "a1": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a1": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "mid": {
+              "type": "string",
+              "description": "Minion ID."
+            }
+          }
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "return": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "last_updated": "2026-09-23T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "49793dd9-a98d-4f78-aaeb-699797737457",
+        "created": "2026-09-23T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 4,
+      "type": "workflow",
+      "reference": "4fd95e21-df46-4474-a5c7-da5fed4c0eb8",
+      "folder": "/Jobs",
+      "document": {
+        "name": "List Jobs",
+        "description": "List Jobs",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "a1": {
+            "name": "listJobs",
+            "canvasName": "listJobs",
+            "summary": "List Jobs",
+            "description": "List all jobs the master has published, from the job cache.",
+            "location": "Adapter",
+            "locationType": "Salt:latest",
+            "app": "Salt:latest",
+            "type": "automatic",
+            "displayName": "Salt",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Salt"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "a1": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a1": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "return": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "description": "Map of job ID to job summary."
+              }
+            }
+          }
+        },
+        "last_updated": "2026-09-23T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "fe294eed-eaa9-4aa7-88c2-7cbb5ffb7bad",
+        "created": "2026-09-23T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 5,
+      "type": "workflow",
+      "reference": "ce1d2533-6230-422b-9d7f-da5929a63cbb",
+      "folder": "/Jobs",
+      "document": {
+        "name": "Get Job",
+        "description": "Get Job",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "a1": {
+            "name": "getJob",
+            "canvasName": "getJob",
+            "summary": "Get Job",
+            "description": "Retrieve metadata and per-minion results for a job, by job ID.",
+            "location": "Adapter",
+            "locationType": "Salt:latest",
+            "app": "Salt:latest",
+            "type": "automatic",
+            "displayName": "Salt",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Salt",
+                "jid": "$var.job.jid"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "a1": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a1": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "jid": {
+              "type": "string",
+              "description": "Job ID."
+            }
+          }
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "info": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Job metadata."
+            },
+            "return": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Per-minion return values."
+            }
+          }
+        },
+        "last_updated": "2026-09-23T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "0bd552d7-ead0-4dbc-9400-8b4dd428b5d6",
+        "created": "2026-09-23T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 6,
+      "type": "workflow",
+      "reference": "aeef8f4e-1820-4eba-a3ef-5fcb145b764f",
+      "folder": "/Keys",
+      "document": {
+        "name": "List Keys",
+        "description": "List Keys",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "a1": {
+            "name": "listKeys",
+            "canvasName": "listKeys",
+            "summary": "List Keys",
+            "description": "List all minion authentication keys known to the master, grouped by accepted, pending, rejected, and denied.",
+            "location": "Adapter",
+            "locationType": "Salt:latest",
+            "app": "Salt:latest",
+            "type": "automatic",
+            "displayName": "Salt",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Salt"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "a1": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a1": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "return": {
+              "type": "object",
+              "properties": {
+                "local": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "minions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "minions_pre": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "minions_rejected": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "minions_denied": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "last_updated": "2026-09-23T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "349ec18c-ff11-452a-8807-7e18820359bb",
+        "created": "2026-09-23T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 7,
+      "type": "workflow",
+      "reference": "693a3a74-5512-46e0-8737-ddc5c86512e3",
+      "folder": "/Keys",
+      "document": {
+        "name": "Get Key",
+        "description": "Get Key",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "a1": {
+            "name": "getKey",
+            "canvasName": "getKey",
+            "summary": "Get Key",
+            "description": "Retrieve the fingerprint of a single minion's key.",
+            "location": "Adapter",
+            "locationType": "Salt:latest",
+            "app": "Salt:latest",
+            "type": "automatic",
+            "displayName": "Salt",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Salt",
+                "mid": "$var.job.mid"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "a1": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a1": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "mid": {
+              "type": "string",
+              "description": "Minion ID."
+            }
+          }
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "return": {
+              "type": "object",
+              "properties": {
+                "minions": {
+                  "type": "object",
+                  "description": "Map of minion ID to its key fingerprint."
+                }
+              }
+            }
+          }
+        },
+        "last_updated": "2026-09-23T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "24d620f4-a896-4a75-a2a5-7e44be7b94d0",
+        "created": "2026-09-23T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 8,
+      "type": "workflow",
+      "reference": "940f7b9e-c46a-484d-9b6a-17a32f72c75f",
+      "folder": "/Keys",
+      "document": {
+        "name": "Generate Key",
+        "description": "Generate Key",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "a1": {
+            "name": "generateKey",
+            "canvasName": "generateKey",
+            "summary": "Generate Key",
+            "description": "Generate a new minion keypair on the master, automatically accept it, and return it as a tarball.",
+            "location": "Adapter",
+            "locationType": "Salt:latest",
+            "app": "Salt:latest",
+            "type": "automatic",
+            "displayName": "Salt",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Salt",
+                "bodyContentType": "application/x-www-form-urlencoded",
+                "requestBodyPayload": "$var.job.body"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "a1": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a1": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "Form fields for Generate Key.",
+              "properties": {
+                "mid": {
+                  "type": "string",
+                  "description": "Minion ID to generate and accept a keypair for."
+                },
+                "keysize": {
+                  "type": "integer",
+                  "description": "RSA key size in bits."
+                },
+                "force": {
+                  "type": "boolean",
+                  "description": "Overwrite an existing key of the same minion ID."
+                }
+              }
+            }
+          }
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {}
+        },
+        "last_updated": "2026-09-23T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "17e34359-94b0-4453-a05e-8dc83b1c1aac",
+        "created": "2026-09-23T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    }
+  ],
+  "iid": 0,
+  "thumbnail": "",
+  "backgroundColor": "#ffffff",
+  "created": "2026-09-23T12:00:00.000Z",
+  "lastUpdated": "2026-09-23T12:00:00.000Z",
+  "createdBy": {
+    "_id": "6aa81494cced17e2080dcf15",
+    "provenance": "LDAP",
+    "username": "admin@itential"
+  },
+  "lastUpdatedBy": {
+    "_id": "6aa81494cced17e2080dcf15",
+    "provenance": "LDAP",
+    "username": "admin@itential"
+  }
+}

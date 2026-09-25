@@ -108,6 +108,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Ruckus** | Fastiron |
 | **Rundeck** | Job automation & orchestration |
 | **Salesforce** | CRM (REST API · Tooling API) |
+| **Salt** | salt-api (rest_cherrypy netapi) |
 | **ScienceLogic** | Skylar One (formerly SL1) |
 | **Sectigo** | Certificate Manager · SCM Admin |
 | **Selector** | AIOps |
