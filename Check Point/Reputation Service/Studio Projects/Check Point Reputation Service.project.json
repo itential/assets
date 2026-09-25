@@ -1,0 +1,257 @@
+{
+  "_id": "6b1c2d3e4f5a6b7c8d9e0f10",
+  "name": "Check Point Reputation Service",
+  "description": "Workflows for the Check Point Reputation Service ThreatCloud reputation lookup",
+  "components": [
+    {
+      "iid": 0,
+      "reference": "2278d810-7b3d-41c9-a21a-02f68142907c",
+      "type": "workflow",
+      "folder": "/Query",
+      "document": {
+        "name": "Query Resource Reputation",
+        "description": "Query Reputation Service for a URL, IP address, or file hash",
+        "type": "automation",
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1a2b": {
+            "name": "merge",
+            "canvasName": "merge",
+            "summary": "Merge Resource",
+            "description": "Merge data into a single object",
+            "location": "Application",
+            "locationType": null,
+            "app": "WorkFlowEngine",
+            "type": "operation",
+            "displayName": "WorkFlowEngine",
+            "variables": {
+              "incoming": {
+                "data_to_merge": [
+                  {
+                    "key": "resource",
+                    "value": {
+                      "task": "job",
+                      "variable": "resource"
+                    }
+                  }
+                ]
+              },
+              "outgoing": {
+                "merged_object": ""
+              }
+            },
+            "actor": "Pronghorn",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "3c4d": {
+            "name": "renderJinja2ContextWithCast",
+            "canvasName": "renderJinja2ContextWithCast",
+            "summary": "Render Reputation Request Body",
+            "description": "Renders jinja2 Context output with data cast.",
+            "location": "Application",
+            "locationType": null,
+            "app": "TemplateBuilder",
+            "type": "automatic",
+            "displayName": "TemplateBuilder",
+            "variables": {
+              "incoming": {
+                "template": "{\n    \"request\": [\n        {\n            \"resource\": \"{{resource}}\"\n        }\n    ]\n}",
+                "variables": "$var.1a2b.merged_object",
+                "castDataType": "object"
+              },
+              "outgoing": {
+                "renderedTemplate": ""
+              }
+            },
+            "actor": "Pronghorn",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          },
+          "5e6f": {
+            "name": "query",
+            "canvasName": "query",
+            "summary": "Query Resource Reputation",
+            "description": "POST /{service}-rep/service/v3.0/query",
+            "location": "Adapter",
+            "locationType": "Check Point Reputation Service:latest",
+            "app": "Check Point Reputation Service:latest",
+            "type": "automatic",
+            "displayName": "Check Point Reputation Service",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Check Point Reputation Service",
+                "service": "$var.job.service",
+                "resource": "$var.job.resource",
+                "Client-Key": "$var.job.clientKey",
+                "bodyContentType": "application/json",
+                "requestBodyPayload": "$var.3c4d.renderedTemplate"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 450
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 600
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1a2b": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1a2b": {
+            "3c4d": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "3c4d": {
+            "5e6f": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "5e6f": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "service": {
+              "type": "string",
+              "enum": [
+                "url",
+                "ip",
+                "file"
+              ]
+            },
+            "resource": {
+              "type": "string"
+            },
+            "clientKey": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "service",
+            "resource",
+            "clientKey"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "service": {
+              "type": "string",
+              "enum": [
+                "url",
+                "ip",
+                "file"
+              ]
+            },
+            "resource": {
+              "type": "string"
+            },
+            "clientKey": {
+              "type": "string"
+            },
+            "_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{24}$"
+            },
+            "initiator": {
+              "type": "string"
+            }
+          }
+        },
+        "last_updated": "2026-09-24T00:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.2",
+        "uuid": "704f425c-b5ef-4d46-a18b-3cd12f2b5e25",
+        "created": "2026-09-24T00:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.2",
+        "scenarios": [],
+        "canvasVersion": 3,
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    }
+  ],
+  "folders": [
+    {
+      "nodeType": "folder",
+      "name": "Query",
+      "children": [
+        {
+          "iid": 0,
+          "nodeType": "component"
+        }
+      ]
+    }
+  ],
+  "createdBy": {
+    "_id": "699f3e2b85569c9f5d8e1f38",
+    "provenance": "LDAP",
+    "username": "admin@itential"
+  },
+  "lastUpdatedBy": {
+    "_id": "699f3e2b85569c9f5d8e1f38",
+    "provenance": "LDAP",
+    "username": "admin@itential"
+  },
+  "created": "2026-09-24T00:00:00.000Z",
+  "lastUpdated": "2026-09-24T00:00:00.000Z",
+  "iid": 1,
+  "thumbnail": "",
+  "backgroundColor": "",
+  "referencedComponentHashes": []
+}

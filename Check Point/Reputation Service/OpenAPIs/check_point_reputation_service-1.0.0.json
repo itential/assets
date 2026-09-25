@@ -1,0 +1,353 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Check Point Reputation Service API",
+    "description": "## Introduction\nLeverage the Check Point’s threat intelligence to enrich your SIEM and SOAR solutions and secure your business applications and websites using simple RESTful APIs.  \n\n| **Input** | **Output** |\n|-------|--------|\n| **URL, IP, File digest (md5/sha1/sha256)**   | Reputation, Risk and Context     |\n\n## Getting Started with the Reputation Service API\n### 1. Get your API Key \n[Contact us](mailto:TCAPI_SUPPORT@checkpoint.com) to get an API key\n\n<br>\n### 2. Request a session token\n* Use the provided client key to get a session token\n* The session token is <ins>**valid for 30min**<ins>.  \n\n<ins>Request example:<ins>  \n```linux\ncurl -X GET \"https://rep.checkpoint.com/rep-auth/service/v1.0/request\" -H \"Client-Key: XXXXXXXXXXXXX\"\n```\n<ins> Response example: <ins> \n```\nexp=XXXXXXX~acl=XXXX/*~hmac=XXXXXXXXX\n```\n<br>\n\n### 3. Reputation Service Query\n* With your API Key and the generated session token you can query Reputation Service\n* Fill in the required service [url-rep / file-rep / ip-rep]\n* Fill in the requested resource\n* **Important**: The resource should be inserted in 2 places:\n  * **Paylod** [Json / Request Body] \n  * **Request parameter** [after ?resource=].  \n\n<ins>Request example:<ins>  \n```linux\ncurl -X POST \"https://rep.checkpoint.com/url-rep/service/v3.0/query?resource=ynet.co.il\" -H \"accept: application/json\" -H \"Client-Key: XXXXXXX\" -H \"token: exp=XXXXXXX~acl=XXXX/*~hmac=XXXXXXXXX -H \"Content-Type: application/json\" -d \"{\\\"request\\\":[{\\\"resource\\\":\\\"ynet.co.il\\\"}]}\"\n```\n\n<ins> Response example: <ins> \n```json\n{\n  \"response\": [\n      {\n          \"status\": {\n              \"code\": 2001,\n              \"label\": \"SUCCESS\",\n              \"message\": \"Succeeded to generate reputation\"\n          },\n          \"resource\": \"ynet.co.il\",\n          \"reputation\": {\n              \"classification\": \"Benign\",\n              \"confidence\": \"High\",\n              \"severity\": \"N/A\"\n          },\n          \"risk\": 0,\n          \"context\": {\n              \"categories\": [\n                  {\n                      \"id\": 24,\n                      \"name\": \"News / Media\"\n                  }\n              ],\n              \"indications\": [\n                  \"The URL is known benign by Check Point's Threat Cloud\",\n                  \"Domain is classified as News / Media\"\n              ],\n              \"safe\": true\n          }\n      }\n  ]\n}\n```\n",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://rep.checkpoint.com"
+    }
+  ],
+  "paths": {
+    "/rep-auth/service/v1.0/request": {
+      "get": {
+        "summary": "Request a session token",
+        "tags": [
+          "Authentication"
+        ],
+        "parameters": [
+          {
+            "name": "Client-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucess - the response is a token valild for 30 minutes"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/{service}-rep/service/v3.0/query": {
+      "post": {
+        "summary": "Query your resource",
+        "tags": [
+          "Query"
+        ],
+        "parameters": [
+          {
+            "name": "Client-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "service",
+            "in": "path",
+            "description": "The service you want to query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "url",
+                "ip",
+                "file"
+              ]
+            }
+          },
+          {
+            "name": "resource",
+            "in": "query",
+            "description": "The resource you want to query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReputationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReputationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "Unauthorized": {
+        "description": "Invalid Client-Key header"
+      },
+      "BadRequest": {
+        "description": "Bad Request - Check the request paremters"
+      },
+      "Forbidden": {
+        "description": "Invalid token header"
+      },
+      "TooManyRequests": {
+        "description": "Quota exceeded"
+      },
+      "NotFound": {
+        "description": "The requested URL was not found"
+      }
+    },
+    "schemas": {
+      "ReputationSingleRequest": {
+        "properties": {
+          "resource": {
+            "type": "string"
+          }
+        }
+      },
+      "ReputationRequest": {
+        "properties": {
+          "request": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReputationSingleRequest"
+            }
+          }
+        },
+        "required": [
+          "request"
+        ]
+      },
+      "ReputationResponse": {
+        "properties": {
+          "risk": {
+            "type": "number",
+            "example": 0
+          },
+          "resource": {
+            "type": "string",
+            "example": "http://google.com"
+          },
+          "reputation": {
+            "$ref": "#/components/schemas/ReputationClassification"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ReputationStatus"
+          },
+          "context": {
+            "$ref": "#/components/schemas/ReputationResponseContext"
+          }
+        }
+      },
+      "ReputationClassification": {
+        "properties": {
+          "classification": {
+            "type": "string",
+            "example": "Benign"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "N/A",
+              "Low",
+              "Medium",
+              "High",
+              "Critical"
+            ]
+          },
+          "Confidence": {
+            "type": "string",
+            "enum": [
+              "Low",
+              "Medium",
+              "High"
+            ]
+          }
+        }
+      },
+      "ReputationStatus": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "enum": [
+              2001,
+              2002
+            ]
+          },
+          "label": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "PARTIAL_SUCCESS"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "enum": [
+              "Succeeded to generate reputation",
+              "Some vendors are unavailable"
+            ]
+          }
+        }
+      },
+      "ReputationResponseContext": {
+        "type": "object",
+        "properties": {
+          "asn": {
+            "type": "number",
+            "description": "ASN of the IP (IP)"
+          },
+          "as_owner": {
+            "type": "string",
+            "description": "ASN owner of the IP (IP)"
+          },
+          "safe": {
+            "type": "boolean",
+            "description": "exists and true if certified safe (URL)"
+          },
+          "malware_family": {
+            "type": "string",
+            "description": "the malware family associated with the resource  (URL/FILE/IP)"
+          },
+          "protection_name": {
+            "type": "string",
+            "description": "The protection name returned from Malware Service / AntiVirus (URL/FILE)"
+          },
+          "redirections": {
+            "type": "array",
+            "description": "The redirections of the resource (URL)",
+            "items": {
+              "type": "string"
+            }
+          },
+          "malware_types": {
+            "type": "array",
+            "description": "The malware types (FILE)",
+            "items": {
+              "type": "string"
+            }
+          },
+          "categories": {
+            "type": "array",
+            "description": "URLF categories (URL)",
+            "items": {
+              "type": "string"
+            }
+          },
+          "location": {
+            "type": "object",
+            "description": "geo location information (IP)",
+            "properties": {
+              "region": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "postalCode": {
+                "type": "string"
+              },
+              "latitude": {
+                "type": "number"
+              },
+              "longitude": {
+                "type": "number"
+              },
+              "dma_code": {
+                "type": "integer"
+              },
+              "area_code": {
+                "type": "integer"
+              },
+              "metro_code": {
+                "type": "integer"
+              }
+            }
+          },
+          "related_resources": {
+            "type": "object",
+            "description": "(FILE)",
+            "properties": {
+              "similar_files_found": {
+                "description": "How many similar files found",
+                "type": "number"
+              },
+              "similar_files_details": {
+                "description": "Information about the similar file",
+                "type": "object",
+                "properties": {
+                  "md5": {
+                    "type": "string"
+                  },
+                  "file_type": {
+                    "type": "string"
+                  },
+                  "classification": {
+                    "type": "string"
+                  },
+                  "malware_family": {
+                    "type": "string"
+                  },
+                  "confidence": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
