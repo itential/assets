@@ -78,7 +78,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **ManageEngine** | ServiceDesk Plus (ITSM) |
 | **Mattermost** | Team collaboration & messaging |
 | **Men and Mice** | Micetro (DDI) |
-| **Microsoft** | 365 IP and URL Web Service · Azure DevOps · Azure Key Vault · Dynamics 365 · Graph · Teams |
+| **Microsoft** | 365 IP and URL Web Service · Azure Blob Storage · Azure DevOps · Azure Key Vault · Azure Kubernetes Service · Azure Resource Manager · Dynamics 365 · Graph · Teams |
 | **Moogsoft** | Enterprise · Cloud |
 | **Morpheus** | Cloud management platform |
 | **Nautobot** | Nautobot 2.4 |
