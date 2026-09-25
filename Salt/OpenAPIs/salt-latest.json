@@ -1,0 +1,667 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Salt",
+    "description": "Salt is an open-source infrastructure automation and remote execution engine. Its salt-api service exposes the master's execution, runner, and wheel functions over a REST interface (the rest_cherrypy netapi module), so external systems can run commands against minions, manage minion authentication keys, and track jobs without a local Salt client.",
+    "version": "latest",
+    "x-vendor-api-version": "3008.1",
+    "x-itential-curated": "Reviewed against the repo's common-CRUD-for-automation policy: all 9 upstream rest_cherrypy operations (command execution, job tracking, minion inventory, and key management) are already in scope, so the full documented spec is carried through as -latest. See the repo README for the operation breakdown and the full spec."
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}",
+      "description": "Salt master running the rest_cherrypy netapi module.",
+      "variables": {
+        "protocol": {
+          "default": "https",
+          "enum": [
+            "http",
+            "https"
+          ],
+          "description": "Scheme the netapi module is served over."
+        },
+        "host": {
+          "default": "salt-master.example.com",
+          "description": "Salt master hostname or IP."
+        },
+        "port": {
+          "default": "8000",
+          "description": "Port the rest_cherrypy netapi module listens on."
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "SaltToken": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Execution",
+      "description": "Run execution-module, runner, or wheel functions against the Salt master or targeted minions."
+    },
+    {
+      "name": "Minions",
+      "description": "Minion inventory and grain data known to the master."
+    },
+    {
+      "name": "Jobs",
+      "description": "Tracking of published jobs and their per-minion results."
+    },
+    {
+      "name": "Keys",
+      "description": "Minion authentication key management."
+    }
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "tags": [
+          "Execution"
+        ],
+        "summary": "Run Command",
+        "description": "Publish one or more lowstate commands (client/tgt/fun/arg) and wait for the result. Supports the local, runner, wheel, and ssh clients.",
+        "operationId": "runCommand",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/LowstateCommand"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReturnEnvelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/minions": {
+      "get": {
+        "tags": [
+          "Minions"
+        ],
+        "summary": "List Minions",
+        "description": "List all known minions and their full grain data.",
+        "operationId": "listMinions",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinionsListResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Execution"
+        ],
+        "summary": "Run Command Async",
+        "description": "Start an execution-module function against targeted minions asynchronously (client is forced to local_async). Returns a job ID immediately instead of waiting for minion replies.",
+        "operationId": "runCommandAsync",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/LowstateCommand"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Job accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AsyncJobResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/minions/{mid}": {
+      "get": {
+        "tags": [
+          "Minions"
+        ],
+        "summary": "Get Minion",
+        "description": "Retrieve grain data for a single minion.",
+        "operationId": "getMinion",
+        "parameters": [
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Minion ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinionDetailResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/jobs": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "List Jobs",
+        "description": "List all jobs the master has published, from the job cache.",
+        "operationId": "listJobs",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobsListResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/jobs/{jid}": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Get Job",
+        "description": "Retrieve metadata and per-minion results for a job, by job ID.",
+        "operationId": "getJob",
+        "parameters": [
+          {
+            "name": "jid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Job ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobDetailResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/keys": {
+      "get": {
+        "tags": [
+          "Keys"
+        ],
+        "summary": "List Keys",
+        "description": "List all minion authentication keys known to the master, grouped by accepted, pending, rejected, and denied.",
+        "operationId": "listKeys",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KeysListResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Keys"
+        ],
+        "summary": "Generate Key",
+        "description": "Generate a new minion keypair on the master, automatically accept it, and return it as a tarball.",
+        "operationId": "generateKey",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateKeyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tarball containing the new minion keypair.",
+            "content": {}
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    },
+    "/keys/{mid}": {
+      "get": {
+        "tags": [
+          "Keys"
+        ],
+        "summary": "Get Key",
+        "description": "Retrieve the fingerprint of a single minion's key.",
+        "operationId": "getKey",
+        "parameters": [
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Minion ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KeyDetailResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "SaltToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Auth-Token",
+        "description": "Session token obtained by POSTing form-urlencoded eauth credentials to /login; replayed on the X-Auth-Token header of every subsequent request.",
+        "x-itential-dynamic-retrieval": {
+          "method": "POST",
+          "url": "{protocol}://{host}:{port}/login",
+          "responsePointer": "/return/0/token"
+        },
+        "x-itential-parameters": [
+          {
+            "name": "username",
+            "in": "body",
+            "x-itential-use-in": [
+              "key"
+            ],
+            "schema": {
+              "type": "string"
+            },
+            "description": "Salt eauth username."
+          },
+          {
+            "name": "password",
+            "in": "body",
+            "x-itential-use-in": [
+              "key"
+            ],
+            "schema": {
+              "type": "string"
+            },
+            "description": "Salt eauth password."
+          },
+          {
+            "name": "eauth",
+            "in": "body",
+            "x-itential-use-in": [
+              "key"
+            ],
+            "schema": {
+              "type": "string",
+              "default": "pam"
+            },
+            "description": "External authentication module to validate the credentials against, e.g. 'pam', 'ldap', 'auto'."
+          }
+        ]
+      }
+    },
+    "schemas": {
+      "LowstateCommand": {
+        "type": "object",
+        "required": [
+          "fun"
+        ],
+        "properties": {
+          "client": {
+            "type": "string",
+            "description": "Salt netapi client to dispatch through. Defaults to 'local' (synchronous execution-module call against targeted minions) when omitted.",
+            "enum": [
+              "local",
+              "local_async",
+              "runner",
+              "runner_async",
+              "wheel",
+              "wheel_async",
+              "ssh"
+            ]
+          },
+          "tgt": {
+            "type": "string",
+            "description": "Target expression (minion ID, glob, grain/compound match, etc.). Required for local/local_async/ssh clients; not used by runner/wheel clients."
+          },
+          "tgt_type": {
+            "type": "string",
+            "description": "How to interpret tgt.",
+            "enum": [
+              "glob",
+              "pcre",
+              "list",
+              "grain",
+              "grain_pcre",
+              "pillar",
+              "pillar_pcre",
+              "compound",
+              "nodegroup",
+              "ipcidr"
+            ]
+          },
+          "fun": {
+            "type": "string",
+            "description": "Execution module function (local/ssh clients), runner function (runner client), or wheel function (wheel client) to call, e.g. 'test.ping', 'jobs.list_jobs', 'key.list_all'."
+          },
+          "arg": {
+            "type": "array",
+            "items": {},
+            "description": "Positional arguments passed to fun."
+          },
+          "kwarg": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Keyword arguments passed to fun."
+          },
+          "timeout": {
+            "type": "integer",
+            "description": "Seconds to wait for minion replies (local/ssh clients)."
+          }
+        }
+      },
+      "ReturnEnvelope": {
+        "type": "object",
+        "properties": {
+          "return": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "description": "One result object per lowstate command submitted, keyed by minion ID (local/ssh) or containing the runner/wheel function's return value."
+          }
+        }
+      },
+      "MinionsListResponse": {
+        "type": "object",
+        "properties": {
+          "return": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "description": "Map of minion ID to its full grain set."
+            }
+          }
+        }
+      },
+      "MinionDetailResponse": {
+        "type": "object",
+        "properties": {
+          "return": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      },
+      "AsyncJobResponse": {
+        "type": "object",
+        "properties": {
+          "return": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "jid": {
+                  "type": "string",
+                  "description": "Job ID assigned to the async execution."
+                },
+                "minions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Minion IDs the job was published to."
+                }
+              }
+            }
+          },
+          "_links": {
+            "type": "object",
+            "description": "HATEOAS links, including the /jobs/<jid> URL for polling the result."
+          }
+        }
+      },
+      "JobsListResponse": {
+        "type": "object",
+        "properties": {
+          "return": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "Function": {
+                    "type": "string"
+                  },
+                  "Arguments": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "Target": {
+                    "type": "string"
+                  },
+                  "Target-type": {
+                    "type": "string"
+                  },
+                  "User": {
+                    "type": "string"
+                  },
+                  "StartTime": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              },
+              "description": "Map of job ID to job summary."
+            }
+          }
+        }
+      },
+      "JobDetailResponse": {
+        "type": "object",
+        "properties": {
+          "info": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "description": "Job metadata (function, arguments, target, jid)."
+          },
+          "return": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "description": "Per-minion return values for the job."
+          }
+        }
+      },
+      "KeysListResponse": {
+        "type": "object",
+        "properties": {
+          "return": {
+            "type": "object",
+            "properties": {
+              "local": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Master's own key files."
+              },
+              "minions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Accepted minion keys."
+              },
+              "minions_pre": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Pending (unaccepted) minion keys."
+              },
+              "minions_rejected": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Rejected minion keys."
+              },
+              "minions_denied": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Denied minion keys."
+              }
+            }
+          }
+        }
+      },
+      "KeyDetailResponse": {
+        "type": "object",
+        "properties": {
+          "return": {
+            "type": "object",
+            "properties": {
+              "minions": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "description": "Map of minion ID to its key fingerprint."
+              }
+            }
+          }
+        }
+      },
+      "GenerateKeyRequest": {
+        "type": "object",
+        "required": [
+          "mid"
+        ],
+        "properties": {
+          "mid": {
+            "type": "string",
+            "description": "Minion ID to generate and accept a keypair for."
+          },
+          "keysize": {
+            "type": "integer",
+            "description": "RSA key size in bits."
+          },
+          "force": {
+            "type": "boolean",
+            "description": "Overwrite an existing key of the same minion ID."
+          }
+        }
+      }
+    }
+  }
+}
