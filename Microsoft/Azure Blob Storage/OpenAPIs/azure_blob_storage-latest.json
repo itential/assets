@@ -1,0 +1,1506 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Azure Blob Storage",
+    "description": "Azure Blob Storage is Microsoft's data-plane object storage service for unstructured data, exposing container and blob resources (create, read, update, delete, list) over a REST API scoped to a single storage account.",
+    "version": "latest",
+    "x-vendor-api-version": "2026-10-06",
+    "x-itential-curated": "Trimmed to 12 of 71 upstream operations covering common CRUD for automation: container create/get-properties/delete/set-metadata, list containers, list blobs in a container, and blob upload/download/delete/get-properties/set-properties/set-metadata. See the repo README for the full scope and the full spec."
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}",
+      "description": "Itential Platform Integration Models require a static server URL rather than OpenAPI server variables, so the actual per-account hostname is set on the integration instance instead. Set server.host to your storage account's full blob endpoint (e.g. mystorageaccount.blob.core.windows.net) \u2014 see the Integration Configuration section in the README."
+    }
+  ],
+  "security": [
+    {
+      "oauth2ClientCredentials": []
+    }
+  ],
+  "paths": {
+    "/{containerName}?restype=container": {
+      "put": {
+        "operationId": "Container_Create",
+        "summary": "Create Container",
+        "description": "Creates a new container under the specified account. If the container with the same name already exists, the operation fails.",
+        "tags": [
+          "Containers"
+        ],
+        "parameters": [
+          {
+            "name": "containerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the container."
+          },
+          {
+            "name": "restype",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "container"
+              ],
+              "default": "container"
+            },
+            "description": "Identifies the operation as targeting a container."
+          },
+          {
+            "name": "x-ms-meta",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A comma-separated list of name-value pairs to associate with the container as metadata."
+          },
+          {
+            "name": "x-ms-blob-public-access",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "container",
+                "blob"
+              ]
+            },
+            "description": "Specifies whether data in the container may be accessed publicly."
+          },
+          {
+            "name": "x-ms-version",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2026-10-06"
+              ],
+              "default": "2026-10-06"
+            },
+            "description": "Specifies the version of the Blob Storage REST API used for this request."
+          },
+          {
+            "name": "x-ms-client-request-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A client-generated, opaque value with a 1 KiB character limit recorded in the analytics logs for troubleshooting."
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The container was created.",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The ETag for the resource."
+              },
+              "Last-Modified": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The date/time the resource was last modified."
+              }
+            }
+          },
+          "default": {
+            "description": "Error response.",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Code": {
+                      "type": "string"
+                    },
+                    "Message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "Container_GetProperties",
+        "summary": "Get Container Properties",
+        "description": "Returns the container's properties and metadata.",
+        "tags": [
+          "Containers"
+        ],
+        "parameters": [
+          {
+            "name": "containerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the container."
+          },
+          {
+            "name": "restype",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "container"
+              ],
+              "default": "container"
+            },
+            "description": "Identifies the operation as targeting a container."
+          },
+          {
+            "name": "x-ms-lease-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "If specified, only succeeds if the container's lease is active and matches this ID."
+          },
+          {
+            "name": "x-ms-version",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2026-10-06"
+              ],
+              "default": "2026-10-06"
+            },
+            "description": "Specifies the version of the Blob Storage REST API used for this request."
+          },
+          {
+            "name": "x-ms-client-request-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A client-generated, opaque value with a 1 KiB character limit recorded in the analytics logs for troubleshooting."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The ETag for the resource."
+              },
+              "Last-Modified": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The date/time the resource was last modified."
+              }
+            }
+          },
+          "default": {
+            "description": "Error response.",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Code": {
+                      "type": "string"
+                    },
+                    "Message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "Container_Delete",
+        "summary": "Delete Container",
+        "description": "Marks the specified container for deletion. The container and any blobs contained within it are later deleted during garbage collection.",
+        "tags": [
+          "Containers"
+        ],
+        "parameters": [
+          {
+            "name": "containerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the container."
+          },
+          {
+            "name": "restype",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "container"
+              ],
+              "default": "container"
+            },
+            "description": "Identifies the operation as targeting a container."
+          },
+          {
+            "name": "x-ms-lease-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "If specified, only succeeds if the container's lease is active and matches this ID."
+          },
+          {
+            "name": "x-ms-version",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2026-10-06"
+              ],
+              "default": "2026-10-06"
+            },
+            "description": "Specifies the version of the Blob Storage REST API used for this request."
+          },
+          {
+            "name": "x-ms-client-request-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A client-generated, opaque value with a 1 KiB character limit recorded in the analytics logs for troubleshooting."
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "The container was marked for deletion.",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The ETag for the resource."
+              },
+              "Last-Modified": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The date/time the resource was last modified."
+              }
+            }
+          },
+          "default": {
+            "description": "Error response.",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Code": {
+                      "type": "string"
+                    },
+                    "Message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{containerName}?restype=container&comp=metadata": {
+      "put": {
+        "operationId": "Container_SetMetadata",
+        "summary": "Set Container Metadata",
+        "description": "Sets one or more user-defined name-value pairs for the specified container, replacing any existing metadata.",
+        "tags": [
+          "Containers"
+        ],
+        "parameters": [
+          {
+            "name": "containerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the container."
+          },
+          {
+            "name": "restype",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "container"
+              ],
+              "default": "container"
+            }
+          },
+          {
+            "name": "comp",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "metadata"
+              ],
+              "default": "metadata"
+            },
+            "description": "Identifies the operation as setting metadata."
+          },
+          {
+            "name": "x-ms-meta",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A comma-separated list of name-value pairs to associate with the container as metadata."
+          },
+          {
+            "name": "x-ms-lease-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "If specified, only succeeds if the container's lease is active and matches this ID."
+          },
+          {
+            "name": "x-ms-version",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2026-10-06"
+              ],
+              "default": "2026-10-06"
+            },
+            "description": "Specifies the version of the Blob Storage REST API used for this request."
+          },
+          {
+            "name": "x-ms-client-request-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A client-generated, opaque value with a 1 KiB character limit recorded in the analytics logs for troubleshooting."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The container metadata was set.",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The ETag for the resource."
+              },
+              "Last-Modified": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The date/time the resource was last modified."
+              }
+            }
+          },
+          "default": {
+            "description": "Error response.",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Code": {
+                      "type": "string"
+                    },
+                    "Message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/?comp=list": {
+      "get": {
+        "operationId": "Service_ListContainersSegment",
+        "summary": "List Containers",
+        "description": "Returns a list of the containers under the specified storage account, optionally filtered by a name prefix and paginated with a marker.",
+        "tags": [
+          "Containers"
+        ],
+        "parameters": [
+          {
+            "name": "comp",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "list"
+              ],
+              "default": "list"
+            },
+            "description": "Identifies the operation as listing containers."
+          },
+          {
+            "name": "prefix",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filters results to containers whose names begin with the specified prefix."
+          },
+          {
+            "name": "marker",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A continuation token returned by a previous call used to resume listing."
+          },
+          {
+            "name": "maxresults",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The maximum number of containers to return in this call."
+          },
+          {
+            "name": "x-ms-version",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2026-10-06"
+              ],
+              "default": "2026-10-06"
+            },
+            "description": "Specifies the version of the Blob Storage REST API used for this request."
+          },
+          {
+            "name": "x-ms-client-request-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A client-generated, opaque value with a 1 KiB character limit recorded in the analytics logs for troubleshooting."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Containers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "Name": {
+                            "type": "string"
+                          },
+                          "Properties": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    },
+                    "NextMarker": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response.",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Code": {
+                      "type": "string"
+                    },
+                    "Message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{containerName}?restype=container&comp=list&flat": {
+      "get": {
+        "operationId": "Container_ListBlobFlatSegment",
+        "summary": "List Blobs",
+        "description": "Returns a flat list of the blobs in the specified container, optionally filtered by a name prefix and paginated with a marker.",
+        "tags": [
+          "Blobs"
+        ],
+        "parameters": [
+          {
+            "name": "containerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the container."
+          },
+          {
+            "name": "restype",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "container"
+              ],
+              "default": "container"
+            }
+          },
+          {
+            "name": "comp",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "list"
+              ],
+              "default": "list"
+            }
+          },
+          {
+            "name": "flat",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                ""
+              ],
+              "default": ""
+            },
+            "description": "Identifies the operation as a flat (non-hierarchical) blob listing."
+          },
+          {
+            "name": "prefix",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filters results to blobs whose names begin with the specified prefix."
+          },
+          {
+            "name": "marker",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A continuation token returned by a previous call used to resume listing."
+          },
+          {
+            "name": "maxresults",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The maximum number of blobs to return in this call."
+          },
+          {
+            "name": "x-ms-version",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2026-10-06"
+              ],
+              "default": "2026-10-06"
+            },
+            "description": "Specifies the version of the Blob Storage REST API used for this request."
+          },
+          {
+            "name": "x-ms-client-request-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A client-generated, opaque value with a 1 KiB character limit recorded in the analytics logs for troubleshooting."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Blobs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "Name": {
+                            "type": "string"
+                          },
+                          "Properties": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    },
+                    "NextMarker": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response.",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Code": {
+                      "type": "string"
+                    },
+                    "Message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{containerName}/{blob}?BlockBlob": {
+      "put": {
+        "operationId": "BlockBlob_Upload",
+        "summary": "Put Blob (Upload Block Blob)",
+        "description": "Creates a new block blob, or updates the content of an existing block blob, in a single write operation.",
+        "tags": [
+          "Blobs"
+        ],
+        "parameters": [
+          {
+            "name": "containerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the container."
+          },
+          {
+            "name": "blob",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the blob."
+          },
+          {
+            "name": "x-ms-blob-type",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "BlockBlob"
+              ],
+              "default": "BlockBlob"
+            },
+            "description": "Identifies this write as a block blob upload."
+          },
+          {
+            "name": "Content-Length",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The length of the blob content being uploaded, in bytes."
+          },
+          {
+            "name": "Content-MD5",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "An MD5 hash of the blob content, used to verify the integrity of the blob during transport."
+          },
+          {
+            "name": "x-ms-blob-content-type",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The MIME content type to set on the blob."
+          },
+          {
+            "name": "x-ms-meta",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A comma-separated list of name-value pairs to associate with the blob as metadata."
+          },
+          {
+            "name": "x-ms-version",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2026-10-06"
+              ],
+              "default": "2026-10-06"
+            },
+            "description": "Specifies the version of the Blob Storage REST API used for this request."
+          },
+          {
+            "name": "x-ms-client-request-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A client-generated, opaque value with a 1 KiB character limit recorded in the analytics logs for troubleshooting."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The blob was created/updated.",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The ETag for the resource."
+              },
+              "Last-Modified": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The date/time the resource was last modified."
+              },
+              "Content-MD5": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The MD5 hash of the blob content."
+              }
+            }
+          },
+          "default": {
+            "description": "Error response.",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Code": {
+                      "type": "string"
+                    },
+                    "Message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{containerName}/{blob}": {
+      "get": {
+        "operationId": "Blob_Download",
+        "summary": "Get Blob (Download)",
+        "description": "Reads or downloads a blob from the system, including its metadata and properties.",
+        "tags": [
+          "Blobs"
+        ],
+        "parameters": [
+          {
+            "name": "containerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the container."
+          },
+          {
+            "name": "blob",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the blob."
+          },
+          {
+            "name": "x-ms-range",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Downloads only the bytes of the blob in the specified range."
+          },
+          {
+            "name": "x-ms-version",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2026-10-06"
+              ],
+              "default": "2026-10-06"
+            },
+            "description": "Specifies the version of the Blob Storage REST API used for this request."
+          },
+          {
+            "name": "x-ms-client-request-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A client-generated, opaque value with a 1 KiB character limit recorded in the analytics logs for troubleshooting."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The full blob was returned.",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "206": {
+            "description": "A partial (range) response was returned.",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response.",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Code": {
+                      "type": "string"
+                    },
+                    "Message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "Blob_Delete",
+        "summary": "Delete Blob",
+        "description": "Marks the specified blob or snapshot for deletion. The blob is later deleted during garbage collection.",
+        "tags": [
+          "Blobs"
+        ],
+        "parameters": [
+          {
+            "name": "containerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the container."
+          },
+          {
+            "name": "blob",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the blob."
+          },
+          {
+            "name": "x-ms-lease-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "If specified, only succeeds if the blob's lease is active and matches this ID."
+          },
+          {
+            "name": "x-ms-version",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2026-10-06"
+              ],
+              "default": "2026-10-06"
+            },
+            "description": "Specifies the version of the Blob Storage REST API used for this request."
+          },
+          {
+            "name": "x-ms-client-request-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A client-generated, opaque value with a 1 KiB character limit recorded in the analytics logs for troubleshooting."
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "The blob was marked for deletion.",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The ETag for the resource."
+              },
+              "Last-Modified": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The date/time the resource was last modified."
+              }
+            }
+          },
+          "default": {
+            "description": "Error response.",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Code": {
+                      "type": "string"
+                    },
+                    "Message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "head": {
+        "operationId": "Blob_GetProperties",
+        "summary": "Get Blob Properties",
+        "description": "Returns a blob's system properties, standard HTTP headers, and user-defined metadata, without returning the blob content.",
+        "tags": [
+          "Blobs"
+        ],
+        "parameters": [
+          {
+            "name": "containerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the container."
+          },
+          {
+            "name": "blob",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the blob."
+          },
+          {
+            "name": "x-ms-lease-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "If specified, only succeeds if the blob's lease is active and matches this ID."
+          },
+          {
+            "name": "x-ms-version",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2026-10-06"
+              ],
+              "default": "2026-10-06"
+            },
+            "description": "Specifies the version of the Blob Storage REST API used for this request."
+          },
+          {
+            "name": "x-ms-client-request-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A client-generated, opaque value with a 1 KiB character limit recorded in the analytics logs for troubleshooting."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The ETag for the resource."
+              },
+              "Last-Modified": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The date/time the resource was last modified."
+              },
+              "x-ms-meta": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "User-defined name-value pairs associated with the blob as metadata."
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer"
+                },
+                "description": "The size of the blob in bytes."
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The content type specified for the blob."
+              }
+            }
+          },
+          "default": {
+            "description": "Error response.",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Code": {
+                      "type": "string"
+                    },
+                    "Message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{containerName}/{blob}?comp=properties&SetHTTPHeaders": {
+      "put": {
+        "operationId": "Blob_SetHTTPHeaders",
+        "summary": "Set Blob Properties",
+        "description": "Sets one or more of a blob's standard HTTP properties (cache control, content type, content encoding/language, content MD5, content disposition).",
+        "tags": [
+          "Blobs"
+        ],
+        "parameters": [
+          {
+            "name": "containerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the container."
+          },
+          {
+            "name": "blob",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the blob."
+          },
+          {
+            "name": "comp",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "properties"
+              ],
+              "default": "properties"
+            }
+          },
+          {
+            "name": "x-ms-blob-cache-control",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sets the blob's Cache-Control header."
+          },
+          {
+            "name": "x-ms-blob-content-type",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sets the blob's Content-Type header."
+          },
+          {
+            "name": "x-ms-blob-content-md5",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sets the blob's Content-MD5 header."
+          },
+          {
+            "name": "x-ms-blob-content-encoding",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sets the blob's Content-Encoding header."
+          },
+          {
+            "name": "x-ms-blob-content-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sets the blob's Content-Language header."
+          },
+          {
+            "name": "x-ms-blob-content-disposition",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sets the blob's Content-Disposition header."
+          },
+          {
+            "name": "x-ms-lease-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "If specified, only succeeds if the blob's lease is active and matches this ID."
+          },
+          {
+            "name": "x-ms-version",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2026-10-06"
+              ],
+              "default": "2026-10-06"
+            },
+            "description": "Specifies the version of the Blob Storage REST API used for this request."
+          },
+          {
+            "name": "x-ms-client-request-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A client-generated, opaque value with a 1 KiB character limit recorded in the analytics logs for troubleshooting."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The blob properties were set.",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The ETag for the resource."
+              },
+              "Last-Modified": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The date/time the resource was last modified."
+              }
+            }
+          },
+          "default": {
+            "description": "Error response.",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Code": {
+                      "type": "string"
+                    },
+                    "Message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{containerName}/{blob}?comp=metadata": {
+      "put": {
+        "operationId": "Blob_SetMetadata",
+        "summary": "Set Blob Metadata",
+        "description": "Sets one or more user-defined name-value pairs for the specified blob, replacing any existing metadata.",
+        "tags": [
+          "Blobs"
+        ],
+        "parameters": [
+          {
+            "name": "containerName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the container."
+          },
+          {
+            "name": "blob",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the blob."
+          },
+          {
+            "name": "comp",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "metadata"
+              ],
+              "default": "metadata"
+            }
+          },
+          {
+            "name": "x-ms-meta",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A comma-separated list of name-value pairs to associate with the blob as metadata."
+          },
+          {
+            "name": "x-ms-lease-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "If specified, only succeeds if the blob's lease is active and matches this ID."
+          },
+          {
+            "name": "x-ms-version",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "2026-10-06"
+              ],
+              "default": "2026-10-06"
+            },
+            "description": "Specifies the version of the Blob Storage REST API used for this request."
+          },
+          {
+            "name": "x-ms-client-request-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A client-generated, opaque value with a 1 KiB character limit recorded in the analytics logs for troubleshooting."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The blob metadata was set.",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The ETag for the resource."
+              },
+              "Last-Modified": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The date/time the resource was last modified."
+              }
+            }
+          },
+          "default": {
+            "description": "Error response.",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Code": {
+                      "type": "string"
+                    },
+                    "Message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "oauth2ClientCredentials": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token",
+            "scopes": {
+              "https://storage.azure.com/.default": "Use the app's configured application role/permission"
+            }
+          }
+        }
+      }
+    }
+  }
+}
