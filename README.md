@@ -117,6 +117,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Slack** | Messaging |
 | **SolarWinds** | Orion NPM · Service Desk |
 | **Sonatype** | Nexus |
+| **Splunk** | Search jobs · Saved searches · Indexes |
 | **Spirent** | TestCenter |
 | **Starburst** | Enterprise |
 | **SurrealDB** | Multi-model database |
