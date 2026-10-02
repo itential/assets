@@ -1,0 +1,2478 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Calix Support Cloud",
+    "description": "Authentication: HTTP Basic. Calix Support Cloud (Calix Cloud) manages TR-069/CWMP-based broadband CPE devices and their subscribers, provisioning records, and device groups for broadband service providers.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://gcs.calix.com:8444"
+    }
+  ],
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "paths": {
+    "/api/device": {
+      "get": {
+        "summary": "Retrieve Devices",
+        "operationId": "listDevices",
+        "description": "Retrieve all devices, or a single device matched by serial number, MAC address, registration ID, or WAN IP address. With no query parameters, returns a JSON array of all devices with no filtering or limit/offset. Use `limit`/`skip` to page through large result sets.",
+        "parameters": [
+          {
+            "name": "serialNumber",
+            "in": "query",
+            "required": false,
+            "description": "The device serial number as reported in the TR-69 INFORM. For most Calix devices, this is the FSAN Serial Number starting with CXNK, not the Manufacturing Serial Number.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "macAddress",
+            "in": "query",
+            "required": false,
+            "description": "The hardware MAC address as reported in the TR-69 INFORM, in the format 00:11:22:33:44:55",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "registrationId",
+            "in": "query",
+            "required": false,
+            "description": "The Calix ONT Registration ID (aka RONTA) as programmed locally on the device.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ipAddress",
+            "in": "query",
+            "required": false,
+            "description": "The WAN IP address as reported by TR-69 INFORM. If STUN is active, this searches the device's WAN IP, not the STUN binding IP.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of records to return (1-500). Default 100.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "description": "Offset, in number of records, to skip from the beginning of the returned values. Default 0.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string",
+                        "description": "Internal device record ID."
+                      },
+                      "manufacturer": {
+                        "type": "string"
+                      },
+                      "manufacturerOUI": {
+                        "type": "string"
+                      },
+                      "productClass": {
+                        "type": "string"
+                      },
+                      "modelName": {
+                        "type": "string"
+                      },
+                      "hardwareVersion": {
+                        "type": "string"
+                      },
+                      "softwareVersion": {
+                        "type": "string"
+                      },
+                      "serialNumber": {
+                        "type": "string",
+                        "description": "FSAN serial number as reported in the TR-69 INFORM."
+                      },
+                      "registrationId": {
+                        "type": "string"
+                      },
+                      "macAddress": {
+                        "type": "string"
+                      },
+                      "periodicInformInterval": {
+                        "type": "integer"
+                      },
+                      "dataModelName": {
+                        "type": "string"
+                      },
+                      "timezoneOffset": {
+                        "type": "string"
+                      },
+                      "ipAddress": {
+                        "type": "string"
+                      },
+                      "changeCounter": {
+                        "type": "integer"
+                      },
+                      "defaultGateway": {
+                        "type": "string"
+                      },
+                      "subnetMask": {
+                        "type": "string"
+                      },
+                      "wapGatewaySn": {
+                        "type": "string"
+                      },
+                      "provRecordStatus": {
+                        "type": "string"
+                      },
+                      "opMode": {
+                        "type": "string"
+                      },
+                      "wanAccessType": {
+                        "type": "string"
+                      },
+                      "stunEnabled": {
+                        "type": "boolean"
+                      },
+                      "udpConnectionRequestAddr": {
+                        "type": "string"
+                      },
+                      "lastInformTime": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "createTime": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "hardwareSerialNumber": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/api/device/{deviceId}": {
+      "get": {
+        "summary": "Retrieve Device By ID",
+        "operationId": "getDeviceById",
+        "description": "Retrieve a single device using its internal _id.",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "description": "Internal device record ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "description": "Internal device record ID."
+                    },
+                    "manufacturer": {
+                      "type": "string"
+                    },
+                    "manufacturerOUI": {
+                      "type": "string"
+                    },
+                    "productClass": {
+                      "type": "string"
+                    },
+                    "modelName": {
+                      "type": "string"
+                    },
+                    "hardwareVersion": {
+                      "type": "string"
+                    },
+                    "softwareVersion": {
+                      "type": "string"
+                    },
+                    "serialNumber": {
+                      "type": "string",
+                      "description": "FSAN serial number as reported in the TR-69 INFORM."
+                    },
+                    "registrationId": {
+                      "type": "string"
+                    },
+                    "macAddress": {
+                      "type": "string"
+                    },
+                    "periodicInformInterval": {
+                      "type": "integer"
+                    },
+                    "dataModelName": {
+                      "type": "string"
+                    },
+                    "timezoneOffset": {
+                      "type": "string"
+                    },
+                    "ipAddress": {
+                      "type": "string"
+                    },
+                    "changeCounter": {
+                      "type": "integer"
+                    },
+                    "defaultGateway": {
+                      "type": "string"
+                    },
+                    "subnetMask": {
+                      "type": "string"
+                    },
+                    "wapGatewaySn": {
+                      "type": "string"
+                    },
+                    "provRecordStatus": {
+                      "type": "string"
+                    },
+                    "opMode": {
+                      "type": "string"
+                    },
+                    "wanAccessType": {
+                      "type": "string"
+                    },
+                    "stunEnabled": {
+                      "type": "boolean"
+                    },
+                    "udpConnectionRequestAddr": {
+                      "type": "string"
+                    },
+                    "lastInformTime": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "createTime": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "hardwareSerialNumber": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Device",
+        "operationId": "deleteDevice",
+        "description": "Delete a single device using its internal _id. Returns only a status code for success/failure; no body.",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "description": "Internal device record ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Device deleted; no body."
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/api/subscriber": {
+      "post": {
+        "summary": "Create Subscriber",
+        "operationId": "createSubscriber",
+        "description": "Create a new subscriber, using a valid subscriber JSON object which does not contain \"createTime\" or \"_id\". Returns the _id value of the subscriber record if successful.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customId": {
+                    "type": "string",
+                    "description": "Displayed as \"Subscriber ID\" in Calix Support Cloud."
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "locations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "address": {
+                          "type": "object",
+                          "properties": {
+                            "streetLine1": {
+                              "type": "string"
+                            },
+                            "city": {
+                              "type": "string"
+                            },
+                            "state": {
+                              "type": "string"
+                            },
+                            "zip": {
+                              "type": "string"
+                            },
+                            "country": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "contacts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "phone": {
+                                "type": "string"
+                              },
+                              "email": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "devices": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Device IDs (FSAN/serial/RegID/MAC) associated with this location."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "description": "Internal subscriber record ID, assigned by Calix Support Cloud."
+                    },
+                    "customId": {
+                      "type": "string",
+                      "description": "Displayed as \"Subscriber ID\" in Calix Support Cloud."
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "locations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "address": {
+                            "type": "object",
+                            "properties": {
+                              "streetLine1": {
+                                "type": "string"
+                              },
+                              "city": {
+                                "type": "string"
+                              },
+                              "state": {
+                                "type": "string"
+                              },
+                              "zip": {
+                                "type": "string"
+                              },
+                              "country": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "contacts": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "phone": {
+                                  "type": "string"
+                                },
+                                "email": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "devices": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "Device IDs (FSAN/serial/RegID/MAC) associated with this location."
+                          }
+                        }
+                      }
+                    },
+                    "createTime": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "get": {
+        "summary": "Retrieve Subscribers",
+        "operationId": "listSubscribers",
+        "description": "Retrieve all subscribers, or a single/list of subscribers matched by internal customId, name, phone, or email. With no query parameters, returns a JSON array of all subscribers with no filtering or limit/offset.",
+        "parameters": [
+          {
+            "name": "customId",
+            "in": "query",
+            "required": false,
+            "description": "The customId value, displayed as \"Subscriber ID\" in Calix Support Cloud. Must match exactly.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "description": "The subscriber's top-level \"name\" value. Must match exactly, and may return multiple matches.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "required": false,
+            "description": "Phone number. May match multiple subscribers, as phone number is not required to be unique.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "description": "Email address. May match multiple subscribers, as email is not required to be unique.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of records to return (1-500). Default 100.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "description": "Offset, in number of records, to skip from the beginning of the returned values. Default 0.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string",
+                        "description": "Internal subscriber record ID, assigned by Calix Support Cloud."
+                      },
+                      "customId": {
+                        "type": "string",
+                        "description": "Displayed as \"Subscriber ID\" in Calix Support Cloud."
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "locations": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "address": {
+                              "type": "object",
+                              "properties": {
+                                "streetLine1": {
+                                  "type": "string"
+                                },
+                                "city": {
+                                  "type": "string"
+                                },
+                                "state": {
+                                  "type": "string"
+                                },
+                                "zip": {
+                                  "type": "string"
+                                },
+                                "country": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "contacts": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "phone": {
+                                    "type": "string"
+                                  },
+                                  "email": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "devices": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              },
+                              "description": "Device IDs (FSAN/serial/RegID/MAC) associated with this location."
+                            }
+                          }
+                        }
+                      },
+                      "createTime": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Subscriber",
+        "operationId": "updateSubscriber",
+        "description": "Update subscriber details: first retrieve the subscriber record, then PUT the full record back with your changes, with all other elements intact. To replace a system and maintain configuration, retrieve the record with the old system ID (in \"devices\"), and PUT the record back with the new system ID substituted in the same transaction (do not delete then add separately).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string",
+                    "description": "Internal subscriber record ID, assigned by Calix Support Cloud."
+                  },
+                  "customId": {
+                    "type": "string",
+                    "description": "Displayed as \"Subscriber ID\" in Calix Support Cloud."
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "locations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "address": {
+                          "type": "object",
+                          "properties": {
+                            "streetLine1": {
+                              "type": "string"
+                            },
+                            "city": {
+                              "type": "string"
+                            },
+                            "state": {
+                              "type": "string"
+                            },
+                            "zip": {
+                              "type": "string"
+                            },
+                            "country": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "contacts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "phone": {
+                                "type": "string"
+                              },
+                              "email": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "devices": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Device IDs (FSAN/serial/RegID/MAC) associated with this location."
+                        }
+                      }
+                    }
+                  },
+                  "createTime": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "description": "Internal subscriber record ID, assigned by Calix Support Cloud."
+                    },
+                    "customId": {
+                      "type": "string",
+                      "description": "Displayed as \"Subscriber ID\" in Calix Support Cloud."
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "locations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "address": {
+                            "type": "object",
+                            "properties": {
+                              "streetLine1": {
+                                "type": "string"
+                              },
+                              "city": {
+                                "type": "string"
+                              },
+                              "state": {
+                                "type": "string"
+                              },
+                              "zip": {
+                                "type": "string"
+                              },
+                              "country": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "contacts": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "phone": {
+                                  "type": "string"
+                                },
+                                "email": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "devices": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "Device IDs (FSAN/serial/RegID/MAC) associated with this location."
+                          }
+                        }
+                      }
+                    },
+                    "createTime": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/api/subscriber/{id}": {
+      "get": {
+        "summary": "Retrieve Subscriber By Internal ID",
+        "operationId": "getSubscriberById",
+        "description": "Retrieve a single subscriber by specifying the internal _id. This value is created by Calix Support Cloud when the subscriber is created.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Internal subscriber record ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "description": "Internal subscriber record ID, assigned by Calix Support Cloud."
+                    },
+                    "customId": {
+                      "type": "string",
+                      "description": "Displayed as \"Subscriber ID\" in Calix Support Cloud."
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "locations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "address": {
+                            "type": "object",
+                            "properties": {
+                              "streetLine1": {
+                                "type": "string"
+                              },
+                              "city": {
+                                "type": "string"
+                              },
+                              "state": {
+                                "type": "string"
+                              },
+                              "zip": {
+                                "type": "string"
+                              },
+                              "country": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "contacts": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "phone": {
+                                  "type": "string"
+                                },
+                                "email": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "devices": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "Device IDs (FSAN/serial/RegID/MAC) associated with this location."
+                          }
+                        }
+                      }
+                    },
+                    "createTime": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Subscriber",
+        "operationId": "deleteSubscriber",
+        "description": "Delete a single subscriber by specifying the internal _id. This value is created by Calix Support Cloud when the subscriber is created. No return body.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Internal subscriber record ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscriber deleted; no body."
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/api/provisioning-record": {
+      "post": {
+        "summary": "Create Provisioning Record",
+        "operationId": "createProvisioningRecord",
+        "description": "Create a new Provisioning Record describing a full device configuration (data/video/voice/WiFi).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Full CPE configuration abstraction (voice, video, data, WiFi) applied to a device.",
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  },
+                  "orgId": {
+                    "type": "string"
+                  },
+                  "opMode": {
+                    "type": "string"
+                  },
+                  "deviceId": {
+                    "type": "string",
+                    "description": "Device ID (FSAN/serial/RegID/MAC)."
+                  },
+                  "subscriberId": {
+                    "type": "string",
+                    "description": "Internal ID of the associated Subscriber record."
+                  },
+                  "data": {
+                    "type": "object",
+                    "description": "Data/Internet service configuration (e.g. PPPoE, VLAN)."
+                  },
+                  "video": {
+                    "type": "object",
+                    "description": "Video service configuration."
+                  },
+                  "voice": {
+                    "type": "object",
+                    "description": "Voice/SIP service configuration."
+                  },
+                  "wifi": {
+                    "type": "object",
+                    "description": "WiFi radio/SSID configuration, keyed by radio index."
+                  },
+                  "modelName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Full CPE configuration abstraction (voice, video, data, WiFi) applied to a device.",
+                  "properties": {
+                    "_id": {
+                      "type": "string"
+                    },
+                    "orgId": {
+                      "type": "string"
+                    },
+                    "opMode": {
+                      "type": "string"
+                    },
+                    "deviceId": {
+                      "type": "string",
+                      "description": "Device ID (FSAN/serial/RegID/MAC)."
+                    },
+                    "subscriberId": {
+                      "type": "string",
+                      "description": "Internal ID of the associated Subscriber record."
+                    },
+                    "data": {
+                      "type": "object",
+                      "description": "Data/Internet service configuration (e.g. PPPoE, VLAN)."
+                    },
+                    "video": {
+                      "type": "object",
+                      "description": "Video service configuration."
+                    },
+                    "voice": {
+                      "type": "object",
+                      "description": "Voice/SIP service configuration."
+                    },
+                    "wifi": {
+                      "type": "object",
+                      "description": "WiFi radio/SSID configuration, keyed by radio index."
+                    },
+                    "modelName": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "get": {
+        "summary": "Retrieve Provisioning Records",
+        "operationId": "listProvisioningRecords",
+        "description": "Retrieve all Provisioning Records, or those matched by Device ID or Subscriber internal ID. With no query parameters, returns a JSON array of all Provisioning Records with no filtering or limit/offset.",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "query",
+            "required": false,
+            "description": "Device ID: FSAN Serial Number, serial number as reported in the TR-69 INFORM, Calix Registration ID, or MAC address (format 00:11:22:33:44:55).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "subscriberId",
+            "in": "query",
+            "required": false,
+            "description": "Internal ID value of the associated Subscriber record.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of records to return (1-500). Default 100.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "description": "Offset, in number of records, to skip from the beginning of the returned values. Default 0.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "Full CPE configuration abstraction (voice, video, data, WiFi) applied to a device.",
+                    "properties": {
+                      "_id": {
+                        "type": "string"
+                      },
+                      "orgId": {
+                        "type": "string"
+                      },
+                      "opMode": {
+                        "type": "string"
+                      },
+                      "deviceId": {
+                        "type": "string",
+                        "description": "Device ID (FSAN/serial/RegID/MAC)."
+                      },
+                      "subscriberId": {
+                        "type": "string",
+                        "description": "Internal ID of the associated Subscriber record."
+                      },
+                      "data": {
+                        "type": "object",
+                        "description": "Data/Internet service configuration (e.g. PPPoE, VLAN)."
+                      },
+                      "video": {
+                        "type": "object",
+                        "description": "Video service configuration."
+                      },
+                      "voice": {
+                        "type": "object",
+                        "description": "Voice/SIP service configuration."
+                      },
+                      "wifi": {
+                        "type": "object",
+                        "description": "WiFi radio/SSID configuration, keyed by radio index."
+                      },
+                      "modelName": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/api/provisioning-record/{id}": {
+      "get": {
+        "summary": "Retrieve Provisioning Record By Internal ID",
+        "operationId": "getProvisioningRecordById",
+        "description": "Retrieve a single Provisioning Record, using the internal ID of the record.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Internal provisioning record ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Full CPE configuration abstraction (voice, video, data, WiFi) applied to a device.",
+                  "properties": {
+                    "_id": {
+                      "type": "string"
+                    },
+                    "orgId": {
+                      "type": "string"
+                    },
+                    "opMode": {
+                      "type": "string"
+                    },
+                    "deviceId": {
+                      "type": "string",
+                      "description": "Device ID (FSAN/serial/RegID/MAC)."
+                    },
+                    "subscriberId": {
+                      "type": "string",
+                      "description": "Internal ID of the associated Subscriber record."
+                    },
+                    "data": {
+                      "type": "object",
+                      "description": "Data/Internet service configuration (e.g. PPPoE, VLAN)."
+                    },
+                    "video": {
+                      "type": "object",
+                      "description": "Video service configuration."
+                    },
+                    "voice": {
+                      "type": "object",
+                      "description": "Voice/SIP service configuration."
+                    },
+                    "wifi": {
+                      "type": "object",
+                      "description": "WiFi radio/SSID configuration, keyed by radio index."
+                    },
+                    "modelName": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "put": {
+        "summary": "Modify Provisioning Record",
+        "operationId": "updateProvisioningRecord",
+        "description": "Modify an existing Provisioning Record, using its internal ID. Submit the full record with your changes; all other elements should remain intact.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Internal provisioning record ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Full CPE configuration abstraction (voice, video, data, WiFi) applied to a device.",
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  },
+                  "orgId": {
+                    "type": "string"
+                  },
+                  "opMode": {
+                    "type": "string"
+                  },
+                  "deviceId": {
+                    "type": "string",
+                    "description": "Device ID (FSAN/serial/RegID/MAC)."
+                  },
+                  "subscriberId": {
+                    "type": "string",
+                    "description": "Internal ID of the associated Subscriber record."
+                  },
+                  "data": {
+                    "type": "object",
+                    "description": "Data/Internet service configuration (e.g. PPPoE, VLAN)."
+                  },
+                  "video": {
+                    "type": "object",
+                    "description": "Video service configuration."
+                  },
+                  "voice": {
+                    "type": "object",
+                    "description": "Voice/SIP service configuration."
+                  },
+                  "wifi": {
+                    "type": "object",
+                    "description": "WiFi radio/SSID configuration, keyed by radio index."
+                  },
+                  "modelName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Full CPE configuration abstraction (voice, video, data, WiFi) applied to a device.",
+                  "properties": {
+                    "_id": {
+                      "type": "string"
+                    },
+                    "orgId": {
+                      "type": "string"
+                    },
+                    "opMode": {
+                      "type": "string"
+                    },
+                    "deviceId": {
+                      "type": "string",
+                      "description": "Device ID (FSAN/serial/RegID/MAC)."
+                    },
+                    "subscriberId": {
+                      "type": "string",
+                      "description": "Internal ID of the associated Subscriber record."
+                    },
+                    "data": {
+                      "type": "object",
+                      "description": "Data/Internet service configuration (e.g. PPPoE, VLAN)."
+                    },
+                    "video": {
+                      "type": "object",
+                      "description": "Video service configuration."
+                    },
+                    "voice": {
+                      "type": "object",
+                      "description": "Voice/SIP service configuration."
+                    },
+                    "wifi": {
+                      "type": "object",
+                      "description": "WiFi radio/SSID configuration, keyed by radio index."
+                    },
+                    "modelName": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Provisioning Record",
+        "operationId": "deleteProvisioningRecord",
+        "description": "Delete a single Provisioning Record, using the internal _id value. Returns no body.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Internal provisioning record ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Provisioning Record deleted; no body."
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/api/device-op": {
+      "post": {
+        "summary": "Run TR-069 Device Operation",
+        "operationId": "runDeviceOperation",
+        "description": "Perform a single TR-069/CWMP operation (GetParameterValues, GetParameterNames, SetParameterValues, AddObject, DeleteObject, Reboot, or FactoryReset) against a device, identified by exactly one key in cpeIdentifier. This triggers a Connection Request to the device, which times out after 15 seconds and 3 attempts (Reboot/FactoryReset may take minutes to complete). Where a Provisioning Record field covers the same configuration, Calix recommends using the Provisioning Record instead, since raw data model changes do not persist across a factory reset.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "A single TR-069/CWMP operation performed against a device via a Connection Request.",
+                "properties": {
+                  "operation": {
+                    "type": "string",
+                    "enum": [
+                      "GetParameterValues",
+                      "GetParameterNames",
+                      "SetParameterValues",
+                      "AddObject",
+                      "DeleteObject",
+                      "Reboot",
+                      "FactoryReset"
+                    ],
+                    "description": "The TR-069/CWMP RPC to invoke."
+                  },
+                  "cpeIdentifier": {
+                    "type": "object",
+                    "description": "Identifies the target device by exactly one of its keys.",
+                    "properties": {
+                      "serialNumber": {
+                        "type": "string"
+                      },
+                      "registrationId": {
+                        "type": "string"
+                      },
+                      "macAddress": {
+                        "type": "string"
+                      },
+                      "ipAddress": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "parameterNames": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "TR-069 data model object paths to retrieve (GetParameterValues) or a single path to list children of (GetParameterNames uses parameterPath instead)."
+                  },
+                  "parameterPath": {
+                    "type": "string",
+                    "description": "TR-069 data model path to list child parameter names of (GetParameterNames)."
+                  },
+                  "parameterValues": {
+                    "type": "object",
+                    "description": "Map of TR-069 data model object path to the value to set (SetParameterValues)."
+                  },
+                  "objectName": {
+                    "type": "string",
+                    "description": "Full TR-069 data model object path, with a trailing dot (AddObject/DeleteObject)."
+                  }
+                },
+                "required": [
+                  "operation",
+                  "cpeIdentifier"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operation result; shape varies by operation. Some operations (SetParameterValues, Reboot, FactoryReset) return no body on success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Shape varies by operation. GetParameterValues/GetParameterNames return the requested data model section; AddObject returns newObjectIndex; SetParameterValues/Reboot/FactoryReset return no body on success.",
+                  "properties": {
+                    "newObjectIndex": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/api/group": {
+      "get": {
+        "summary": "Retrieve All Device Groups",
+        "operationId": "listDeviceGroups",
+        "description": "Retrieve a list of all Device Groups (static and dynamic).",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "static",
+                          "dynamic"
+                        ]
+                      },
+                      "allowInheritance": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/api/group/{groupId}": {
+      "get": {
+        "summary": "Retrieve Device Group By ID",
+        "operationId": "getDeviceGroupById",
+        "description": "Retrieve a single Device Group by its internal ID.",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "description": "Internal Device Group ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "static",
+                        "dynamic"
+                      ]
+                    },
+                    "allowInheritance": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/api/static-group-member": {
+      "get": {
+        "summary": "Retrieve Static Group Memberships",
+        "operationId": "listStaticGroupMemberships",
+        "description": "Retrieve all Static Group Membership records, or those matching a device (a device can belong to more than one static group, so multiple records may be returned even for a single device).",
+        "parameters": [
+          {
+            "name": "memberInfo",
+            "in": "query",
+            "required": false,
+            "description": "One of: FSAN ID, serial number, Registration ID, or MAC address. Searches for membership information for a matching device.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bDiscovered",
+            "in": "query",
+            "required": false,
+            "description": "If present, return only Discovered devices (those which have successfully checked in to the ACS).",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "bUndiscovered",
+            "in": "query",
+            "required": false,
+            "description": "If present, return only devices which have not checked in to the ACS.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string"
+                      },
+                      "groupId": {
+                        "type": "string",
+                        "description": "Internal ID of the Device Group."
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Device identifier type, e.g. FSAN."
+                      },
+                      "memberInfo": {
+                        "type": "string",
+                        "description": "FSAN ID, serial number, Registration ID, or MAC address of the device."
+                      },
+                      "orgId": {
+                        "type": "string"
+                      },
+                      "deviceRecordId": {
+                        "type": "string"
+                      },
+                      "createTime": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "post": {
+        "summary": "Add Device To Static Group",
+        "operationId": "createStaticGroupMembership",
+        "description": "Add a specified device or provisioning record to a Static Group, by creating a membership record. Returns the _id of the Device Group Membership record if successful.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string",
+                    "description": "Internal ID of the Device Group."
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Device identifier type, e.g. FSAN."
+                  },
+                  "memberInfo": {
+                    "type": "string",
+                    "description": "FSAN ID, serial number, Registration ID, or MAC address of the device."
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "type",
+                  "memberInfo"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string"
+                    },
+                    "groupId": {
+                      "type": "string",
+                      "description": "Internal ID of the Device Group."
+                    },
+                    "type": {
+                      "type": "string",
+                      "description": "Device identifier type, e.g. FSAN."
+                    },
+                    "memberInfo": {
+                      "type": "string",
+                      "description": "FSAN ID, serial number, Registration ID, or MAC address of the device."
+                    },
+                    "orgId": {
+                      "type": "string"
+                    },
+                    "deviceRecordId": {
+                      "type": "string"
+                    },
+                    "createTime": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove Device From Static Group By Query",
+        "operationId": "deleteStaticGroupMembershipByQuery",
+        "description": "Remove a device from a specific Static Group (groupId + memberInfo), or from all Static Groups it belongs to (memberInfo alone, with groupId omitted). Returns no body.",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "query",
+            "required": false,
+            "description": "Internal ID of the Device Group. Omit to remove the device from all Static Groups it belongs to.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "memberInfo",
+            "in": "query",
+            "required": true,
+            "description": "One of: FSAN ID, serial number, Registration ID, or MAC address, identifying the device.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Membership(s) removed; no body."
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/api/static-group-member/{id}": {
+      "get": {
+        "summary": "Retrieve Single Static Group Membership Record",
+        "operationId": "getStaticGroupMembershipById",
+        "description": "Retrieve a single Static Group Membership by internal ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Internal Device Group Membership ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string"
+                    },
+                    "groupId": {
+                      "type": "string",
+                      "description": "Internal ID of the Device Group."
+                    },
+                    "type": {
+                      "type": "string",
+                      "description": "Device identifier type, e.g. FSAN."
+                    },
+                    "memberInfo": {
+                      "type": "string",
+                      "description": "FSAN ID, serial number, Registration ID, or MAC address of the device."
+                    },
+                    "orgId": {
+                      "type": "string"
+                    },
+                    "deviceRecordId": {
+                      "type": "string"
+                    },
+                    "createTime": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove Device From Static Group By Membership ID",
+        "operationId": "deleteStaticGroupMembershipById",
+        "description": "Remove a device from a Static Group using the internal Device Group Membership ID. Returns no body.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Internal Device Group Membership ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Membership removed; no body."
+          },
+          "400": {
+            "description": "Bad Request - invalid URL path and/or query parameters and/or payload."
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid HTTP Basic Authentication."
+          },
+          "403": {
+            "description": "Forbidden - resource already exists, or attempted to edit a read-only attribute."
+          },
+          "404": {
+            "description": "Not Found - no record matches the given ID or query parameter."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "Device": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Internal device record ID."
+          },
+          "manufacturer": {
+            "type": "string"
+          },
+          "manufacturerOUI": {
+            "type": "string"
+          },
+          "productClass": {
+            "type": "string"
+          },
+          "modelName": {
+            "type": "string"
+          },
+          "hardwareVersion": {
+            "type": "string"
+          },
+          "softwareVersion": {
+            "type": "string"
+          },
+          "serialNumber": {
+            "type": "string",
+            "description": "FSAN serial number as reported in the TR-69 INFORM."
+          },
+          "registrationId": {
+            "type": "string"
+          },
+          "macAddress": {
+            "type": "string"
+          },
+          "periodicInformInterval": {
+            "type": "integer"
+          },
+          "dataModelName": {
+            "type": "string"
+          },
+          "timezoneOffset": {
+            "type": "string"
+          },
+          "ipAddress": {
+            "type": "string"
+          },
+          "changeCounter": {
+            "type": "integer"
+          },
+          "defaultGateway": {
+            "type": "string"
+          },
+          "subnetMask": {
+            "type": "string"
+          },
+          "wapGatewaySn": {
+            "type": "string"
+          },
+          "provRecordStatus": {
+            "type": "string"
+          },
+          "opMode": {
+            "type": "string"
+          },
+          "wanAccessType": {
+            "type": "string"
+          },
+          "stunEnabled": {
+            "type": "boolean"
+          },
+          "udpConnectionRequestAddr": {
+            "type": "string"
+          },
+          "lastInformTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "hardwareSerialNumber": {
+            "type": "string"
+          }
+        }
+      },
+      "Subscriber": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Internal subscriber record ID, assigned by Calix Support Cloud."
+          },
+          "customId": {
+            "type": "string",
+            "description": "Displayed as \"Subscriber ID\" in Calix Support Cloud."
+          },
+          "name": {
+            "type": "string"
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "object",
+                  "properties": {
+                    "streetLine1": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "zip": {
+                      "type": "string"
+                    },
+                    "country": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "contacts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "phone": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "devices": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Device IDs (FSAN/serial/RegID/MAC) associated with this location."
+                }
+              }
+            }
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SubscriberCreate": {
+        "type": "object",
+        "properties": {
+          "customId": {
+            "type": "string",
+            "description": "Displayed as \"Subscriber ID\" in Calix Support Cloud."
+          },
+          "name": {
+            "type": "string"
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "object",
+                  "properties": {
+                    "streetLine1": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "zip": {
+                      "type": "string"
+                    },
+                    "country": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "contacts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "phone": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "devices": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Device IDs (FSAN/serial/RegID/MAC) associated with this location."
+                }
+              }
+            }
+          }
+        }
+      },
+      "ProvisioningRecord": {
+        "type": "object",
+        "description": "Full CPE configuration abstraction (voice, video, data, WiFi) applied to a device.",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "opMode": {
+            "type": "string"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Device ID (FSAN/serial/RegID/MAC)."
+          },
+          "subscriberId": {
+            "type": "string",
+            "description": "Internal ID of the associated Subscriber record."
+          },
+          "data": {
+            "type": "object",
+            "description": "Data/Internet service configuration (e.g. PPPoE, VLAN)."
+          },
+          "video": {
+            "type": "object",
+            "description": "Video service configuration."
+          },
+          "voice": {
+            "type": "object",
+            "description": "Voice/SIP service configuration."
+          },
+          "wifi": {
+            "type": "object",
+            "description": "WiFi radio/SSID configuration, keyed by radio index."
+          },
+          "modelName": {
+            "type": "string"
+          }
+        }
+      },
+      "DeviceGroup": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "static",
+              "dynamic"
+            ]
+          },
+          "allowInheritance": {
+            "type": "boolean"
+          }
+        }
+      },
+      "StaticGroupMember": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "groupId": {
+            "type": "string",
+            "description": "Internal ID of the Device Group."
+          },
+          "type": {
+            "type": "string",
+            "description": "Device identifier type, e.g. FSAN."
+          },
+          "memberInfo": {
+            "type": "string",
+            "description": "FSAN ID, serial number, Registration ID, or MAC address of the device."
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "deviceRecordId": {
+            "type": "string"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "StaticGroupMemberCreate": {
+        "type": "object",
+        "properties": {
+          "groupId": {
+            "type": "string",
+            "description": "Internal ID of the Device Group."
+          },
+          "type": {
+            "type": "string",
+            "description": "Device identifier type, e.g. FSAN."
+          },
+          "memberInfo": {
+            "type": "string",
+            "description": "FSAN ID, serial number, Registration ID, or MAC address of the device."
+          }
+        },
+        "required": [
+          "groupId",
+          "type",
+          "memberInfo"
+        ]
+      },
+      "DeviceOperationRequest": {
+        "type": "object",
+        "description": "A single TR-069/CWMP operation performed against a device via a Connection Request.",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "GetParameterValues",
+              "GetParameterNames",
+              "SetParameterValues",
+              "AddObject",
+              "DeleteObject",
+              "Reboot",
+              "FactoryReset"
+            ],
+            "description": "The TR-069/CWMP RPC to invoke."
+          },
+          "cpeIdentifier": {
+            "type": "object",
+            "description": "Identifies the target device by exactly one of its keys.",
+            "properties": {
+              "serialNumber": {
+                "type": "string"
+              },
+              "registrationId": {
+                "type": "string"
+              },
+              "macAddress": {
+                "type": "string"
+              },
+              "ipAddress": {
+                "type": "string"
+              }
+            }
+          },
+          "parameterNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "TR-069 data model object paths to retrieve (GetParameterValues) or a single path to list children of (GetParameterNames uses parameterPath instead)."
+          },
+          "parameterPath": {
+            "type": "string",
+            "description": "TR-069 data model path to list child parameter names of (GetParameterNames)."
+          },
+          "parameterValues": {
+            "type": "object",
+            "description": "Map of TR-069 data model object path to the value to set (SetParameterValues)."
+          },
+          "objectName": {
+            "type": "string",
+            "description": "Full TR-069 data model object path, with a trailing dot (AddObject/DeleteObject)."
+          }
+        },
+        "required": [
+          "operation",
+          "cpeIdentifier"
+        ]
+      },
+      "DeviceOperationResponse": {
+        "type": "object",
+        "description": "Shape varies by operation. GetParameterValues/GetParameterNames return the requested data model section; AddObject returns newObjectIndex; SetParameterValues/Reboot/FactoryReset return no body on success.",
+        "properties": {
+          "newObjectIndex": {
+            "type": "integer"
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
