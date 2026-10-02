@@ -146,4 +146,4 @@ If the job succeeds and the flow run also succeeds but you still don't see a mes
 
 #### Dependencies
 - A Power Automate flow with a "When a Teams webhook request is received" trigger (see above)
-- [Automation Gateway 5.x](https://www.itential.com/automation-gateway/) — the `runCode` task executes on a connected Gateway cluster
+- [Itential Gateway 5.x](https://www.itential.com/automation-gateway/) — the `runCode` task executes on a connected Gateway cluster

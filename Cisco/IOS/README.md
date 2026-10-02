@@ -4,7 +4,7 @@ Cisco IOS is the network operating system running Cisco's routers and switches �
 
 This project provides a Studio Project covering software upgrade, port turn-up, golden configuration compliance, and inventory management for Cisco IOS devices — see **Projects** below.
 
-**Requirements:** Itential Platform >= 6.4 · Itential Automation Gateway >= 5.0
+**Requirements:** Itential Platform >= 6.4 · Itential Gateway >= 5.0
 
 ## Table of Contents
 
