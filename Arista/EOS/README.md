@@ -4,7 +4,7 @@ Arista EOS is the network operating system running Arista's switches and routers
 
 This project provides a Studio Project covering software upgrade, port turn-up, golden configuration compliance, and inventory management for Arista EOS devices — see **Projects** below.
 
-**Requirements:** Itential Platform >= 6.4 · Itential Automation Gateway >= 5.0
+**Requirements:** Itential Platform >= 6.4 · Itential Gateway >= 5.0
 
 ## Table of Contents
 
@@ -24,9 +24,9 @@ This project provides a Studio Project covering software upgrade, port turn-up, 
 
 ## Inventory Manager Configuration
 
-Device targeting uses Itential Platform's native Inventory Manager, not an Automation Gateway Ansible inventory. Each workflow's `device` input is an Inventory Manager identifier in `{inventoryName}::{nodeName}` format (e.g. `Arista Lab::switch-01`) — command-template checks (`MOP.RunCommandTemplate`) and device lookups (`ConfigurationManager.getDevice`) resolve directly against that inventory.
+Device targeting uses Itential Platform's native Inventory Manager, not an Itential Gateway Ansible inventory. Each workflow's `device` input is an Inventory Manager identifier in `{inventoryName}::{nodeName}` format (e.g. `Arista Lab::switch-01`) — command-template checks (`MOP.RunCommandTemplate`) and device lookups (`ConfigurationManager.getDevice`) resolve directly against that inventory.
 
-Actual configuration pushes go through an Itential Automation Gateway 5.x cluster via `GatewayManager.sendConfig`, targeting the cluster by ID (the shipped workflows use `cluster-itential` as an example — update this to match your own IAG5 cluster name before importing). Set up the inventory and the IAG5 cluster mapping using the **Inventory Management** workflows below, or directly in Inventory Manager / Admin Essentials.
+Actual configuration pushes go through an Itential Gateway 5.x cluster via `GatewayManager.sendConfig`, targeting the cluster by ID (the shipped workflows use `cluster-itential` as an example — update this to match your own IAG5 cluster name before importing). Set up the inventory and the IAG5 cluster mapping using the **Inventory Management** workflows below, or directly in Inventory Manager / Admin Essentials.
 
 ### Node Attributes
 

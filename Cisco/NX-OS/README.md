@@ -20,5 +20,5 @@ Sample Itential Gateway 4.x Inventory using Ansible:
 - Command Template Runner
 
 #### Dependencies
-- [Automation Gateway 4.x](https://www.itential.com/automation-gateway/)
+- [Itential Gateway 4.x](https://www.itential.com/automation-gateway/)
 - Automation Gateway Adapter (_ships with Itential Platform_)
