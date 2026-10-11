@@ -98,28 +98,53 @@ service that handles it. They do not need to match — the mapping is the bridge
 
 ### Node Attributes
 
-Devices use NETCONF over SSH (port 830). Set these attributes on each node in Inventory Manager:
+Devices use NETCONF over SSH (port 830). Set these attributes on each node in Inventory Manager.
+This is a complete node as it typically appears when the same device is also managed with the
+`netmiko` driver (for example for Config Manager backups):
 
 ```json
 {
   "name": "my-junos-device",
   "attributes": {
     "itential_host": "192.0.2.1",
+    "itential_port": 22,
+    "itential_driver": "netmiko",
+    "itential_platform": "juniper_junos",
     "itential_user": "netconf-user",
     "itential_password": "changeme",
     "itential_driver_options": {
       "netconf": {
         "port": 830,
         "timeout": 30,
-        "command_timeout": 300,
+        "command_timeout": 600,
         "config_format": "set",
         "lock_timeout": 60,
         "lock_poll_interval": 2
+      },
+      "netmiko": {
+        "banner_timeout": 60,
+        "conn_timeout": 60,
+        "enable_fast_mode": false,
+        "global_delay_factor": 3,
+        "read_timeout_override": 600,
+        "session_timeout": 300
       }
     }
   }
 }
 ```
+
+The attributes outside `itential_driver_options` are shared by every driver on the node. The
+`netconf` driver reads only `itential_host`, `itential_user`, `itential_password` and
+`itential_driver_options.netconf`.
+
+- **`itential_port` is the SSH port (`22`)** that `netmiko` and Config Manager use. The `netconf`
+  driver ignores it and connects to `itential_driver_options.netconf.port` (default `830`), so
+  the two ports can differ.
+- **`itential_driver_options.netmiko`** is only needed if the node is also used with `netmiko`.
+  It does not affect this driver.
+- **`itential_driver` and `itential_platform`** pick the default driver and device type for the
+  node. They are not read by this driver.
 
 | Attribute | Type | Unit | Description |
 |---|---|---|---|
