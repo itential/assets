@@ -23,6 +23,7 @@ netconf ssh` committed on the target device.
 - [Recommended inventory attributes per device](#recommended-inventory-attributes-per-device)
 - [Why NETCONF for destructive ops](#why-netconf-for-destructive-ops)
 - [Prerequisites on the device](#prerequisites-on-the-device)
+- [Installing on Itential Gateway](#installing-on-itential-gateway)
 - [Local development](#local-development)
 
 ## Actions
@@ -248,6 +249,29 @@ commit
 
 Port 830 must be reachable from IG5. The vSRX security group should
 allow TCP/22 (CLI) and TCP/830 (NETCONF) from the IG5 host.
+
+## Installing on Itential Gateway
+
+**1. Create the services.** Each operation is a
+[Python script service](https://docs.itential.com/itential-gateway/5/iagctl/create-service-python-script).
+[`import.yaml`](import.yaml) defines the repository, the 6 input decorators and all 7
+services. Copy this driver folder into your own Git repository, update the `repositories` entry and each
+service's `working-directory` (`Juniper/JUNOS/device-drivers/netconf-python`) to match, then import it:
+
+```bash
+export GATEWAY_APPLICATION_MODE=client
+iagctl db import import.yaml --force
+```
+
+You can also import the file from
+[Gateway Manager](https://docs.itential.com/docs/gateway-manager) in Itential Platform.
+The runner needs Python with network access to install `requirements.txt`, and a route to the device.
+
+**2. Set up Inventory Manager.** Add the connection attributes to each device
+([Recommended inventory attributes per device](#recommended-inventory-attributes-per-device)), then map the actions to the services
+([From an Inventory Manager action mapping](#from-an-inventory-manager-action-mapping);
+see also [Inventory Manager](https://docs.itential.com/itential-platform/inventory-manager/overview)
+and [Configuration Manager](https://docs.itential.com/itential-platform/configuration-manager/overview)).
 
 ## Local development
 
