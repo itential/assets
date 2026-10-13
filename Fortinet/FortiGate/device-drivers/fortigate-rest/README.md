@@ -154,6 +154,29 @@ as a query param unless the route already includes one.
 - **No CLI passthrough** — see above. Use the netmiko option (see the product README) if genuine CLI-style config application is required.
 - **`get-config` may return a truncated config on very large or heavily-VDOM'd appliances.** Fortinet customers have reported the `/api/v2/monitor/system/config/backup` endpoint returning a partial config (vs. the full CLI-equivalent backup) in some cases. Verify output completeness against a CLI-based backup if this matters for your use case.
 
+## Installing on Itential Gateway
+
+**1. Create the services.** Each operation is a
+[Python script service](https://docs.itential.com/itential-gateway/5/iagctl/create-service-python-script).
+[`import.yaml`](import.yaml) defines the repository, the 1 input decorator and all 3
+services. Copy this driver folder into your own Git repository, update the `repositories` entry and each
+service's `working-directory` (`Fortinet/FortiGate/device-drivers/fortigate-rest`) to match, then import it:
+
+```bash
+export GATEWAY_APPLICATION_MODE=client
+iagctl db import import.yaml --force
+```
+
+You can also import the file from
+[Gateway Manager](https://docs.itential.com/docs/gateway-manager) in Itential Platform.
+The runner needs Python with network access to install `requirements.txt`, and a route to the device.
+
+**2. Set up Inventory Manager.** Add the connection attributes to each device
+([Inventory Manager attributes](#inventory-manager-attributes)), then map the actions to the services
+([Inventory Manager action mapping](#inventory-manager-action-mapping);
+see also [Inventory Manager](https://docs.itential.com/itential-platform/inventory-manager/overview)
+and [Configuration Manager](https://docs.itential.com/itential-platform/configuration-manager/overview)).
+
 ## Local testing
 
 ```bash

@@ -180,7 +180,9 @@ See [Golden Configuration overview](https://docs.itential.com/itential-platform/
 4. After importing, bind the tree to your devices.
 
 ### Install a Device Driver (Gateway)
-Follow the instructions in the driver's `README.md`. Drivers typically require copying files to your Itential Gateway host and restarting the Itential Gateway service.
+Each driver is a set of [Python script services](https://docs.itential.com/itential-gateway/5/iagctl/create-service-python-script) described by the `import.yaml` beside its `main.py`. See the driver's `README.md` for its operations and inventory attributes.
+1. **Create the Itential Gateway services.** Copy the driver folder into your own Git repository, edit the `repositories` entry and each service's `working-directory` in `import.yaml` to match, then import it with `iagctl db import import.yaml --force`. You can also import the file from [Gateway Manager](https://docs.itential.com/docs/gateway-manager) in Itential Platform.
+2. **Set up Inventory Manager.** Add the connection attributes the driver's `README.md` lists to each device, then map the actions (`is-alive`, `get-config`, `set-config`, `run-command`) to the driver's services. See [Inventory Manager](https://docs.itential.com/itential-platform/inventory-manager/overview) and [Configuration Manager](https://docs.itential.com/itential-platform/configuration-manager/overview).
 
 ### Install a Secret Provider (Gateway)
 Follow the instructions in the `secret-providers/README.md`. Copy the plugin file to your Itential Gateway host, then register it as a secret provider and create a secret alias via `iagctl` — see [Itential Gateway — Configure a Custom Plugin Secret Provider](https://docs.itential.com/itential-gateway/secrets/external-secrets/configure-custom-plugin-provider).

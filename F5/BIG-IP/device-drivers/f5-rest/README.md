@@ -139,6 +139,29 @@ Disable a node:
 
 The response is the raw JSON from iControl (or plain text if iControl returns non-JSON).
 
+## Installing on Itential Gateway
+
+**1. Create the services.** Each operation is a
+[Python script service](https://docs.itential.com/itential-gateway/5/iagctl/create-service-python-script).
+[`import.yaml`](import.yaml) defines the repository, the 3 input decorators and all 5
+services. Copy this driver folder into your own Git repository, update the `repositories` entry and each
+service's `working-directory` (`F5/BIG-IP/device-drivers/f5-rest`) to match, then import it:
+
+```bash
+export GATEWAY_APPLICATION_MODE=client
+iagctl db import import.yaml --force
+```
+
+You can also import the file from
+[Gateway Manager](https://docs.itential.com/docs/gateway-manager) in Itential Platform.
+The runner needs Python with network access to install `requirements.txt`, and a route to the device.
+
+**2. Set up Inventory Manager.** Add the connection attributes to each device
+([Inventory Manager attributes](#inventory-manager-attributes)), then map the actions to the services
+([Inventory Manager action mapping](#inventory-manager-action-mapping);
+see also [Inventory Manager](https://docs.itential.com/itential-platform/inventory-manager/overview)
+and [Configuration Manager](https://docs.itential.com/itential-platform/configuration-manager/overview)).
+
 ## Local testing
 
 ```bash

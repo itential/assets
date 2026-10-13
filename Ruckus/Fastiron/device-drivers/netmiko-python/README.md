@@ -19,6 +19,7 @@ Tested against Ruckus ICX series switches running FastIron OS (SPS 08.0.95r+).
   - [Direct local testing](#direct-local-testing)
 - [Inventory attributes](#inventory-attributes)
 - [Prerequisites](#prerequisites)
+- [Installing on Itential Gateway](#installing-on-itential-gateway)
 - [Local development](#local-development)
 
 ## Why a custom driver
@@ -225,6 +226,29 @@ Set these on the device record in Inventory Manager:
 - TCP/22 reachable from IG5 to the device
 - SSH enabled on the device (`ip ssh`)
 - Credentials with sufficient privilege for the required operations
+
+## Installing on Itential Gateway
+
+**1. Create the services.** Each operation is a
+[Python script service](https://docs.itential.com/itential-gateway/5/iagctl/create-service-python-script).
+[`import.yaml`](import.yaml) defines the repository, the 4 input decorators and all 5
+services. Copy this driver folder into your own Git repository, update the `repositories` entry and each
+service's `working-directory` (`Ruckus/Fastiron/device-drivers/netmiko-python`) to match, then import it:
+
+```bash
+export GATEWAY_APPLICATION_MODE=client
+iagctl db import import.yaml --force
+```
+
+You can also import the file from
+[Gateway Manager](https://docs.itential.com/docs/gateway-manager) in Itential Platform.
+The runner needs Python with network access to install `requirements.txt`, and a route to the device.
+
+**2. Set up Inventory Manager.** Add the connection attributes to each device
+([Inventory attributes](#inventory-attributes)), then map the actions to the services
+([From an Inventory Manager action mapping](#from-an-inventory-manager-action-mapping);
+see also [Inventory Manager](https://docs.itential.com/itential-platform/inventory-manager/overview)
+and [Configuration Manager](https://docs.itential.com/itential-platform/configuration-manager/overview)).
 
 ## Local development
 
