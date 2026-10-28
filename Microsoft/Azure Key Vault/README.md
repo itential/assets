@@ -12,4 +12,4 @@ This project provides a custom secret-provider plugin so Itential Gateway can re
 |---|---|
 | [secret-providers/](./secret-providers/) | IG5 custom secret-provider plugin — resolves Azure Key Vault secrets into Gateway secret aliases, usable in device inventory credentials and Gateway-executed Integration Model instances |
 
-See [secret-providers/README.md](./secret-providers/README.md) for full setup details: the service principal and role assignment it needs, registration steps, and how to reference the resulting alias.
+See [secret-providers/README.md](./secret-providers/README.md) for full setup details: the managed identity (for Itential Gateway on an Azure VM) or service principal it authenticates as, the role assignment it needs, registration steps, and how to reference the resulting alias.
