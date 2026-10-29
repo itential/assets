@@ -1,11 +1,20 @@
 #!/usr/bin/env python3
-"""IAG custom secret-provider plugin for Azure Key Vault.
+"""Itential Gateway custom secret-provider plugin for Azure Key Vault.
 
-IAG invokes this as `azure-plugin.py get`, writing a JSON request to
-stdin (`{"path": "<secret name>", "key": "<optional field>", "config":
-{"env": {...}}}`) and reading a JSON response from stdout
+Itential Gateway invokes this as `azure-plugin.py get`, writing a JSON
+request to stdin (`{"path": "<secret name>", "key": "<optional field>",
+"config": {"env": {...}}}`) and reading a JSON response from stdout
 (`{"value": "..."}`) on success. On failure, write a message to stderr
 and exit non-zero.
+
+Authentication to Azure is chosen from the plugin's environment:
+
+- If AZURE_CLIENT_SECRET_FILE or AZURE_CLIENT_SECRET is set, the plugin
+  signs in as a service principal (AZURE_TENANT_ID and AZURE_CLIENT_ID
+  are also required).
+- Otherwise it uses the managed identity of the Azure VM running
+  Itential Gateway. AZURE_CLIENT_ID is optional and only selects a
+  user-assigned identity; leave it unset for a system-assigned identity.
 """
 import sys
 import json
@@ -13,6 +22,8 @@ import os
 import urllib.request
 import urllib.parse
 import urllib.error
+
+IMDS_TOKEN_URL = "http://169.254.169.254/metadata/identity/oauth2/token"
 
 
 def fail(msg):
@@ -25,13 +36,57 @@ def read_client_secret(cfg_env):
     if secret_file:
         try:
             with open(secret_file, "r") as f:
-                return f.read().strip()
+                secret = f.read().strip()
         except OSError as e:
             fail(f"failed to read AZURE_CLIENT_SECRET_FILE: {e}")
+        if not secret:
+            fail("AZURE_CLIENT_SECRET_FILE is empty")
+        return secret
     secret = cfg_env.get("AZURE_CLIENT_SECRET") or os.environ.get("AZURE_CLIENT_SECRET")
     if secret:
         return secret
-    fail("AZURE_CLIENT_SECRET_FILE or AZURE_CLIENT_SECRET must be set")
+    return None
+
+
+def token_from_client_credentials(tenant_id, client_id, client_secret):
+    # OAuth2 client credentials grant against Azure AD (Entra ID),
+    # scoped to Key Vault's own resource.
+    form = {
+        "grant_type": "client_credentials",
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "scope": "https://vault.azure.net/.default",
+    }
+    data = urllib.parse.urlencode(form).encode()
+    token_url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token"
+    try:
+        resp = urllib.request.urlopen(token_url, data=data, timeout=15)
+        return resp.read()
+    except urllib.error.HTTPError as e:
+        fail(f"oauth failed: status {e.code}")
+    except Exception as e:
+        fail(f"oauth request failed: {e}")
+
+
+def token_from_managed_identity(client_id):
+    # Token request to the Azure Instance Metadata Service (IMDS) for the
+    # VM's managed identity. IMDS is link-local, so bypass any proxy
+    # settings. client_id is only needed to pick a user-assigned identity.
+    params = {"api-version": "2018-02-01", "resource": "https://vault.azure.net"}
+    if client_id:
+        params["client_id"] = client_id
+    req = urllib.request.Request(
+        f"{IMDS_TOKEN_URL}?{urllib.parse.urlencode(params)}",
+        headers={"Metadata": "true"},
+    )
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+    try:
+        return opener.open(req, timeout=15).read()
+    except urllib.error.HTTPError as e:
+        detail = e.read().decode("utf-8", "replace")[:200]
+        fail(f"managed identity token request failed: status {e.code}: {detail}")
+    except Exception as e:
+        fail(f"managed identity token request failed: {e}")
 
 
 def main():
@@ -52,30 +107,20 @@ def main():
     client_id = cfg_env.get("AZURE_CLIENT_ID") or os.environ.get("AZURE_CLIENT_ID")
     client_secret = read_client_secret(cfg_env)
 
-    if not vault_url or not tenant_id or not client_id or not client_secret:
-        fail("AZURE_VAULT_URL, AZURE_TENANT_ID, AZURE_CLIENT_ID, and a client secret must be set in the plugin's environment")
+    if not vault_url or (client_secret and (not tenant_id or not client_id)):
+        fail("AZURE_VAULT_URL must be set in the plugin's environment, and AZURE_TENANT_ID and AZURE_CLIENT_ID as well when a client secret is used")
     if not path:
         fail("no secret name provided")
 
     vault_url = vault_url.rstrip("/")
 
-    # Step 1: OAuth2 client credentials grant against Azure AD (Entra ID),
-    # scoped to Key Vault's own resource.
-    form = {
-        "grant_type": "client_credentials",
-        "client_id": client_id,
-        "client_secret": client_secret,
-        "scope": "https://vault.azure.net/.default",
-    }
-    data = urllib.parse.urlencode(form).encode()
-    token_url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token"
-    try:
-        resp = urllib.request.urlopen(token_url, data=data, timeout=15)
-        token_body = resp.read()
-    except urllib.error.HTTPError as e:
-        fail(f"oauth failed: status {e.code}")
-    except Exception as e:
-        fail(f"oauth request failed: {e}")
+    # Step 1: get an Azure AD token scoped to Key Vault, as a service
+    # principal when a client secret is configured, otherwise as the VM's
+    # managed identity.
+    if client_secret:
+        token_body = token_from_client_credentials(tenant_id, client_id, client_secret)
+    else:
+        token_body = token_from_managed_identity(client_id)
 
     try:
         token = json.loads(token_body).get("access_token")

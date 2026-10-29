@@ -6,10 +6,13 @@ A custom secret-provider plugin so Itential Gateway resolves Azure Key Vault cre
 
 Itential Gateway 5.5+ supports **external secret providers** out of the box for **HashiCorp Vault (KV v2)** and **CyberArk CCP** — see Itential's docs on [configuring a custom secret provider plugin](https://docs.itential.com/itential-gateway/secrets/external-secrets/configure-custom-plugin-provider) and [managing secret aliases](https://docs.itential.com/itential-gateway/secrets/external-secrets/manage-secret-aliases). Azure Key Vault isn't a built-in type, so this uses the third option — **`plugin`** — a small executable you provide that Itential Gateway calls to fetch a secret on demand.
 
+The plugin authenticates to Azure in one of two ways, chosen from the provider's configuration: a **managed identity** when Itential Gateway runs on an Azure VM (no credential to create, store, or rotate), or a **service principal** with a client secret when it runs anywhere else.
+
 ## Table of Contents
 
 - [What This Is](#what-this-is)
 - [Prerequisites](#prerequisites)
+- [Setting Up a Managed Identity](#setting-up-a-managed-identity)
 - [Setting Up a Service Principal](#setting-up-a-service-principal)
 - [The Plugin](#the-plugin)
 - [Storing the Client Secret](#storing-the-client-secret)
@@ -26,12 +29,64 @@ Itential Gateway 5.5+ supports **external secret providers** out of the box for 
 - Itential Gateway 5.5 or later, with the `secret-provider` feature available (`iagctl create secret-provider --help` should show the `plugin`, `vault`, and `cyberark` provider types). See the [custom plugin provider docs](https://docs.itential.com/itential-gateway/secrets/external-secrets/configure-custom-plugin-provider) for the full reference.
 - An Azure Key Vault with the **Azure role-based access control (RBAC)** permission model enabled (this is the default/recommended option when creating a vault). This example uses an RBAC role assignment, not a legacy vault access policy.
 - Python 3 on the Itential Gateway host (already required by Itential Gateway itself).
+- An identity for the plugin to authenticate as: a managed identity on the Azure VM that runs Itential Gateway, or a service principal. The next two sections cover each.
+
+## Setting Up a Managed Identity
+
+Use this when Itential Gateway runs on an Azure VM. The plugin asks the VM's Azure Instance Metadata Service (IMDS) for a Key Vault token, so there is no client secret to create, store, or rotate, and no tenant ID to configure.
+
+**1. Attach an identity to the VM.** Either kind works.
+
+For a system-assigned identity:
+
+```bash
+az vm identity assign --name <vm-name> --resource-group <rg>
+```
+
+For a user-assigned identity, create it once and attach it to the VM:
+
+```bash
+az identity create --name <identity-name> --resource-group <rg>
+```
+
+```bash
+az vm identity assign --name <vm-name> --resource-group <rg> --identities <identity-resource-id>
+```
+
+**2. Grant it read access to the vault.** Use the narrowest useful role, scoped to just this vault (not the resource group or subscription). `<principal-id>` is the identity's object ID: `az vm show --name <vm-name> --resource-group <rg> --query identity.principalId -o tsv` for a system-assigned identity, or `az identity show --name <identity-name> --resource-group <rg> --query principalId -o tsv` for a user-assigned one.
+
+```bash
+az role assignment create \
+  --assignee <principal-id> \
+  --role "Key Vault Secrets User" \
+  --scope $(az keyvault show --name <vault-name> --resource-group <rg> --query id -o tsv)
+```
+
+**3. Note the client ID of a user-assigned identity.** The plugin needs it to pick the right identity when the VM has one or more user-assigned identities. A system-assigned identity needs no client ID.
+
+```bash
+az identity show --name <identity-name> --resource-group <rg> --query clientId -o tsv
+```
+
+**4. Check it from the Itential Gateway host, before involving the plugin.** Request a token from IMDS (drop `&client_id=<client-id>` for a system-assigned identity):
+
+```bash
+TOKEN=$(curl -s -H 'Metadata: true' 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://vault.azure.net&client_id=<client-id>' | python3 -c 'import sys,json;print(json.load(sys.stdin)["access_token"])')
+```
+
+Then read a secret with it:
+
+```bash
+curl -s -H "Authorization: Bearer $TOKEN" 'https://<vault-name>.vault.azure.net/secrets/<secret-name>?api-version=7.4'
+```
+
+A JSON response containing `"value"` means the identity, the role assignment, and the network path to the vault all work. An `Identity not found` error from the first command means no identity is attached to the VM. A `403` from the second means the role is missing or a vault firewall or private endpoint is blocking the host.
 
 ## Setting Up a Service Principal
 
-Itential Gateway typically doesn't run on an Azure VM, so there's no Azure Managed Identity available to it — the plugin needs its own identity to authenticate as. If Itential Gateway *is* running on an Azure VM in your environment, use a **Managed Identity** instead of everything in this section — it removes the credential entirely.
+Use this when Itential Gateway does not run on an Azure VM, so there is no managed identity available to it and the plugin needs its own identity to authenticate as. If Itential Gateway runs on an Azure VM, use a [managed identity](#setting-up-a-managed-identity) instead, which removes the credential entirely.
 
-Otherwise, create a dedicated App Registration for this integration (don't reuse a shared/general-purpose one):
+Create a dedicated App Registration for this integration (don't reuse a shared/general-purpose one):
 
 ```bash
 # Create the App Registration
@@ -60,7 +115,30 @@ This gives you three values the plugin needs: the **Tenant ID**, the **Client ID
 
 Itential Gateway invokes the plugin as `<command> get`, writing a JSON request to stdin and reading a JSON response from stdout. Configuration (the non-sensitive values registered with the provider) arrives via the JSON on stdin, in `config.env` — the plugin process does not otherwise inherit Itential Gateway's environment.
 
-**Request (stdin):**
+The plugin picks the authentication method from that configuration. If `AZURE_CLIENT_SECRET_FILE` or `AZURE_CLIENT_SECRET` is set, it signs in as a service principal. Otherwise it uses the VM's managed identity.
+
+| Value | Managed identity | Service principal |
+|---|---|---|
+| `AZURE_VAULT_URL` | Required | Required |
+| `AZURE_CLIENT_ID` | Only to select a user-assigned identity | Required |
+| `AZURE_TENANT_ID` | Not used | Required |
+| `AZURE_CLIENT_SECRET_FILE` or `AZURE_CLIENT_SECRET` | Leave unset | One is required |
+
+**Request (stdin), managed identity:**
+```json
+{
+  "path": "IOSXE-PASSWORD",
+  "key": "",
+  "config": {
+    "env": {
+      "AZURE_VAULT_URL": "https://<vault-name>.vault.azure.net/",
+      "AZURE_CLIENT_ID": "<client-id>"
+    }
+  }
+}
+```
+
+**Request (stdin), service principal:**
 ```json
 {
   "path": "IOSXE-PASSWORD",
@@ -94,6 +172,8 @@ Unlike Secret Server-style providers, Key Vault secrets are addressed by **name*
 
 ## Storing the Client Secret
 
+This applies to the service principal only. A managed identity has no secret to store, so skip this section.
+
 Never pass the client secret as a raw `--env` value — it would be stored in the gateway's provider configuration. Instead, write it to a file the plugin reads at runtime, and only pass the file path via `--env`:
 
 ```bash
@@ -113,8 +193,20 @@ the-client-secret-value
 
 Full CLI reference: [configuring a custom secret provider plugin](https://docs.itential.com/itential-gateway/secrets/external-secrets/configure-custom-plugin-provider) and [managing secret aliases](https://docs.itential.com/itential-gateway/secrets/external-secrets/manage-secret-aliases).
 
+Register the plugin and its non-sensitive config as a provider. With a managed identity, only the vault URL and, for a user-assigned identity, its client ID are needed. Omit the `AZURE_CLIENT_ID` line for a system-assigned identity:
+
 ```bash
-# Provider: registers the plugin and its non-sensitive config
+iagctl create secret-provider azure-keyvault-plugin \
+  --type plugin \
+  --command /opt/gateway/azure-plugin.py \
+  --env AZURE_VAULT_URL=https://<vault-name>.vault.azure.net/ \
+  --env AZURE_CLIENT_ID=<client-id> \
+  --description "Azure Key Vault via managed identity"
+```
+
+With a service principal:
+
+```bash
 iagctl create secret-provider azure-keyvault-plugin \
   --type plugin \
   --command /opt/gateway/azure-plugin.py \
@@ -123,8 +215,11 @@ iagctl create secret-provider azure-keyvault-plugin \
   --env AZURE_CLIENT_ID=<client-id> \
   --env AZURE_CLIENT_SECRET_FILE=/etc/gateway/azure_client_secret \
   --description "Azure Key Vault via Entra ID client credentials"
+```
 
-# Alias: maps a friendly name to a specific secret on that provider
+Then create an alias, which maps a friendly name to a specific secret on that provider:
+
+```bash
 iagctl create secret AZURE-IOSXE-PASSWORD \
   --provider azure-keyvault-plugin \
   --secret IOSXE-PASSWORD
@@ -154,7 +249,7 @@ Itential Gateway
         │  resolves $GATEWAYSECRET_(alias)
         ▼
 azure-plugin.py
-        │  OAuth2 client credentials
+        │  Azure AD token (managed identity or client credentials)
         ▼
 Azure Key Vault
 ```
@@ -224,12 +319,14 @@ Gateway resolves the alias just before the outbound call executes, same as the d
 - The gateway log (`journalctl -u iagctl`) shows a line like `secret_resolution alias="..." provider="..." path="..." outcome=success` for each call that uses the alias.
 - The device/API call using the resolved secret succeeds end to end.
 
+If a call fails, the plugin's stderr message is included in the error Gateway reports. With a managed identity, `managed identity token request failed: status 400: ... Identity not found` means no identity is attached to the VM (or the `AZURE_CLIENT_ID` does not match an attached one), and `secret fetch failed: status 403` means the identity lacks the **Key Vault Secrets User** role on the vault or the vault firewall is blocking the host.
+
 ## Adapting This Example
 
 - **Multiple secrets**: register one provider, then create as many `secret` aliases as you need against it — each just needs its own `--secret <name>`.
 - **Structured secrets**: if you store a JSON object as a secret's value (e.g. `{"username": "...", "password": "..."}`), pass `--key <field-name>` when creating the alias — the plugin will parse the value as JSON and pull out that field.
-- **Itential Gateway running on an Azure VM**: use a Managed Identity instead of a service principal, and adjust the plugin's authentication step accordingly — no client secret to create, store, or rotate.
-- **Client secret rotation**: unlike some other providers, Azure AD client secrets expire. Track the expiration date you set and rotate the secret (`az ad app credential reset`) and the file on the Itential Gateway host before it does.
+- **More than one Itential Gateway server**: every server needs the plugin at the same path. With a managed identity, each VM needs an identity attached (or the same user-assigned identity) that holds the **Key Vault Secrets User** role on the vault.
+- **Client secret rotation** (service principal only; a managed identity has nothing to rotate): unlike some other providers, Azure AD client secrets expire. Track the expiration date you set and rotate the secret (`az ad app credential reset`) and the file on the Itential Gateway host before it does.
 
 ## References
 
