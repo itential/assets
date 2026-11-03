@@ -7,6 +7,9 @@ request to stdin (`{"path": "<secret name>", "key": "<optional field>",
 (`{"value": "..."}`) on success. On failure, write a message to stderr
 and exit non-zero.
 
+Itential Gateway copies stderr into its error log unredacted, so stderr must never
+carry a secret value, a credential, a URL or a response body.
+
 Authentication to Azure is chosen from the plugin's environment:
 
 - If AZURE_CLIENT_SECRET_FILE or AZURE_CLIENT_SECRET is set, the plugin
@@ -26,7 +29,32 @@ import urllib.error
 IMDS_TOKEN_URL = "http://169.254.169.254/metadata/identity/oauth2/token"
 
 
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    """Never follow redirects. urllib forwards the Authorization header to the
+    redirect target, so following one could send a bearer token to another host."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+_opener = urllib.request.build_opener(_NoRedirect)
+
+
+def describe_error(e):
+    """Short description of an exception that is safe to write to stderr.
+    Never includes response bodies, URLs, command lines or file names."""
+    if isinstance(e, urllib.error.HTTPError):
+        return f"HTTP status {e.code}"
+    if isinstance(e, urllib.error.URLError):
+        return f"{type(e).__name__}: {e.reason}"
+    if isinstance(e, OSError) and e.strerror:
+        return e.strerror
+    return type(e).__name__
+
+
 def fail(msg):
+    """Gateway copies stderr into its error log unredacted. Pass only fixed text
+    and values from describe_error(); never a secret, credential, URL or response body."""
     print(msg, file=sys.stderr)
     sys.exit(1)
 
@@ -38,7 +66,7 @@ def read_client_secret(cfg_env):
             with open(secret_file, "r") as f:
                 secret = f.read().strip()
         except OSError as e:
-            fail(f"failed to read AZURE_CLIENT_SECRET_FILE: {e}")
+            fail(f"failed to read AZURE_CLIENT_SECRET_FILE: {describe_error(e)}")
         if not secret:
             fail("AZURE_CLIENT_SECRET_FILE is empty")
         return secret
@@ -58,14 +86,14 @@ def token_from_client_credentials(tenant_id, client_id, client_secret):
         "scope": "https://vault.azure.net/.default",
     }
     data = urllib.parse.urlencode(form).encode()
-    token_url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token"
+    token_url = f"https://login.microsoftonline.com/{urllib.parse.quote(tenant_id, safe='')}/oauth2/v2.0/token"
     try:
-        resp = urllib.request.urlopen(token_url, data=data, timeout=15)
+        resp = _opener.open(token_url, data=data, timeout=15)
         return resp.read()
     except urllib.error.HTTPError as e:
         fail(f"oauth failed: status {e.code}")
     except Exception as e:
-        fail(f"oauth request failed: {e}")
+        fail(f"oauth request failed: {describe_error(e)}")
 
 
 def token_from_managed_identity(client_id):
@@ -83,10 +111,9 @@ def token_from_managed_identity(client_id):
     try:
         return opener.open(req, timeout=15).read()
     except urllib.error.HTTPError as e:
-        detail = e.read().decode("utf-8", "replace")[:200]
-        fail(f"managed identity token request failed: status {e.code}: {detail}")
+        fail(f"managed identity token request failed: status {e.code}")
     except Exception as e:
-        fail(f"managed identity token request failed: {e}")
+        fail(f"managed identity token request failed: {describe_error(e)}")
 
 
 def main():
@@ -95,8 +122,8 @@ def main():
 
     try:
         req_in = json.load(sys.stdin)
-    except json.JSONDecodeError as e:
-        fail(f"failed to parse stdin: {e}")
+    except json.JSONDecodeError:
+        fail("failed to parse stdin: invalid JSON")
 
     path = req_in.get("path")
     key = req_in.get("key", "")
@@ -113,6 +140,8 @@ def main():
         fail("no secret name provided")
 
     vault_url = vault_url.rstrip("/")
+    if not vault_url.lower().startswith("https://"):
+        fail("AZURE_VAULT_URL must start with https://")
 
     # Step 1: get an Azure AD token scoped to Key Vault, as a service
     # principal when a client secret is configured, otherwise as the VM's
@@ -132,15 +161,15 @@ def main():
     # Step 2: fetch the secret by name. Key Vault returns the value as a
     # plain JSON field (unlike some other providers, no extra unwrapping
     # of the response body is needed).
-    secret_url = f"{vault_url}/secrets/{path}?api-version=7.4"
+    secret_url = f"{vault_url}/secrets/{urllib.parse.quote(path, safe='')}?api-version=7.4"
     req = urllib.request.Request(secret_url, headers={"Authorization": f"Bearer {token}"})
     try:
-        fresp = urllib.request.urlopen(req, timeout=15)
+        fresp = _opener.open(req, timeout=15)
         secret_body = fresp.read()
     except urllib.error.HTTPError as e:
         fail(f"secret fetch failed: status {e.code}")
     except Exception as e:
-        fail(f"secret fetch failed: {e}")
+        fail(f"secret fetch failed: {describe_error(e)}")
 
     try:
         value = json.loads(secret_body).get("value")
@@ -155,7 +184,9 @@ def main():
     if key:
         try:
             parsed = json.loads(value)
-            if isinstance(parsed, dict) and key in parsed:
+            if isinstance(parsed, dict):
+                if key not in parsed:
+                    fail("key not found in secret")
                 value = parsed[key]
         except (json.JSONDecodeError, TypeError):
             pass
@@ -164,4 +195,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:  # SystemExit from fail() is not an Exception
+        # An uncaught exception prints a traceback to stderr, which Gateway copies into its error log.
+        fail(f"unexpected error: {type(e).__name__}")

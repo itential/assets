@@ -42,6 +42,7 @@ Every asset type in this repo — Studio Projects, Golden Configurations, OpenAP
 - [ ] No sensitive or private data included, and no customer/partner names anywhere (see [`STANDARDS.md`](./STANDARDS.md#repo-wide-requirements)).
 - [ ] Root [`README.md`](./README.md) updated if your contribution adds a new vendor, a new product under an existing vendor, or a new asset type (update the Vendor Index and/or Asset Type table).
 - [ ] Reviewed against the relevant sections of [`STANDARDS.md`](./STANDARDS.md) for the asset type(s) you're contributing.
+- [ ] If you're adding or changing a `secret-providers` plugin: `python3 .github/scripts/check-secret-plugins.py` passes, and you followed [Secret Provider Plugins](./STANDARDS.md#secret-provider-plugins-vendorproductsecret-providers) in `STANDARDS.md`. Say in the PR how you tested it, using a marker value and not a real secret.
 
 ## Naming Your Pull Request
 

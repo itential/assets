@@ -6,6 +6,9 @@ stdin (`{"path": "<secret name or ARN>", "key": "<optional field>", "config":
 {"env": {...}}}`) and reading a JSON response from stdout
 (`{"value": "..."}`) on success. On failure, write a message to stderr
 and exit non-zero.
+
+Gateway copies stderr into its error log unredacted, so stderr must never
+carry a secret value, a credential, a URL or a response body.
 """
 import sys
 import json
@@ -14,6 +17,7 @@ import hmac
 import hashlib
 import datetime
 import shlex
+import re
 import subprocess
 import urllib.request
 import urllib.error
@@ -21,14 +25,51 @@ import urllib.error
 IMDS_BASE = "http://169.254.169.254"
 
 
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    """Never follow redirects. urllib forwards the Authorization header to the
+    redirect target, so following one could send a bearer token to another host."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+_opener = urllib.request.build_opener(_NoRedirect)
+
+
+def describe_error(e):
+    """Short description of an exception that is safe to write to stderr.
+    Never includes response bodies, URLs, command lines or file names."""
+    if isinstance(e, urllib.error.HTTPError):
+        return f"HTTP status {e.code}"
+    if isinstance(e, urllib.error.URLError):
+        return f"{type(e).__name__}: {e.reason}"
+    if isinstance(e, subprocess.CalledProcessError):
+        return f"exit status {e.returncode}"
+    if isinstance(e, OSError) and e.strerror:
+        return e.strerror
+    return type(e).__name__
+
+
 def fail(msg):
+    """Gateway copies stderr into its error log unredacted. Pass only fixed text
+    and values from describe_error(); never a secret, credential, URL or response body."""
     print(msg, file=sys.stderr)
     sys.exit(1)
 
 
+def aws_error_type(e):
+    """AWS error type (e.g. ResourceNotFoundException) from an HTTPError body.
+    The body's message can contain account IDs and IAM ARNs, so it is dropped."""
+    try:
+        err_type = str(json.loads(e.read()).get("__type", "")).split("#")[-1]
+    except Exception:
+        return "unknown error"
+    return err_type if re.fullmatch(r"[A-Za-z]{1,64}", err_type) else "unknown error"
+
+
 def imds_get(path, headers=None, method="GET"):
     req = urllib.request.Request(f"{IMDS_BASE}{path}", headers=headers or {}, method=method)
-    return urllib.request.urlopen(req, timeout=2).read().decode()
+    return urllib.request.urlopen(req, timeout=2).read().decode()  # secret-plugin: allow (fixed link-local address, no redirect target)
 
 
 def instance_role_credentials():
@@ -68,7 +109,7 @@ def read_secret_key(cfg_env):
             with open(key_file, "r") as f:
                 return f.read().strip()
         except OSError as e:
-            fail(f"failed to read AWS_SECRET_ACCESS_KEY_FILE: {e}")
+            fail(f"failed to read AWS_SECRET_ACCESS_KEY_FILE: {describe_error(e)}")
     return cfg_env.get("AWS_SECRET_ACCESS_KEY") or os.environ.get("AWS_SECRET_ACCESS_KEY")
 
 
@@ -86,12 +127,12 @@ def credential_process_credentials(cfg_env):
             shlex.split(command), capture_output=True, text=True, timeout=30, check=True
         )
     except (subprocess.SubprocessError, OSError) as e:
-        fail(f"AWS_CREDENTIAL_PROCESS failed: {e}")
+        fail(f"AWS_CREDENTIAL_PROCESS failed: {describe_error(e)}")
     try:
         creds = json.loads(result.stdout)
         return creds["AccessKeyId"], creds["SecretAccessKey"], creds.get("SessionToken")
-    except (json.JSONDecodeError, KeyError) as e:
-        fail(f"AWS_CREDENTIAL_PROCESS returned unparseable output: {e}")
+    except (json.JSONDecodeError, KeyError):
+        fail("AWS_CREDENTIAL_PROCESS returned unparseable output")
 
 
 def resolve_credentials(cfg_env):
@@ -187,8 +228,8 @@ def main():
 
     try:
         req_in = json.load(sys.stdin)
-    except json.JSONDecodeError as e:
-        fail(f"failed to parse stdin: {e}")
+    except json.JSONDecodeError:
+        fail("failed to parse stdin: invalid JSON")
 
     path = req_in.get("path")
     key = req_in.get("key", "")
@@ -211,13 +252,12 @@ def main():
 
     req = urllib.request.Request(f"https://{host}/", data=payload, headers=headers, method="POST")
     try:
-        resp = urllib.request.urlopen(req, timeout=15)
+        resp = _opener.open(req, timeout=15)
         body = resp.read()
     except urllib.error.HTTPError as e:
-        detail = e.read().decode(errors="replace")
-        fail(f"secret fetch failed: status {e.code}: {detail}")
+        fail(f"secret fetch failed: status {e.code}: {aws_error_type(e)}")
     except Exception as e:
-        fail(f"secret fetch failed: {e}")
+        fail(f"secret fetch failed: {describe_error(e)}")
 
     try:
         result = json.loads(body)
@@ -234,7 +274,9 @@ def main():
     if key:
         try:
             parsed = json.loads(value)
-            if isinstance(parsed, dict) and key in parsed:
+            if isinstance(parsed, dict):
+                if key not in parsed:
+                    fail("key not found in secret")
                 value = parsed[key]
         except (json.JSONDecodeError, TypeError):
             pass
@@ -243,4 +285,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:  # SystemExit from fail() is not an Exception
+        # An uncaught exception prints a traceback to stderr, which Gateway copies into its error log.
+        fail(f"unexpected error: {type(e).__name__}")
