@@ -15,6 +15,7 @@ The plugin authenticates to Azure in one of two ways, chosen from the provider's
 - [Setting Up a Managed Identity](#setting-up-a-managed-identity)
 - [Setting Up a Service Principal](#setting-up-a-service-principal)
 - [The Plugin](#the-plugin)
+- [How the Secret Value Is Handled](#how-the-secret-value-is-handled)
 - [Storing the Client Secret](#storing-the-client-secret)
 - [Registering the Provider and Alias](#registering-the-provider-and-alias)
 - [Referencing the Alias](#referencing-the-alias)
@@ -77,10 +78,11 @@ TOKEN=$(curl -s -H 'Metadata: true' 'http://169.254.169.254/metadata/identity/oa
 Then read a secret with it:
 
 ```bash
-curl -s -H "Authorization: Bearer $TOKEN" 'https://<vault-name>.vault.azure.net/secrets/<secret-name>?api-version=7.4'
+curl -s -H "Authorization: Bearer $TOKEN" 'https://<vault-name>.vault.azure.net/secrets/<secret-name>?api-version=7.4' \
+  | python3 -c 'import sys, json; d = json.load(sys.stdin); print("value present" if "value" in d else d)'
 ```
 
-A JSON response containing `"value"` means the identity, the role assignment, and the network path to the vault all work. An `Identity not found` error from the first command means no identity is attached to the VM. A `403` from the second means the role is missing or a vault firewall or private endpoint is blocking the host.
+`value present` means the identity, the role assignment, and the network path to the vault all work. An `Identity not found` error from the first command means no identity is attached to the VM. A `Forbidden` error from the second means the role is missing or a vault firewall or private endpoint is blocking the host.
 
 ## Setting Up a Service Principal
 
@@ -113,7 +115,7 @@ This gives you three values the plugin needs: the **Tenant ID**, the **Client ID
 
 ## The Plugin
 
-Itential Gateway invokes the plugin as `<command> get`, writing a JSON request to stdin and reading a JSON response from stdout. Configuration (the non-sensitive values registered with the provider) arrives via the JSON on stdin, in `config.env` — the plugin process does not otherwise inherit Itential Gateway's environment.
+Itential Gateway invokes the plugin as `<command> get`, writing a JSON request to stdin and reading a JSON response from stdout. Configuration (the `--env` values registered with the provider, such as the region or a file path) arrives via the JSON on stdin, in `config.env`. Keep credentials out of these values: reference a file instead (see [Storing the Client Secret](#storing-the-client-secret)). The plugin process does not otherwise inherit Itential Gateway's environment.
 
 The plugin picks the authentication method from that configuration. If `AZURE_CLIENT_SECRET_FILE` or `AZURE_CLIENT_SECRET` is set, it signs in as a service principal. Otherwise it uses the VM's managed identity.
 
@@ -170,6 +172,29 @@ chmod +x /opt/gateway/azure-plugin.py
 
 Unlike Secret Server-style providers, Key Vault secrets are addressed by **name**, not a numeric ID, and each secret is a single value rather than a multi-field record — so `path` is the secret's name and `key` is normally left empty.
 
+## How the Secret Value Is Handled
+
+**The plugin's stdout is an in-memory pipe, not a terminal, a file, or a log.** Itential Gateway starts the plugin as a child process and connects its stdout to a buffer in Gateway's own memory. The `{"value": "..."}` response goes from the plugin into that buffer and nowhere else. It is the same mechanism as `$(command)` in a shell script or a `|` between two programs: nothing is displayed, and nothing is written to disk.
+
+From there:
+
+- Gateway resolves the alias on the Gateway host and passes the value to the device driver, service, or script that referenced it as an environment variable. The plaintext secret is not returned to Itential Platform.
+- The pipe and the environment variable have the same access boundary: processes running as the Gateway service account, and root. On Linux, other users on the host cannot read either one (tested: `/proc/<pid>/fd` and `/proc/<pid>/environ` return "Permission denied" to a different user).
+- For a successful lookup, Gateway logs one line with the alias, provider, path, and `outcome=success`. The value is not logged (tested on Gateway 5.5.3: a marker value did not appear in CLI output, the systemd journal, or `gateway.log`).
+
+What the plugin does to keep it that way:
+
+- stdout carries only the final `{"value": "..."}` response.
+- On failure, Gateway includes the plugin's stderr in its error log without redaction. The plugin therefore writes only fixed text, an HTTP status code, or the provider's error type to stderr. It never writes a secret, a credential, a URL, a command line, or a response body.
+- Credentials the plugin itself needs come from a file you control or from the VM's managed identity, never from the command line.
+- The plugin connects over HTTPS with certificate verification on, does not follow redirects, does not log, and does not write files.
+- If Itential Gateway runs on an Azure VM, use a managed identity so there is no client secret to store.
+
+What you can do to keep it safe:
+
+- Secure the Itential Gateway host as you would any system that handles credentials.
+- Scope the plugin's identity to the specific secrets it needs.
+
 ## Storing the Client Secret
 
 This applies to the service principal only. A managed identity has no secret to store, so skip this section.
@@ -177,7 +202,10 @@ This applies to the service principal only. A managed identity has no secret to 
 Never pass the client secret as a raw `--env` value — it would be stored in the gateway's provider configuration. Instead, write it to a file the plugin reads at runtime, and only pass the file path via `--env`:
 
 ```bash
-sudo tee /etc/gateway/azure_client_secret <<< 'the-client-secret-value' > /dev/null
+# Reads the value without echoing it, so it stays out of shell history
+read -rsp 'Client secret: ' SECRET
+printf '%s' "$SECRET" | sudo sh -c 'umask 077; cat > /etc/gateway/azure_client_secret'
+unset SECRET
 sudo chown itential:itential /etc/gateway/azure_client_secret
 sudo chmod 400 /etc/gateway/azure_client_secret
 ```
@@ -318,8 +346,15 @@ Gateway resolves the alias just before the outbound call executes, same as the d
 - `iagctl describe secret <alias>` shows the correct provider/secret.
 - The gateway log (`journalctl -u iagctl`) shows a line like `secret_resolution alias="..." provider="..." path="..." outcome=success` for each call that uses the alias.
 - The device/API call using the resolved secret succeeds end to end.
+- To test the plugin directly, pipe a request into it, using the same `config.env` you registered, and check the result without printing it:
+  ```bash
+  echo '{"path":"IOSXE-PASSWORD","config":{"env":{"AZURE_VAULT_URL":"https://<vault-name>.vault.azure.net/"}}}' \
+    | /opt/gateway/azure-plugin.py get \
+    | python3 -c 'import sys, json; v = json.load(sys.stdin)["value"]; print("OK: plugin returned a value of", len(v), "characters")'
+  ```
+  The last command stops the value from reaching your screen. Without it, the plugin's output would print in your terminal and stay in its scrollback. When Itential Gateway runs the plugin, that output goes to Gateway's memory instead. If the plugin fails, its error message appears here, which is what Gateway would log.
 
-If a call fails, the plugin's stderr message is included in the error Gateway reports. With a managed identity, `managed identity token request failed: status 400: ... Identity not found` means no identity is attached to the VM (or the `AZURE_CLIENT_ID` does not match an attached one), and `secret fetch failed: status 403` means the identity lacks the **Key Vault Secrets User** role on the vault or the vault firewall is blocking the host.
+If a call fails, the plugin's stderr message is included in the error Gateway reports. With a managed identity, `managed identity token request failed: status 400` means no identity is attached to the VM, or the `AZURE_CLIENT_ID` does not match an attached one (the plugin reports only the status code; run the token check in [Setting Up a Managed Identity](#setting-up-a-managed-identity) to see Azure's full message), and `secret fetch failed: status 403` means the identity lacks the **Key Vault Secrets User** role on the vault or the vault firewall is blocking the host.
 
 ## Adapting This Example
 

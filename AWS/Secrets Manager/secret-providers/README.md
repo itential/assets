@@ -13,6 +13,7 @@ Itential Gateway 5.5+ supports **external secret providers** out of the box for 
 - [What This Is](#what-this-is)
 - [Prerequisites](#prerequisites)
 - [The Plugin](#the-plugin)
+- [How the Secret Value Is Handled](#how-the-secret-value-is-handled)
 - [Authenticating to AWS: Three Patterns](#authenticating-to-aws-three-patterns)
   - [Pattern 1 — EC2 Instance Role](#pattern-1--ec2-instance-role-best-when-itential-gateway-runs-on-ec2)
   - [Pattern 2 — IAM Roles Anywhere](#pattern-2--iam-roles-anywhere-recommended-for-on-prem--non-ec2)
@@ -34,7 +35,7 @@ Itential Gateway 5.5+ supports **external secret providers** out of the box for 
 
 ## The Plugin
 
-Itential Gateway invokes the plugin as `<command> get`, writing a JSON request to stdin and reading a JSON response from stdout. Configuration (the non-sensitive values registered with the provider) arrives via the JSON on stdin, in `config.env` — the plugin process does not otherwise inherit Itential Gateway's environment.
+Itential Gateway invokes the plugin as `<command> get`, writing a JSON request to stdin and reading a JSON response from stdout. Configuration (the `--env` values registered with the provider, such as the region or a file path) arrives via the JSON on stdin, in `config.env`. Keep credentials out of these values: reference a file instead (see [Pattern 3](#pattern-3--static-iam-user-access-key-simplest-quick-start)). The plugin process does not otherwise inherit Itential Gateway's environment.
 
 **Request (stdin):**
 ```json
@@ -65,6 +66,29 @@ chmod +x /opt/gateway/aws-plugin.py
 ```
 
 `path` is the secret's **name or full ARN** — see the [cross-account note](#cross-account-note) for why the ARN matters. If the secret's `SecretString` is a JSON object and `key` is given, the plugin parses it and pulls out that one field; otherwise it returns the whole string.
+
+## How the Secret Value Is Handled
+
+**The plugin's stdout is an in-memory pipe, not a terminal, a file, or a log.** Itential Gateway starts the plugin as a child process and connects its stdout to a buffer in Gateway's own memory. The `{"value": "..."}` response goes from the plugin into that buffer and nowhere else. It is the same mechanism as `$(command)` in a shell script or a `|` between two programs: nothing is displayed, and nothing is written to disk.
+
+From there:
+
+- Gateway resolves the alias on the Gateway host and passes the value to the device driver, service, or script that referenced it as an environment variable. The plaintext secret is not returned to Itential Platform.
+- The pipe and the environment variable have the same access boundary: processes running as the Gateway service account, and root. On Linux, other users on the host cannot read either one (tested: `/proc/<pid>/fd` and `/proc/<pid>/environ` return "Permission denied" to a different user).
+- For a successful lookup, Gateway logs one line with the alias, provider, path, and `outcome=success`. The value is not logged (tested on Gateway 5.5.3: a marker value did not appear in CLI output, the systemd journal, or `gateway.log`).
+
+What the plugin does to keep it that way:
+
+- stdout carries only the final `{"value": "..."}` response.
+- On failure, Gateway includes the plugin's stderr in its error log without redaction. The plugin therefore writes only fixed text, an HTTP status code, or the provider's error type to stderr. It never writes a secret, a credential, a URL, a command line, or a response body.
+- Credentials the plugin itself needs come from a file you control or from short-lived credentials (an EC2 instance role or a credential process), never from the command line.
+- The plugin connects over HTTPS with certificate verification on, does not follow redirects, does not log, and does not write files.
+- Prefer an EC2 instance role or IAM Roles Anywhere (Patterns 1 and 2) over a static access key, so no long-lived AWS key sits on the host.
+
+What you can do to keep it safe:
+
+- Secure the Itential Gateway host as you would any system that handles credentials.
+- Scope the plugin's identity to the specific secrets it needs.
 
 ## Authenticating to AWS: Three Patterns
 
@@ -179,7 +203,10 @@ aws iam create-access-key --user-name svc-iag5-secretsmanager-reader
 Store the secret half in a file, never as a raw `--env` value (which would be stored in the gateway's provider configuration in plaintext):
 
 ```bash
-sudo tee /etc/gateway/aws_secret_access_key <<< 'the-secret-access-key' > /dev/null
+# Reads the value without echoing it, so it stays out of shell history
+read -rsp 'Secret access key: ' SECRET
+printf '%s' "$SECRET" | sudo sh -c 'umask 077; cat > /etc/gateway/aws_secret_access_key'
+unset SECRET
 sudo chown itential:itential /etc/gateway/aws_secret_access_key
 sudo chmod 400 /etc/gateway/aws_secret_access_key
 ```
@@ -300,11 +327,13 @@ Gateway resolves the alias just before the outbound call executes, same as the d
 - `iagctl describe secret <alias>` shows the correct provider/secret/key.
 - The gateway log (`journalctl -u iagctl`) shows a line like `secret_resolution alias="..." provider="..." path="..." outcome=success` for each call that uses the alias.
 - The device/API call using the resolved secret succeeds end to end.
-- To test a provider directly without going through a real device call, pipe a request straight into the plugin using the exact `config.env` you registered — this is exactly what Itential Gateway does internally:
+- To test the plugin directly, pipe a request into it, using the same `config.env` you registered, and check the result without printing it:
   ```bash
   echo '{"path":"AWS-IOSXE-PASSWORD","key":"password","config":{"env":{"AWS_REGION":"us-east-1"}}}' \
-    | /opt/gateway/aws-plugin.py get
+    | /opt/gateway/aws-plugin.py get \
+    | python3 -c 'import sys, json; v = json.load(sys.stdin)["value"]; print("OK: plugin returned a value of", len(v), "characters")'
   ```
+  The last command stops the value from reaching your screen. Without it, the plugin's output would print in your terminal and stay in its scrollback. When Itential Gateway runs the plugin, that output goes to Gateway's memory instead. If the plugin fails, its error message appears here, which is what Gateway would log.
 
 ## Adapting This Example
 

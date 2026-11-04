@@ -10,6 +10,7 @@ All asset types below live at `{Vendor}/[{Product}/]{AssetType}/`. The `{Product
 - [Studio Projects](#studio-projects-vendorproductstudio-projects)
 - [Golden Configurations](#golden-configurations-vendorproductgolden-configurations)
 - [OpenAPIs](#openapis-vendorproductopenapis)
+- [Secret Provider Plugins](#secret-provider-plugins-vendorproductsecret-providers)
 - [Repo-Wide Requirements](#repo-wide-requirements)
 
 ## General Principles
@@ -53,6 +54,46 @@ Imported into Itential Platform as Integration Models.
 - **Global security block encouraged**: Define security at the top level of the spec rather than on individual operations. Per-operation overrides are supported but the global block is preferred for consistency.
 - **Supported auth method**: The `securityScheme` must use an auth type supported by Itential Platform. See the [Itential Platform Security Schemes documentation](https://docs.itential.com/itential-platform/admin-essentials/integrations/auth/security-schemes) for the full list of supported methods.
 - **No duplicate specs**: Don't leave an old, differently-named spec in the same folder once a renamed/enriched replacement exists — update the product's `README.md` links and remove the superseded file in the same contribution.
+
+## Secret Provider Plugins (`{Vendor}/[{Product}/]secret-providers/`)
+
+A secret-provider plugin runs on the Itential Gateway host with live credentials, and Itential Gateway copies a failed plugin's stderr into its error log without redaction. A plugin that does not meet every rule below will not be merged.
+
+The protocol is fixed: Itential Gateway writes a JSON request to the plugin's stdin and reads `{"value": "..."}` from its stdout. Don't change it, and don't work around it with files or environment variables.
+
+**Output**
+- stdout carries exactly one thing: the final `{"value": "..."}` response. No other `print`, no debug output.
+- stderr carries only fixed text, an HTTP status code, or the provider's error type. Never write a secret value, a credential, a URL, a command line, a file path, an exception's raw text, or a response body. Use a helper like `describe_error()` in the existing plugins.
+- Handle every exception. A top-level handler must turn an uncaught exception into a one-line message with the exception type only, so no traceback reaches stderr.
+
+**Credentials**
+- Read the plugin's own credentials from a file path (`*_FILE`) or fetch short-lived ones (instance role, managed identity, a documented credential helper). Don't document or recommend a raw credential as an `--env` value: every `--env` value is sent on stdin and stored in the provider configuration.
+- New plugins should not accept a raw credential in `config.env` at all.
+- Examples use placeholders only. Never include a real key, token, password, ARN, account ID, or tenant ID.
+
+**Network**
+- HTTPS only, with TLS verification on. Reject `http://` base URLs.
+- Don't follow redirects on a request that carries credentials (`urllib` forwards the `Authorization` header to the redirect target).
+- URL-encode `path` and `key` before putting them in a URL.
+- Set a timeout of 15 seconds or less per request. Itential Gateway kills the plugin at 30 seconds.
+
+**Side Effects**
+- No logging, no files or temp files, no environment changes, no caching of secrets, no `shell=True`, no `os.system`.
+- The only subprocess allowed is a documented credential helper, run without a shell, with its stderr and arguments kept out of error messages.
+- Standard library only, unless a dependency is pinned and justified in the README.
+
+**Return Only What Was Asked For**
+- If `key` is given and isn't in the secret, fail with "key not found". Don't return the whole secret.
+
+**README**
+- Include a "How the Secret Value Is Handled" section (copy it from the AWS Secrets Manager README) that says stdout is an in-memory pipe, not a terminal, and says what Itential Gateway logs.
+- Any command that runs the plugin by hand must not print the value. Pipe the output into a check that prints only success and the value's length.
+- Store credential files with `chmod 400`, created without leaving the value in shell history.
+- Use least-privilege examples: one secret ARN, one vault, one secret ID.
+
+**Testing**
+- Run `python3 .github/scripts/check-secret-plugins.py` and fix every finding. An exception needs a `# secret-plugin: allow (reason)` comment that a reviewer accepts.
+- Test with a mock secret that contains a recognizable marker, and confirm the marker appears nowhere in stderr, Itential Gateway's CLI output, its journal, or `gateway.log`, on both success and failure. Never test with a real production secret.
 
 ## Repo-Wide Requirements
 

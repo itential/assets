@@ -12,6 +12,7 @@ Itential Gateway 5.5+ supports **external secret providers** out of the box for 
 - [Prerequisites](#prerequisites)
 - [How Delinea Secret Server API Access Works](#how-delinea-secret-server-api-access-works)
 - [The Plugin](#the-plugin)
+- [How the Secret Value Is Handled](#how-the-secret-value-is-handled)
 - [Storing the Password](#storing-the-password)
 - [Registering the Provider and Alias](#registering-the-provider-and-alias)
 - [Referencing the Alias](#referencing-the-alias)
@@ -38,7 +39,7 @@ The secret `{id}` is the numeric ID Secret Server assigns (visible in the secret
 
 ## The Plugin
 
-Itential Gateway invokes the plugin as `<command> get`, writing a JSON request to stdin and reading a JSON response from stdout. Configuration (the non-sensitive values registered with the provider) arrives via the JSON on stdin, in `config.env` — the plugin process does not otherwise inherit Itential Gateway's environment.
+Itential Gateway invokes the plugin as `<command> get`, writing a JSON request to stdin and reading a JSON response from stdout. Configuration (the `--env` values registered with the provider, such as the region or a file path) arrives via the JSON on stdin, in `config.env`. Keep credentials out of these values: reference a file instead (see [Storing the Password](#storing-the-password)). The plugin process does not otherwise inherit Itential Gateway's environment.
 
 **Request (stdin):**
 ```json
@@ -70,12 +71,38 @@ cp plugin.py /opt/gateway/delinea-plugin.py
 chmod +x /opt/gateway/delinea-plugin.py
 ```
 
+## How the Secret Value Is Handled
+
+**The plugin's stdout is an in-memory pipe, not a terminal, a file, or a log.** Itential Gateway starts the plugin as a child process and connects its stdout to a buffer in Gateway's own memory. The `{"value": "..."}` response goes from the plugin into that buffer and nowhere else. It is the same mechanism as `$(command)` in a shell script or a `|` between two programs: nothing is displayed, and nothing is written to disk.
+
+From there:
+
+- Gateway resolves the alias on the Gateway host and passes the value to the device driver, service, or script that referenced it as an environment variable. The plaintext secret is not returned to Itential Platform.
+- The pipe and the environment variable have the same access boundary: processes running as the Gateway service account, and root. On Linux, other users on the host cannot read either one (tested: `/proc/<pid>/fd` and `/proc/<pid>/environ` return "Permission denied" to a different user).
+- For a successful lookup, Gateway logs one line with the alias, provider, path, and `outcome=success`. The value is not logged (tested on Gateway 5.5.3: a marker value did not appear in CLI output, the systemd journal, or `gateway.log`).
+
+What the plugin does to keep it that way:
+
+- stdout carries only the final `{"value": "..."}` response.
+- On failure, Gateway includes the plugin's stderr in its error log without redaction. The plugin therefore writes only fixed text, an HTTP status code, or the provider's error type to stderr. It never writes a secret, a credential, a URL, a command line, or a response body.
+- Credentials the plugin itself needs come from a file you control, never from the command line.
+- The plugin connects over HTTPS with certificate verification on, does not follow redirects, does not log, and does not write files.
+- The service account's password is sent only to `DELINEA_BASE_URL`, which must be an `https://` URL.
+
+What you can do to keep it safe:
+
+- Secure the Itential Gateway host as you would any system that handles credentials.
+- Scope the plugin's identity to the specific secrets it needs.
+
 ## Storing the Password
 
 Never pass the Secret Server account's password as a raw `--env` value — it would be stored in the gateway's provider configuration. Instead, write it to a file the plugin reads at runtime, and only pass the file path via `--env`:
 
 ```bash
-sudo tee /etc/gateway/delinea_password <<< 'the-service-account-password' > /dev/null
+# Reads the value without echoing it, so it stays out of shell history
+read -rsp 'Service account password: ' SECRET
+printf '%s' "$SECRET" | sudo sh -c 'umask 077; cat > /etc/gateway/delinea_password'
+unset SECRET
 sudo chown itential:itential /etc/gateway/delinea_password
 sudo chmod 400 /etc/gateway/delinea_password
 ```
@@ -204,6 +231,13 @@ Gateway resolves the alias just before the outbound call executes, same as the d
 - `iagctl describe secret <alias>` shows the correct provider/secret/key.
 - The gateway log (`journalctl -u iagctl`) shows a line like `secret_resolution alias="..." provider="..." path="..." outcome=success` for each call that uses the alias.
 - The device/API call using the resolved secret succeeds end to end.
+- To test the plugin directly, pipe a request into it, using the same `config.env` you registered, and check the result without printing it:
+  ```bash
+  echo '{"path":"382","key":"password","config":{"env":{"DELINEA_BASE_URL":"https://<tenant>.secretservercloud.com","DELINEA_USERNAME":"svc-account","DELINEA_PASSWORD_FILE":"/etc/gateway/delinea_password"}}}' \
+    | /opt/gateway/delinea-plugin.py get \
+    | python3 -c 'import sys, json; v = json.load(sys.stdin)["value"]; print("OK: plugin returned a value of", len(v), "characters")'
+  ```
+  The last command stops the value from reaching your screen. Without it, the plugin's output would print in your terminal and stay in its scrollback. When Itential Gateway runs the plugin, that output goes to Gateway's memory instead. If the plugin fails, its error message appears here, which is what Gateway would log.
 
 ## Adapting This Example
 
