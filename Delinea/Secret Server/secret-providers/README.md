@@ -89,7 +89,7 @@ What the plugin does to keep it that way:
 - The plugin connects over HTTPS with certificate verification on, does not follow redirects, does not log, and does not write files.
 - The service account's password is sent only to `DELINEA_BASE_URL`, which must be an `https://` URL.
 
-What you keep safe:
+What you can do to keep it safe:
 
 - Secure the Itential Gateway host as you would any system that handles credentials.
 - Scope the plugin's identity to the specific secrets it needs.

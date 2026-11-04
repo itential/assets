@@ -85,7 +85,7 @@ What the plugin does to keep it that way:
 - The plugin connects over HTTPS with certificate verification on, does not follow redirects, does not log, and does not write files.
 - Prefer an EC2 instance role or IAM Roles Anywhere (Patterns 1 and 2) over a static access key, so no long-lived AWS key sits on the host.
 
-What you keep safe:
+What you can do to keep it safe:
 
 - Secure the Itential Gateway host as you would any system that handles credentials.
 - Scope the plugin's identity to the specific secrets it needs.

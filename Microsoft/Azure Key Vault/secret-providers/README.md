@@ -190,7 +190,7 @@ What the plugin does to keep it that way:
 - The plugin connects over HTTPS with certificate verification on, does not follow redirects, does not log, and does not write files.
 - If Itential Gateway runs on an Azure VM, use a managed identity so there is no client secret to store.
 
-What you keep safe:
+What you can do to keep it safe:
 
 - Secure the Itential Gateway host as you would any system that handles credentials.
 - Scope the plugin's identity to the specific secrets it needs.
