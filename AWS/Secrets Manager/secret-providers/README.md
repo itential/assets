@@ -87,7 +87,7 @@ What the plugin does to keep it that way:
 
 What you keep safe:
 
-- Restrict shell access to the Gateway host and read access to its logs. The Gateway service account and root can read the secret in memory.
+- Only the account Itential Gateway runs as, and root, can read the secret while Gateway is using it. These are the same accounts that already control Gateway and the devices it logs in to. Other users on the host cannot read it. Limit shell access to the Gateway host as you would for any system that handles credentials.
 - Scope the plugin's identity to the specific secrets it needs.
 
 ## Authenticating to AWS: Three Patterns
