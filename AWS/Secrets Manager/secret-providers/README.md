@@ -88,7 +88,6 @@ What the plugin does to keep it that way:
 What you keep safe:
 
 - Restrict shell access to the Gateway host and read access to its logs. The Gateway service account and root can read the secret in memory.
-- In services and scripts that use a secret alias, do not print environment variables and do not run with `set -x`. Gateway streams script output back as log events, and that output is not redacted.
 - Scope the plugin's identity to the specific secrets it needs.
 
 ## Authenticating to AWS: Three Patterns
