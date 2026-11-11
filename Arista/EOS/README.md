@@ -2,7 +2,7 @@
 
 Arista EOS is the network operating system running Arista's switches and routers — a single Linux-based image spanning campus, data center, and cloud networking hardware, with a programmatic API (eAPI) and extensible CLI.
 
-This project provides a Studio Project covering software upgrade, port turn-up, golden configuration compliance, and inventory management for Arista EOS devices — see **Projects** below.
+This project provides a Studio Project covering software upgrade, port turn-up, golden configuration compliance, and inventory management for Arista EOS devices — see **Projects** below. EOS also supports gNMI and gNOI; for a vendor-neutral gRPC device driver, see [OpenConfig gRPC](../../OpenConfig/gRPC/).
 
 **Requirements:** Itential Platform >= 6.4 · Itential Gateway >= 5.0
 
