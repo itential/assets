@@ -15,7 +15,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Studio Projects** | Bundles of related automation assets (workflows, forms, templates, and transformations) for a specific use case |
 | **OpenAPIs** | JSON-based definitions imported as Integration Models that specify how Itential Platform connects to external APIs, databases, and systems |
 | **Golden Configurations** | Config Manager compliance trees for auditing device configuration drift |
-| **device-drivers** | Netmiko-based drivers for connecting Itential Gateway to physical and virtual devices |
+| **device-drivers** | Itential Gateway 5 drivers (Python scripts) for connecting to physical and virtual devices over CLI, REST, NETCONF, or gRPC |
 | **Configuration Parsers** | Scripts for parsing structured output from device CLI commands |
 | **secret-providers** | Custom secret-provider plugin so Itential Gateway resolves credentials from an external secrets manager at runtime, instead of storing them in Gateway's own encrypted store — usable for both device inventory credentials and Gateway-executed Integration Model instances |
 
@@ -95,6 +95,7 @@ Assets are organized by vendor and product. Each folder may contain one or more 
 | **Okta** | Identity management |
 | **OP5** | Naemon/Nagios-core network and infrastructure monitoring (op5 Monitor, by ITRS Group) |
 | **OpenAI** | AI / LLM APIs |
+| **OpenConfig** | gRPC (gNMI / gNOI) |
 | **OpsRamp** | IT operations management (monitoring, alerting, incident management) |
 | **OWASP ZAP** | Web application security scanner |
 | **Paessler** | PRTG monitoring |

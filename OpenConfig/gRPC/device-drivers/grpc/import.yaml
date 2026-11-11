@@ -1,0 +1,796 @@
+# Sample Gateway 5 import file for the gRPC (gNMI/gNOI) driver: the repository,
+# the input decorators and all 32 services.
+#
+# Copy this driver folder into your own Git repository, then update the
+# `repositories` entry and each service's `working-directory`
+# (OpenConfig/gRPC/device-drivers/grpc) to match.
+#
+#   export GATEWAY_APPLICATION_MODE=client
+#   iagctl db import import.yaml --force
+
+repositories:
+  - name: itential-assets
+    description: Itential community assets repository
+    url: https://github.com/itential/assets.git
+    reference: devel
+
+decorators:
+  - name: grpc-gnmi-get-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnmi-get inputs
+      type: object
+      properties:
+        path: {"type": "array", "items": {"type": "string"}, "description": "gNMI paths to read (default [\"/\"])"}
+        datatype: {"type": "string", "description": "Data class to return", "enum": ["all", "config", "state", "operational"]}
+        encoding: {"type": "string", "description": "Override the encoding negotiated from Capabilities (json, json_ietf, bytes, proto, ascii)"}
+        prefix: {"type": "string", "description": "gNMI path prefix"}
+        target: {"type": "string", "description": "gNMI target name (for proxies)"}
+        origin: {"type": "string", "description": "Path origin applied to paths without one, e.g. openconfig, a native YANG module (Cisco-IOS-XR-ifmgr-cfg), or cli"}
+        raw: {"type": "string", "enum": ["true", "false"], "description": "true = each path is one verbatim element (not split on / and case preserved)"}
+      additionalProperties: false
+
+  - name: grpc-gnmi-get-config-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnmi-get-config inputs
+      type: object
+      properties:
+        path: {"type": "array", "items": {"type": "string"}, "description": "gNMI paths to read (default [\"/\"])"}
+        encoding: {"type": "string", "description": "Override the negotiated encoding"}
+        prefix: {"type": "string", "description": "gNMI path prefix"}
+        origin: {"type": "string", "description": "Path origin applied to paths without one"}
+      additionalProperties: false
+
+  - name: grpc-gnmi-set-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnmi-set inputs
+      type: object
+      properties:
+        update: {"type": "array", "description": "Paths to merge, as [{path, value}]", "items": {"type": "object", "properties": {"path": {"type": "string"}, "value": {"description": "JSON value to write (object, string, number or boolean)"}}, "required": ["path", "value"], "additionalProperties": false}}
+        replace: {"type": "array", "description": "Paths to replace, as [{path, value}]", "items": {"type": "object", "properties": {"path": {"type": "string"}, "value": {"description": "JSON value to write (object, string, number or boolean)"}}, "required": ["path", "value"], "additionalProperties": false}}
+        union_replace: {"type": "array", "description": "Replace the whole configuration with the union of these [{path, value}] (gNMI 0.10.0+; refused on older targets unless force=true)", "items": {"type": "object", "properties": {"path": {"type": "string"}, "value": {"description": "JSON value to write (object, string, number or boolean)"}}, "required": ["path", "value"], "additionalProperties": false}}
+        delete: {"type": "array", "items": {"type": "string"}, "description": "Paths to delete"}
+        encoding: {"type": "string", "description": "Override the negotiated encoding"}
+        prefix: {"type": "string", "description": "gNMI path prefix"}
+        origin: {"type": "string", "description": "Path origin applied to paths without one, e.g. openconfig or a native YANG module"}
+        raw: {"type": "string", "enum": ["true", "false"], "description": "true = each path is one verbatim element"}
+        force: {"type": "string", "enum": ["true", "false"], "description": "true = send union_replace even if the device does not advertise gNMI 0.10.0 (an older device ignores it and applies nothing)"}
+      additionalProperties: false
+
+  - name: grpc-gnmi-set-config-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnmi-set-config inputs
+      type: object
+      properties:
+        config: {"type": "string", "x-itential-payload-type": "file", "x-itential-payload-target": "GRPC_CONFIG_FILE", "description": "JSON-encoded Config Manager changes array [{parents, old, new}]. parents joins into the gNMI path; new (JSON) is written; old with an empty new deletes the path."}
+        mode: {"type": "string", "enum": ["update", "replace", "union_replace"], "description": "How changes are written (default update). union_replace replaces the whole configuration with the union of the changes."}
+        origin: {"type": "string", "description": "Path origin for every change, e.g. a native YANG module"}
+        force: {"type": "string", "enum": ["true", "false"], "description": "Send union_replace even to a device that does not advertise gNMI 0.10.0"}
+      required: ["config"]
+      additionalProperties: false
+
+  - name: grpc-run-command-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-run-command inputs
+      type: object
+      properties:
+        command: {"type": "string", "description": "One command per line. Plain text is a CLI command (gNMI cli origin). 'gnmi get <path>', 'gnmi capabilities' and 'gnoi <service.Method> [json]' call gNMI/gNOI."}
+      required: ["command"]
+      additionalProperties: false
+
+  - name: grpc-gnoi-call-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnoi-call inputs
+      type: object
+      properties:
+        rpc: {"type": "string", "description": "gNOI RPC as <service>.<Method>, e.g. \"system.Time\" or \"layer2.ClearSpanningTree\""}
+        request: {"type": "string", "description": "JSON request body (default {})"}
+      required: ["rpc"]
+      additionalProperties: false
+
+  - name: grpc-gnoi-reboot-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnoi-reboot inputs
+      type: object
+      properties:
+        method: {"type": "string", "description": "RebootMethod enum name, e.g. COLD, WARM, POWERDOWN"}
+        delay: {"type": "integer", "description": "Delay in nanoseconds before rebooting"}
+        message: {"type": "string", "description": "Reason recorded on the device"}
+        request: {"type": "string", "description": "Full JSON RebootRequest (overrides the fields above)"}
+      additionalProperties: false
+
+  - name: grpc-reflection-call-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-reflection-call inputs
+      type: object
+      properties:
+        method: {"type": "string", "description": "Fully-qualified method, e.g. \"gnoi.system.System/Time\""}
+        payload: {"type": "string", "description": "JSON request body (default {})"}
+      required: ["method"]
+      additionalProperties: false
+
+  - name: grpc-gnmi-get-state-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnmi-get-state inputs
+      type: object
+      properties:
+        path: {"type": "array", "items": {"type": "string"}, "description": "gNMI paths (default [\"/\"])"}
+        encoding: {"type": "string", "description": "Override the negotiated encoding"}
+        prefix: {"type": "string", "description": "gNMI path prefix"}
+        target: {"type": "string", "description": "gNMI target name (for proxies)"}
+        origin: {"type": "string", "description": "Path origin applied to paths without one, e.g. openconfig, a native YANG module, or cli"}
+        raw: {"type": "string", "enum": ["true", "false"], "description": "true = each path is one verbatim element (not split on / and case preserved)"}
+      additionalProperties: false
+
+  - name: grpc-gnmi-get-all-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnmi-get-all inputs
+      type: object
+      properties:
+        path: {"type": "array", "items": {"type": "string"}, "description": "gNMI paths (default [\"/\"])"}
+        encoding: {"type": "string", "description": "Override the negotiated encoding"}
+        prefix: {"type": "string", "description": "gNMI path prefix"}
+        target: {"type": "string", "description": "gNMI target name (for proxies)"}
+        origin: {"type": "string", "description": "Path origin applied to paths without one, e.g. openconfig, a native YANG module, or cli"}
+        raw: {"type": "string", "enum": ["true", "false"], "description": "true = each path is one verbatim element (not split on / and case preserved)"}
+      additionalProperties: false
+
+  - name: grpc-gnmi-get-operational-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnmi-get-operational inputs
+      type: object
+      properties:
+        path: {"type": "array", "items": {"type": "string"}, "description": "gNMI paths (default [\"/\"])"}
+        encoding: {"type": "string", "description": "Override the negotiated encoding"}
+        prefix: {"type": "string", "description": "gNMI path prefix"}
+        target: {"type": "string", "description": "gNMI target name (for proxies)"}
+        origin: {"type": "string", "description": "Path origin applied to paths without one, e.g. openconfig, a native YANG module, or cli"}
+        raw: {"type": "string", "enum": ["true", "false"], "description": "true = each path is one verbatim element (not split on / and case preserved)"}
+      additionalProperties: false
+
+  - name: grpc-gnmi-update-config-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnmi-update-config inputs
+      type: object
+      properties:
+        update: {"type": "array", "description": "Paths to merge, as [{path, value}]", "items": {"type": "object", "properties": {"path": {"type": "string"}, "value": {"description": "JSON value to write (object, string, number or boolean)"}}, "required": ["path", "value"], "additionalProperties": false}}
+        encoding: {"type": "string", "description": "Override the negotiated encoding"}
+        prefix: {"type": "string", "description": "gNMI path prefix"}
+        target: {"type": "string", "description": "gNMI target name (for proxies)"}
+        origin: {"type": "string", "description": "Path origin applied to paths without one, e.g. openconfig or a native YANG module"}
+        raw: {"type": "string", "enum": ["true", "false"], "description": "true = each path is one verbatim element"}
+        force: {"type": "string", "enum": ["true", "false"], "description": "true = send union_replace even if the device does not advertise gNMI 0.10.0"}
+      required: ["update"]
+      additionalProperties: false
+
+  - name: grpc-gnmi-replace-config-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnmi-replace-config inputs
+      type: object
+      properties:
+        replace: {"type": "array", "description": "Paths to replace, as [{path, value}]", "items": {"type": "object", "properties": {"path": {"type": "string"}, "value": {"description": "JSON value to write (object, string, number or boolean)"}}, "required": ["path", "value"], "additionalProperties": false}}
+        encoding: {"type": "string", "description": "Override the negotiated encoding"}
+        prefix: {"type": "string", "description": "gNMI path prefix"}
+        target: {"type": "string", "description": "gNMI target name (for proxies)"}
+        origin: {"type": "string", "description": "Path origin applied to paths without one, e.g. openconfig or a native YANG module"}
+        raw: {"type": "string", "enum": ["true", "false"], "description": "true = each path is one verbatim element"}
+        force: {"type": "string", "enum": ["true", "false"], "description": "true = send union_replace even if the device does not advertise gNMI 0.10.0"}
+      required: ["replace"]
+      additionalProperties: false
+
+  - name: grpc-gnmi-union-replace-config-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnmi-union-replace-config inputs
+      type: object
+      properties:
+        union_replace: {"type": "array", "description": "Replace the whole configuration with the union of these [{path, value}]", "items": {"type": "object", "properties": {"path": {"type": "string"}, "value": {"description": "JSON value to write (object, string, number or boolean)"}}, "required": ["path", "value"], "additionalProperties": false}}
+        encoding: {"type": "string", "description": "Override the negotiated encoding"}
+        prefix: {"type": "string", "description": "gNMI path prefix"}
+        target: {"type": "string", "description": "gNMI target name (for proxies)"}
+        origin: {"type": "string", "description": "Path origin applied to paths without one, e.g. openconfig or a native YANG module"}
+        raw: {"type": "string", "enum": ["true", "false"], "description": "true = each path is one verbatim element"}
+        force: {"type": "string", "enum": ["true", "false"], "description": "true = send union_replace even if the device does not advertise gNMI 0.10.0"}
+      required: ["union_replace"]
+      additionalProperties: false
+
+  - name: grpc-gnmi-delete-config-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnmi-delete-config inputs
+      type: object
+      properties:
+        delete: {"type": "array", "items": {"type": "string"}, "description": "Paths to delete"}
+        encoding: {"type": "string", "description": "Override the negotiated encoding"}
+        prefix: {"type": "string", "description": "gNMI path prefix"}
+        target: {"type": "string", "description": "gNMI target name (for proxies)"}
+        origin: {"type": "string", "description": "Path origin applied to paths without one, e.g. openconfig or a native YANG module"}
+        raw: {"type": "string", "enum": ["true", "false"], "description": "true = each path is one verbatim element"}
+        force: {"type": "string", "enum": ["true", "false"], "description": "true = send union_replace even if the device does not advertise gNMI 0.10.0"}
+      required: ["delete"]
+      additionalProperties: false
+
+  - name: grpc-gnmi-update-all-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnmi-update-all inputs
+      type: object
+      properties:
+        value: {"type": "object", "description": "JSON object written at the root path '/'"}
+        confirm: {"type": "string", "enum": ["true", "false"], "description": "Must be true: this writes at the root path '/'"}
+        encoding: {"type": "string", "description": "Override the negotiated encoding"}
+        prefix: {"type": "string", "description": "gNMI path prefix"}
+        target: {"type": "string", "description": "gNMI target name (for proxies)"}
+        origin: {"type": "string", "description": "Path origin applied to paths without one, e.g. openconfig or a native YANG module"}
+        raw: {"type": "string", "enum": ["true", "false"], "description": "true = each path is one verbatim element"}
+        force: {"type": "string", "enum": ["true", "false"], "description": "true = send union_replace even if the device does not advertise gNMI 0.10.0"}
+      required: ["value", "confirm"]
+      additionalProperties: false
+
+  - name: grpc-gnmi-replace-all-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnmi-replace-all inputs
+      type: object
+      properties:
+        value: {"type": "object", "description": "JSON object written at the root path '/'"}
+        confirm: {"type": "string", "enum": ["true", "false"], "description": "Must be true: this writes at the root path '/'"}
+        encoding: {"type": "string", "description": "Override the negotiated encoding"}
+        prefix: {"type": "string", "description": "gNMI path prefix"}
+        target: {"type": "string", "description": "gNMI target name (for proxies)"}
+        origin: {"type": "string", "description": "Path origin applied to paths without one, e.g. openconfig or a native YANG module"}
+        raw: {"type": "string", "enum": ["true", "false"], "description": "true = each path is one verbatim element"}
+        force: {"type": "string", "enum": ["true", "false"], "description": "true = send union_replace even if the device does not advertise gNMI 0.10.0"}
+      required: ["value", "confirm"]
+      additionalProperties: false
+
+  - name: grpc-gnmi-union-replace-all-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnmi-union-replace-all inputs
+      type: object
+      properties:
+        value: {"type": "object", "description": "JSON object written at the root path '/'"}
+        confirm: {"type": "string", "enum": ["true", "false"], "description": "Must be true: this writes at the root path '/'"}
+        encoding: {"type": "string", "description": "Override the negotiated encoding"}
+        prefix: {"type": "string", "description": "gNMI path prefix"}
+        target: {"type": "string", "description": "gNMI target name (for proxies)"}
+        origin: {"type": "string", "description": "Path origin applied to paths without one, e.g. openconfig or a native YANG module"}
+        raw: {"type": "string", "enum": ["true", "false"], "description": "true = each path is one verbatim element"}
+        force: {"type": "string", "enum": ["true", "false"], "description": "true = send union_replace even if the device does not advertise gNMI 0.10.0"}
+      required: ["value", "confirm"]
+      additionalProperties: false
+
+  - name: grpc-gnmi-subscribe-once-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnmi-subscribe-once inputs
+      type: object
+      properties:
+        path: {"type": "array", "items": {"type": "string"}, "description": "gNMI paths (default [\"/\"])"}
+        encoding: {"type": "string", "description": "Override the negotiated encoding"}
+        prefix: {"type": "string", "description": "gNMI path prefix"}
+        target: {"type": "string", "description": "gNMI target name (for proxies)"}
+        origin: {"type": "string", "description": "Path origin applied to paths without one"}
+        raw: {"type": "string", "enum": ["true", "false"], "description": "true = each path is one verbatim element"}
+        updates_only: {"type": "string", "enum": ["true", "false"], "description": "true = skip the initial snapshot and return only changes"}
+      additionalProperties: false
+
+  - name: grpc-gnmi-subscribe-poll-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnmi-subscribe-poll inputs
+      type: object
+      properties:
+        path: {"type": "array", "items": {"type": "string"}, "description": "gNMI paths (default [\"/\"])"}
+        encoding: {"type": "string", "description": "Override the negotiated encoding"}
+        prefix: {"type": "string", "description": "gNMI path prefix"}
+        target: {"type": "string", "description": "gNMI target name (for proxies)"}
+        origin: {"type": "string", "description": "Path origin applied to paths without one"}
+        raw: {"type": "string", "enum": ["true", "false"], "description": "true = each path is one verbatim element"}
+        updates_only: {"type": "string", "enum": ["true", "false"], "description": "true = skip the initial snapshot and return only changes"}
+        count: {"type": "integer", "minimum": 1, "description": "Number of polls (default 1)"}
+        interval: {"type": "number", "minimum": 0, "description": "Seconds between polls (default 1)"}
+      additionalProperties: false
+
+  - name: grpc-gnmi-subscribe-stream-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnmi-subscribe-stream inputs
+      type: object
+      properties:
+        path: {"type": "array", "items": {"type": "string"}, "description": "gNMI paths (default [\"/\"])"}
+        encoding: {"type": "string", "description": "Override the negotiated encoding"}
+        prefix: {"type": "string", "description": "gNMI path prefix"}
+        target: {"type": "string", "description": "gNMI target name (for proxies)"}
+        origin: {"type": "string", "description": "Path origin applied to paths without one"}
+        raw: {"type": "string", "enum": ["true", "false"], "description": "true = each path is one verbatim element"}
+        updates_only: {"type": "string", "enum": ["true", "false"], "description": "true = skip the initial snapshot and return only changes"}
+        stream_mode: {"type": "string", "enum": ["sample", "on_change", "target_defined"], "description": "Subscription mode (default sample)"}
+        duration: {"type": "number", "minimum": 0.1, "description": "Seconds to collect (default 10, capped by GRPC_SUBSCRIBE_MAX_DURATION)"}
+        max_updates: {"type": "integer", "minimum": 1, "description": "Stop after this many notifications (default 1000)"}
+        sample_interval: {"type": "number", "minimum": 0, "description": "Seconds between samples (0 = device default)"}
+        heartbeat_interval: {"type": "number", "minimum": 0, "description": "Seconds between heartbeats for on_change"}
+        suppress_redundant: {"type": "string", "enum": ["true", "false"], "description": "true = only send a sample when the value changed"}
+      additionalProperties: false
+
+  - name: grpc-gnoi-ping-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnoi-ping inputs
+      type: object
+      properties:
+        destination: {"type": "string", "description": "Destination address or hostname"}
+        source: {"type": "string", "description": "Source address"}
+        count: {"type": "integer", "description": "Number of probes"}
+        interval: {"type": "integer", "description": "Nanoseconds between probes"}
+        wait: {"type": "integer", "description": "Nanoseconds to wait for a reply"}
+        size: {"type": "integer", "description": "Packet size in bytes"}
+        do_not_fragment: {"type": "string", "enum": ["true", "false"], "description": "Set the DF bit"}
+        do_not_resolve: {"type": "string", "enum": ["true", "false"], "description": "Do not resolve addresses to names"}
+        l3protocol: {"type": "string", "description": "Layer-3 protocol enum name, e.g. IPV4 or IPV6"}
+        request: {"type": "string", "description": "JSON request body for fields not exposed above (e.g. nested ones); explicit inputs win"}
+      required: ["destination"]
+      additionalProperties: false
+
+  - name: grpc-gnoi-traceroute-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnoi-traceroute inputs
+      type: object
+      properties:
+        destination: {"type": "string", "description": "Destination address or hostname"}
+        source: {"type": "string", "description": "Source address"}
+        initial_ttl: {"type": "integer", "description": "First TTL"}
+        max_ttl: {"type": "integer", "description": "Maximum TTL (hops)"}
+        wait: {"type": "integer", "description": "Nanoseconds to wait per hop"}
+        do_not_fragment: {"type": "string", "enum": ["true", "false"], "description": "Set the DF bit"}
+        do_not_resolve: {"type": "string", "enum": ["true", "false"], "description": "Do not resolve addresses to names"}
+        l3protocol: {"type": "string", "description": "Layer-3 protocol enum name, e.g. IPV4 or IPV6"}
+        l4protocol: {"type": "string", "description": "Layer-4 protocol enum name, e.g. ICMP, TCP or UDP"}
+        request: {"type": "string", "description": "JSON request body for fields not exposed above (e.g. nested ones); explicit inputs win"}
+      required: ["destination"]
+      additionalProperties: false
+
+  - name: grpc-gnoi-reboot-status-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnoi-reboot-status inputs
+      type: object
+      properties:
+        request: {"type": "string", "description": "JSON request body for fields not exposed above (e.g. nested ones); explicit inputs win"}
+      additionalProperties: false
+
+  - name: grpc-gnoi-cancel-reboot-input
+    schema:
+      $schema: https://json-schema.org/draft/2020-12/schema
+      title: grpc-gnoi-cancel-reboot inputs
+      type: object
+      properties:
+        message: {"type": "string", "description": "Reason recorded on the device"}
+        request: {"type": "string", "description": "JSON request body for fields not exposed above (e.g. nested ones); explicit inputs win"}
+      additionalProperties: false
+
+services:
+  - name: grpc-is-alive
+    type: python-script
+    description: gRPC — Channel + gNMI Capabilities round trip; prints true/false
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: is-alive
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnmi-capabilities
+    type: python-script
+    description: gRPC — gNMI Capabilities
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: capabilities
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnmi-get
+    type: python-script
+    description: gRPC — gNMI Get
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnmi-get-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: get
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnmi-get-config
+    type: python-script
+    description: gRPC — gNMI Get restricted to configuration data
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnmi-get-config-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: get-config
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnmi-set
+    type: python-script
+    description: gRPC — gNMI Set — update / replace / union_replace / delete (atomic on the device)
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnmi-set-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: set
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnmi-set-config
+    type: python-script
+    description: gRPC — Config Manager remediation via IM iag5-service action (broker entry point)
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnmi-set-config-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: set-config
+    tags: [driver, grpc, gnmi, broker]
+
+  - name: grpc-run-command
+    type: python-script
+    description: gRPC — Command Templates entry point (CLI via gNMI cli origin, plus gnmi/gnoi commands)
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-run-command-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: run-command
+    tags: [driver, grpc, gnmi, broker]
+
+  - name: grpc-gnoi-call
+    type: python-script
+    description: gRPC — Invoke any gNOI RPC by name (system.*, layer2.*, bgp.*, interface.* and plugin services)
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnoi-call-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: gnoi
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnoi-time
+    type: python-script
+    description: gRPC — gNOI system.Time
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: gnoi-time
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnoi-reboot
+    type: python-script
+    description: gRPC — gNOI system.Reboot
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnoi-reboot-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: gnoi-reboot
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-reflection-call
+    type: python-script
+    description: gRPC — Call any gRPC method through server reflection (no compiled stubs needed)
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-reflection-call-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: call
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-pool-status
+    type: python-script
+    description: gRPC — Show the connection-pool daemon's channels and hit/miss counters
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: pool-status
+    tags: [driver, grpc, gnmi, pool]
+
+  - name: grpc-pool-stop
+    type: python-script
+    description: gRPC — Stop the connection-pool daemon and close its channels
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: pool-stop
+    tags: [driver, grpc, gnmi, pool]
+
+  - name: grpc-gnmi-get-config-text
+    type: python-script
+    description: gRPC — configuration as brace-style text (Config Manager backups, Golden Config)
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnmi-get-config-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: get-config-text
+    tags: [driver, grpc, gnmi, broker]
+
+  - name: grpc-gnmi-set-config-text
+    type: python-script
+    description: gRPC — Config Manager remediation with brace-text changes (Golden Config)
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnmi-set-config-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: set-config-text
+    tags: [driver, grpc, gnmi, broker]
+
+  - name: grpc-gnmi-get-state
+    type: python-script
+    description: gRPC — gNMI Get type=STATE (operational state only)
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnmi-get-state-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: get-state
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnmi-get-all
+    type: python-script
+    description: gRPC — gNMI Get type=ALL (configuration and state)
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnmi-get-all-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: get-all
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnmi-get-operational
+    type: python-script
+    description: gRPC — gNMI Get type=OPERATIONAL
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnmi-get-operational-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: get-operational
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnmi-update-config
+    type: python-script
+    description: gRPC — gNMI Set update[] (merge)
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnmi-update-config-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: update-config
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnmi-replace-config
+    type: python-script
+    description: gRPC — gNMI Set replace[] (replace the target subtree)
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnmi-replace-config-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: replace-config
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnmi-union-replace-config
+    type: python-script
+    description: gRPC — gNMI Set union_replace[] (gNMI 0.10.0+)
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnmi-union-replace-config-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: union-replace-config
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnmi-delete-config
+    type: python-script
+    description: gRPC — gNMI Set delete[] (remove the target paths)
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnmi-delete-config-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: delete-config
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnmi-update-all
+    type: python-script
+    description: gRPC — gNMI Set update at the root path '/' (requires confirm=true)
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnmi-update-all-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: update-all
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnmi-replace-all
+    type: python-script
+    description: gRPC — gNMI Set replace at the root path '/' (requires confirm=true)
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnmi-replace-all-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: replace-all
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnmi-union-replace-all
+    type: python-script
+    description: gRPC — gNMI Set union_replace at the root path '/' (requires confirm=true)
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnmi-union-replace-all-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: union-replace-all
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnmi-subscribe-once
+    type: python-script
+    description: "gRPC — gNMI Subscribe ONCE: one snapshot"
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnmi-subscribe-once-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: subscribe-once
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnmi-subscribe-poll
+    type: python-script
+    description: "gRPC — gNMI Subscribe POLL: count polls, interval seconds apart"
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnmi-subscribe-poll-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: subscribe-poll
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnmi-subscribe-stream
+    type: python-script
+    description: gRPC — gNMI Subscribe STREAM, bounded by duration and max_updates
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnmi-subscribe-stream-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: subscribe-stream
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnoi-ping
+    type: python-script
+    description: gRPC — gNOI system.Ping
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnoi-ping-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: gnoi-ping
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnoi-traceroute
+    type: python-script
+    description: gRPC — gNOI system.Traceroute
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnoi-traceroute-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: gnoi-traceroute
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnoi-reboot-status
+    type: python-script
+    description: gRPC — gNOI system.RebootStatus
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnoi-reboot-status-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: gnoi-reboot-status
+    tags: [driver, grpc, gnmi]
+
+  - name: grpc-gnoi-cancel-reboot
+    type: python-script
+    description: gRPC — gNOI system.CancelReboot
+    repository: itential-assets
+    working-directory: OpenConfig/gRPC/device-drivers/grpc
+    filename: main.py
+    decorator: grpc-gnoi-cancel-reboot-input
+    runtime:
+      req-file: requirements.txt
+      env:
+        GRPC_OP: gnoi-cancel-reboot
+    tags: [driver, grpc, gnmi]
