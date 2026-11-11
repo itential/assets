@@ -1,0 +1,2552 @@
+{
+  "_id": "480675ec44814d9d924f93c6",
+  "iid": 1,
+  "name": "Splunk",
+  "description": "Workflows covering Splunk's core management REST API: search job lifecycle, saved search CRUD/dispatch/history, and index list/create/get/update.",
+  "thumbnail": "",
+  "backgroundColor": "#FFFFFF",
+  "components": [
+    {
+      "iid": 0,
+      "type": "workflow",
+      "reference": "c192956c-e700-4ee6-8257-6e1265edb830",
+      "folder": "/Search Jobs",
+      "document": {
+        "name": "List Search Jobs",
+        "description": "List Search Jobs",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "1": {
+            "name": "ListSearchJobs",
+            "canvasName": "ListSearchJobs",
+            "summary": "List Search Jobs",
+            "description": "Lists current and recently completed search jobs.",
+            "location": "Adapter",
+            "locationType": "Splunk:latest",
+            "app": "Splunk:latest",
+            "type": "automatic",
+            "displayName": "Splunk",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Splunk",
+                "count": "$var.job.count",
+                "offset": "$var.job.offset",
+                "search": "$var.job.filter"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "1": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "1": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "description": "Maximum number of entries to return. 0 means return all entries."
+            },
+            "offset": {
+              "type": "integer",
+              "description": "Index of the first entry to return, for pagination."
+            },
+            "filter": {
+              "type": "string",
+              "description": "Filter the list to entries matching this expression."
+            }
+          }
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "entry": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "last_updated": "2026-09-28T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "e100f409-c536-422f-9209-56efc94a0fb2",
+        "created": "2026-09-28T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 1,
+      "type": "workflow",
+      "reference": "308b98e7-2865-4403-af0c-2d2a672800fc",
+      "folder": "/Search Jobs",
+      "document": {
+        "name": "Create Search Job",
+        "description": "Create Search Job",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "2": {
+            "name": "CreateSearchJob",
+            "canvasName": "CreateSearchJob",
+            "summary": "Create Search Job",
+            "description": "Creates a search job. Returns immediately with a search ID (sid) unless exec_mode is set to blocking or oneshot.",
+            "location": "Adapter",
+            "locationType": "Splunk:latest",
+            "app": "Splunk:latest",
+            "type": "automatic",
+            "displayName": "Splunk",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Splunk",
+                "bodyContentType": "application/x-www-form-urlencoded",
+                "requestBodyPayload": "$var.job.body"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "2": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "2": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "properties": {
+                "search": {
+                  "type": "string",
+                  "description": "The search query to run, e.g. \"search index=main error\"."
+                },
+                "exec_mode": {
+                  "type": "string",
+                  "enum": [
+                    "blocking",
+                    "normal",
+                    "oneshot"
+                  ],
+                  "description": "normal dispatches and returns a sid immediately; blocking waits for completion; oneshot runs synchronously."
+                },
+                "earliest_time": {
+                  "type": "string",
+                  "description": "Earliest time bound for the search, e.g. \"-24h\"."
+                },
+                "latest_time": {
+                  "type": "string",
+                  "description": "Latest time bound for the search, e.g. \"now\"."
+                },
+                "max_count": {
+                  "type": "integer",
+                  "description": "Maximum number of results the job keeps in memory."
+                },
+                "status_buckets": {
+                  "type": "integer",
+                  "description": "Number of timeline summary buckets to generate."
+                }
+              },
+              "required": [
+                "search"
+              ]
+            }
+          },
+          "required": [
+            "body"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "sid": {
+              "type": "string",
+              "description": "Search job ID."
+            }
+          }
+        },
+        "last_updated": "2026-09-28T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "ac66ef7c-bb4f-4f67-9bb5-a5dadd5c7486",
+        "created": "2026-09-28T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 2,
+      "type": "workflow",
+      "reference": "1246b3ef-bb70-4985-b97f-8d0ca2315db0",
+      "folder": "/Search Jobs",
+      "document": {
+        "name": "Get Search Job Status",
+        "description": "Get Search Job Status",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "3": {
+            "name": "GetSearchJobStatus",
+            "canvasName": "GetSearchJobStatus",
+            "summary": "Get Search Job Status",
+            "description": "Returns the status and properties of a search job, including dispatchState, doneProgress, resultCount, and eventCount.",
+            "location": "Adapter",
+            "locationType": "Splunk:latest",
+            "app": "Splunk:latest",
+            "type": "automatic",
+            "displayName": "Splunk",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Splunk",
+                "search_id": "$var.job.search_id"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "3": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "3": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "search_id": {
+              "type": "string",
+              "description": "Search job ID (sid)."
+            }
+          },
+          "required": [
+            "search_id"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "entry": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "last_updated": "2026-09-28T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "a3f96394-c1f2-4aa2-8b76-c07090889a56",
+        "created": "2026-09-28T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 3,
+      "type": "workflow",
+      "reference": "44e43086-ed3d-4fff-a2f3-fe98b41bde59",
+      "folder": "/Search Jobs",
+      "document": {
+        "name": "Cancel Search Job",
+        "description": "Cancel Search Job",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "4": {
+            "name": "CancelSearchJob",
+            "canvasName": "CancelSearchJob",
+            "summary": "Cancel Search Job",
+            "description": "Cancels a search job and removes it from the dispatch directory.",
+            "location": "Adapter",
+            "locationType": "Splunk:latest",
+            "app": "Splunk:latest",
+            "type": "automatic",
+            "displayName": "Splunk",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Splunk",
+                "search_id": "$var.job.search_id"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "4": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "4": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "search_id": {
+              "type": "string",
+              "description": "Search job ID (sid)."
+            }
+          },
+          "required": [
+            "search_id"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "description": "Empty on success."
+        },
+        "last_updated": "2026-09-28T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "709294f2-7640-4bd5-909a-ce505f9dd03d",
+        "created": "2026-09-28T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 4,
+      "type": "workflow",
+      "reference": "2f13c246-dafd-41f0-8dcd-d05afa43fd04",
+      "folder": "/Search Jobs",
+      "document": {
+        "name": "Control Search Job",
+        "description": "Control Search Job",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "5": {
+            "name": "ControlSearchJob",
+            "canvasName": "ControlSearchJob",
+            "summary": "Control Search Job",
+            "description": "Applies a control action (pause, unpause, finalize, cancel, touch, setttl, setpriority) to a search job.",
+            "location": "Adapter",
+            "locationType": "Splunk:latest",
+            "app": "Splunk:latest",
+            "type": "automatic",
+            "displayName": "Splunk",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Splunk",
+                "search_id": "$var.job.search_id",
+                "bodyContentType": "application/x-www-form-urlencoded",
+                "requestBodyPayload": "$var.job.body"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "5": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "5": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "search_id": {
+              "type": "string",
+              "description": "Search job ID (sid)."
+            },
+            "body": {
+              "type": "object",
+              "properties": {
+                "action": {
+                  "type": "string",
+                  "enum": [
+                    "pause",
+                    "unpause",
+                    "finalize",
+                    "cancel",
+                    "touch",
+                    "setttl",
+                    "setpriority"
+                  ],
+                  "description": "Control action to apply to the job."
+                },
+                "ttl": {
+                  "type": "integer",
+                  "description": "New time-to-live in seconds. Required when action is setttl."
+                },
+                "priority": {
+                  "type": "integer",
+                  "description": "New OS process priority (0-10). Required when action is setpriority."
+                }
+              },
+              "required": [
+                "action"
+              ]
+            }
+          },
+          "required": [
+            "search_id",
+            "body"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "description": "Empty on success."
+        },
+        "last_updated": "2026-09-28T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "253e95c6-08a4-4228-99f0-c38717db6e4c",
+        "created": "2026-09-28T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 5,
+      "type": "workflow",
+      "reference": "b8a26a5f-7497-4a87-8809-568bf420a14f",
+      "folder": "/Search Jobs",
+      "document": {
+        "name": "Get Search Job Results",
+        "description": "Get Search Job Results",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "6": {
+            "name": "GetSearchJobResults",
+            "canvasName": "GetSearchJobResults",
+            "summary": "Get Search Job Results",
+            "description": "Returns the final, transformed results of a completed search job.",
+            "location": "Adapter",
+            "locationType": "Splunk:latest",
+            "app": "Splunk:latest",
+            "type": "automatic",
+            "displayName": "Splunk",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Splunk",
+                "search_id": "$var.job.search_id",
+                "count": "$var.job.count",
+                "offset": "$var.job.offset",
+                "search": "$var.job.post_process_search"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "6": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "6": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "search_id": {
+              "type": "string",
+              "description": "Search job ID (sid)."
+            },
+            "count": {
+              "type": "integer",
+              "description": "Maximum number of entries to return. 0 means return all entries."
+            },
+            "offset": {
+              "type": "integer",
+              "description": "Index of the first entry to return, for pagination."
+            },
+            "post_process_search": {
+              "type": "string",
+              "description": "A post-process search to further filter or transform the returned results."
+            }
+          },
+          "required": [
+            "search_id"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "last_updated": "2026-09-28T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "69444830-645f-47be-ad0e-b13131ee16c1",
+        "created": "2026-09-28T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 6,
+      "type": "workflow",
+      "reference": "450ff2e9-f79e-421a-bf4c-fc6cbe004809",
+      "folder": "/Search Jobs",
+      "document": {
+        "name": "Get Search Job Events",
+        "description": "Get Search Job Events",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "7": {
+            "name": "GetSearchJobEvents",
+            "canvasName": "GetSearchJobEvents",
+            "summary": "Get Search Job Events",
+            "description": "Returns the untransformed events of a search job. Available before the search has finished running.",
+            "location": "Adapter",
+            "locationType": "Splunk:latest",
+            "app": "Splunk:latest",
+            "type": "automatic",
+            "displayName": "Splunk",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Splunk",
+                "search_id": "$var.job.search_id",
+                "count": "$var.job.count",
+                "offset": "$var.job.offset",
+                "search": "$var.job.post_process_search"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "7": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "7": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "search_id": {
+              "type": "string",
+              "description": "Search job ID (sid)."
+            },
+            "count": {
+              "type": "integer",
+              "description": "Maximum number of entries to return. 0 means return all entries."
+            },
+            "offset": {
+              "type": "integer",
+              "description": "Index of the first entry to return, for pagination."
+            },
+            "post_process_search": {
+              "type": "string",
+              "description": "A post-process search to further filter or transform the returned events."
+            }
+          },
+          "required": [
+            "search_id"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "last_updated": "2026-09-28T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "6133457f-8346-4c3f-8231-df4f67e0bda4",
+        "created": "2026-09-28T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 7,
+      "type": "workflow",
+      "reference": "e0138116-5b94-4b66-8be7-6dccbfb12b97",
+      "folder": "/Search Jobs",
+      "document": {
+        "name": "Export Search Results",
+        "description": "Export Search Results",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "8": {
+            "name": "ExportSearchResults",
+            "canvasName": "ExportSearchResults",
+            "summary": "Export Search Results",
+            "description": "Runs a search and streams results as they become available, without creating a persistent search job.",
+            "location": "Adapter",
+            "locationType": "Splunk:latest",
+            "app": "Splunk:latest",
+            "type": "automatic",
+            "displayName": "Splunk",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Splunk",
+                "bodyContentType": "application/x-www-form-urlencoded",
+                "requestBodyPayload": "$var.job.body"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "8": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "8": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "properties": {
+                "search": {
+                  "type": "string",
+                  "description": "The search query to run."
+                },
+                "earliest_time": {
+                  "type": "string",
+                  "description": "Earliest time bound for the search."
+                },
+                "latest_time": {
+                  "type": "string",
+                  "description": "Latest time bound for the search."
+                },
+                "max_count": {
+                  "type": "integer",
+                  "description": "Maximum number of results to return."
+                }
+              },
+              "required": [
+                "search"
+              ]
+            }
+          },
+          "required": [
+            "body"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "last_updated": "2026-09-28T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "e72f8b37-e8a3-4a99-ac3d-56ebcc9eb9a7",
+        "created": "2026-09-28T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 8,
+      "type": "workflow",
+      "reference": "03b337ec-337c-4fe0-8afc-69dd35d63845",
+      "folder": "/Saved Searches",
+      "document": {
+        "name": "List Saved Searches",
+        "description": "List Saved Searches",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "9": {
+            "name": "ListSavedSearches",
+            "canvasName": "ListSavedSearches",
+            "summary": "List Saved Searches",
+            "description": "Lists saved search configurations.",
+            "location": "Adapter",
+            "locationType": "Splunk:latest",
+            "app": "Splunk:latest",
+            "type": "automatic",
+            "displayName": "Splunk",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Splunk",
+                "count": "$var.job.count",
+                "offset": "$var.job.offset",
+                "search": "$var.job.filter"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "9": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "9": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "description": "Maximum number of entries to return. 0 means return all entries."
+            },
+            "offset": {
+              "type": "integer",
+              "description": "Index of the first entry to return, for pagination."
+            },
+            "filter": {
+              "type": "string",
+              "description": "Filter the list to entries matching this expression."
+            }
+          }
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "entry": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "last_updated": "2026-09-28T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "1bbe0ed0-e0e1-4b34-b178-6de46feaf2c0",
+        "created": "2026-09-28T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 9,
+      "type": "workflow",
+      "reference": "ee47a9a0-8df4-4a1a-889c-3e95c4594c90",
+      "folder": "/Saved Searches",
+      "document": {
+        "name": "Create Saved Search",
+        "description": "Create Saved Search",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "a": {
+            "name": "CreateSavedSearch",
+            "canvasName": "CreateSavedSearch",
+            "summary": "Create Saved Search",
+            "description": "Creates a saved search.",
+            "location": "Adapter",
+            "locationType": "Splunk:latest",
+            "app": "Splunk:latest",
+            "type": "automatic",
+            "displayName": "Splunk",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Splunk",
+                "bodyContentType": "application/x-www-form-urlencoded",
+                "requestBodyPayload": "$var.job.body"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "a": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "a": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of the saved search."
+                },
+                "search": {
+                  "type": "string",
+                  "description": "The search query to save."
+                },
+                "description": {
+                  "type": "string"
+                },
+                "disabled": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "is_scheduled": {
+                  "type": "boolean",
+                  "description": "Whether this saved search runs on the cron_schedule.",
+                  "default": false
+                },
+                "cron_schedule": {
+                  "type": "string",
+                  "description": "Cron expression controlling when this search runs, e.g. \"*/5 * * * *\"."
+                },
+                "dispatch.earliest_time": {
+                  "type": "string",
+                  "description": "Earliest time bound applied when this saved search runs."
+                },
+                "dispatch.latest_time": {
+                  "type": "string",
+                  "description": "Latest time bound applied when this saved search runs."
+                },
+                "actions": {
+                  "type": "string",
+                  "description": "Comma-separated list of alert actions to trigger, e.g. \"email\"."
+                },
+                "action.email.to": {
+                  "type": "string",
+                  "description": "Email recipient(s) when the email action is enabled."
+                }
+              },
+              "required": [
+                "name",
+                "search"
+              ]
+            }
+          },
+          "required": [
+            "body"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "content": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        },
+        "last_updated": "2026-09-28T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "7478f608-0dff-4e9a-b382-c76d0ebfbdbf",
+        "created": "2026-09-28T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 10,
+      "type": "workflow",
+      "reference": "4c9f347c-8964-46d1-9e12-fa957114d206",
+      "folder": "/Saved Searches",
+      "document": {
+        "name": "Get Saved Search",
+        "description": "Get Saved Search",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "b": {
+            "name": "GetSavedSearch",
+            "canvasName": "GetSavedSearch",
+            "summary": "Get Saved Search",
+            "description": "Returns the configuration of a specific saved search.",
+            "location": "Adapter",
+            "locationType": "Splunk:latest",
+            "app": "Splunk:latest",
+            "type": "automatic",
+            "displayName": "Splunk",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Splunk",
+                "name": "$var.job.name"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "b": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "b": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the saved search."
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "content": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        },
+        "last_updated": "2026-09-28T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "d318015d-ae08-47c1-811c-171406df9df9",
+        "created": "2026-09-28T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 11,
+      "type": "workflow",
+      "reference": "33207a78-5798-465a-8a4a-78210ed57cf6",
+      "folder": "/Saved Searches",
+      "document": {
+        "name": "Update Saved Search",
+        "description": "Update Saved Search",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "c": {
+            "name": "UpdateSavedSearch",
+            "canvasName": "UpdateSavedSearch",
+            "summary": "Update Saved Search",
+            "description": "Updates the configuration of a specific saved search.",
+            "location": "Adapter",
+            "locationType": "Splunk:latest",
+            "app": "Splunk:latest",
+            "type": "automatic",
+            "displayName": "Splunk",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Splunk",
+                "name": "$var.job.name",
+                "bodyContentType": "application/x-www-form-urlencoded",
+                "requestBodyPayload": "$var.job.body"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "c": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "c": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the saved search."
+            },
+            "body": {
+              "type": "object",
+              "properties": {
+                "search": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "disabled": {
+                  "type": "boolean"
+                },
+                "is_scheduled": {
+                  "type": "boolean"
+                },
+                "cron_schedule": {
+                  "type": "string"
+                },
+                "dispatch.earliest_time": {
+                  "type": "string"
+                },
+                "dispatch.latest_time": {
+                  "type": "string"
+                },
+                "actions": {
+                  "type": "string"
+                },
+                "action.email.to": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "name",
+            "body"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "content": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        },
+        "last_updated": "2026-09-28T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "2930ff83-1df2-411d-8d08-8ad764f98b41",
+        "created": "2026-09-28T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 12,
+      "type": "workflow",
+      "reference": "f66fca56-08e4-4cb2-ae13-fd775e3d3cf0",
+      "folder": "/Saved Searches",
+      "document": {
+        "name": "Delete Saved Search",
+        "description": "Delete Saved Search",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "d": {
+            "name": "DeleteSavedSearch",
+            "canvasName": "DeleteSavedSearch",
+            "summary": "Delete Saved Search",
+            "description": "Deletes a specific saved search.",
+            "location": "Adapter",
+            "locationType": "Splunk:latest",
+            "app": "Splunk:latest",
+            "type": "automatic",
+            "displayName": "Splunk",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Splunk",
+                "name": "$var.job.name"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "d": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "d": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the saved search."
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "description": "Empty on success."
+        },
+        "last_updated": "2026-09-28T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "6d2d2132-6369-469a-9b16-5d1ea98bf1a5",
+        "created": "2026-09-28T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 13,
+      "type": "workflow",
+      "reference": "06e52a5b-f0ab-43ad-94a9-95068ca86e3f",
+      "folder": "/Saved Searches",
+      "document": {
+        "name": "Dispatch Saved Search",
+        "description": "Dispatch Saved Search",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "e": {
+            "name": "DispatchSavedSearch",
+            "canvasName": "DispatchSavedSearch",
+            "summary": "Dispatch Saved Search",
+            "description": "Runs a saved search immediately, outside of its normal schedule, and returns a search job ID.",
+            "location": "Adapter",
+            "locationType": "Splunk:latest",
+            "app": "Splunk:latest",
+            "type": "automatic",
+            "displayName": "Splunk",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Splunk",
+                "name": "$var.job.name",
+                "bodyContentType": "application/x-www-form-urlencoded",
+                "requestBodyPayload": "$var.job.body"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "e": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "e": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the saved search."
+            },
+            "body": {
+              "type": "object",
+              "properties": {
+                "dispatch.now": {
+                  "type": "string",
+                  "description": "Reference time used to resolve relative time modifiers for this dispatch."
+                },
+                "dispatch.earliest_time": {
+                  "type": "string"
+                },
+                "dispatch.latest_time": {
+                  "type": "string"
+                },
+                "trigger_actions": {
+                  "type": "boolean",
+                  "description": "Whether to trigger the saved search's configured alert actions if conditions are met.",
+                  "default": true
+                }
+              }
+            }
+          },
+          "required": [
+            "name",
+            "body"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "sid": {
+              "type": "string",
+              "description": "Search job ID."
+            }
+          }
+        },
+        "last_updated": "2026-09-28T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "5aec2c9b-5df6-4933-8505-bd2da713f1a3",
+        "created": "2026-09-28T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 14,
+      "type": "workflow",
+      "reference": "399ed384-3ea7-42ff-8225-396f1a541b0d",
+      "folder": "/Saved Searches",
+      "document": {
+        "name": "Get Saved Search History",
+        "description": "Get Saved Search History",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "f": {
+            "name": "GetSavedSearchHistory",
+            "canvasName": "GetSavedSearchHistory",
+            "summary": "Get Saved Search History",
+            "description": "Returns the search jobs created by previous dispatches of a saved search.",
+            "location": "Adapter",
+            "locationType": "Splunk:latest",
+            "app": "Splunk:latest",
+            "type": "automatic",
+            "displayName": "Splunk",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Splunk",
+                "name": "$var.job.name"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "f": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "f": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the saved search."
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "entry": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "last_updated": "2026-09-28T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "94e8d447-d224-4132-a1d5-9c4802a297c5",
+        "created": "2026-09-28T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 15,
+      "type": "workflow",
+      "reference": "28c5299d-fc9c-4e92-a9b6-515cc6905b01",
+      "folder": "/Indexes",
+      "document": {
+        "name": "List Indexes",
+        "description": "List Indexes",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "10": {
+            "name": "ListIndexes",
+            "canvasName": "ListIndexes",
+            "summary": "List Indexes",
+            "description": "Lists indexes on the Splunk instance.",
+            "location": "Adapter",
+            "locationType": "Splunk:latest",
+            "app": "Splunk:latest",
+            "type": "automatic",
+            "displayName": "Splunk",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Splunk",
+                "count": "$var.job.count",
+                "offset": "$var.job.offset"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "10": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "10": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "description": "Maximum number of entries to return. 0 means return all entries."
+            },
+            "offset": {
+              "type": "integer",
+              "description": "Index of the first entry to return, for pagination."
+            }
+          }
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "entry": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "last_updated": "2026-09-28T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "9ca5d3b8-90a6-4c84-ab44-25ac76b349ba",
+        "created": "2026-09-28T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 16,
+      "type": "workflow",
+      "reference": "c2b4413c-d1b8-496d-a02d-29acc275015d",
+      "folder": "/Indexes",
+      "document": {
+        "name": "Create Index",
+        "description": "Create Index",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "11": {
+            "name": "CreateIndex",
+            "canvasName": "CreateIndex",
+            "summary": "Create Index",
+            "description": "Creates a new index.",
+            "location": "Adapter",
+            "locationType": "Splunk:latest",
+            "app": "Splunk:latest",
+            "type": "automatic",
+            "displayName": "Splunk",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Splunk",
+                "bodyContentType": "application/x-www-form-urlencoded",
+                "requestBodyPayload": "$var.job.body"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "11": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "11": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of the index to create."
+                },
+                "maxTotalDataSizeMB": {
+                  "type": "integer",
+                  "description": "Maximum combined size, in MB, of all hot/warm/cold buckets before data rolls to frozen."
+                },
+                "frozenTimePeriodInSecs": {
+                  "type": "integer",
+                  "description": "Number of seconds after which indexed data rolls to frozen."
+                },
+                "homePath": {
+                  "type": "string",
+                  "description": "Path for hot/warm buckets."
+                },
+                "coldPath": {
+                  "type": "string",
+                  "description": "Path for cold buckets."
+                },
+                "thawedPath": {
+                  "type": "string",
+                  "description": "Path for thawed (restored) buckets."
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          },
+          "required": [
+            "body"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "content": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        },
+        "last_updated": "2026-09-28T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "f59a15e0-9fb3-4fde-8272-75ed59a8a87d",
+        "created": "2026-09-28T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 17,
+      "type": "workflow",
+      "reference": "42bdddb3-7d36-4100-bb4b-2886f40d90ef",
+      "folder": "/Indexes",
+      "document": {
+        "name": "Get Index",
+        "description": "Get Index",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "12": {
+            "name": "GetIndex",
+            "canvasName": "GetIndex",
+            "summary": "Get Index",
+            "description": "Returns the configuration and status of a specific index.",
+            "location": "Adapter",
+            "locationType": "Splunk:latest",
+            "app": "Splunk:latest",
+            "type": "automatic",
+            "displayName": "Splunk",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Splunk",
+                "name": "$var.job.name"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "12": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "12": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the index."
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "content": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        },
+        "last_updated": "2026-09-28T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "e95895a1-263a-402c-a193-145d995af646",
+        "created": "2026-09-28T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    },
+    {
+      "iid": 18,
+      "type": "workflow",
+      "reference": "75681b15-d8af-4398-9d08-1a0e7afcd7f0",
+      "folder": "/Indexes",
+      "document": {
+        "name": "Update Index",
+        "description": "Update Index",
+        "type": "automation",
+        "canvasVersion": 3,
+        "font_size": 12,
+        "tasks": {
+          "workflow_start": {
+            "name": "workflow_start",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          "13": {
+            "name": "UpdateIndex",
+            "canvasName": "UpdateIndex",
+            "summary": "Update Index",
+            "description": "Updates the configuration of a specific index, including enabling/disabling it and adjusting retention/size limits.",
+            "location": "Adapter",
+            "locationType": "Splunk:latest",
+            "app": "Splunk:latest",
+            "type": "automatic",
+            "displayName": "Splunk",
+            "variables": {
+              "incoming": {
+                "adapter_id": "Splunk",
+                "name": "$var.job.name",
+                "bodyContentType": "application/x-www-form-urlencoded",
+                "requestBodyPayload": "$var.job.body"
+              },
+              "outgoing": {
+                "response": null
+              },
+              "error": "",
+              "decorators": []
+            },
+            "groups": [],
+            "actor": "Pronghorn",
+            "scheduled": false,
+            "nodeLocation": {
+              "x": 264,
+              "y": 150
+            }
+          },
+          "workflow_end": {
+            "name": "workflow_end",
+            "groups": [],
+            "nodeLocation": {
+              "x": 264,
+              "y": 300
+            }
+          }
+        },
+        "transitions": {
+          "workflow_start": {
+            "13": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "13": {
+            "workflow_end": {
+              "type": "standard",
+              "state": "success"
+            }
+          },
+          "workflow_end": {}
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the index."
+            },
+            "body": {
+              "type": "object",
+              "properties": {
+                "disabled": {
+                  "type": "boolean",
+                  "description": "Set true to disable the index, false to enable it."
+                },
+                "maxTotalDataSizeMB": {
+                  "type": "integer"
+                },
+                "frozenTimePeriodInSecs": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "name",
+            "body"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "content": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        },
+        "last_updated": "2026-09-28T12:00:00.000Z",
+        "last_updated_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "lastUpdatedVersion": "5.55.5",
+        "uuid": "debde7a6-d312-4dd1-9750-4d80a3da0563",
+        "created": "2026-09-28T12:00:00.000Z",
+        "created_by": {
+          "provenance": "LDAP",
+          "username": "admin@itential",
+          "firstname": "admin@itential",
+          "inactive": false
+        },
+        "createdVersion": "5.55.5",
+        "scenarios": [],
+        "tags": [],
+        "groups": [],
+        "migrationVersion": 8
+      }
+    }
+  ],
+  "created": "2026-09-28T12:00:00.000Z",
+  "createdBy": {
+    "_id": "Pronghorn"
+  },
+  "lastUpdated": "2026-09-28T12:00:00.000Z",
+  "lastUpdatedBy": {
+    "_id": "Pronghorn"
+  }
+}

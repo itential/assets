@@ -1,0 +1,988 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Splunk",
+    "description": "Splunk is a platform for searching, monitoring, and analyzing machine-generated data. This spec covers the core Splunk Enterprise management REST API exposed directly by a running Splunk instance: search job lifecycle, saved searches, and indexes.",
+    "version": "latest",
+    "x-itential-curated": "Curated to 19 of the management REST API's operations, covering the search job lifecycle (create, list, get status, cancel, control, results, events, export), saved search CRUD plus dispatch and history, and index list/create/get/update. See the repo README for the full breakdown."
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}",
+      "variables": {
+        "protocol": {
+          "default": "https",
+          "enum": ["http", "https"]
+        },
+        "host": {
+          "default": "localhost"
+        },
+        "port": {
+          "default": "8089"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "BasicAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Search Jobs",
+      "description": "Create, monitor, control, and retrieve results from search jobs."
+    },
+    {
+      "name": "Saved Searches",
+      "description": "Create, list, update, delete, dispatch, and inspect the history of saved searches."
+    },
+    {
+      "name": "Indexes",
+      "description": "List, create, get, and update indexes."
+    }
+  ],
+  "paths": {
+    "/services/search/jobs": {
+      "get": {
+        "tags": ["Search Jobs"],
+        "summary": "List Search Jobs",
+        "description": "Lists current and recently completed search jobs.",
+        "operationId": "listSearchJobs",
+        "parameters": [
+          { "$ref": "#/components/parameters/OutputMode" },
+          { "$ref": "#/components/parameters/Count" },
+          { "$ref": "#/components/parameters/Offset" },
+          { "$ref": "#/components/parameters/SearchFilter" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "entry": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/SearchJob" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      },
+      "post": {
+        "tags": ["Search Jobs"],
+        "summary": "Create Search Job",
+        "description": "Creates a search job. Returns immediately with a search ID (sid) unless exec_mode is set to blocking or oneshot.",
+        "operationId": "createSearchJob",
+        "parameters": [
+          { "$ref": "#/components/parameters/OutputMode" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": { "$ref": "#/components/schemas/CreateSearchJobRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Search job created.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SearchJobCreated" }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      }
+    },
+    "/services/search/jobs/{search_id}": {
+      "get": {
+        "tags": ["Search Jobs"],
+        "summary": "Get Search Job Status",
+        "description": "Returns the status and properties of a search job, including dispatchState, doneProgress, resultCount, and eventCount.",
+        "operationId": "getSearchJobStatus",
+        "parameters": [
+          { "$ref": "#/components/parameters/SearchId" },
+          { "$ref": "#/components/parameters/OutputMode" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "entry": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/SearchJob" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      },
+      "delete": {
+        "tags": ["Search Jobs"],
+        "summary": "Cancel Search Job",
+        "description": "Cancels a search job and removes it from the dispatch directory. Equivalent to the control action cancel.",
+        "operationId": "deleteSearchJob",
+        "parameters": [
+          { "$ref": "#/components/parameters/SearchId" },
+          { "$ref": "#/components/parameters/OutputMode" }
+        ],
+        "responses": {
+          "200": { "description": "Search job canceled." },
+          "default": { "description": "Error response." }
+        }
+      }
+    },
+    "/services/search/jobs/{search_id}/control": {
+      "post": {
+        "tags": ["Search Jobs"],
+        "summary": "Control Search Job",
+        "description": "Applies a control action (pause, unpause, finalize, cancel, touch, setttl, setpriority) to a search job.",
+        "operationId": "controlSearchJob",
+        "parameters": [
+          { "$ref": "#/components/parameters/SearchId" },
+          { "$ref": "#/components/parameters/OutputMode" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": { "$ref": "#/components/schemas/ControlSearchJobRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Control action applied." },
+          "default": { "description": "Error response." }
+        }
+      }
+    },
+    "/services/search/jobs/{search_id}/results": {
+      "get": {
+        "tags": ["Search Jobs"],
+        "summary": "Get Search Job Results",
+        "description": "Returns the final, transformed results of a completed search job.",
+        "operationId": "getSearchJobResults",
+        "parameters": [
+          { "$ref": "#/components/parameters/SearchId" },
+          { "$ref": "#/components/parameters/OutputMode" },
+          { "$ref": "#/components/parameters/Count" },
+          { "$ref": "#/components/parameters/Offset" },
+          { "$ref": "#/components/parameters/PostProcessSearch" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SearchResults" }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      }
+    },
+    "/services/search/jobs/{search_id}/events": {
+      "get": {
+        "tags": ["Search Jobs"],
+        "summary": "Get Search Job Events",
+        "description": "Returns the untransformed events of a search job. Available before the search has finished running.",
+        "operationId": "getSearchJobEvents",
+        "parameters": [
+          { "$ref": "#/components/parameters/SearchId" },
+          { "$ref": "#/components/parameters/OutputMode" },
+          { "$ref": "#/components/parameters/Count" },
+          { "$ref": "#/components/parameters/Offset" },
+          { "$ref": "#/components/parameters/PostProcessSearch" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SearchResults" }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      }
+    },
+    "/services/search/jobs/export": {
+      "post": {
+        "tags": ["Search Jobs"],
+        "summary": "Export Search Results",
+        "description": "Runs a search and streams results as they become available, without creating a persistent search job.",
+        "operationId": "exportSearchResults",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": { "$ref": "#/components/schemas/ExportSearchRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Streamed search results.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SearchResults" }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      }
+    },
+    "/services/saved/searches": {
+      "get": {
+        "tags": ["Saved Searches"],
+        "summary": "List Saved Searches",
+        "description": "Lists saved search configurations.",
+        "operationId": "listSavedSearches",
+        "parameters": [
+          { "$ref": "#/components/parameters/OutputMode" },
+          { "$ref": "#/components/parameters/Count" },
+          { "$ref": "#/components/parameters/Offset" },
+          { "$ref": "#/components/parameters/SearchFilter" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "entry": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/SavedSearch" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      },
+      "post": {
+        "tags": ["Saved Searches"],
+        "summary": "Create Saved Search",
+        "description": "Creates a saved search.",
+        "operationId": "createSavedSearch",
+        "parameters": [
+          { "$ref": "#/components/parameters/OutputMode" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": { "$ref": "#/components/schemas/CreateSavedSearchRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Saved search created.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SavedSearch" }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      }
+    },
+    "/services/saved/searches/{name}": {
+      "get": {
+        "tags": ["Saved Searches"],
+        "summary": "Get Saved Search",
+        "description": "Returns the configuration of a specific saved search.",
+        "operationId": "getSavedSearch",
+        "parameters": [
+          { "$ref": "#/components/parameters/SavedSearchName" },
+          { "$ref": "#/components/parameters/OutputMode" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SavedSearch" }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      },
+      "post": {
+        "tags": ["Saved Searches"],
+        "summary": "Update Saved Search",
+        "description": "Updates the configuration of a specific saved search.",
+        "operationId": "updateSavedSearch",
+        "parameters": [
+          { "$ref": "#/components/parameters/SavedSearchName" },
+          { "$ref": "#/components/parameters/OutputMode" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": { "$ref": "#/components/schemas/UpdateSavedSearchRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Saved search updated.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SavedSearch" }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      },
+      "delete": {
+        "tags": ["Saved Searches"],
+        "summary": "Delete Saved Search",
+        "description": "Deletes a specific saved search.",
+        "operationId": "deleteSavedSearch",
+        "parameters": [
+          { "$ref": "#/components/parameters/SavedSearchName" },
+          { "$ref": "#/components/parameters/OutputMode" }
+        ],
+        "responses": {
+          "200": { "description": "Saved search deleted." },
+          "default": { "description": "Error response." }
+        }
+      }
+    },
+    "/services/saved/searches/{name}/dispatch": {
+      "post": {
+        "tags": ["Saved Searches"],
+        "summary": "Dispatch Saved Search",
+        "description": "Runs a saved search immediately, outside of its normal schedule, and returns a search job ID.",
+        "operationId": "dispatchSavedSearch",
+        "parameters": [
+          { "$ref": "#/components/parameters/SavedSearchName" },
+          { "$ref": "#/components/parameters/OutputMode" }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": { "$ref": "#/components/schemas/DispatchSavedSearchRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Saved search dispatched.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SearchJobCreated" }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      }
+    },
+    "/services/saved/searches/{name}/history": {
+      "get": {
+        "tags": ["Saved Searches"],
+        "summary": "Get Saved Search History",
+        "description": "Returns the search jobs created by previous dispatches of a saved search.",
+        "operationId": "getSavedSearchHistory",
+        "parameters": [
+          { "$ref": "#/components/parameters/SavedSearchName" },
+          { "$ref": "#/components/parameters/OutputMode" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "entry": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/SearchJob" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      }
+    },
+    "/services/data/indexes": {
+      "get": {
+        "tags": ["Indexes"],
+        "summary": "List Indexes",
+        "description": "Lists indexes on the Splunk instance.",
+        "operationId": "listIndexes",
+        "parameters": [
+          { "$ref": "#/components/parameters/OutputMode" },
+          { "$ref": "#/components/parameters/Count" },
+          { "$ref": "#/components/parameters/Offset" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "entry": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Index" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      },
+      "post": {
+        "tags": ["Indexes"],
+        "summary": "Create Index",
+        "description": "Creates a new index.",
+        "operationId": "createIndex",
+        "parameters": [
+          { "$ref": "#/components/parameters/OutputMode" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": { "$ref": "#/components/schemas/CreateIndexRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Index created.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Index" }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      }
+    },
+    "/services/data/indexes/{name}": {
+      "get": {
+        "tags": ["Indexes"],
+        "summary": "Get Index",
+        "description": "Returns the configuration and status of a specific index.",
+        "operationId": "getIndex",
+        "parameters": [
+          { "$ref": "#/components/parameters/IndexName" },
+          { "$ref": "#/components/parameters/OutputMode" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Index" }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      },
+      "post": {
+        "tags": ["Indexes"],
+        "summary": "Update Index",
+        "description": "Updates the configuration of a specific index, including enabling/disabling it and adjusting retention/size limits.",
+        "operationId": "updateIndex",
+        "parameters": [
+          { "$ref": "#/components/parameters/IndexName" },
+          { "$ref": "#/components/parameters/OutputMode" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": { "$ref": "#/components/schemas/UpdateIndexRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Index updated.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Index" }
+              }
+            }
+          },
+          "default": { "description": "Error response." }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "parameters": {
+      "SearchId": {
+        "name": "search_id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" },
+        "description": "Search job ID (sid)."
+      },
+      "SavedSearchName": {
+        "name": "name",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" },
+        "description": "Name of the saved search."
+      },
+      "IndexName": {
+        "name": "name",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" },
+        "description": "Name of the index."
+      },
+      "OutputMode": {
+        "name": "output_mode",
+        "in": "query",
+        "required": false,
+        "schema": { "type": "string", "enum": ["json", "xml", "csv"], "default": "json" },
+        "description": "Response format."
+      },
+      "Count": {
+        "name": "count",
+        "in": "query",
+        "required": false,
+        "schema": { "type": "integer", "default": 30 },
+        "description": "Maximum number of entries to return. 0 means return all entries."
+      },
+      "Offset": {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "schema": { "type": "integer", "default": 0 },
+        "description": "Index of the first entry to return, for pagination."
+      },
+      "SearchFilter": {
+        "name": "search",
+        "in": "query",
+        "required": false,
+        "schema": { "type": "string" },
+        "description": "Filter the list to entries matching this expression."
+      },
+      "PostProcessSearch": {
+        "name": "search",
+        "in": "query",
+        "required": false,
+        "schema": { "type": "string" },
+        "description": "A post-process search to further filter or transform the returned results/events."
+      }
+    },
+    "schemas": {
+      "CreateSearchJobRequest": {
+        "type": "object",
+        "required": ["search"],
+        "properties": {
+          "search": {
+            "type": "string",
+            "description": "The search query to run, e.g. \"search index=main error\"."
+          },
+          "exec_mode": {
+            "type": "string",
+            "enum": ["blocking", "normal", "oneshot"],
+            "default": "normal",
+            "description": "normal dispatches and returns a sid immediately; blocking waits for completion before returning; oneshot runs synchronously and returns results directly instead of a sid."
+          },
+          "earliest_time": {
+            "type": "string",
+            "description": "Earliest time bound for the search, e.g. \"-24h\"."
+          },
+          "latest_time": {
+            "type": "string",
+            "description": "Latest time bound for the search, e.g. \"now\"."
+          },
+          "max_count": {
+            "type": "integer",
+            "description": "Maximum number of results the job keeps in memory (default 10000)."
+          },
+          "status_buckets": {
+            "type": "integer",
+            "description": "Number of timeline summary buckets to generate. 0 disables timeline/summary generation."
+          },
+          "rf": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Additional fields required to be present in results/events, even if not referenced by the search itself."
+          }
+        }
+      },
+      "SearchJobCreated": {
+        "type": "object",
+        "properties": {
+          "sid": {
+            "type": "string",
+            "description": "Search job ID, used to reference this job in subsequent calls."
+          }
+        }
+      },
+      "SearchJob": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Search job ID (sid)."
+          },
+          "content": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "dispatchState": {
+                "type": "string",
+                "enum": ["QUEUED", "PARSING", "RUNNING", "PAUSED", "FINALIZING", "DONE", "FAILED"],
+                "description": "Current state of the search job."
+              },
+              "isDone": {
+                "type": "boolean",
+                "description": "Whether the search job has finished running."
+              },
+              "isFailed": {
+                "type": "boolean"
+              },
+              "doneProgress": {
+                "type": "number",
+                "description": "Search progress, a value between 0 and 1."
+              },
+              "resultCount": {
+                "type": "integer"
+              },
+              "eventCount": {
+                "type": "integer"
+              },
+              "runDuration": {
+                "type": "number"
+              },
+              "ttl": {
+                "type": "integer",
+                "description": "Seconds before the job is removed if idle."
+              }
+            }
+          }
+        }
+      },
+      "ControlSearchJobRequest": {
+        "type": "object",
+        "required": ["action"],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": ["pause", "unpause", "finalize", "cancel", "touch", "setttl", "setpriority"],
+            "description": "Control action to apply to the job."
+          },
+          "ttl": {
+            "type": "integer",
+            "description": "New time-to-live in seconds. Required when action is setttl."
+          },
+          "priority": {
+            "type": "integer",
+            "description": "New OS process priority (0-10, lower runs faster). Required when action is setpriority."
+          }
+        }
+      },
+      "SearchResults": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "ExportSearchRequest": {
+        "type": "object",
+        "required": ["search"],
+        "properties": {
+          "search": {
+            "type": "string",
+            "description": "The search query to run."
+          },
+          "earliest_time": {
+            "type": "string"
+          },
+          "latest_time": {
+            "type": "string"
+          },
+          "output_mode": {
+            "type": "string",
+            "enum": ["json", "xml", "csv"],
+            "default": "json"
+          },
+          "max_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "SavedSearch": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the saved search."
+          },
+          "content": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "search": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "disabled": {
+                "type": "boolean"
+              },
+              "is_scheduled": {
+                "type": "boolean"
+              },
+              "cron_schedule": {
+                "type": "string"
+              },
+              "dispatch.earliest_time": {
+                "type": "string"
+              },
+              "dispatch.latest_time": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "CreateSavedSearchRequest": {
+        "type": "object",
+        "required": ["name", "search"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the saved search."
+          },
+          "search": {
+            "type": "string",
+            "description": "The search query to save."
+          },
+          "description": {
+            "type": "string"
+          },
+          "disabled": {
+            "type": "boolean",
+            "default": false
+          },
+          "is_scheduled": {
+            "type": "boolean",
+            "description": "Whether this saved search runs on the cron_schedule.",
+            "default": false
+          },
+          "cron_schedule": {
+            "type": "string",
+            "description": "Cron expression controlling when this search runs, e.g. \"*/5 * * * *\"."
+          },
+          "dispatch.earliest_time": {
+            "type": "string",
+            "description": "Earliest time bound applied when this saved search runs."
+          },
+          "dispatch.latest_time": {
+            "type": "string",
+            "description": "Latest time bound applied when this saved search runs."
+          },
+          "actions": {
+            "type": "string",
+            "description": "Comma-separated list of alert actions to trigger, e.g. \"email\"."
+          },
+          "action.email.to": {
+            "type": "string",
+            "description": "Email recipient(s) when the email action is enabled."
+          }
+        }
+      },
+      "UpdateSavedSearchRequest": {
+        "type": "object",
+        "properties": {
+          "search": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "disabled": {
+            "type": "boolean"
+          },
+          "is_scheduled": {
+            "type": "boolean"
+          },
+          "cron_schedule": {
+            "type": "string"
+          },
+          "dispatch.earliest_time": {
+            "type": "string"
+          },
+          "dispatch.latest_time": {
+            "type": "string"
+          },
+          "actions": {
+            "type": "string"
+          },
+          "action.email.to": {
+            "type": "string"
+          }
+        }
+      },
+      "DispatchSavedSearchRequest": {
+        "type": "object",
+        "properties": {
+          "dispatch.now": {
+            "type": "string",
+            "description": "Reference time used to resolve relative time modifiers for this dispatch."
+          },
+          "dispatch.earliest_time": {
+            "type": "string"
+          },
+          "dispatch.latest_time": {
+            "type": "string"
+          },
+          "trigger_actions": {
+            "type": "boolean",
+            "description": "Whether to trigger the saved search's configured alert actions if conditions are met.",
+            "default": true
+          }
+        }
+      },
+      "Index": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the index."
+          },
+          "content": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "disabled": {
+                "type": "boolean"
+              },
+              "currentDBSizeMB": {
+                "type": "integer"
+              },
+              "maxTotalDataSizeMB": {
+                "type": "integer"
+              },
+              "frozenTimePeriodInSecs": {
+                "type": "integer"
+              },
+              "homePath": {
+                "type": "string"
+              },
+              "coldPath": {
+                "type": "string"
+              },
+              "thawedPath": {
+                "type": "string"
+              },
+              "totalEventCount": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+      "CreateIndexRequest": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the index to create."
+          },
+          "maxTotalDataSizeMB": {
+            "type": "integer",
+            "description": "Maximum combined size, in MB, of all hot/warm/cold buckets before data rolls to frozen."
+          },
+          "frozenTimePeriodInSecs": {
+            "type": "integer",
+            "description": "Number of seconds after which indexed data rolls to frozen."
+          },
+          "homePath": {
+            "type": "string",
+            "description": "Path for hot/warm buckets."
+          },
+          "coldPath": {
+            "type": "string",
+            "description": "Path for cold buckets."
+          },
+          "thawedPath": {
+            "type": "string",
+            "description": "Path for thawed (restored) buckets."
+          }
+        }
+      },
+      "UpdateIndexRequest": {
+        "type": "object",
+        "properties": {
+          "disabled": {
+            "type": "boolean",
+            "description": "Set true to disable the index, false to enable it."
+          },
+          "maxTotalDataSizeMB": {
+            "type": "integer"
+          },
+          "frozenTimePeriodInSecs": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}
